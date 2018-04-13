@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:stretchColumns="0,1,2,3">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:id="@+id/minus5m"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/minus5m" />
+
+        <TextView
+            android:id="@+id/minus1h"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/minus1h" />
+
+        <TextView
+            android:id="@+id/minus1d"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/minus1d" />
+
+        <TextView
+            android:id="@+id/edit"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/edit" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:id="@+id/plus5m"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/plus5m" />
+
+        <TextView
+            android:id="@+id/plus1h"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/plus1h" />
+
+        <TextView
+            android:id="@+id/plus1d"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/plus1d" />
+
+        <TextView
+            android:id="@+id/notes"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/notes" />
+    </TableRow>
+</TableLayout>

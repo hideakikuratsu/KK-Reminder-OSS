@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Reminder</string>
+    <string name="minus5m">-5分</string>
+    <string name="plus5m">+5分</string>
+    <string name="minus1h">-1時間</string>
+    <string name="plus1h">+1時間</string>
+    <string name="minus1d">-1日</string>
+    <string name="plus1d">+1日</string>
+    <string name="edit">編集</string>
+    <string name="notes">メモ</string>
+</resources>
