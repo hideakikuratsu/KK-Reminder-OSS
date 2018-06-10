@@ -100,7 +100,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     Item item = (Item)getChild(i, i1);
 
     String set_time = new SimpleDateFormat("yyyy年M月d日(E)H:m").format(item.getDate());
-    long date_sub = System.currentTimeMillis() - item.getDate().getTime();
+    long date_sub = item.getDate().getTime() - System.currentTimeMillis();
 
     boolean date_minus_or_not = false;
     if(date_sub < 0) {
@@ -160,7 +160,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     else {
       viewHolder.time.setText(set_time + "(<< 1分 >>)");
     }
-    
+
     if(date_minus_or_not) {
       viewHolder.time.setTextColor(Color.RED);
     }
