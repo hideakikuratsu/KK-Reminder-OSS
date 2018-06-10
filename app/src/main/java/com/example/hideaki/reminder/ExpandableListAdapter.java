@@ -1,6 +1,7 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
   private List<String> groups;
   private List<List<Item>> children;
   private Context context;
-  private boolean date_minus_or_not = false;
-  private int date_long_judge;
 
   private static class ChildViewHolder {
     TextView time;
@@ -102,6 +101,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     String set_time = new SimpleDateFormat("yyyy年M月d日(E)H:m").format(item.getDate());
     long date_sub = System.currentTimeMillis() - item.getDate().getTime();
+
+    boolean date_minus_or_not = false;
     if(date_sub < 0) {
       date_sub = Math.abs(date_sub);
       date_minus_or_not = true;
@@ -158,6 +159,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
     else {
       viewHolder.time.setText(set_time + "(<< 1分 >>)");
+    }
+    
+    if(date_minus_or_not) {
+      viewHolder.time.setTextColor(Color.RED);
     }
 
     viewHolder.detail.setText(item.getDetail());
