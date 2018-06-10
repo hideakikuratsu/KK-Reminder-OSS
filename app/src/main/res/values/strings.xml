@@ -8,4 +8,8 @@
     <string name="plus1d">+1日</string>
     <string name="edit">編集</string>
     <string name="notes">メモ</string>
+    <string name="next_group">次のグループを展開</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

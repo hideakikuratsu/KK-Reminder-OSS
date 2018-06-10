@@ -1,6 +1,10 @@
 package com.example.hideaki.reminder;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ExpandableListView;
 
@@ -10,13 +14,36 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+  private DatabaseHelper helper = null;
+  public static ExpandableListView elv = null;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    ExpandableListView elv = findViewById(R.id.listView);
+    helper = new DatabaseHelper(this);
+    SQLiteDatabase db = helper.getWritableDatabase();
+
+    elv = findViewById(R.id.listView);
     elv.setAdapter(new ExpandableListAdapter(createGroups(), createChildren(), this));
+
+    elv.setTextFilterEnabled(true);
+
+    FragmentManager manager = getSupportFragmentManager();
+    Fragment fragment = manager.findFragmentByTag("SearchFragment");
+    if(fragment == null) {
+      fragment = new SearchFragment();
+      FragmentTransaction transaction = manager.beginTransaction();
+      transaction.add(R.id.content, fragment, "SearchFragment");
+      transaction.commit();
+    }
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    helper.close();
   }
 
   private List<List<Item>> createChildren() {
