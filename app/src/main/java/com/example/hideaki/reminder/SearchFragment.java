@@ -6,6 +6,7 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -35,9 +36,8 @@ public class SearchFragment extends Fragment {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.reminder_menu, menu);
 
-//    MenuItem search_item = menu.findItem(R.id.search_groups);
-//    searchView = (SearchView)search_item.getActionView();
-    searchView = getActivity().findViewById(R.id.search_groups);
+    MenuItem search_item = menu.findItem(R.id.search_groups);
+    searchView = (SearchView)search_item.getActionView();
 
     searchView.setIconifiedByDefault(true);
     searchView.setSubmitButtonEnabled(false);

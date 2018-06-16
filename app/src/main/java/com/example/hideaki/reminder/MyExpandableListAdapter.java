@@ -6,28 +6,112 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 
   private List<String> groups;
-  private List<List<Item>> children;
+  private List<String> org_groups = new ArrayList<>();
+  public static List<List<Item>> children;
   private Context context;
+
+  public MyExpandableListAdapter(List<String> groups, List<List<Item>> children, Context context) {
+    this.groups = groups;
+    this.children = children;
+    this.context = context;
+
+    //groupsのコピーを作成
+    for(String s : groups) {
+      org_groups.add(s);
+    }
+  }
+
+  @Override
+  public Filter getFilter() {
+    Filter filter = new Filter() {
+      @Override
+      protected FilterResults performFiltering(CharSequence constraint) {
+        FilterResults results = new FilterResults();
+        List<List<Item>> filteredList = new ArrayList<>();
+
+        //入力文字列が大文字を含むかどうか調べる
+        boolean is_upper = false;
+        for(int i = 0; i < constraint.length(); i++) {
+          if(Character.isUpperCase(constraint.charAt(i))) {
+            is_upper = true;
+            break;
+          }
+        }
+
+        //検索処理
+        for(List<Item> itemList : MainActivity.createChildren()) {
+          List<Item> filteredItem = new ArrayList<>();
+
+          for(Item item : itemList) {
+            String detail = item.getDetail();
+
+            if(!is_upper) {
+              detail = detail.toLowerCase();
+            }
+
+            if(detail.contains(constraint)) {
+              filteredItem.add(item);
+            }
+          }
+
+          filteredList.add(filteredItem);
+        }
+
+        results.count = filteredList.size();
+        results.values = filteredList;
+
+        return results;
+      }
+
+      @Override
+      protected void publishResults(CharSequence constraint, FilterResults results) {
+        children = (List<List<Item>>)results.values;
+
+        //childrenのコピーを作成
+        List<List<Item>> org_children = new ArrayList<>();
+        for(List<Item> itemList : children) {
+          List<Item> org_child_list = new ArrayList<>();
+          for(Item item : itemList) {
+            org_child_list.add(item);
+          }
+          org_children.add(org_child_list);
+        }
+
+        //項目数が0でないときのみ表示(検索に一致した結果のみ表示)
+        groups.clear();
+        children.clear();
+
+        for(int i = 0; i < org_children.size(); i++) {
+          if(org_children.get(i).size() != 0) {
+            groups.add(org_groups.get(i));
+            children.add(org_children.get(i));
+          }
+        }
+
+        //リストの表示更新
+        notifyDataSetChanged();
+      }
+    };
+
+    return filter;
+  }
 
   private static class ChildViewHolder {
     TextView time;
     TextView detail;
     TextView repeat;
-  }
-
-  public ExpandableListAdapter(List<String> groups, List<List<Item>> children, Context context) {
-    this.groups = groups;
-    this.children = children;
-    this.context = context;
   }
 
   @Override
@@ -74,6 +158,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     ((TextView)convertView.findViewById(R.id.day)).setText(getGroup(i).toString());
+
     return convertView;
   }
 
@@ -99,6 +184,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     Item item = (Item)getChild(i, i1);
 
+    //時間を表示する処理
     String set_time = new SimpleDateFormat("yyyy年M月d日(E)H:m").format(item.getDate());
     long date_sub = item.getDate().getTime() - System.currentTimeMillis();
 
@@ -165,6 +251,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
       viewHolder.time.setTextColor(Color.RED);
     }
 
+    //詳細と、リピート通知のインターバルを表示
     viewHolder.detail.setText(item.getDetail());
     viewHolder.repeat.setText(item.getRepeat());
 
