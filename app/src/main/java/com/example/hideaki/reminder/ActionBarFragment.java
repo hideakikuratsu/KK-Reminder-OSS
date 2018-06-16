@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class SearchFragment extends Fragment {
+public class ActionBarFragment extends Fragment {
 
   private SearchView searchView;
 
-  public SearchFragment() {
+  public ActionBarFragment() {
     // Required empty public constructor
   }
 
@@ -36,7 +36,8 @@ public class SearchFragment extends Fragment {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.reminder_menu, menu);
 
-    MenuItem search_item = menu.findItem(R.id.search_groups);
+    //検索アイコンの実装
+    MenuItem search_item = menu.findItem(R.id.search_item);
     searchView = (SearchView)search_item.getActionView();
 
     searchView.setIconifiedByDefault(true);
@@ -60,5 +61,14 @@ public class SearchFragment extends Fragment {
         return false;
       }
     });
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch(item.getItemId()) {
+      case R.id.search_item:
+        return true;
+    }
+    return false;
   }
 }

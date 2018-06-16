@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     elv.setTextFilterEnabled(true);
 
-    showMainItem();
+    showActionBar();
   }
 
   @Override
@@ -65,13 +65,13 @@ public class MainActivity extends AppCompatActivity {
     return groups;
   }
 
-  private void showMainItem() {
+  private void showActionBar() {
     FragmentManager manager = getSupportFragmentManager();
-    Fragment fragment = manager.findFragmentByTag("SearchFragment");
+    Fragment fragment = manager.findFragmentByTag("ActionBarFragment");
     if(fragment == null) {
-      fragment = new SearchFragment();
+      fragment = new ActionBarFragment();
       FragmentTransaction transaction = manager.beginTransaction();
-      transaction.add(R.id.content, fragment, "SearchFragment");
+      transaction.add(R.id.content, fragment, "ActionBarFragment");
       transaction.commit();
     }
   }

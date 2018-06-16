@@ -5,18 +5,28 @@
 
     <item
         android:id="@+id/next_group"
-        android:icon="@drawable/ic_next_group_black_24dp"
+        android:icon="@drawable/ic_next_group_white_24dp"
         android:title="@string/next_group"
         app:showAsAction="always" />
     <item
-        android:id="@+id/active_done_switch"
-        android:title="Switch"
-        app:actionLayout="@layout/switch_item"
-        app:showAsAction="always"></item>
+        android:id="@+id/to_do"
+        android:title="Item"
+        app:showAsAction="always"
+        app:actionViewClass="android.widget.Button" />
     <item
-        android:id="@+id/search_groups"
-        android:icon="@drawable/ic_search_black_24dp"
+        android:id="@+id/done"
+        android:title="Item"
+        app:showAsAction="always"
+        app:actionViewClass="android.widget.Button" />
+    <item
+        android:id="@+id/search_item"
+        android:icon="@drawable/ic_search_white_24dp"
         android:title="Search"
         app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/add_item"
+        android:icon="@drawable/ic_add_box_white_24dp"
+        android:title="Item"
         app:showAsAction="always" />
 </menu>
