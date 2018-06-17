@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     return child;
   }
 
-  public static List<String> createGroups() {
+  private List<String> createGroups() {
     List<String> groups = new ArrayList<>();
     groups.add("今日");
     groups.add("明日");

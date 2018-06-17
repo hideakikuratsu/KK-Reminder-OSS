@@ -9,11 +9,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
 
 public class ActionBarFragment extends Fragment {
 
   private SearchView searchView;
+  private ToggleButton button;
 
   public ActionBarFragment() {
     // Required empty public constructor
@@ -36,13 +39,14 @@ public class ActionBarFragment extends Fragment {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.reminder_menu, menu);
 
-    //検索アイコンの実装
+    //検索メニューの実装
     MenuItem search_item = menu.findItem(R.id.search_item);
     searchView = (SearchView)search_item.getActionView();
 
     searchView.setIconifiedByDefault(true);
     searchView.setSubmitButtonEnabled(false);
 
+    //検索アイコン押下時の処理
     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
       @Override
       public boolean onQueryTextSubmit(String query) {
@@ -59,6 +63,28 @@ public class ActionBarFragment extends Fragment {
         }
 
         return false;
+      }
+    });
+
+    //To-doメニューの実装
+    MenuItem toggle_button = menu.findItem(R.id.toggle);
+    button = (ToggleButton)toggle_button.getActionView();
+
+    button.setTextOff("To-do");
+    button.setTextOn("Done");
+    button.setChecked(false);
+    button.setBackgroundResource(R.drawable.toggle_button);
+
+    //To-doメニューボタン押下時の処理
+    button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(isChecked) {
+          //TODO: Doneデータベースからデータを読み込み、レイアウト表示をDone用に変える
+        }
+        else {
+          //TODO: To-doデータベースからデータを読み込み、レイアウト表示を元に戻す。
+        }
       }
     });
   }

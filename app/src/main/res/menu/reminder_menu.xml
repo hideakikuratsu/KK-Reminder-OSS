@@ -9,15 +9,10 @@
         android:title="@string/next_group"
         app:showAsAction="always" />
     <item
-        android:id="@+id/to_do"
+        android:id="@+id/toggle"
         android:title="Item"
-        app:showAsAction="always"
-        app:actionViewClass="android.widget.Button" />
-    <item
-        android:id="@+id/done"
-        android:title="Item"
-        app:showAsAction="always"
-        app:actionViewClass="android.widget.Button" />
+        app:actionViewClass="android.widget.ToggleButton"
+        app:showAsAction="always" />
     <item
         android:id="@+id/search_item"
         android:icon="@drawable/ic_search_white_24dp"
