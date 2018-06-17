@@ -172,7 +172,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           .inflate(R.layout.child_layout, null);
 
       viewHolder = new ChildViewHolder();
-      viewHolder.time = convertView.findViewById(R.id.time);
+      viewHolder.time = convertView.findViewById(R.id.date);
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.repeat = convertView.findViewById(R.id.repeat);
 
@@ -261,5 +261,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   @Override
   public boolean isChildSelectable(int i, int i1) {
     return true;
+  }
+
+  private void insertEntry(int id, String detail, String date, String repeat) {
+
   }
 }
