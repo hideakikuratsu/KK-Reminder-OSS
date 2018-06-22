@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-  private DatabaseHelper helper = null;
+  private MyDatabaseHelper helper = null;
   public static ExpandableListView elv = null;
 
   @Override
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    helper = new DatabaseHelper(this);
+    helper = new MyDatabaseHelper(this);
     SQLiteDatabase db = helper.getWritableDatabase();
 
     elv = findViewById(R.id.listView);

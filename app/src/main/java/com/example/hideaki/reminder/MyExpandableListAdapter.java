@@ -253,7 +253,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     //詳細と、リピート通知のインターバルを表示
     viewHolder.detail.setText(item.getDetail());
-    viewHolder.repeat.setText(item.getRepeat());
+    if(item.getRepeat() != null) {
+      viewHolder.repeat.setText(item.getRepeat().getLabel());
+    }
 
     return convertView;
   }
@@ -261,9 +263,5 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   @Override
   public boolean isChildSelectable(int i, int i1) {
     return true;
-  }
-
-  private void insertEntry(int id, String detail, String date, String repeat) {
-
   }
 }

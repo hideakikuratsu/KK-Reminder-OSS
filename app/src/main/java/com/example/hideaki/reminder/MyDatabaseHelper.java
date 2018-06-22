@@ -4,14 +4,16 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class MyDatabaseHelper extends SQLiteOpenHelper {
 
+  static final String TODO_TABLE = "todo";
+  static final String DONE_TABLE = "done";
   static final String CREATE_TODO_TABLE =
-      "create table todo(_id integer primary key, detail text, date text, repeat text)";
+      "create table todo(_id integer primary key, serial blob)";
   static final String CREATE_DONE_TABLE =
-      "create table done(_id integer primary key, detail text, date text, repeat text)";
+      "create table done(_id integer primary key, serial blob)";
 
-  public DatabaseHelper(Context context) {
+  public MyDatabaseHelper(Context context) {
     super(context, "reminder.db", null, 1);
   }
 
