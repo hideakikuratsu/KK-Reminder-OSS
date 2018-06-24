@@ -36,6 +36,7 @@ public class DBAccessor {
     }
     finally {
       sdb.endTransaction();
+      sdb.close();
     }
   }
 
@@ -54,6 +55,7 @@ public class DBAccessor {
     }
     finally {
       sdb.endTransaction();
+      sdb.close();
     }
   }
 
@@ -66,6 +68,7 @@ public class DBAccessor {
     }
     finally {
       if(cursor != null) cursor.close();
+      sdb.close();
     }
   }
 

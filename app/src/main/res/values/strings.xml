@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">Reminder</string>
     <string name="minus5m">-5分</string>
     <string name="plus5m">+5分</string>
@@ -9,7 +10,22 @@
     <string name="edit">編集</string>
     <string name="notes">メモ</string>
     <string name="next_group">次のグループを展開</string>
+    <string name="alarm">アラーム</string>
+    <string name="above_picker1_default">9:00</string>
+    <string name="above_picker2_default">12:00</string>
+    <string name="above_picker3_default">15:00</string>
+    <string name="above_picker4_default">18:00</string>
+    <string name="below_picker1_default">今日</string>
+    <string name="below_picker2_default">+3時間</string>
+    <string name="below_picker3_default">+1週間</string>
+    <string name="below_picker4_default">カレンダー</string>
+    <string name="tag">タグ</string>
+    <string name="notify_option">通知設定</string>
+    <string name="interval">通知頻度</string>
+    <string name="repeat_option">繰り返し設定</string>
+    <string name="repeat">繰り返し</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.example.hideaki.reminder;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
@@ -12,11 +13,14 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
+import java.io.IOException;
+
 
 public class ActionBarFragment extends Fragment {
 
   private SearchView searchView;
   private ToggleButton button;
+  private OnFragmentInteractionListener mListener = null;
 
   public ActionBarFragment() {
     // Required empty public constructor
@@ -32,6 +36,17 @@ public class ActionBarFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_search, container, false);
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    if(context instanceof OnFragmentInteractionListener) {
+      mListener = (OnFragmentInteractionListener)context;
+    } else {
+      throw new RuntimeException(context.toString()
+          + " must implement OnFragmentInteractionListener");
+    }
   }
 
   @Override
@@ -92,9 +107,21 @@ public class ActionBarFragment extends Fragment {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch(item.getItemId()) {
-      case R.id.search_item:
+      case R.id.add_item:
+        mListener.showEditFragment();
         return true;
     }
     return false;
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    mListener = null;
+  }
+
+  public interface OnFragmentInteractionListener {
+    void insertDB(long id, Object data, String table) throws IOException;
+    void showEditFragment();
   }
 }

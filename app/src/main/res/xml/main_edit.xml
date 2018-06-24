@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="detail"
+        android:persistent="false" />
+
+    <PreferenceScreen android:key="alarm" />
+
+    <PreferenceCategory android:layout="@layout/date_picker">
+    </PreferenceCategory>
+
+    <PreferenceScreen
+        android:key="tag"
+        android:title="@string/tag" />
+
+    <PreferenceCategory android:title="@string/notify_option">
+        <PreferenceScreen
+            android:key="interval"
+            android:title="@string/interval" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/repeat_option">
+        <PreferenceScreen
+            android:key="repeat"
+            android:title="@string/repeat" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/notes">
+        <EditTextPreference
+            android:key="notes"
+            android:height="60dp"
+            android:persistent="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
