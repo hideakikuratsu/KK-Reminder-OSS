@@ -2,7 +2,6 @@ package com.example.hideaki.reminder;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,14 +15,14 @@ import android.widget.ToggleButton;
 import java.io.IOException;
 
 
-public class ActionBarFragment extends Fragment {
+public class ActionBarFragment extends android.app.Fragment {
 
   private SearchView searchView;
   private ToggleButton button;
   private OnFragmentInteractionListener mListener = null;
 
-  public ActionBarFragment() {
-    // Required empty public constructor
+  public static ActionBarFragment newInstance() {
+    return new ActionBarFragment();
   }
 
   @Override
@@ -123,5 +122,6 @@ public class ActionBarFragment extends Fragment {
   public interface OnFragmentInteractionListener {
     void insertDB(long id, Object data, String table) throws IOException;
     void showEditFragment();
+    void showEditFragment(Item item);
   }
 }

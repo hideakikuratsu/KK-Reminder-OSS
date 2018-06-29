@@ -5,20 +5,28 @@ import java.util.Date;
 
 public class Item implements Serializable {
   private static final long serialVersionUID = 8520136120224971584L;
-  private long id;
+  private long id = -1;
   private String detail;
-  private Date date;
-  private Tag tag;
-  private NotifyInterval notify_interval;
-  private Repeat repeat;
+  private Date date = new Date();
+  private Tag tag = null;
+  private NotifyInterval notify_interval = null;
+  private Repeat repeat = null;
+  private String notes;
 
-  public Item(long id, String detail, Date date, Tag tag, NotifyInterval notify_interval, Repeat repeat) {
+  public Item() {
+  }
+
+  public Item(long id, String detail, Date date, Tag tag, NotifyInterval notify_interval, Repeat repeat,
+              String notes) {
+
     this.id = id;
     this.detail = detail;
     this.date = date;
     this.tag = tag;
     this.notify_interval = notify_interval;
     this.repeat = repeat;
+    this.notes = notes;
+
   }
 
   public long getId() {
@@ -45,6 +53,10 @@ public class Item implements Serializable {
     return repeat;
   }
 
+  public String getNotes() {
+    return notes;
+  }
+
   public void setId(long id) {
     this.id = id;
   }
@@ -67,5 +79,9 @@ public class Item implements Serializable {
 
   public void setRepeat(Repeat repeat) {
     this.repeat = repeat;
+  }
+
+  public void setNotes(String notes) {
+    this.notes = notes;
   }
 }

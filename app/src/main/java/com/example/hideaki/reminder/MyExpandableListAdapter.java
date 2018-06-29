@@ -51,7 +51,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
 
         //検索処理
-        for(List<Item> itemList : MainActivity.createChildren()) {
+        for(List<Item> itemList : children) {
           List<Item> filteredItem = new ArrayList<>();
 
           for(Item item : itemList) {
@@ -79,6 +79,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       protected void publishResults(CharSequence constraint, FilterResults results) {
         children = (List<List<Item>>)results.values;
 
+        //TODO: リストの表示更新より上の、これより下の処理はおそらくchildrenに関する処理をまるまる削除して、getGroupViewに書けば良い。
         //childrenのコピーを作成
         List<List<Item>> org_children = new ArrayList<>();
         for(List<Item> itemList : children) {

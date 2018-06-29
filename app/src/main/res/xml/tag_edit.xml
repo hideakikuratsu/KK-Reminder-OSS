@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
     <CheckBoxPreference
-        android:key=""
+        android:key="tag_none"
+        android:defaultValue="true"
+        android:title="@string/none" />
+
+    <CheckBoxPreference
+        android:key="tag_home"
         android:defaultValue="false"
+        android:title="@string/home" />
+
+    <CheckBoxPreference
+        android:key="tag_work"
+        android:defaultValue="false"
+        android:title="@string/work" />
+
+    <CheckBoxPreference
+        android:key="tag_shopping"
+        android:defaultValue="false"
+        android:title="@string/shopping" />
+
 </PreferenceScreen>

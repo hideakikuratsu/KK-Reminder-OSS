@@ -4,16 +4,18 @@ import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-public class EditFragment extends PreferenceFragment {
+public class IntervalEditFragment extends PreferenceFragment {
 
   private OnFragmentInteractionListener mListener;
+
+  public static IntervalEditFragment newInstance() {
+    return new IntervalEditFragment();
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    addPreferencesFromResource(R.xml.main_edit);
-
-
+    addPreferencesFromResource(R.xml.interval_edit);
   }
 
   @Override
