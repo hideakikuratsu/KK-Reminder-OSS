@@ -7,8 +7,7 @@
 
     <PreferenceScreen android:key="alarm" />
 
-    <PreferenceCategory android:layout="@layout/date_picker">
-    </PreferenceCategory>
+    <com.example.hideaki.reminder.MyPreference />
 
     <PreferenceScreen
         android:key="tag"

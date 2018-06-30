@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ActionBarFragment.OnFragmentInteractionListener,
-  MainEditFragment.OnFragmentInteractionListener {
+  MainEditFragment.OnFragmentInteractionListener, IntervalEditFragment.OnFragmentInteractionListener {
 
   public static ExpandableListView elv = null;
   private static DBAccessor accessor = null;

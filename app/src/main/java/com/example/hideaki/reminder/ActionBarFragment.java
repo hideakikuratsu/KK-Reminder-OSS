@@ -84,8 +84,8 @@ public class ActionBarFragment extends android.app.Fragment {
     MenuItem toggle_button = menu.findItem(R.id.toggle);
     button = (ToggleButton)toggle_button.getActionView();
 
-    button.setTextOff("To-do");
-    button.setTextOn("Done");
+    button.setTextOff(getResources().getString(R.string.todo));
+    button.setTextOn(getResources().getString(R.string.done));
     button.setChecked(false);
     button.setBackgroundResource(R.drawable.toggle_button);
 

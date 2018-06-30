@@ -6,31 +6,36 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
-  private static final String ITEM = "ITEM";
+  public static final String ITEM = "ITEM";
 
   private OnFragmentInteractionListener mListener;
   EditTextPreference detail;
   EditTextPreference notes;
   Item item = null;
+  ActionBar actionBar;
 
   public static MainEditFragment newInstance() {
     MainEditFragment fragment = new MainEditFragment();
-    Item item = new Item();
 
+    Item item = new Item();
     Bundle args = new Bundle();
     args.putSerializable(ITEM, item);
     fragment.setArguments(args);
 
     return fragment;
-  }
 
-  public static MainEditFragment newInstance(Item item) {
+  }  public static MainEditFragment newInstance(Item item) {
     MainEditFragment fragment = new MainEditFragment();
 
     Bundle args = new Bundle();
@@ -44,9 +49,14 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.main_edit);
+    setHasOptionsMenu(true);
 
     Bundle args = getArguments();
     item = (Item)args.getSerializable(ITEM);
+
+    actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+    actionBar.setDisplayHomeAsUpEnabled(true);
+    actionBar.setTitle("編集");
 
     findPreference("tag").setOnPreferenceClickListener(this);
     findPreference("interval").setOnPreferenceClickListener(this);
@@ -80,6 +90,27 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
 
     return view;
+  }
+
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    super.onCreateOptionsMenu(menu, inflater);
+    inflater.inflate(R.menu.main_edit_menu, menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch(item.getItemId()) {
+      case android.R.id.home:
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setTitle(R.string.app_name);
+        getFragmentManager().popBackStack();
+        return true;
+      case R.id.done:
+        //TODO: "DONE"押下時の処理を記述
+      default:
+        return super.onOptionsItemSelected(item);
+    }
   }
 
   @Override
