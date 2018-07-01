@@ -1,13 +1,13 @@
 package com.example.hideaki.reminder;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
 
 public class Item implements Serializable {
   private static final long serialVersionUID = 8520136120224971584L;
   private long id = -1;
   private String detail;
-  private Date date = new Date();
+  private Calendar date = Calendar.getInstance();
   private Tag tag = null;
   private NotifyInterval notify_interval = null;
   private Repeat repeat = null;
@@ -16,7 +16,7 @@ public class Item implements Serializable {
   public Item() {
   }
 
-  public Item(long id, String detail, Date date, Tag tag, NotifyInterval notify_interval, Repeat repeat,
+  public Item(long id, String detail, Calendar date, Tag tag, NotifyInterval notify_interval, Repeat repeat,
               String notes) {
 
     this.id = id;
@@ -37,7 +37,7 @@ public class Item implements Serializable {
     return detail;
   }
 
-  public Date getDate() {
+  public Calendar getDate() {
     return date;
   }
 
@@ -65,7 +65,7 @@ public class Item implements Serializable {
     this.detail = detail;
   }
 
-  public void setDate(Date date) {
+  public void setDate(Calendar date) {
     this.date = date;
   }
 

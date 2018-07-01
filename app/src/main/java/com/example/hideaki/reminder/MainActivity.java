@@ -12,7 +12,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ActionBarFragment.OnFragmentInteractionListener,
@@ -21,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
   public static ExpandableListView elv = null;
   private static DBAccessor accessor = null;
   private FragmentManager manager;
+  public static MyExpandableListAdapter ela;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +29,16 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     accessor = new DBAccessor(this);
 
-    elv = findViewById(R.id.expandable_list);
-
     try {
-      elv.setAdapter(new MyExpandableListAdapter(getGroups(), getChildren(MyDatabaseHelper.TODO_TABLE), this));
+      ela = new MyExpandableListAdapter(getGroups(), getChildren(MyDatabaseHelper.TODO_TABLE), this);
     } catch(IOException e) {
       e.printStackTrace();
     } catch(ClassNotFoundException e) {
       e.printStackTrace();
     }
 
+    elv = findViewById(R.id.expandable_list);
+    elv.setAdapter(ela);
     elv.setTextFilterEnabled(true);
 
     showActionBar();
@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     List<Item> week_list = new ArrayList<>();
     List<Item> future_list = new ArrayList<>();
 
-    Calendar cal = Calendar.getInstance();
     Calendar now = Calendar.getInstance();
     Calendar tomorrow = (Calendar)now.clone();
 
@@ -72,10 +71,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     for(Item item : queryAllDB(table)) {
 
-      Date date = item.getDate();
-      cal.setTime(date);
-      int spec_day = cal.get(Calendar.DAY_OF_MONTH);
-      long sub_time = date.getTime() - now.getTimeInMillis();
+      int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
+      long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
       long sub_day = sub_time / (1000 * 60 * 60 * 24);
 
       if(sub_time < 0) {

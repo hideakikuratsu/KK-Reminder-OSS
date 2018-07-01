@@ -15,14 +15,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.IOException;
+import java.util.Calendar;
+
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
   public static final String ITEM = "ITEM";
+  public static long ID = -1;
 
   private OnFragmentInteractionListener mListener;
   EditTextPreference detail;
   EditTextPreference notes;
   Item item = null;
+  String detail_str;
+  String notes_str;
   ActionBar actionBar;
 
   public static MainEditFragment newInstance() {
@@ -68,7 +74,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     detail.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
       @Override
       public boolean onPreferenceChange(Preference preference, Object newValue) {
-        item.setDetail((String)newValue);
+        detail_str = (String)newValue;
         detail.setTitle((String)newValue);
         return true;
       }
@@ -77,7 +83,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     notes.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
       @Override
       public boolean onPreferenceChange(Preference preference, Object newValue) {
-        item.setNotes((String)newValue);
+        notes_str = (String)newValue;
         notes.setTitle((String)newValue);
         return true;
       }
@@ -100,14 +106,22 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+    actionBar.setDisplayHomeAsUpEnabled(false);
+    actionBar.setTitle(R.string.app_name);
+    getFragmentManager().popBackStack();
     switch(item.getItemId()) {
-      case android.R.id.home:
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setTitle(R.string.app_name);
-        getFragmentManager().popBackStack();
-        return true;
       case R.id.done:
-        //TODO: "DONE"押下時の処理を記述
+        this.item.setDetail(detail_str);
+        this.item.setDate((Calendar)MyPreference.getFinal_cal().clone());
+        this.item.setNotes(notes_str);
+        ID++;
+        try {
+          mListener.insertDB(ID, this.item, MyDatabaseHelper.TODO_TABLE);
+        } catch(IOException e) {
+          e.printStackTrace();
+        }
+        MainActivity.ela.notifyDataSetChanged();
+        return true;
       default:
         return super.onOptionsItemSelected(item);
     }
@@ -158,5 +172,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   }
 
   public interface OnFragmentInteractionListener {
+    void insertDB(long id, Object data, String table) throws IOException;
   }
 }

@@ -186,8 +186,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     Item item = (Item)getChild(i, i1);
 
     //時間を表示する処理
-    String set_time = new SimpleDateFormat("yyyy年M月d日(E)H:m").format(item.getDate());
-    long date_sub = item.getDate().getTime() - System.currentTimeMillis();
+    String set_time = new SimpleDateFormat("yyyy年M月d日(E)H:mm").format(item.getDate().getTime());
+    long date_sub = item.getDate().getTimeInMillis() - System.currentTimeMillis();
 
     boolean date_minus_or_not = false;
     if(date_sub < 0) {
