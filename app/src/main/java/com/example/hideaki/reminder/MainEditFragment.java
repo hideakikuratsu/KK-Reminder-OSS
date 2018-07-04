@@ -112,12 +112,15 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     switch(item.getItemId()) {
       case R.id.done:
         this.item.setDetail(detail_str);
-        this.item.setDate((Calendar)MyPreference.getFinal_cal().clone());
+        this.item.setDate((Calendar)MyPreference.final_cal.clone());
         this.item.setNotes(notes_str);
         ID++;
         try {
           mListener.insertDB(ID, this.item, MyDatabaseHelper.TODO_TABLE);
+          MyExpandableListAdapter.children = MainActivity.getChildren(MyDatabaseHelper.TODO_TABLE);
         } catch(IOException e) {
+          e.printStackTrace();
+        } catch(ClassNotFoundException e) {
           e.printStackTrace();
         }
         MainActivity.ela.notifyDataSetChanged();

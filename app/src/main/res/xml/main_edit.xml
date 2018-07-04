@@ -7,7 +7,7 @@
 
     <PreferenceScreen android:key="alarm" />
 
-    <com.example.hideaki.reminder.MyPreference />
+    <com.example.hideaki.reminder.MyPreference android:persistent="false" />
 
     <PreferenceScreen
         android:key="tag"

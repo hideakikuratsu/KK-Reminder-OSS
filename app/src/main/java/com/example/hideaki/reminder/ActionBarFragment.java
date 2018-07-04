@@ -13,6 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 
 public class ActionBarFragment extends android.app.Fragment {
@@ -107,6 +108,7 @@ public class ActionBarFragment extends android.app.Fragment {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch(item.getItemId()) {
       case R.id.add_item:
+        MyPreference.final_cal = Calendar.getInstance();
         mListener.showEditFragment();
         return true;
     }

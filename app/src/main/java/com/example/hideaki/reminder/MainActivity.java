@@ -92,14 +92,14 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
       }
     }
 
-    List<List<Item>> child = new ArrayList<>();
-    child.add(past_list);
-    child.add(today_list);
-    child.add(tomorrow_list);
-    child.add(week_list);
-    child.add(future_list);
+    List<List<Item>> children = new ArrayList<>();
+    children.add(past_list);
+    children.add(today_list);
+    children.add(tomorrow_list);
+    children.add(week_list);
+    children.add(future_list);
 
-    return child;
+    return children;
   }
 
   //受け取ったオブジェクトをシリアライズしてデータベースへ挿入
