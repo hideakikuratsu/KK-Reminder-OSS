@@ -117,6 +117,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         ID++;
         try {
           mListener.insertDB(ID, this.item, MyDatabaseHelper.TODO_TABLE);
+          //TODO: getChildrenは処理コストが非常に大きいので追加分のみ処理するようにする。
           MyExpandableListAdapter.children = MainActivity.getChildren(MyDatabaseHelper.TODO_TABLE);
         } catch(IOException e) {
           e.printStackTrace();

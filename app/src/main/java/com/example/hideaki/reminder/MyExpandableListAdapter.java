@@ -12,25 +12,38 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 
-  private List<String> groups;
-  private List<String> org_groups = new ArrayList<>();
+  private static boolean[] display_groups = new boolean[5];
+  private static List<String> groups;
+  private static final List<String> org_groups;
   public static List<List<Item>> children;
+  private static List<List<Item>> org_children;
   private Context context;
 
-  public MyExpandableListAdapter(List<String> groups, List<List<Item>> children, Context context) {
-    this.groups = groups;
-    this.children = children;
-    this.context = context;
+  static {
+    groups = new ArrayList<>();
+    org_groups = new ArrayList<>();
+
+    groups.add("過去");
+    groups.add("今日");
+    groups.add("明日");
+    groups.add("一週間");
+    groups.add("一週間以上");
 
     //groupsのコピーを作成
     for(String s : groups) {
       org_groups.add(s);
     }
+  }
+
+  public MyExpandableListAdapter(List<List<Item>> children, Context context) {
+    this.children = children;
+    this.context = context;
   }
 
   @Override
@@ -51,6 +64,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
 
         //検索処理
+        if(org_children == null) org_children = children;
+        else children = org_children;
+
         for(List<Item> itemList : children) {
           List<Item> filteredItem = new ArrayList<>();
 
@@ -79,28 +95,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       protected void publishResults(CharSequence constraint, FilterResults results) {
         children = (List<List<Item>>)results.values;
 
-        //TODO: リストの表示更新より上の、これより下の処理はおそらくchildrenに関する処理をまるまる削除して、getGroupViewに書けば良い。
-        //childrenのコピーを作成
-        List<List<Item>> org_children = new ArrayList<>();
-        for(List<Item> itemList : children) {
-          List<Item> org_child_list = new ArrayList<>();
-          for(Item item : itemList) {
-            org_child_list.add(item);
-          }
-          org_children.add(org_child_list);
-        }
-
-        //項目数が0でないときのみ表示(検索に一致した結果のみ表示)
-        groups.clear();
-        children.clear();
-
-        for(int i = 0; i < org_children.size(); i++) {
-          if(org_children.get(i).size() != 0) {
-            groups.add(org_groups.get(i));
-            children.add(org_children.get(i));
-          }
-        }
-
         //リストの表示更新
         notifyDataSetChanged();
       }
@@ -117,21 +111,54 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
   @Override
   public int getGroupCount() {
-    return groups.size();
+    int count = 0;
+    Arrays.fill(display_groups, false);
+    for(int i = 0; i < groups.size(); i++) {
+      if(children.get(i).size() != 0) {
+        display_groups[i] = true;
+        count++;
+      }
+    }
+
+    return count;
   }
 
   @Override
   public int getChildrenCount(int i) {
+    int count = 0;
+    for(int j = 0; j < groups.size(); j++) {
+      if(display_groups[j]) {
+        count++;
+        if(count == i + 1) return children.get(j).size();
+      }
+    }
+
     return children.get(i).size();
   }
 
   @Override
   public Object getGroup(int i) {
+    int count = 0;
+    for(int j = 0; j < groups.size(); j++) {
+      if(display_groups[j]) {
+        count++;
+        if(count == i + 1) return groups.get(j);
+      }
+    }
+
     return groups.get(i);
   }
 
   @Override
   public Object getChild(int i, int i1) {
+    int count = 0;
+    for(int j = 0; j < groups.size(); j++) {
+      if(display_groups[j]) {
+        count++;
+        if(count == i + 1) return children.get(j).get(i1);
+      }
+    }
+
     return children.get(i).get(i1);
   }
 

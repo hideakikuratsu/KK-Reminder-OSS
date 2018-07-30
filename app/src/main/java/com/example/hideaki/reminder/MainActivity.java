@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     accessor = new DBAccessor(this);
 
     try {
-      ela = new MyExpandableListAdapter(getGroups(), getChildren(MyDatabaseHelper.TODO_TABLE), this);
+      ela = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
     } catch(IOException e) {
       e.printStackTrace();
     } catch(ClassNotFoundException e) {
@@ -44,18 +44,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     showActionBar();
   }
 
-  public static List<String> getGroups() {
-
-    List<String> groups = new ArrayList<>();
-    groups.add("過去");
-    groups.add("今日");
-    groups.add("明日");
-    groups.add("一週間");
-    groups.add("一週間以上");
-
-    return groups;
-  }
-
+  //TODO: この処理は非常にパフォーマンスコストが高いのでインスタンス生成時のみに行うよう変更する。
   public static List<List<Item>> getChildren(String table) throws IOException, ClassNotFoundException {
 
     List<Item> past_list = new ArrayList<>();
