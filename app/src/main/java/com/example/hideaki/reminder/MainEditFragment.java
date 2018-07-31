@@ -21,7 +21,6 @@ import java.util.Calendar;
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
   public static final String ITEM = "ITEM";
-  public static long ID = -1;
 
   private OnFragmentInteractionListener mListener;
   EditTextPreference detail;
@@ -114,16 +113,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         this.item.setDetail(detail_str);
         this.item.setDate((Calendar)MyPreference.final_cal.clone());
         this.item.setNotes(notes_str);
-        ID++;
         try {
-          mListener.insertDB(ID, this.item, MyDatabaseHelper.TODO_TABLE);
-          //TODO: getChildrenは処理コストが非常に大きいので追加分のみ処理するようにする。
-          MyExpandableListAdapter.children = MainActivity.getChildren(MyDatabaseHelper.TODO_TABLE);
+          mListener.insertDB(this.item, MyDatabaseHelper.TODO_TABLE);
         } catch(IOException e) {
           e.printStackTrace();
-        } catch(ClassNotFoundException e) {
-          e.printStackTrace();
         }
+        MainActivity.addChildren(MyDatabaseHelper.TODO_TABLE, this.item);
         MainActivity.ela.notifyDataSetChanged();
         return true;
       default:
@@ -176,6 +171,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   }
 
   public interface OnFragmentInteractionListener {
-    void insertDB(long id, Object data, String table) throws IOException;
+    void insertDB(Object data, String table) throws IOException;
   }
 }

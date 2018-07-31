@@ -18,28 +18,22 @@ import java.util.List;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 
+  private static String set_time;
   private static Calendar tmp;
   private static boolean[] display_groups = new boolean[5];
   private static List<String> groups;
-  private static final List<String> org_groups;
-  public static List<List<Item>> children;
+  public static List<List<Item>> children = new ArrayList<>();
   private static List<List<Item>> org_children;
   private Context context;
 
   static {
     groups = new ArrayList<>();
-    org_groups = new ArrayList<>();
 
     groups.add("過去");
     groups.add("今日");
     groups.add("明日");
     groups.add("一週間");
     groups.add("一週間以上");
-
-    //groupsのコピーを作成
-    for(String s : groups) {
-      org_groups.add(s);
-    }
   }
 
   public MyExpandableListAdapter(List<List<Item>> children, Context context) {
@@ -214,43 +208,31 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     Item item = (Item)getChild(i, i1);
 
     //時間を表示する処理
-    String set_time = new SimpleDateFormat("yyyy年M月d日(E)H:mm").format(item.getDate().getTime());
     Calendar now = Calendar.getInstance();
+    if(now.get(Calendar.YEAR) == item.getDate().get(Calendar.YEAR)) {
+      set_time = new SimpleDateFormat("M月d日(E)H:mm").format(item.getDate().getTime());
+    }
+    else {
+      set_time = new SimpleDateFormat("yyyy年M月d日(E)H:mm").format(item.getDate().getTime());
+    }
     long date_sub = item.getDate().getTimeInMillis() - now.getTimeInMillis();
 
-    boolean date_minus_or_not = false;
+    boolean date_is_minus = false;
     if(date_sub < 0) {
       date_sub = -date_sub;
-      date_minus_or_not = true;
-    }
-
-    long how_far_minutes = date_sub / (1000 * 60);
-    long how_far_hours = date_sub / (1000 * 60 * 60);
-    long how_far_days = date_sub / (1000 * 60 * 60 * 24);
-
-    int how_far_weeks = 0;
-    if(how_far_days != 0) {
-      tmp = (Calendar)now.clone();
-      tmp.add(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
-      while(tmp.before(item.getDate())) {
-        tmp.add(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
-        how_far_weeks++;
-      }
-    }
-
-    int how_far_months = 0;
-    if(how_far_weeks != 0) {
-      tmp = (Calendar)now.clone();
-      tmp.add(Calendar.MONTH, 1);
-      while(tmp.before(item.getDate())) {
-        tmp.add(Calendar.MONTH, 1);
-        how_far_months++;
-      }
+      date_is_minus = true;
     }
 
     int how_far_years = 0;
-    if(how_far_months != 0) {
-      tmp = (Calendar)now.clone();
+    tmp = (Calendar)now.clone();
+    if(date_is_minus) {
+      tmp.add(Calendar.YEAR, -1);
+      while(tmp.after(item.getDate())) {
+        tmp.add(Calendar.YEAR, -1);
+        how_far_years++;
+      }
+    }
+    else {
       tmp.add(Calendar.YEAR, 1);
       while(tmp.before(item.getDate())) {
         tmp.add(Calendar.YEAR, 1);
@@ -258,31 +240,82 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       }
     }
 
-    if(how_far_years != 0) {
-      viewHolder.time.setText(set_time + "(" + how_far_years + "年" + how_far_months + "ヶ月"
-      + how_far_weeks + "週間)");
-    }
-    else if(how_far_months != 0) {
-      viewHolder.time.setText(set_time + "(" + how_far_months + "ヶ月" + how_far_weeks + "週間)");
-    }
-    else if(how_far_weeks != 0) {
-      viewHolder.time.setText(set_time + "(" + how_far_weeks + "週間" + how_far_days + "日)");
-    }
-    else if(how_far_days != 0) {
-      viewHolder.time.setText(set_time + "(" + how_far_days + "日)");
-    }
-    else if(how_far_hours != 0) {
-      long tmp = how_far_minutes - 60 * how_far_hours;
-      viewHolder.time.setText(set_time + "(" + how_far_hours + "時間" + tmp + "分)");
-    }
-    else if(how_far_minutes != 0) {
-      viewHolder.time.setText(set_time + "(" + how_far_minutes + "分)");
+    int how_far_months = 0;
+    tmp = (Calendar)now.clone();
+    if(how_far_years != 0) tmp.add(Calendar.YEAR, how_far_years);
+    if(date_is_minus) {
+      tmp.add(Calendar.MONTH, -1);
+      while(tmp.after(item.getDate())) {
+        tmp.add(Calendar.MONTH, -1);
+        how_far_months++;
+      }
     }
     else {
-      viewHolder.time.setText(set_time + "(<< 1分 >>)");
+      tmp.add(Calendar.MONTH, 1);
+      while(tmp.before(item.getDate())) {
+        tmp.add(Calendar.MONTH, 1);
+        how_far_months++;
+      }
     }
 
-    if(date_minus_or_not) {
+    int how_far_weeks = 0;
+    tmp = (Calendar)now.clone();
+    if(how_far_years != 0) tmp.add(Calendar.YEAR, how_far_years);
+    if(how_far_months != 0) tmp.add(Calendar.MONTH, how_far_months);
+    if(date_is_minus) {
+      tmp.add(Calendar.DAY_OF_WEEK_IN_MONTH, -1);
+      while(tmp.after(item.getDate())) {
+        tmp.add(Calendar.DAY_OF_WEEK_IN_MONTH, -1);
+        how_far_weeks++;
+      }
+    }
+    else {
+      tmp.add(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
+      while(tmp.before(item.getDate())) {
+        tmp.add(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
+        how_far_weeks++;
+      }
+    }
+
+    long how_far_days = date_sub / (1000 * 60 * 60 * 24);
+    long how_far_hours = date_sub / (1000 * 60 * 60);
+    long how_far_minutes = date_sub / (1000 * 60);
+
+
+    String display_date = set_time + " (";
+    if(how_far_years != 0) {
+      display_date += how_far_years + "年";
+      if(how_far_months != 0) display_date += how_far_months + "ヶ月";
+      if(how_far_weeks != 0) display_date += how_far_weeks + "週間";
+    }
+    else if(how_far_months != 0) {
+      display_date += how_far_months + "ヶ月";
+      if(how_far_weeks != 0) display_date += how_far_weeks + "週間";
+    }
+    else if(how_far_weeks != 0) {
+      display_date += how_far_weeks + "週間";
+      how_far_days -= 7 * how_far_weeks;
+      if(how_far_days != 0) display_date += how_far_days + "日";
+    }
+    else if(how_far_days != 0) {
+      display_date += how_far_days + "日";
+    }
+    else if(how_far_hours != 0) {
+      display_date += how_far_hours + "時間";
+      how_far_minutes -= 60 * how_far_hours;
+      if(how_far_minutes != 0) display_date += how_far_minutes + "分";
+    }
+    else if(how_far_minutes != 0) {
+      display_date += how_far_minutes + "分";
+    }
+    else {
+      display_date += "<< 1分 >>";
+    }
+    display_date += ")";
+
+    viewHolder.time.setText(display_date);
+
+    if(date_is_minus) {
       viewHolder.time.setTextColor(Color.RED);
     }
 

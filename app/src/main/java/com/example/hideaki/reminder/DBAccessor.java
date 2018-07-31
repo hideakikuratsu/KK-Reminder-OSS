@@ -19,13 +19,12 @@ public class DBAccessor {
     this.sdb = helper.getWritableDatabase();
   }
 
-  public void executeInsert(long id, byte[] stream, String table) {
-    state_str = "insert into " + table + "(_id, serial) values(?, ?)";
+  public void executeInsert(byte[] stream, String table) {
+    state_str = "insert into " + table + "(serial) values(?)";
     sdb.beginTransaction();
     try {
       statement = sdb.compileStatement(state_str);
-      statement.bindLong(1, id);
-      statement.bindBlob(2, stream);
+      statement.bindBlob(1, stream);
 
       statement.executeInsert();
 

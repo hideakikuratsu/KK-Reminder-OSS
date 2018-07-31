@@ -122,7 +122,7 @@ public class ActionBarFragment extends android.app.Fragment {
   }
 
   public interface OnFragmentInteractionListener {
-    void insertDB(long id, Object data, String table) throws IOException;
+    void insertDB(Object data, String table) throws IOException;
     void showEditFragment();
     void showEditFragment(Item item);
   }

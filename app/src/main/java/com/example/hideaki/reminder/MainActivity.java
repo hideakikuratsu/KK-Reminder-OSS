@@ -1,6 +1,7 @@
 package com.example.hideaki.reminder;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ExpandableListView;
@@ -13,10 +14,15 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements ActionBarFragment.OnFragmentInteractionListener,
   MainEditFragment.OnFragmentInteractionListener, IntervalEditFragment.OnFragmentInteractionListener {
 
+  private Timer timer = new Timer();
+  private TimerTask timerTask = new MyTimerTask();
+  private Handler handler = new Handler();
   public static ExpandableListView elv = null;
   private static DBAccessor accessor = null;
   private FragmentManager manager;
@@ -42,9 +48,66 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     elv.setTextFilterEnabled(true);
 
     showActionBar();
+    timer.schedule(timerTask, 0, 1000);
   }
 
-  //TODO: この処理は非常にパフォーマンスコストが高いのでインスタンス生成時のみに行うよう変更する。
+  private class MyTimerTask extends TimerTask {
+    @Override
+    public void run() {
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          int group_count = 0;
+          for(List<Item> itemList : MyExpandableListAdapter.children) {
+            for(Item item : itemList) {
+
+              Calendar now = Calendar.getInstance();
+              Calendar tomorrow = (Calendar)now.clone();
+              tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+
+              int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
+              long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
+              long sub_day = sub_time / (1000 * 60 * 60 * 24);
+
+              if(sub_time < 0) {
+                if(group_count != 0) {
+                  MyExpandableListAdapter.children.get(0).add(item);
+                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                }
+              }
+              else if(sub_day < 1 && spec_day == now.get(Calendar.DAY_OF_MONTH)) {
+                if(group_count != 1) {
+                  MyExpandableListAdapter.children.get(1).add(item);
+                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                }
+              }
+              else if(sub_day < 2 && spec_day == tomorrow.get(Calendar.DAY_OF_MONTH)) {
+                if(group_count != 2) {
+                  MyExpandableListAdapter.children.get(2).add(item);
+                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                }
+              }
+              else if(sub_day < 8) {
+                if(group_count != 3) {
+                  MyExpandableListAdapter.children.get(3).add(item);
+                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                }
+              }
+              else {
+                if(group_count != 4) {
+                  MyExpandableListAdapter.children.get(4).add(item);
+                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                }
+              }
+            }
+            group_count++;
+          }
+          ela.notifyDataSetChanged();
+        }
+      });
+    }
+  }
+
   public static List<List<Item>> getChildren(String table) throws IOException, ClassNotFoundException {
 
     List<Item> past_list = new ArrayList<>();
@@ -55,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     Calendar now = Calendar.getInstance();
     Calendar tomorrow = (Calendar)now.clone();
-
     tomorrow.add(Calendar.DAY_OF_MONTH, 1);
 
     for(Item item : queryAllDB(table)) {
@@ -91,12 +153,39 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     return children;
   }
 
+  public static void addChildren(String table, Item item) {
+
+    Calendar now = Calendar.getInstance();
+    Calendar tomorrow = (Calendar)now.clone();
+    tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+
+    int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
+    long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
+    long sub_day = sub_time / (1000 * 60 * 60 * 24);
+
+    if(sub_time < 0) {
+      MyExpandableListAdapter.children.get(0).add(item);
+    }
+    else if(sub_day < 1 && spec_day == now.get(Calendar.DAY_OF_MONTH)) {
+      MyExpandableListAdapter.children.get(1).add(item);
+    }
+    else if(sub_day < 2 && spec_day == tomorrow.get(Calendar.DAY_OF_MONTH)) {
+      MyExpandableListAdapter.children.get(2).add(item);
+    }
+    else if(sub_day < 8) {
+      MyExpandableListAdapter.children.get(3).add(item);
+    }
+    else {
+      MyExpandableListAdapter.children.get(4).add(item);
+    }
+  }
+
   //受け取ったオブジェクトをシリアライズしてデータベースへ挿入
-  public void insertDB(long id, Object data, String table) throws IOException {
+  public void insertDB(Object data, String table) throws IOException {
     byte[] stream = null;
 
     stream = serialize(data);
-    accessor.executeInsert(id, stream, table);
+    accessor.executeInsert(stream, table);
   }
 
   //指定されたテーブルからオブジェクトのバイト列をすべて取り出し、デシリアライズしてオブジェクトのリストで返す。
