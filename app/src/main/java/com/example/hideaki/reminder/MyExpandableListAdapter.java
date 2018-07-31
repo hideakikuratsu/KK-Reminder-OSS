@@ -22,7 +22,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private static Calendar tmp;
   private static boolean[] display_groups = new boolean[5];
   private static List<String> groups;
-  public static List<List<Item>> children = new ArrayList<>();
+  public static List<List<Item>> children;
   private static List<List<Item>> org_children;
   private Context context;
 
@@ -66,14 +66,16 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           List<Item> filteredItem = new ArrayList<>();
 
           for(Item item : itemList) {
-            String detail = item.getDetail();
+            if(item.getDetail() != null) {
+              String detail = item.getDetail();
 
-            if(!is_upper) {
-              detail = detail.toLowerCase();
-            }
+              if(!is_upper) {
+                detail = detail.toLowerCase();
+              }
 
-            if(detail.contains(constraint)) {
-              filteredItem.add(item);
+              if(detail.contains(constraint)) {
+                filteredItem.add(item);
+              }
             }
           }
 

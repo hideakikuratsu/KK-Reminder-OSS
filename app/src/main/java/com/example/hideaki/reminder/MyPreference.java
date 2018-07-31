@@ -2,10 +2,12 @@ package com.example.hideaki.reminder;
 
 import android.content.Context;
 import android.preference.Preference;
+import android.preference.PreferenceScreen;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.NumberPicker;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -13,14 +15,13 @@ import java.util.List;
 public class MyPreference extends Preference {
 
   final String[] day_of_week = {"日", "月", "火", "水", "木", "金", "土"};
-
   List<String> day_list = new ArrayList<>();
   List<String> hour_list = new ArrayList<>();
   List<String> minute_list = new ArrayList<>();
   static Calendar cal;
   Calendar norm = Calendar.getInstance();
-  Calendar now = (Calendar)final_cal.clone();
   static Calendar final_cal = Calendar.getInstance();
+  static Calendar now = (Calendar)final_cal.clone();
   int now_year;
   int offset;
   int whole_list_size;
@@ -30,6 +31,7 @@ public class MyPreference extends Preference {
   NumberPicker day_picker;
   NumberPicker hour_picker;
   NumberPicker minute_picker;
+  private PreferenceScreen alarm;
 
   public MyPreference(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -41,6 +43,7 @@ public class MyPreference extends Preference {
     super.onBindView(view);
 
     //初期化
+    alarm = (PreferenceScreen)getPreferenceManager().findPreference("alarm");
     cal = (Calendar)final_cal.clone();
     now = (Calendar)final_cal.clone();
     final_cal.clear(Calendar.SECOND);
@@ -96,6 +99,12 @@ public class MyPreference extends Preference {
             Calendar tmp = (Calendar)norm.clone();
             tmp.add(Calendar.DAY_OF_MONTH, day_picker.getValue());
             final_cal.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), tmp.get(Calendar.DAY_OF_MONTH));
+            if(now.get(Calendar.YEAR) == final_cal.get(Calendar.YEAR)) {
+              alarm.setTitle(new SimpleDateFormat("M月d日(E)H:mm").format(final_cal.getTime()));
+            }
+            else {
+              alarm.setTitle(new SimpleDateFormat("yyyy年M月d日(E)H:mm").format(final_cal.getTime()));
+            }
         }
       }
     });
@@ -116,6 +125,12 @@ public class MyPreference extends Preference {
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
             final_cal.set(Calendar.HOUR_OF_DAY, hour_picker.getValue());
+            if(now.get(Calendar.YEAR) == final_cal.get(Calendar.YEAR)) {
+              alarm.setTitle(new SimpleDateFormat("M月d日(E)H:mm").format(final_cal.getTime()));
+            }
+            else {
+              alarm.setTitle(new SimpleDateFormat("yyyy年M月d日(E)H:mm").format(final_cal.getTime()));
+            }
         }
       }
     });
@@ -136,6 +151,12 @@ public class MyPreference extends Preference {
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
             final_cal.set(Calendar.MINUTE, minute_picker.getValue());
+            if(now.get(Calendar.YEAR) == final_cal.get(Calendar.YEAR)) {
+              alarm.setTitle(new SimpleDateFormat("M月d日(E)H:mm").format(final_cal.getTime()));
+            }
+            else {
+              alarm.setTitle(new SimpleDateFormat("yyyy年M月d日(E)H:mm").format(final_cal.getTime()));
+            }
         }
       }
     });

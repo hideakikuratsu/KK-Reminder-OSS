@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -23,6 +25,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public static final String ITEM = "ITEM";
 
   private OnFragmentInteractionListener mListener;
+  PreferenceScreen alarm;
   EditTextPreference detail;
   EditTextPreference notes;
   Item item = null;
@@ -67,8 +70,16 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     findPreference("interval").setOnPreferenceClickListener(this);
     findPreference("repeat").setOnPreferenceClickListener(this);
 
+    alarm = (PreferenceScreen)getPreferenceManager().findPreference("alarm");
     detail = (EditTextPreference)getPreferenceManager().findPreference("detail");
     notes = (EditTextPreference)getPreferenceManager().findPreference("notes");
+
+    if(MyPreference.now.get(Calendar.YEAR) == MyPreference.final_cal.get(Calendar.YEAR)) {
+      alarm.setTitle(new SimpleDateFormat("M月d日(E)H:mm").format(MyPreference.final_cal.getTime()));
+    }
+    else {
+      alarm.setTitle(new SimpleDateFormat("yyyy年M月d日(E)H:mm").format(MyPreference.final_cal.getTime()));
+    }
 
     detail.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
       @Override
