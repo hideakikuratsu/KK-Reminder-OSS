@@ -2,6 +2,7 @@ package com.example.hideaki.reminder;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -212,10 +212,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //時間を表示する処理
     Calendar now = Calendar.getInstance();
     if(now.get(Calendar.YEAR) == item.getDate().get(Calendar.YEAR)) {
-      set_time = new SimpleDateFormat("M月d日(E)H:mm").format(item.getDate().getTime());
+      set_time = (String)DateFormat.format("M月d日(E)H:mm", item.getDate());
     }
     else {
-      set_time = new SimpleDateFormat("yyyy年M月d日(E)H:mm").format(item.getDate().getTime());
+      set_time = (String)DateFormat.format("yyyy年M月d日(E)H:mm", item.getDate());
     }
     long date_sub = item.getDate().getTimeInMillis() - now.getTimeInMillis();
 

@@ -5,8 +5,6 @@
         android:key="detail"
         android:persistent="false" />
 
-    <PreferenceScreen android:key="alarm" />
-
     <com.example.hideaki.reminder.MyPreference android:persistent="false" />
 
     <PreferenceScreen
