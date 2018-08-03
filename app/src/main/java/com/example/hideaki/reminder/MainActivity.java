@@ -1,5 +1,10 @@
 package com.example.hideaki.reminder;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
@@ -20,8 +25,9 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity implements ActionBarFragment.OnFragmentInteractionListener,
   MainEditFragment.OnFragmentInteractionListener, IntervalEditFragment.OnFragmentInteractionListener {
 
+  private byte[] ob_array;
   private Timer timer = new Timer();
-  private TimerTask timerTask = new MyTimerTask();
+  private TimerTask timerTask = new UpdateList();
   private Handler handler = new Handler();
   public static ExpandableListView elv = null;
   private static DBAccessor accessor = null;
@@ -51,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     timer.schedule(timerTask, 0, 1000);
   }
 
-  private class MyTimerTask extends TimerTask {
+  private class UpdateList extends TimerTask {
     @Override
     public void run() {
       handler.post(new Runnable() {
@@ -108,7 +114,33 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     }
   }
 
-  public static List<List<Item>> getChildren(String table) throws IOException, ClassNotFoundException {
+  public void setAlarm(Item item) {
+
+    if(item.getDate().getTimeInMillis() < System.currentTimeMillis()) return;
+    Intent intent = new Intent(this, AlarmReceiver.class);
+    try {
+      ob_array = serialize(item);
+    } catch(IOException e) {
+      e.printStackTrace();
+    }
+    intent.putExtra(MainEditFragment.ITEM, ob_array);
+    PendingIntent sender = PendingIntent.getBroadcast(
+        this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+    AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      alarmManager.setAlarmClock(
+          new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
+    }
+    else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
+    }
+    else {
+      alarmManager.set(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
+    }
+  }
+
+  private List<List<Item>> getChildren(String table) throws IOException, ClassNotFoundException {
 
     List<Item> past_list = new ArrayList<>();
     List<Item> today_list = new ArrayList<>();
@@ -153,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     return children;
   }
 
-  public static void addChildren(String table, Item item) {
+  public void addChildren(Item item) {
 
     Calendar now = Calendar.getInstance();
     Calendar tomorrow = (Calendar)now.clone();
@@ -200,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
   }
 
   //シリアライズメソッド
-  private byte[] serialize(Object data) throws IOException {
+  public static byte[] serialize(Object data) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     ObjectOutputStream oos = new ObjectOutputStream(baos);
 
@@ -211,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
   }
 
   //デシリアライズメソッド
-  private static Object deserialize(byte[] stream) throws IOException, ClassNotFoundException {
+  public static Object deserialize(byte[] stream) throws IOException, ClassNotFoundException {
     ByteArrayInputStream bais = new ByteArrayInputStream(stream);
     ObjectInputStream ois = new ObjectInputStream(bais);
 

@@ -4,29 +4,16 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 public class Item implements Serializable {
-  private static final long serialVersionUID = 8520136120224971584L;
-  private long id = -1;
+  private static final long serialVersionUID = 4442661995575921496L;
+  private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
   private Tag tag = null;
-  private NotifyInterval notify_interval = null;
+  private NotifyInterval notify_interval = new NotifyInterval();
   private Repeat repeat = null;
   private String notes;
 
   public Item() {
-  }
-
-  public Item(long id, String detail, Calendar date, Tag tag, NotifyInterval notify_interval, Repeat repeat,
-              String notes) {
-
-    this.id = id;
-    this.detail = detail;
-    this.date = date;
-    this.tag = tag;
-    this.notify_interval = notify_interval;
-    this.repeat = repeat;
-    this.notes = notes;
-
   }
 
   public long getId() {
@@ -55,10 +42,6 @@ public class Item implements Serializable {
 
   public String getNotes() {
     return notes;
-  }
-
-  public void setId(long id) {
-    this.id = id;
   }
 
   public void setDetail(String detail) {

@@ -118,8 +118,9 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         } catch(IOException e) {
           e.printStackTrace();
         }
-        MainActivity.addChildren(MyDatabaseHelper.TODO_TABLE, this.item);
+        mListener.addChildren(this.item);
         MainActivity.ela.notifyDataSetChanged();
+        mListener.setAlarm(this.item);
         return true;
       default:
         return super.onOptionsItemSelected(item);
@@ -172,5 +173,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   public interface OnFragmentInteractionListener {
     void insertDB(Object data, String table) throws IOException;
+    void addChildren(Item item);
+    void setAlarm(Item item);
   }
 }
