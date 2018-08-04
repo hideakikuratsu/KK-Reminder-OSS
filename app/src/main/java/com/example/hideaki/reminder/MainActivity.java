@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ExpandableListView;
 
@@ -29,10 +28,9 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
   private Timer timer = new Timer();
   private TimerTask timerTask = new UpdateList();
   private Handler handler = new Handler();
-  public static ExpandableListView elv = null;
-  private static DBAccessor accessor = null;
-  private FragmentManager manager;
-  public static MyExpandableListAdapter ela;
+  private ExpandableListView elv;
+  private DBAccessor accessor = null;
+  private MyExpandableListAdapter ela;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -214,14 +212,12 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
   //受け取ったオブジェクトをシリアライズしてデータベースへ挿入
   public void insertDB(Object data, String table) throws IOException {
-    byte[] stream = null;
 
-    stream = serialize(data);
-    accessor.executeInsert(stream, table);
+    accessor.executeInsert(serialize(data), table);
   }
 
   //指定されたテーブルからオブジェクトのバイト列をすべて取り出し、デシリアライズしてオブジェクトのリストで返す。
-  public static List<Item> queryAllDB(String table) throws IOException, ClassNotFoundException {
+  public List<Item> queryAllDB(String table) throws IOException, ClassNotFoundException {
     List<Item> itemList = new ArrayList<>();
 
     for(byte[] stream : accessor.executeQueryAll(table)) {
@@ -276,5 +272,17 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         .replace(android.R.id.content, MainEditFragment.newInstance(item))
         .addToBackStack(null)
         .commit();
+  }
+
+  public void notifyDataSetChanged() {
+    ela.notifyDataSetChanged();
+  }
+
+  public void clearTextFilter() {
+    elv.clearTextFilter();
+  }
+
+  public void setFilterText(String text) {
+    elv.setFilterText(text);
   }
 }

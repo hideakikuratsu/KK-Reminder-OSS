@@ -1,6 +1,7 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -23,12 +24,13 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public static final String ITEM = "ITEM";
 
   private OnFragmentInteractionListener mListener;
-  EditTextPreference detail;
-  EditTextPreference notes;
-  Item item = null;
-  String detail_str;
-  String notes_str;
-  ActionBar actionBar;
+  private EditTextPreference detail;
+  private EditTextPreference notes;
+  private Item item = null;
+  private String detail_str;
+  private String notes_str;
+  private ActionBar actionBar;
+  private Context direct_boot_context;
 
   public static MainEditFragment newInstance() {
     MainEditFragment fragment = new MainEditFragment();
@@ -118,8 +120,15 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         } catch(IOException e) {
           e.printStackTrace();
         }
+
+        //データベースに挿入を行ったら、そのデータベースを端末暗号化ストレージへコピーする
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          direct_boot_context = getActivity().createDeviceProtectedStorageContext();
+          direct_boot_context.moveDatabaseFrom(getActivity(), MyDatabaseHelper.TODO_TABLE);
+        }
+
         mListener.addChildren(this.item);
-        MainActivity.ela.notifyDataSetChanged();
+        mListener.notifyDataSetChanged();
         mListener.setAlarm(this.item);
         return true;
       default:
@@ -175,5 +184,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     void insertDB(Object data, String table) throws IOException;
     void addChildren(Item item);
     void setAlarm(Item item);
+    void notifyDataSetChanged();
   }
 }

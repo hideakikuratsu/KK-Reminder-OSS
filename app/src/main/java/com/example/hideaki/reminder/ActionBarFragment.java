@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
-import java.io.IOException;
 import java.util.Calendar;
 
 
@@ -71,10 +70,10 @@ public class ActionBarFragment extends android.app.Fragment {
       @Override
       public boolean onQueryTextChange(String text) {
         if(text == null || text.equals("")) {
-          MainActivity.elv.clearTextFilter();
+          mListener.clearTextFilter();
         }
         else {
-          MainActivity.elv.setFilterText(text);
+          mListener.setFilterText(text);
         }
 
         return false;
@@ -122,8 +121,8 @@ public class ActionBarFragment extends android.app.Fragment {
   }
 
   public interface OnFragmentInteractionListener {
-    void insertDB(Object data, String table) throws IOException;
     void showEditFragment();
-    void showEditFragment(Item item);
+    void clearTextFilter();
+    void setFilterText(String text);
   }
 }
