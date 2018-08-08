@@ -1,4 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <CheckBoxPreference
+        android:key="never"
+        android:defaultValue="true"
+        android:title="@string/none"/>
+
+    <CheckBoxPreference
+        android:key="everyday"
+        android:defaultValue="false"
+        android:title="@string/everyday"/>
+
+    <CheckBoxPreference
+        android:key="weekday"
+        android:defaultValue="false"
+        android:title="@string/weekday"/>
+
+    <CheckBoxPreference
+        android:key="everyweek"
+        android:defaultValue="false"
+        android:title="@string/everyweek"/>
+
+    <CheckBoxPreference
+        android:key="everymonth"
+        android:defaultValue="false"
+        android:title="@string/everymonth"/>
+
+    <CheckBoxPreference
+        android:key="everyyear"
+        android:defaultValue="false"
+        android:title="@string/everyyear"/>
+
+    <CheckBoxPreference
+        android:key="custom"
+        android:defaultValue="false"
+        android:title="@string/custom"/>
+
 </PreferenceScreen>

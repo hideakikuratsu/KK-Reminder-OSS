@@ -4,45 +4,53 @@ import android.content.Context;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.NumberPicker;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class MyPreference extends Preference {
+public class DatePickerPreference extends Preference {
 
-  final String[] day_of_week = {"日", "月", "火", "水", "木", "金", "土"};
-  List<String> day_list = new ArrayList<>();
-  List<String> hour_list = new ArrayList<>();
-  List<String> minute_list = new ArrayList<>();
-  static Calendar cal;
-  Calendar norm = Calendar.getInstance();
-  static Calendar final_cal = Calendar.getInstance();
-  static Calendar now = (Calendar)final_cal.clone();
-  int now_year;
-  int offset;
-  int whole_list_size;
-  int first_list_size;
-  boolean change_to_top = false;
-  boolean change_to_bottom = false;
-  NumberPicker day_picker;
-  NumberPicker hour_picker;
-  NumberPicker minute_picker;
+  private final String[] day_of_week = {"日", "月", "火", "水", "木", "金", "土"};
+  private List<String> day_list = new ArrayList<>();
+  private List<String> hour_list = new ArrayList<>();
+  private List<String> minute_list = new ArrayList<>();
+  private static Calendar cal;
+  private Calendar norm = Calendar.getInstance();
+  private static Calendar now = (Calendar)MainEditFragment.final_cal.clone();
+  private int now_year;
+  private int offset;
+  private int whole_list_size;
+  private int first_list_size;
+  private boolean change_to_top = false;
+  private boolean change_to_bottom = false;
+  private NumberPicker day_picker;
+  private NumberPicker hour_picker;
+  private NumberPicker minute_picker;
 
-  public MyPreference(Context context, AttributeSet attrs) {
+  public DatePickerPreference(Context context, AttributeSet attrs) {
     super(context, attrs);
-    setLayoutResource(R.layout.date_picker);
+  }
+
+  @Override
+  protected View onCreateView(ViewGroup parent) {
+
+    super.onCreateView(parent);
+    View view = View.inflate(getContext(), R.layout.date_picker, null);
+    return view;
   }
 
   @Override
   protected void onBindView(View view) {
+
     super.onBindView(view);
 
     //初期化
-    cal = (Calendar)final_cal.clone();
-    now = (Calendar)final_cal.clone();
-    final_cal.clear(Calendar.SECOND);
+    cal = (Calendar)MainEditFragment.final_cal.clone();
+    now = (Calendar)MainEditFragment.final_cal.clone();
+    MainEditFragment.final_cal.clear(Calendar.SECOND);
     day_list.clear();
 
     //day_pickerの実装
@@ -94,7 +102,7 @@ public class MyPreference extends Preference {
           case SCROLL_STATE_IDLE:
             Calendar tmp = (Calendar)norm.clone();
             tmp.add(Calendar.DAY_OF_MONTH, day_picker.getValue());
-            final_cal.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), tmp.get(Calendar.DAY_OF_MONTH));
+            MainEditFragment.final_cal.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), tmp.get(Calendar.DAY_OF_MONTH));
         }
       }
     });
@@ -114,7 +122,7 @@ public class MyPreference extends Preference {
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
-            final_cal.set(Calendar.HOUR_OF_DAY, hour_picker.getValue());
+            MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY, hour_picker.getValue());
         }
       }
     });
@@ -134,7 +142,7 @@ public class MyPreference extends Preference {
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
-            final_cal.set(Calendar.MINUTE, minute_picker.getValue());
+            MainEditFragment.final_cal.set(Calendar.MINUTE, minute_picker.getValue());
         }
       }
     });

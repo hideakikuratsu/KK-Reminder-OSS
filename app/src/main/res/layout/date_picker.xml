@@ -76,19 +76,17 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/hour"
-        app:layout_constraintTop_toBottomOf="@+id/above_quick_time_picker"></NumberPicker>
+        app:layout_constraintTop_toBottomOf="@+id/above_quick_time_picker" />
 
     <NumberPicker
         android:id="@+id/hour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
-        android:layout_marginRight="64dp"
+        android:layout_marginEnd="124dp"
+        android:layout_marginRight="124dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.384"
-        app:layout_constraintStart_toEndOf="@+id/day"
-        app:layout_constraintTop_toBottomOf="@+id/above_quick_time_picker"></NumberPicker>
+        app:layout_constraintTop_toBottomOf="@+id/above_quick_time_picker" />
 
     <NumberPicker
         android:id="@+id/day"
@@ -98,7 +96,7 @@
         android:layout_marginStart="36dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/above_quick_time_picker"></NumberPicker>
+        app:layout_constraintTop_toBottomOf="@+id/above_quick_time_picker" />
 
     <TableLayout
         android:id="@+id/below_quick_time_picker"

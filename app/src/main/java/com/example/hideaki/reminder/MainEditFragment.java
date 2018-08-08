@@ -19,7 +19,8 @@ import android.view.ViewGroup;
 import java.io.IOException;
 import java.util.Calendar;
 
-public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
+    Preference.OnPreferenceChangeListener {
 
   public static final String ITEM = "ITEM";
 
@@ -31,8 +32,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   private String notes_str;
   private ActionBar actionBar;
   private Context direct_boot_context;
+  static Calendar final_cal = Calendar.getInstance();
+  static Repeat repeat = new Repeat();
 
   public static MainEditFragment newInstance() {
+
     MainEditFragment fragment = new MainEditFragment();
 
     Item item = new Item();
@@ -41,8 +45,10 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     fragment.setArguments(args);
 
     return fragment;
+  }
 
-  }  public static MainEditFragment newInstance(Item item) {
+  public static MainEditFragment newInstance(Item item) {
+
     MainEditFragment fragment = new MainEditFragment();
 
     Bundle args = new Bundle();
@@ -63,7 +69,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
     actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setTitle("編集");
+    actionBar.setTitle(getResources().getString(R.string.edit));
 
     findPreference("tag").setOnPreferenceClickListener(this);
     findPreference("interval").setOnPreferenceClickListener(this);
@@ -72,23 +78,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     detail = (EditTextPreference)getPreferenceManager().findPreference("detail");
     notes = (EditTextPreference)getPreferenceManager().findPreference("notes");
 
-    detail.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-      @Override
-      public boolean onPreferenceChange(Preference preference, Object newValue) {
-        detail_str = (String)newValue;
-        detail.setTitle((String)newValue);
-        return true;
-      }
-    });
-
-    notes.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-      @Override
-      public boolean onPreferenceChange(Preference preference, Object newValue) {
-        notes_str = (String)newValue;
-        notes.setTitle((String)newValue);
-        return true;
-      }
-    });
+    detail.setOnPreferenceChangeListener(this);
+    notes.setOnPreferenceChangeListener(this);
   }
 
   @Override
@@ -113,7 +104,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     switch(item.getItemId()) {
       case R.id.done:
         this.item.setDetail(detail_str);
-        this.item.setDate((Calendar)MyPreference.final_cal.clone());
+        this.item.setDate((Calendar)final_cal.clone());
         this.item.setNotes(notes_str);
         try {
           mListener.insertDB(this.item, MyDatabaseHelper.TODO_TABLE);
@@ -158,24 +149,38 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     switch(preference.getKey()) {
       case "tag":
-        transitionFragment(new TagEditFragment());
+        transitionFragment(TagEditFragment.newInstance());
         return true;
       case "interval":
-        transitionFragment(new IntervalEditFragment());
+        transitionFragment(IntervalEditFragment.newInstance());
         return true;
       case "repeat":
-        transitionFragment(new RepeatEditFragment());
+        transitionFragment(RepeatEditFragment.newInstance());
         return true;
     }
-
     return false;
+  }
 
+  @Override
+  public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+    switch(preference.getKey()) {
+      case "detail":
+        detail_str = (String)newValue;
+        detail.setTitle((String)newValue);
+        return true;
+      case "notes":
+        notes_str = (String)newValue;
+        notes.setTitle((String)newValue);
+        return true;
+    }
+    return false;
   }
 
   private void transitionFragment(PreferenceFragment next) {
     getFragmentManager()
         .beginTransaction()
-        .replace(R.id.content, next)
+        .replace(android.R.id.content, next)
         .addToBackStack(null)
         .commit();
   }

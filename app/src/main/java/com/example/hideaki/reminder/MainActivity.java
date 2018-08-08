@@ -21,8 +21,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements ActionBarFragment.OnFragmentInteractionListener,
-  MainEditFragment.OnFragmentInteractionListener, IntervalEditFragment.OnFragmentInteractionListener {
+public class MainActivity
+    extends AppCompatActivity
+    implements ActionBarFragment.OnFragmentInteractionListener, MainEditFragment.OnFragmentInteractionListener {
 
   private byte[] ob_array;
   private Timer timer = new Timer();
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
   }
 
   private class UpdateList extends TimerTask {
+
     @Override
     public void run() {
       handler.post(new Runnable() {
@@ -218,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
   //指定されたテーブルからオブジェクトのバイト列をすべて取り出し、デシリアライズしてオブジェクトのリストで返す。
   public List<Item> queryAllDB(String table) throws IOException, ClassNotFoundException {
+
     List<Item> itemList = new ArrayList<>();
 
     for(byte[] stream : accessor.executeQueryAll(table)) {
@@ -229,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
   //シリアライズメソッド
   public static byte[] serialize(Object data) throws IOException {
+
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     ObjectOutputStream oos = new ObjectOutputStream(baos);
 
@@ -240,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
   //デシリアライズメソッド
   public static Object deserialize(byte[] stream) throws IOException, ClassNotFoundException {
+
     ByteArrayInputStream bais = new ByteArrayInputStream(stream);
     ObjectInputStream ois = new ObjectInputStream(bais);
 
@@ -258,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
   }
 
   //編集画面を表示(引数にitemを渡すとそのitemの情報が入力された状態で表示)
-  public void showEditFragment() {
+  public void showMainEditFragment() {
     getFragmentManager()
         .beginTransaction()
         .replace(android.R.id.content, MainEditFragment.newInstance())

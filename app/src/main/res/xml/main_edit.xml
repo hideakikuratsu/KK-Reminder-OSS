@@ -5,7 +5,7 @@
         android:key="detail"
         android:persistent="false" />
 
-    <com.example.hideaki.reminder.MyPreference android:persistent="false" />
+    <com.example.hideaki.reminder.DatePickerPreference android:persistent="false" />
 
     <PreferenceScreen
         android:key="tag"

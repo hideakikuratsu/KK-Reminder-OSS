@@ -6,29 +6,27 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class TagEditFragment extends PreferenceFragment {
+public class RepeatCustomOnTheMonthPickerFragment extends PreferenceFragment {
 
   private ActionBar actionBar;
 
-  public static TagEditFragment newInstance() {
+  public static RepeatCustomOnTheMonthPickerFragment newInstance() {
 
-    return new TagEditFragment();
+    return new RepeatCustomOnTheMonthPickerFragment();
   }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    addPreferencesFromResource(R.xml.tag_edit);
+    addPreferencesFromResource(R.xml.repeat_custom_on_the_month_item);
     setHasOptionsMenu(true);
 
     actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-    actionBar.setTitle(getResources().getString(R.string.tag));
+    actionBar.setTitle(getResources().getString(R.string.on_the_month));
   }
 
   @Override
@@ -41,22 +39,8 @@ public class TagEditFragment extends PreferenceFragment {
   }
 
   @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    super.onCreateOptionsMenu(menu, inflater);
-    inflater.inflate(R.menu.tag_edit_menu, menu);
-  }
-
-  @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    switch(item.getItemId()) {
-      case R.id.edit:
-        return true;
-      case android.R.id.home:
-        actionBar.setTitle(R.string.edit);
-        getFragmentManager().popBackStack();
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
-    }
+    getFragmentManager().popBackStack();
+    return super.onOptionsItemSelected(item);
   }
 }

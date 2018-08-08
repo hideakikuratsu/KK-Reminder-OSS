@@ -107,8 +107,8 @@ public class ActionBarFragment extends android.app.Fragment {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch(item.getItemId()) {
       case R.id.add_item:
-        MyPreference.final_cal = Calendar.getInstance();
-        mListener.showEditFragment();
+        MainEditFragment.final_cal = Calendar.getInstance();
+        mListener.showMainEditFragment();
         return true;
     }
     return false;
@@ -121,7 +121,7 @@ public class ActionBarFragment extends android.app.Fragment {
   }
 
   public interface OnFragmentInteractionListener {
-    void showEditFragment();
+    void showMainEditFragment();
     void clearTextFilter();
     void setFilterText(String text);
   }

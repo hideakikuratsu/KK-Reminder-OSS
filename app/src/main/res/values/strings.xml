@@ -30,8 +30,34 @@
     <string name="shopping">買い物</string>
     <string name="todo">TO-DO</string>
     <string name="done">DONE</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="everyday">毎日</string>
+    <string name="weekday">平日 (月 - 金)</string>
+    <string name="everyweek">毎週</string>
+    <string name="everymonth">毎月</string>
+    <string name="everyyear">毎年</string>
+    <string name="custom">カスタム</string>
+    <string name="days_of_month">日付</string>
+    <string name="on_the_month">月の...</string>
+    <string name="on_days">曜日</string>
+    <string name="monday">月曜日</string>
+    <string name="tuesday">火曜日</string>
+    <string name="wednesday">水曜日</string>
+    <string name="thursday">木曜日</string>
+    <string name="friday">金曜日</string>
+    <string name="saturday">土曜日</string>
+    <string name="sunday">日曜日</string>
+    <string name="on_months">月</string>
+    <string name="january">1月</string>
+    <string name="february">2月</string>
+    <string name="march">3月</string>
+    <string name="april">4月</string>
+    <string name="may">5月</string>
+    <string name="june">6月</string>
+    <string name="july">7月</string>
+    <string name="august">8月</string>
+    <string name="september">9月</string>
+    <string name="october">10月</string>
+    <string name="november">11月</string>
+    <string name="december">12月</string>
 
 </resources>
