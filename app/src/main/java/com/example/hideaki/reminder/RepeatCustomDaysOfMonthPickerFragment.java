@@ -21,12 +21,13 @@ public class RepeatCustomDaysOfMonthPickerFragment extends PreferenceFragment {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.repeat_custom_days_of_month_item);
     setHasOptionsMenu(true);
 
     actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-    actionBar.setTitle(getResources().getString(R.string.days_of_month));
+    actionBar.setTitle(R.string.days_of_month);
   }
 
   @Override
@@ -40,6 +41,8 @@ public class RepeatCustomDaysOfMonthPickerFragment extends PreferenceFragment {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+
+    actionBar.setTitle(R.string.custom);
     getFragmentManager().popBackStack();
     return super.onOptionsItemSelected(item);
   }

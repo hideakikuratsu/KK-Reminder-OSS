@@ -36,6 +36,7 @@
     <string name="everymonth">毎月</string>
     <string name="everyyear">毎年</string>
     <string name="custom">カスタム</string>
+    <string name="non_repeat">繰り返しなし</string>
     <string name="days_of_month">日付</string>
     <string name="on_the_month">月の...</string>
     <string name="on_days">曜日</string>

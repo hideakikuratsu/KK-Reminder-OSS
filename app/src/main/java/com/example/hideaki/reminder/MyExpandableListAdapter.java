@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 
@@ -25,6 +27,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   public static List<List<Item>> children;
   private static List<List<Item>> org_children;
   private Context context;
+  private Pattern pattern;
+  private Matcher matcher;
 
   static {
     groups = new ArrayList<>();
@@ -73,7 +77,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 detail = detail.toLowerCase();
               }
 
-              if(detail.contains(constraint)) {
+              pattern = Pattern.compile(constraint.toString());
+              matcher = pattern.matcher(detail);
+
+              if(matcher.find()) {
                 filteredItem.add(item);
               }
             }

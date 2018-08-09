@@ -5,12 +5,22 @@ import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+
+import java.util.Calendar;
 
 public class RepeatCustomYearPickerPreference extends Preference implements CompoundButton.OnCheckedChangeListener {
 
+  private TableLayout year_table;
+  private TableRow tableRow;
+  private CheckBox checkBox;
   private int mask_num;
-  private int mask;
+  static int year;
+  private static Repeat repeat;
+  private int cal_month;
 
   public RepeatCustomYearPickerPreference(Context context, AttributeSet attrs) {
 
@@ -29,59 +39,59 @@ public class RepeatCustomYearPickerPreference extends Preference implements Comp
   protected void onBindView(View view) {
 
     super.onBindView(view);
+
+    year = MainEditFragment.repeat.getYear();
+
+    year_table = view.findViewById(R.id.year_table);
+    if(repeat == MainEditFragment.repeat || year != 0) {
+      for(int i = 0; i < year_table.getChildCount(); i++) {
+        tableRow = (TableRow)year_table.getChildAt(i);
+        for(int j = 0; j < tableRow.getChildCount(); j++) {
+          checkBox = (CheckBox)tableRow.getChildAt(j);
+          if((year & (1 << i)) != 0) checkBox.setChecked(true);
+          checkBox.setOnCheckedChangeListener(this);
+        }
+      }
+    }
+    else {
+      year = 0;
+      cal_month = MainEditFragment.final_cal.get(Calendar.MONTH);
+
+      for(int i = 0; i < year_table.getChildCount(); i++) {
+        tableRow = (TableRow)year_table.getChildAt(i);
+        for(int j = 0; j < tableRow.getChildCount(); j++) {
+          checkBox = (CheckBox)tableRow.getChildAt(j);
+          mask_num = Integer.parseInt(checkBox.getTag().toString());
+
+          if(mask_num == cal_month) {
+            year |= (1 << mask_num);
+            checkBox.setChecked(true);
+          }
+
+          checkBox.setOnCheckedChangeListener(this);
+        }
+      }
+
+      MainEditFragment.repeat.setYear(year);
+      repeat = MainEditFragment.repeat;
+    }
   }
 
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-    mask = 1;
-    switch(buttonView.getId()) {
-      case R.id.january:
-        mask_num = isChecked ? 1 : -1;
-        break;
-      case R.id.february:
-        mask_num = isChecked ? 2 : -2;
-        break;
-      case R.id.march:
-        mask_num = isChecked ? 3 : -3;
-        break;
-      case R.id.april:
-        mask_num = isChecked ? 4 : -4;
-        break;
-      case R.id.may:
-        mask_num = isChecked ? 5 : -5;
-        break;
-      case R.id.june:
-        mask_num = isChecked ? 6 : -6;
-        break;
-      case R.id.july:
-        mask_num = isChecked ? 7 : -7;
-        break;
-      case R.id.august:
-        mask_num = isChecked ? 8 : -8;
-        break;
-      case R.id.september:
-        mask_num = isChecked ? 9 : -9;
-        break;
-      case R.id.october:
-        mask_num = isChecked ? 10 : -10;
-        break;
-      case R.id.november:
-        mask_num = isChecked ? 11 : -11;
-        break;
-      case R.id.december:
-        mask_num = isChecked ? 12 : -12;
-        break;
+    checkBox = (CheckBox)buttonView;
+    mask_num = Integer.parseInt(checkBox.getTag().toString());
+
+    if(checkBox.isChecked()) year |= (1 << mask_num);
+    else {
+      year &= ~(1 << mask_num);
+      if(year == 0) {
+        year |= (1 << mask_num);
+        checkBox.setChecked(true);
+      }
     }
 
-    if(mask_num < 0) {
-      mask_num = -mask_num;
-      mask <<= (mask_num - 1);
-      MainEditFragment.repeat.setYear(MainEditFragment.repeat.getYear() & ~mask);
-    }
-    else {
-      mask <<= (mask_num - 1);
-      MainEditFragment.repeat.setYear(MainEditFragment.repeat.getYear() | mask);
-    }
+    MainEditFragment.repeat.setYear(year);
   }
 }

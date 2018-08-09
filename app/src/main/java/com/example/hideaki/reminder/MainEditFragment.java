@@ -69,7 +69,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
     actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setTitle(getResources().getString(R.string.edit));
+    actionBar.setTitle(R.string.edit);
 
     findPreference("tag").setOnPreferenceClickListener(this);
     findPreference("interval").setOnPreferenceClickListener(this);
@@ -98,6 +98,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+    repeat = new Repeat();
     actionBar.setDisplayHomeAsUpEnabled(false);
     actionBar.setTitle(R.string.app_name);
     getFragmentManager().popBackStack();

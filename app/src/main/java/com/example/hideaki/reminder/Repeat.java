@@ -3,16 +3,18 @@ package com.example.hideaki.reminder;
 import java.io.Serializable;
 
 public class Repeat implements Serializable, Cloneable {
-  private static final long serialVersionUID = 4983350086185199626L;
+  private static final long serialVersionUID = 3887166489806671308L;
   private String label = null;
-  private int interval = 1;
-  private int day = 0;
+  private int interval = 0;
+  private int scale = 0;
+  private boolean day = false;
   private int week = 0;
   private int days_of_month = 0;
   private int ordinal_number = 0;
   private Week on_the_month = null;
+  private boolean month_setted = false;
   private int year = 0;
-  private boolean is_setted = false;
+  private boolean setted = false;
 
   public String getLabel() {
     return label;
@@ -22,7 +24,11 @@ public class Repeat implements Serializable, Cloneable {
     return interval;
   }
 
-  public int getDay() {
+  public int getScale() {
+    return scale;
+  }
+
+  public boolean isDay() {
     return day;
   }
 
@@ -42,12 +48,16 @@ public class Repeat implements Serializable, Cloneable {
     return on_the_month;
   }
 
+  public boolean isMonth_setted() {
+    return month_setted;
+  }
+
   public int getYear() {
     return year;
   }
 
-  public boolean isIs_setted() {
-    return is_setted;
+  public boolean isSetted() {
+    return setted;
   }
 
   public void setLabel(String label) {
@@ -58,7 +68,11 @@ public class Repeat implements Serializable, Cloneable {
     this.interval = interval;
   }
 
-  public void setDay(int day) {
+  public void setScale(int scale) {
+    this.scale = scale;
+  }
+
+  public void setDay(boolean day) {
     this.day = day;
   }
 
@@ -78,12 +92,16 @@ public class Repeat implements Serializable, Cloneable {
     this.on_the_month = on_the_month;
   }
 
+  public void setMonth_setted(boolean month_setted) {
+    this.month_setted = month_setted;
+  }
+
   public void setYear(int year) {
     this.year = year;
   }
 
-  public void setIs_setted(boolean is_setted) {
-    this.is_setted = is_setted;
+  public void setSetted(boolean setted) {
+    this.setted = setted;
   }
 
   @Override
@@ -93,13 +111,15 @@ public class Repeat implements Serializable, Cloneable {
 
     repeat.setLabel(this.label);
     repeat.setInterval(this.interval);
+    repeat.setScale(this.scale);
     repeat.setDay(this.day);
     repeat.setWeek(this.week);
     repeat.setDays_of_month(this.days_of_month);
     repeat.setOrdinal_number(this.ordinal_number);
     repeat.setOn_the_month(this.on_the_month);
+    repeat.setMonth_setted(this.month_setted);
     repeat.setYear(this.year);
-    repeat.setIs_setted(this.is_setted);
+    repeat.setSetted(this.setted);
 
     return repeat;
   }
@@ -108,13 +128,15 @@ public class Repeat implements Serializable, Cloneable {
 
     this.label = null;
     this.interval = 1;
-    this.day = 0;
+    this.scale = 0;
+    this.day = false;
     this.week = 0;
     this.days_of_month = 0;
     this.ordinal_number = 0;
     this.on_the_month = null;
+    this.month_setted = false;
     this.year = 0;
-    this.is_setted = false;
+    this.setted = false;
   }
 
   public void dayClear() {
@@ -128,23 +150,33 @@ public class Repeat implements Serializable, Cloneable {
 
   public void weekClear() {
 
-    this.day = 0;
+    this.day = false;
     this.days_of_month = 0;
     this.ordinal_number = 0;
     this.on_the_month = null;
     this.year = 0;
   }
 
-  public void monthClear() {
+  public void daysOfMonthClear() {
 
-    this.day = 0;
+    this.day = false;
     this.week = 0;
+    this.ordinal_number = 0;
+    this.on_the_month = null;
+    this.year = 0;
+  }
+
+  public void onTheMonthClear() {
+
+    this.day = false;
+    this.week = 0;
+    this.days_of_month = 0;
     this.year = 0;
   }
 
   public void yearClear() {
 
-    this.day = 0;
+    this.day = false;
     this.week = 0;
     this.days_of_month = 0;
     this.ordinal_number = 0;

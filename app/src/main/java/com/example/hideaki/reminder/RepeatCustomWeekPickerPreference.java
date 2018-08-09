@@ -5,12 +5,22 @@ import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+
+import java.util.Calendar;
 
 public class RepeatCustomWeekPickerPreference extends Preference implements CompoundButton.OnCheckedChangeListener {
 
+  private TableLayout week_table;
+  private TableRow tableRow;
+  private CheckBox checkBox;
   private int mask_num;
-  private int mask;
+  static int week;
+  private static Repeat repeat;
+  private int cal_day_of_week;
 
   public RepeatCustomWeekPickerPreference(Context context, AttributeSet attrs) {
 
@@ -29,44 +39,59 @@ public class RepeatCustomWeekPickerPreference extends Preference implements Comp
   protected void onBindView(View view) {
 
     super.onBindView(view);
+
+    week = MainEditFragment.repeat.getWeek();
+
+    week_table = view.findViewById(R.id.week_table);
+    if(repeat == MainEditFragment.repeat || week != 0) {
+      for(int i = 0; i < week_table.getChildCount(); i++) {
+        tableRow = (TableRow)week_table.getChildAt(i);
+        for(int j = 0; j < tableRow.getChildCount(); j++) {
+          checkBox = (CheckBox)tableRow.getChildAt(j);
+          if((week & (1 << i)) != 0) checkBox.setChecked(true);
+          checkBox.setOnCheckedChangeListener(this);
+        }
+      }
+    }
+    else {
+      week = 0;
+      cal_day_of_week = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
+
+      for(int i = 0; i < week_table.getChildCount(); i++) {
+        tableRow = (TableRow)week_table.getChildAt(i);
+        for(int j = 0; j < tableRow.getChildCount(); j++) {
+          checkBox = (CheckBox)tableRow.getChildAt(j);
+          mask_num = Integer.parseInt(checkBox.getTag().toString());
+
+          if(mask_num + 2 == cal_day_of_week || mask_num - 5 == cal_day_of_week) {
+            week |= (1 << mask_num);
+            checkBox.setChecked(true);
+          }
+
+          checkBox.setOnCheckedChangeListener(this);
+        }
+      }
+
+      MainEditFragment.repeat.setWeek(week);
+      repeat = MainEditFragment.repeat;
+    }
   }
 
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-    mask = 1;
-    switch(buttonView.getId()) {
-      case R.id.monday:
-        mask_num = isChecked ? 1 : -1;
-        break;
-      case R.id.tuesday:
-        mask_num = isChecked ? 2 : -2;
-        break;
-      case R.id.wednesday:
-        mask_num = isChecked ? 3 : -3;
-        break;
-      case R.id.thursday:
-        mask_num = isChecked ? 4 : -4;
-        break;
-      case R.id.friday:
-        mask_num = isChecked ? 5 : -5;
-        break;
-      case R.id.saturday:
-        mask_num = isChecked ? 6 : -6;
-        break;
-      case R.id.sunday:
-        mask_num = isChecked ? 7 : -7;
-        break;
+    checkBox = (CheckBox)buttonView;
+    mask_num = Integer.parseInt(checkBox.getTag().toString());
+
+    if(checkBox.isChecked()) week |= (1 << mask_num);
+    else {
+      week &= ~(1 << mask_num);
+      if(week == 0) {
+        week |= (1 << mask_num);
+        checkBox.setChecked(true);
+      }
     }
 
-    if(mask_num < 0) {
-      mask_num = -mask_num;
-      mask <<= (mask_num - 1);
-      MainEditFragment.repeat.setWeek(MainEditFragment.repeat.getWeek() & ~mask);
-    }
-    else {
-      mask <<= (mask_num - 1);
-      MainEditFragment.repeat.setWeek(MainEditFragment.repeat.getWeek() | mask);
-    }
+    MainEditFragment.repeat.setWeek(week);
   }
 }

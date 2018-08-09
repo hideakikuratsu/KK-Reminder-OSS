@@ -21,12 +21,13 @@ public class RepeatCustomOnTheMonthPickerFragment extends PreferenceFragment {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.repeat_custom_on_the_month_item);
     setHasOptionsMenu(true);
 
     actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-    actionBar.setTitle(getResources().getString(R.string.on_the_month));
+    actionBar.setTitle(R.string.on_the_month);
   }
 
   @Override
@@ -40,6 +41,8 @@ public class RepeatCustomOnTheMonthPickerFragment extends PreferenceFragment {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+
+    actionBar.setTitle(R.string.custom);
     getFragmentManager().popBackStack();
     return super.onOptionsItemSelected(item);
   }

@@ -36,4 +36,8 @@
         android:defaultValue="false"
         android:title="@string/custom"/>
 
+    <PreferenceScreen
+        android:key="label"
+        android:summary="@string/non_repeat"/>
+
 </PreferenceScreen>
