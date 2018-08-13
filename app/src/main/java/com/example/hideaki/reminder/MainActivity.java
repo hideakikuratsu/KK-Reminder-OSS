@@ -17,21 +17,29 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity
     extends AppCompatActivity
-    implements ActionBarFragment.OnFragmentInteractionListener, MainEditFragment.OnFragmentInteractionListener {
+    implements ActionBarFragment.OnFragmentInteractionListener, MainEditFragment.OnFragmentInteractionListener,
+    MyExpandableListAdapter.OnFragmentInteractionListener {
 
   private byte[] ob_array;
   private Timer timer = new Timer();
   private TimerTask timerTask = new UpdateList();
   private Handler handler = new Handler();
-  private ExpandableListView elv;
+  private ExpandableListView expandableListView;
   private DBAccessor accessor = null;
-  private MyExpandableListAdapter ela;
+  private MyExpandableListAdapter expandableListAdapter;
+  private Intent intent;
+  private PendingIntent sender;
+  private AlarmManager alarmManager;
+  private int group_changed; //groupの変化があったかどうかのフラグをビットで表す
+  private int group_changed_num; //groupの変化があったchildの個数を保持する
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +50,16 @@ public class MainActivity
     accessor = new DBAccessor(this);
 
     try {
-      ela = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
+      expandableListAdapter = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
     } catch(IOException e) {
       e.printStackTrace();
     } catch(ClassNotFoundException e) {
       e.printStackTrace();
     }
 
-    elv = findViewById(R.id.expandable_list);
-    elv.setAdapter(ela);
-    elv.setTextFilterEnabled(true);
+    expandableListView = findViewById(R.id.expandable_list);
+    expandableListView.setAdapter(expandableListAdapter);
+    expandableListView.setTextFilterEnabled(true);
 
     showActionBar();
     timer.schedule(timerTask, 0, 1000);
@@ -64,10 +72,16 @@ public class MainActivity
       handler.post(new Runnable() {
         @Override
         public void run() {
-          int group_count = 0;
-          for(List<Item> itemList : MyExpandableListAdapter.children) {
-            for(Item item : itemList) {
 
+          group_changed_num = 0;
+          for(int group_count = 0; group_count < MyExpandableListAdapter.groups.size(); group_count++) {
+
+            group_changed = 0;
+            List<Item> itemList = MyExpandableListAdapter.children.get(group_count);
+
+            for(int child_count = 0; child_count < itemList.size() - group_changed_num; child_count++) {
+
+              Item item = itemList.get(child_count);
               Calendar now = Calendar.getInstance();
               Calendar tomorrow = (Calendar)now.clone();
               tomorrow.add(Calendar.DAY_OF_MONTH, 1);
@@ -79,66 +93,106 @@ public class MainActivity
               if(sub_time < 0) {
                 if(group_count != 0) {
                   MyExpandableListAdapter.children.get(0).add(item);
-                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                  group_changed |= (1 << child_count);
                 }
               }
               else if(sub_day < 1 && spec_day == now.get(Calendar.DAY_OF_MONTH)) {
                 if(group_count != 1) {
                   MyExpandableListAdapter.children.get(1).add(item);
-                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                  group_changed |= (1 << child_count);
                 }
               }
               else if(sub_day < 2 && spec_day == tomorrow.get(Calendar.DAY_OF_MONTH)) {
                 if(group_count != 2) {
                   MyExpandableListAdapter.children.get(2).add(item);
-                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                  group_changed |= (1 << child_count);
                 }
               }
               else if(sub_day < 8) {
                 if(group_count != 3) {
                   MyExpandableListAdapter.children.get(3).add(item);
-                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                  group_changed |= (1 << child_count);
                 }
               }
               else {
                 if(group_count != 4) {
                   MyExpandableListAdapter.children.get(4).add(item);
-                  MyExpandableListAdapter.children.get(group_count).remove(item);
+                  group_changed |= (1 << child_count);
                 }
               }
             }
-            group_count++;
+
+            group_changed_num = 0;
+            for(int i = 0; i <= group_changed; i++) {
+              if((group_changed & (1 << i)) != 0) {
+                MyExpandableListAdapter.children.get(group_count).remove(i);
+                group_changed_num++;
+              }
+            }
           }
-          ela.notifyDataSetChanged();
+
+          for(List<Item> itemList : MyExpandableListAdapter.children) {
+            Collections.sort(itemList, new MyComparator());
+          }
+          expandableListAdapter.notifyDataSetChanged();
         }
       });
     }
   }
 
+  private class MyComparator implements Comparator<Item> {
+
+    @Override
+    public int compare(Item o1, Item o2) {
+      return (int)(o1.getDate().getTimeInMillis() - o2.getDate().getTimeInMillis());
+    }
+  }
+
   public void setAlarm(Item item) {
 
-    if(item.getDate().getTimeInMillis() < System.currentTimeMillis()) return;
-    Intent intent = new Intent(this, AlarmReceiver.class);
-    try {
-      ob_array = serialize(item);
-    } catch(IOException e) {
-      e.printStackTrace();
-    }
-    intent.putExtra(MainEditFragment.ITEM, ob_array);
-    PendingIntent sender = PendingIntent.getBroadcast(
-        this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    if(item.getDate().getTimeInMillis() > System.currentTimeMillis()) {
+      item.getNotify_interval().setTime(item.getNotify_interval().getOrg_time());
+      intent = new Intent(this, AlarmReceiver.class);
+      try {
+        ob_array = serialize(item);
+      } catch(IOException e) {
+        e.printStackTrace();
+      }
+      intent.putExtra(MainEditFragment.ITEM, ob_array);
+      sender = PendingIntent.getBroadcast(
+          this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-    AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      alarmManager.setAlarmClock(
-          new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
+      alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        alarmManager.setAlarmClock(
+            new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
+      } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
+      } else {
+        alarmManager.set(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
+      }
     }
-    else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-    }
-    else {
-      alarmManager.set(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-    }
+  }
+
+  public void deleteAlarm(Item item) {
+
+    intent = new Intent(this, AlarmReceiver.class);
+    sender = PendingIntent.getBroadcast(
+        this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+
+    alarmManager.cancel(sender);
+    sender.cancel();
+  }
+
+  public boolean isAlarmSetted(Item item) {
+
+    intent = new Intent(this, AlarmReceiver.class);
+    sender = PendingIntent.getBroadcast(
+        this, (int)item.getId(), intent, PendingIntent.FLAG_NO_CREATE);
+
+    if(sender == null) return false;
+    else return true;
   }
 
   private List<List<Item>> getChildren(String table) throws IOException, ClassNotFoundException {
@@ -272,7 +326,7 @@ public class MainActivity
         .commit();
   }
 
-  public void showEditFragment(Item item) {
+  public void showMainEditFragment(Item item) {
     getFragmentManager()
         .beginTransaction()
         .replace(android.R.id.content, MainEditFragment.newInstance(item))
@@ -280,15 +334,23 @@ public class MainActivity
         .commit();
   }
 
+  public void showNotesFragment(Item item) {
+    getFragmentManager()
+        .beginTransaction()
+        .replace(android.R.id.content, NotesFragment.newInstance(item))
+        .addToBackStack(null)
+        .commit();
+  }
+
   public void notifyDataSetChanged() {
-    ela.notifyDataSetChanged();
+    expandableListAdapter.notifyDataSetChanged();
   }
 
   public void clearTextFilter() {
-    elv.clearTextFilter();
+    expandableListView.clearTextFilter();
   }
 
   public void setFilterText(String text) {
-    elv.setFilterText(text);
+    expandableListView.setFilterText(text);
   }
 }

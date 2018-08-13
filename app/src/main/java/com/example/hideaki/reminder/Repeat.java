@@ -3,18 +3,18 @@ package com.example.hideaki.reminder;
 import java.io.Serializable;
 
 public class Repeat implements Serializable, Cloneable {
-  private static final long serialVersionUID = 3887166489806671308L;
+  private static final long serialVersionUID = -5025461769318004722L;
   private String label = null;
   private int interval = 0;
   private int scale = 0;
   private boolean day = false;
-  private int week = 0;
-  private int days_of_month = 0;
+  private int week = 0; //月～日曜日の7個のパラメータの設定状況のフラグをビットで表す
+  private int days_of_month = 0; //1日～月末までの最大31個のパラメータの設定状況のフラグをビットで表す
   private int ordinal_number = 0;
   private Week on_the_month = null;
-  private boolean month_setted = false;
-  private int year = 0;
-  private boolean setted = false;
+  private boolean days_of_month_setted = false;
+  private int year = 0; //1～12月の12個のパラメータの設定状況のフラグをビットで表す
+  private int setted = 0; //day, week, month, yearの4つについて設定状況のフラグをビットで表す
 
   public String getLabel() {
     return label;
@@ -48,15 +48,15 @@ public class Repeat implements Serializable, Cloneable {
     return on_the_month;
   }
 
-  public boolean isMonth_setted() {
-    return month_setted;
+  public boolean isDays_of_month_setted() {
+    return days_of_month_setted;
   }
 
   public int getYear() {
     return year;
   }
 
-  public boolean isSetted() {
+  public int getSetted() {
     return setted;
   }
 
@@ -92,20 +92,19 @@ public class Repeat implements Serializable, Cloneable {
     this.on_the_month = on_the_month;
   }
 
-  public void setMonth_setted(boolean month_setted) {
-    this.month_setted = month_setted;
+  public void setDays_of_month_setted(boolean days_of_month_setted) {
+    this.days_of_month_setted = days_of_month_setted;
   }
 
   public void setYear(int year) {
     this.year = year;
   }
 
-  public void setSetted(boolean setted) {
+  public void setSetted(int setted) {
     this.setted = setted;
   }
 
-  @Override
-  protected Object clone() {
+  public Repeat clone() {
 
     Repeat repeat = new Repeat();
 
@@ -117,7 +116,7 @@ public class Repeat implements Serializable, Cloneable {
     repeat.setDays_of_month(this.days_of_month);
     repeat.setOrdinal_number(this.ordinal_number);
     repeat.setOn_the_month(this.on_the_month);
-    repeat.setMonth_setted(this.month_setted);
+    repeat.setDays_of_month_setted(this.days_of_month_setted);
     repeat.setYear(this.year);
     repeat.setSetted(this.setted);
 
@@ -134,9 +133,9 @@ public class Repeat implements Serializable, Cloneable {
     this.days_of_month = 0;
     this.ordinal_number = 0;
     this.on_the_month = null;
-    this.month_setted = false;
+    this.days_of_month_setted = false;
     this.year = 0;
-    this.setted = false;
+    this.setted = 0;
   }
 
   public void dayClear() {
@@ -145,6 +144,7 @@ public class Repeat implements Serializable, Cloneable {
     this.days_of_month = 0;
     this.ordinal_number = 0;
     this.on_the_month = null;
+    this.days_of_month_setted = false;
     this.year = 0;
   }
 
@@ -154,6 +154,7 @@ public class Repeat implements Serializable, Cloneable {
     this.days_of_month = 0;
     this.ordinal_number = 0;
     this.on_the_month = null;
+    this.days_of_month_setted = false;
     this.year = 0;
   }
 
@@ -181,5 +182,6 @@ public class Repeat implements Serializable, Cloneable {
     this.days_of_month = 0;
     this.ordinal_number = 0;
     this.on_the_month = null;
+    this.days_of_month_setted = false;
   }
 }

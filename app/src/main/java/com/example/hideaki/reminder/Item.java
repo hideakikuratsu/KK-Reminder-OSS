@@ -4,14 +4,18 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 public class Item implements Serializable {
-  private static final long serialVersionUID = 4442661995575921496L;
+  private static final long serialVersionUID = 1502373802647981974L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
+  //子ビューのコントロールパネルで時間を変えたときだけ時間を元に戻すのに用いる
+  private Calendar org_date = (Calendar)date.clone();
   private Tag tag = null;
   private NotifyInterval notify_interval = new NotifyInterval();
-  private Repeat repeat = null;
+  private Repeat repeat = new Repeat();
   private String notes;
+  private long time_altered; //子ビューのコントロールパネルで時間を変えたとき、変えた総時間を保持する
+  private boolean alarm_stopped;
 
   public Item() {
   }
@@ -22,6 +26,10 @@ public class Item implements Serializable {
 
   public String getDetail() {
     return detail;
+  }
+
+  public Calendar getOrg_date() {
+    return org_date;
   }
 
   public Calendar getDate() {
@@ -44,8 +52,20 @@ public class Item implements Serializable {
     return notes;
   }
 
+  public long getTime_altered() {
+    return time_altered;
+  }
+
+  public boolean isAlarm_stopped() {
+    return alarm_stopped;
+  }
+
   public void setDetail(String detail) {
     this.detail = detail;
+  }
+
+  public void setOrg_date(Calendar org_date) {
+    this.org_date = org_date;
   }
 
   public void setDate(Calendar date) {
@@ -66,5 +86,17 @@ public class Item implements Serializable {
 
   public void setNotes(String notes) {
     this.notes = notes;
+  }
+
+  public void addTime_altered(long time_altered) {
+    this.time_altered += time_altered;
+  }
+
+  public void setTime_altered(long time_altered) {
+    this.time_altered = time_altered;
+  }
+
+  public void setAlarm_stopped(boolean alarm_stopped) {
+    this.alarm_stopped = alarm_stopped;
   }
 }

@@ -31,7 +31,7 @@
     <string name="todo">TO-DO</string>
     <string name="done">DONE</string>
     <string name="everyday">毎日</string>
-    <string name="weekday">平日 (月 - 金)</string>
+    <string name="everyweekday">毎週平日 (月 - 金)</string>
     <string name="everyweek">毎週</string>
     <string name="everymonth">毎月</string>
     <string name="everyyear">毎年</string>
@@ -60,5 +60,6 @@
     <string name="october">10月</string>
     <string name="november">11月</string>
     <string name="december">12月</string>
+    <string name="memo">メモ</string>
 
 </resources>

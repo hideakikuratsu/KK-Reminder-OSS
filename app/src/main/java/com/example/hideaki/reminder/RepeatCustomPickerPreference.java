@@ -137,16 +137,15 @@ public class RepeatCustomPickerPreference extends Preference {
               RepeatCustomPickerFragment.addOnTheMonthPreference();
               month = true;
 
-              if(!MainEditFragment.repeat.isMonth_setted()) {
+              if(MainEditFragment.repeat.getDays_of_month() == 0) {
                 mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
                 RepeatCustomDaysOfMonthPickerPreference.days_of_month |= (1 << (mask_num - 1));
                 MainEditFragment.repeat.setDays_of_month(
                     RepeatCustomDaysOfMonthPickerPreference.days_of_month
                 );
-                MainEditFragment.repeat.setMonth_setted(true);
                 RepeatCustomPickerFragment.days_of_month.setChecked(true);
-                RepeatCustomPickerFragment.is_days_of_month = true;
-                RepeatCustomPickerFragment.is_on_the_month = false;
+                RepeatCustomPickerFragment.on_the_month.setChecked(false);
+                MainEditFragment.repeat.setDays_of_month_setted(true);
               }
             }
             else if(MainEditFragment.repeat.getScale() == 4) {

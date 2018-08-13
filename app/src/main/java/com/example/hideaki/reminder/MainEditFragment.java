@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -27,19 +28,22 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   private OnFragmentInteractionListener mListener;
   private EditTextPreference detail;
   private EditTextPreference notes;
+  private PreferenceScreen repeat_item;
   private Item item = null;
   private String detail_str;
   private String notes_str;
   private ActionBar actionBar;
   private Context direct_boot_context;
-  static Calendar final_cal = Calendar.getInstance();
-  static Repeat repeat = new Repeat();
+  static Calendar final_cal;
+  static Repeat repeat;
 
   public static MainEditFragment newInstance() {
 
     MainEditFragment fragment = new MainEditFragment();
 
     Item item = new Item();
+    repeat = new Repeat();
+    final_cal = Calendar.getInstance();
     Bundle args = new Bundle();
     args.putSerializable(ITEM, item);
     fragment.setArguments(args);
@@ -51,6 +55,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     MainEditFragment fragment = new MainEditFragment();
 
+    repeat = item.getRepeat().clone();
+    final_cal = item.getDate();
     Bundle args = new Bundle();
     args.putSerializable(ITEM, item);
     fragment.setArguments(args);
@@ -73,10 +79,14 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     findPreference("tag").setOnPreferenceClickListener(this);
     findPreference("interval").setOnPreferenceClickListener(this);
-    findPreference("repeat").setOnPreferenceClickListener(this);
 
-    detail = (EditTextPreference)getPreferenceManager().findPreference("detail");
-    notes = (EditTextPreference)getPreferenceManager().findPreference("notes");
+    detail = (EditTextPreference)findPreference("detail");
+    notes = (EditTextPreference)findPreference("notes");
+    repeat_item = (PreferenceScreen)findPreference("repeat");
+
+    if(repeat.getLabel() == null) repeat_item.setSummary(R.string.non_repeat);
+    else repeat_item.setSummary(repeat.getLabel());
+    repeat_item.setOnPreferenceClickListener(this);
 
     detail.setOnPreferenceChangeListener(this);
     notes.setOnPreferenceChangeListener(this);
@@ -84,20 +94,26 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
     View view = super.onCreateView(inflater, container, savedInstanceState);
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+
+    if(repeat.getLabel() == null) repeat_item.setSummary(R.string.non_repeat);
+    else repeat_item.setSummary(repeat.getLabel());
 
     return view;
   }
 
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.main_edit_menu, menu);
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+
     repeat = new Repeat();
     actionBar.setDisplayHomeAsUpEnabled(false);
     actionBar.setTitle(R.string.app_name);
@@ -107,6 +123,19 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         this.item.setDetail(detail_str);
         this.item.setDate((Calendar)final_cal.clone());
         this.item.setNotes(notes_str);
+        if(repeat.getSetted() != 0) {
+          if(repeat.getSetted() == (1 << 0)) repeat.dayClear();
+          else if(repeat.getSetted() == (1 << 1)) repeat.weekClear();
+          else if(repeat.getSetted() == (1 << 2)) {
+            if(repeat.isDays_of_month_setted()) repeat.daysOfMonthClear();
+            else repeat.onTheMonthClear();
+          }
+          else if(repeat.getSetted() == (1 << 3)) repeat.yearClear();
+
+          this.item.setRepeat(repeat.clone());
+        }
+        else this.item.getRepeat().setLabel(getActivity().getResources().getString(R.string.non_repeat));
+
         try {
           mListener.insertDB(this.item, MyDatabaseHelper.TODO_TABLE);
         } catch(IOException e) {
@@ -130,6 +159,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   @Override
   public void onAttach(Context context) {
+
     super.onAttach(context);
     if(context instanceof OnFragmentInteractionListener) {
       mListener = (OnFragmentInteractionListener)context;
@@ -141,6 +171,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   @Override
   public void onDetach() {
+
     super.onDetach();
     mListener = null;
   }
@@ -179,6 +210,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   }
 
   private void transitionFragment(PreferenceFragment next) {
+
     getFragmentManager()
         .beginTransaction()
         .replace(android.R.id.content, next)
@@ -187,6 +219,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   }
 
   public interface OnFragmentInteractionListener {
+
     void insertDB(Object data, String table) throws IOException;
     void addChildren(Item item);
     void setAlarm(Item item);

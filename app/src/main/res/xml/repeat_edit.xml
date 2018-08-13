@@ -12,9 +12,9 @@
         android:title="@string/everyday"/>
 
     <CheckBoxPreference
-        android:key="weekday"
+        android:key="everyweekday"
         android:defaultValue="false"
-        android:title="@string/weekday"/>
+        android:title="@string/everyweekday"/>
 
     <CheckBoxPreference
         android:key="everyweek"

@@ -27,8 +27,6 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
   static CheckBoxPreference days_of_month;
   static CheckBoxPreference on_the_month;
   private static Preference year;
-  static boolean is_days_of_month;
-  static boolean is_on_the_month;
   private int cal_day_of_week;
   private int cal_day_of_month;
   private int cal_month;
@@ -53,10 +51,10 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
     picker = findPreference("picker");
     week = findPreference("week");
     days_of_month = (CheckBoxPreference)findPreference("days_of_month");
-    days_of_month.setChecked(is_days_of_month);
+    days_of_month.setChecked(MainEditFragment.repeat.isDays_of_month_setted());
     days_of_month.setOnPreferenceClickListener(this);
     on_the_month = (CheckBoxPreference)findPreference("on_the_month");
-    on_the_month.setChecked(is_on_the_month);
+    on_the_month.setChecked(!MainEditFragment.repeat.isDays_of_month_setted());
     on_the_month.setOnPreferenceClickListener(this);
     year = findPreference("year");
     rootPreferenceScreen.removeAll();
@@ -80,6 +78,8 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
       match_to_template = true;
       RepeatEditFragment.everyday.setChecked(true);
       RepeatEditFragment.custom.setChecked(false);
+      MainEditFragment.repeat.setSetted(1 << 0);
+      MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.everyday));
       RepeatEditFragment.label.setSummary(R.string.everyday);
     }
     else if(RepeatCustomPickerPreference.week && MainEditFragment.repeat.getInterval() == 1) {
@@ -91,17 +91,22 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
         RepeatEditFragment.custom.setChecked(false);
         RepeatEditFragment.label_str = getActivity().getResources().getString(R.string.everyweek)
             + DateFormat.format("E曜日", MainEditFragment.final_cal);
+        MainEditFragment.repeat.setSetted(1 << 1);
+        MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str);
         RepeatEditFragment.label.setSummary(RepeatEditFragment.label_str);
       }
 
       if(RepeatCustomWeekPickerPreference.week == Integer.parseInt("11111", 2)) {
         match_to_template = true;
-        RepeatEditFragment.weekday.setChecked(true);
+        RepeatEditFragment.everyweekday.setChecked(true);
         RepeatEditFragment.custom.setChecked(false);
-        RepeatEditFragment.label.setSummary(R.string.weekday);
+        MainEditFragment.repeat.setSetted(1 << 1);
+        MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.everyweekday));
+        RepeatEditFragment.label.setSummary(R.string.everyweekday);
       }
     }
-    else if(RepeatCustomPickerPreference.month && is_days_of_month && MainEditFragment.repeat.getInterval() == 1) {
+    else if(RepeatCustomPickerPreference.month && MainEditFragment.repeat.isDays_of_month_setted()
+        && MainEditFragment.repeat.getInterval() == 1) {
       cal_day_of_month = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
       if(RepeatCustomDaysOfMonthPickerPreference.days_of_month == (1 << (cal_day_of_month - 1))) {
         match_to_template = true;
@@ -109,6 +114,8 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
         RepeatEditFragment.custom.setChecked(false);
         RepeatEditFragment.label_str = getActivity().getResources().getString(R.string.everymonth)
             + DateFormat.format("d日", MainEditFragment.final_cal);
+        MainEditFragment.repeat.setSetted(1 << 2);
+        MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str);
         RepeatEditFragment.label.setSummary(RepeatEditFragment.label_str);
       }
     }
@@ -120,22 +127,26 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
         RepeatEditFragment.custom.setChecked(false);
         RepeatEditFragment.label_str = getActivity().getResources().getString(R.string.everyyear)
             + DateFormat.format("M月d日", MainEditFragment.final_cal);
+        MainEditFragment.repeat.setSetted(1 << 3);
+        MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str);
         RepeatEditFragment.label.setSummary(RepeatEditFragment.label_str);
       }
     }
 
     if(!match_to_template) {
       if(RepeatEditFragment.everyday.isChecked()) RepeatEditFragment.everyday.setChecked(false);
-      if(RepeatEditFragment.weekday.isChecked()) RepeatEditFragment.weekday.setChecked(false);
+      if(RepeatEditFragment.everyweekday.isChecked()) RepeatEditFragment.everyweekday.setChecked(false);
       if(RepeatEditFragment.everyweek.isChecked()) RepeatEditFragment.everyweek.setChecked(false);
       if(RepeatEditFragment.everymonth.isChecked()) RepeatEditFragment.everymonth.setChecked(false);
       if(RepeatEditFragment.everyyear.isChecked()) RepeatEditFragment.everyyear.setChecked(false);
       if(!RepeatEditFragment.custom.isChecked()) RepeatEditFragment.custom.setChecked(true);
 
       if(RepeatCustomPickerPreference.day) {
+        MainEditFragment.repeat.setSetted(1 << 0);
         RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "日おき";
       }
       else if(RepeatCustomPickerPreference.week) {
+        MainEditFragment.repeat.setSetted(1 << 1);
         if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str = "毎週";
         else RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "週間おきの";
 
@@ -148,7 +159,8 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
         RepeatEditFragment.label_str += tmp + "曜日";
       }
       else if(RepeatCustomPickerPreference.month) {
-        if(is_days_of_month) {
+        MainEditFragment.repeat.setSetted(1 << 2);
+        if(MainEditFragment.repeat.isDays_of_month_setted()) {
           if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str = "毎月";
           else RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "ヶ月おきの";
 
@@ -162,7 +174,7 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
           RepeatEditFragment.label_str += tmp + "日";
 
         }
-        else if(is_on_the_month) {
+        else if(!MainEditFragment.repeat.isDays_of_month_setted()) {
           if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str = "毎月";
           else RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "ヶ月おきの";
 
@@ -184,6 +196,7 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
         }
       }
       else if(RepeatCustomPickerPreference.year) {
+        MainEditFragment.repeat.setSetted(1 << 3);
         if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str = "毎年";
         else RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "年おきの";
 
@@ -198,6 +211,7 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
             tmp + "月の" + MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH) + "日";
       }
 
+      MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str);
       RepeatEditFragment.label.setSummary(RepeatEditFragment.label_str);
     }
 
@@ -256,8 +270,7 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
     switch(preference.getKey()) {
       case "days_of_month":
         if(days_of_month.isChecked()) {
-          is_days_of_month = true;
-          is_on_the_month = false;
+          MainEditFragment.repeat.setDays_of_month_setted(true);
           on_the_month.setChecked(false);
         }
         else days_of_month.setChecked(true);
@@ -265,8 +278,7 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
         return true;
       case "on_the_month":
         if(on_the_month.isChecked()) {
-          is_on_the_month = true;
-          is_days_of_month = false;
+          MainEditFragment.repeat.setDays_of_month_setted(false);
           days_of_month.setChecked(false);
         }
         else on_the_month.setChecked(true);
