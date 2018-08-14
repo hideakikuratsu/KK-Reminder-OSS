@@ -40,6 +40,7 @@ public class MainActivity
   private AlarmManager alarmManager;
   private int group_changed; //groupの変化があったかどうかのフラグをビットで表す
   private int group_changed_num; //groupの変化があったchildの個数を保持する
+  private final MyComparator comparator = new MyComparator();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +133,7 @@ public class MainActivity
           }
 
           for(List<Item> itemList : MyExpandableListAdapter.children) {
-            Collections.sort(itemList, new MyComparator());
+            Collections.sort(itemList, comparator);
           }
           expandableListAdapter.notifyDataSetChanged();
         }
@@ -176,13 +177,15 @@ public class MainActivity
 
   public void deleteAlarm(Item item) {
 
-    intent = new Intent(this, AlarmReceiver.class);
-    sender = PendingIntent.getBroadcast(
-        this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+    if(isAlarmSetted(item)) {
+      intent = new Intent(this, AlarmReceiver.class);
+      sender = PendingIntent.getBroadcast(
+          this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+      alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
-    alarmManager.cancel(sender);
-    sender.cancel();
+      alarmManager.cancel(sender);
+      sender.cancel();
+    }
   }
 
   public boolean isAlarmSetted(Item item) {
@@ -268,9 +271,14 @@ public class MainActivity
   }
 
   //受け取ったオブジェクトをシリアライズしてデータベースへ挿入
-  public void insertDB(Object data, String table) throws IOException {
+  public void insertDB(Item item, String table) throws IOException {
 
-    accessor.executeInsert(serialize(data), table);
+    accessor.executeInsert(item.getId(), serialize(item), table);
+  }
+
+  public void updateDB(Item item, String table) throws IOException {
+
+    accessor.executeUpdate(item.getId(), serialize(item), table);
   }
 
   //指定されたテーブルからオブジェクトのバイト列をすべて取り出し、デシリアライズしてオブジェクトのリストで返す。

@@ -15,6 +15,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -39,6 +40,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private boolean date_is_minus;
   private Item item;
   private MyOnClickListener listener;
+  private static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
 
   static {
     groups = new ArrayList<>();
@@ -151,7 +153,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       switch(v.getId()) {
         case R.id.child_card:
           if(viewHolder.control_panel.getVisibility() == View.GONE) {
+            has_panel = item.getId();
             viewHolder.control_panel.setVisibility(View.VISIBLE);
+            notifyDataSetChanged();
           }
           else viewHolder.control_panel.setVisibility(View.GONE);
           break;
@@ -165,10 +169,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             item.addTime_altered(-5 * 60 * 1000);
             if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-            if(mListener.isAlarmSetted(item)) {
-              mListener.deleteAlarm(item);
-            }
+            mListener.deleteAlarm(item);
             mListener.setAlarm(item);
+            try {
+              mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            } catch(IOException e) {
+              e.printStackTrace();
+            }
+
             displayDate(viewHolder, item);
           }
           break;
@@ -182,10 +190,15 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             item.addTime_altered(-1 * 60 * 60 * 1000);
             if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-            if(mListener.isAlarmSetted(item)) {
-              mListener.deleteAlarm(item);
-            }
+            mListener.deleteAlarm(item);
             mListener.setAlarm(item);
+            //TODO: insertだと同じものが複製されてしまう！updateを作るべし！
+            try {
+              mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            } catch(IOException e) {
+              e.printStackTrace();
+            }
+
             displayDate(viewHolder, item);
           }
           break;
@@ -199,15 +212,20 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             item.addTime_altered(-24 * 60 * 60 * 1000);
             if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-            if(mListener.isAlarmSetted(item)) {
-              mListener.deleteAlarm(item);
-            }
+            mListener.deleteAlarm(item);
             mListener.setAlarm(item);
+            try {
+              mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            } catch(IOException e) {
+              e.printStackTrace();
+            }
+
             displayDate(viewHolder, item);
           }
           break;
         case R.id.edit:
           mListener.showMainEditFragment(item);
+          viewHolder.control_panel.setVisibility(View.GONE);
           break;
         case R.id.p5m:
           if(item.getDate().getTimeInMillis() < System.currentTimeMillis()) {
@@ -226,10 +244,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           item.addTime_altered(5 * 60 * 1000);
           if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-          if(mListener.isAlarmSetted(item)) {
-            mListener.deleteAlarm(item);
-          }
+          mListener.deleteAlarm(item);
           mListener.setAlarm(item);
+          try {
+            mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+          } catch(IOException e) {
+            e.printStackTrace();
+          }
+
           displayDate(viewHolder, item);
           break;
         case R.id.p1h:
@@ -249,10 +271,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           item.addTime_altered(1 * 60 * 60 * 1000);
           if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-          if(mListener.isAlarmSetted(item)) {
-            mListener.deleteAlarm(item);
-          }
+          mListener.deleteAlarm(item);
           mListener.setAlarm(item);
+          try {
+            mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+          } catch(IOException e) {
+            e.printStackTrace();
+          }
+
           displayDate(viewHolder, item);
           break;
         case R.id.p1d:
@@ -272,10 +298,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           item.addTime_altered(24 * 60 * 60 * 1000);
           if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-          if(mListener.isAlarmSetted(item)) {
-            mListener.deleteAlarm(item);
-          }
+          mListener.deleteAlarm(item);
           mListener.setAlarm(item);
+          try {
+            mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+          } catch(IOException e) {
+            e.printStackTrace();
+          }
+
           displayDate(viewHolder, item);
           break;
         case R.id.notes:
@@ -300,6 +330,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               mListener.deleteAlarm(item);
             }
           }
+
+          try {
+            mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+          } catch(IOException e) {
+            e.printStackTrace();
+          }
+
           displayDate(viewHolder, item);
           break;
       }
@@ -424,6 +461,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //詳細と、リピート通知のインターバルを表示
     viewHolder.detail.setText(item.getDetail());
     viewHolder.repeat.setText(item.getRepeat().getLabel());
+
+    if(item.getId() != has_panel && viewHolder.control_panel.getVisibility() == View.VISIBLE) {
+      viewHolder.control_panel.setVisibility(View.GONE);
+    }
 
     viewHolder.child_card.setOnClickListener(listener);
 
@@ -570,5 +611,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     void setAlarm(Item item);
     void deleteAlarm(Item item);
     boolean isAlarmSetted(Item item);
+    void updateDB(Item item, String table) throws IOException;
   }
 }

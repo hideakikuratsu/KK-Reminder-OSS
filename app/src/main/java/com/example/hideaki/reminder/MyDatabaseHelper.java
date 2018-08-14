@@ -10,9 +10,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   static final String DONE_TABLE = "done";
   static final String DATABASE = "reminder.db";
   static final String CREATE_TODO_TABLE =
-      "create table todo(_id integer primary key autoincrement not null, serial blob not null)";
+      "CREATE TABLE todo(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, item_id INTEGER NOT NULL, serial BLOB NOT NULL)";
   static final String CREATE_DONE_TABLE =
-      "create table done(_id integer primary key autoincrement not null, serial blob not null)";
+      "CREATE TABLE done(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, item_id INTEGER NOT NULL, serial BLOB NOT NULL)";
 
   public MyDatabaseHelper(Context context) {
     super(context, DATABASE, null, 1);

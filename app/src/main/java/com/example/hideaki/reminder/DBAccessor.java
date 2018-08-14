@@ -16,19 +16,46 @@ public class DBAccessor {
   private SQLiteStatement statement;
 
   public DBAccessor(Context context) {
+
     this.helper = new MyDatabaseHelper(context);
   }
 
-  public void executeInsert(byte[] stream, String table) {
+  public void executeInsert(long id, byte[] stream, String table) {
 
     sdb = helper.getWritableDatabase();
-    state_str = "insert into " + table + "(serial) values(?)";
+    state_str = "INSERT INTO " + table + "(item_id, serial) VALUES(?, ?)";
+
+    sdb.beginTransaction();
+    try {
+      statement = sdb.compileStatement(state_str);
+      statement.bindLong(1, id);
+      statement.bindBlob(2, stream);
+
+      statement.executeInsert();
+
+      sdb.setTransactionSuccessful();
+    }
+    catch(SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      sdb.endTransaction();
+      sdb.close();
+    }
+  }
+
+  public void executeUpdate(long id, byte[] stream, String table) {
+
+    sdb = helper.getWritableDatabase();
+    state_str = "UPDATE " + table + " SET serial = ? WHERE item_id = ?";
+
     sdb.beginTransaction();
     try {
       statement = sdb.compileStatement(state_str);
       statement.bindBlob(1, stream);
+      statement.bindLong(2, id);
 
-      statement.executeInsert();
+      statement.executeUpdateDelete();
 
       sdb.setTransactionSuccessful();
     }
@@ -44,7 +71,8 @@ public class DBAccessor {
   public void executeDeleteAll(String table) {
 
     sdb = helper.getWritableDatabase();
-    state_str = "delete from " + table;
+    state_str = "DELETE FROM " + table;
+
     sdb.beginTransaction();
     try {
       statement = sdb.compileStatement(state_str);
@@ -66,7 +94,8 @@ public class DBAccessor {
 
     sdb = helper.getWritableDatabase();
     Cursor cursor = null;
-    state_str = "select * from " + table;
+    state_str = "SELECT * FROM " + table;
+
     try {
       cursor = sdb.rawQuery(state_str, null);
       return readCursor(cursor);

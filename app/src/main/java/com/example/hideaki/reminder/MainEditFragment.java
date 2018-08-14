@@ -220,7 +220,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   public interface OnFragmentInteractionListener {
 
-    void insertDB(Object data, String table) throws IOException;
+    void insertDB(Item item, String table) throws IOException;
     void addChildren(Item item);
     void setAlarm(Item item);
     void notifyDataSetChanged();
