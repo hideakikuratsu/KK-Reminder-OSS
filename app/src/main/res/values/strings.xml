@@ -61,5 +61,13 @@
     <string name="november">11月</string>
     <string name="december">12月</string>
     <string name="memo">メモ</string>
+    <string name="complete">タスクを完了しました。</string>
+    <string name="undo">元に戻す</string>
+    <string name="repeat_conflict_dialog_message">リピートが設定された状態で予定日時が変更されました。\nこの変更は一時的なものですか？</string>
+    <string name="repeat_conflict_dialog_before_altered">変更前</string>
+    <string name="repeat_conflict_dialog_after_altered">変更後</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="cancel">キャンセル</string>
 
 </resources>

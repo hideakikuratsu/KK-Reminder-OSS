@@ -73,12 +73,22 @@ public class RepeatCustomPickerPreference extends Preference {
     }
     scale.setValue(MainEditFragment.repeat.getScale());
     scale.setDisplayedValues(SCALE_LIST);
-    if(MainEditFragment.repeat.getScale() == 2) RepeatCustomPickerFragment.addWeekPreference();
+    if(MainEditFragment.repeat.getScale() == 1) {
+      day = true;
+    }
+    else if(MainEditFragment.repeat.getScale() == 2) {
+      week = true;
+      RepeatCustomPickerFragment.addWeekPreference();
+    }
     else if(MainEditFragment.repeat.getScale() == 3) {
+      month = true;
       RepeatCustomPickerFragment.addDaysOfMonthPreference();
       RepeatCustomPickerFragment.addOnTheMonthPreference();
     }
-    else if(MainEditFragment.repeat.getScale() == 4) RepeatCustomPickerFragment.addYearPreference();
+    else if(MainEditFragment.repeat.getScale() == 4) {
+      year = true;
+      RepeatCustomPickerFragment.addYearPreference();
+    }
     scale.setOnScrollListener(new NumberPicker.OnScrollListener() {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
@@ -139,10 +149,7 @@ public class RepeatCustomPickerPreference extends Preference {
 
               if(MainEditFragment.repeat.getDays_of_month() == 0) {
                 mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
-                RepeatCustomDaysOfMonthPickerPreference.days_of_month |= (1 << (mask_num - 1));
-                MainEditFragment.repeat.setDays_of_month(
-                    RepeatCustomDaysOfMonthPickerPreference.days_of_month
-                );
+                MainEditFragment.repeat.setDays_of_month(1 << (mask_num - 1));
                 RepeatCustomPickerFragment.days_of_month.setChecked(true);
                 RepeatCustomPickerFragment.on_the_month.setChecked(false);
                 MainEditFragment.repeat.setDays_of_month_setted(true);

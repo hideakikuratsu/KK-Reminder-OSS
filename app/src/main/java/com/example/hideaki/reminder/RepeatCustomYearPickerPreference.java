@@ -19,7 +19,6 @@ public class RepeatCustomYearPickerPreference extends Preference implements Comp
   private CheckBox checkBox;
   private int mask_num;
   static int year;
-  private static Repeat repeat;
   private int cal_month;
 
   public RepeatCustomYearPickerPreference(Context context, AttributeSet attrs) {
@@ -43,7 +42,7 @@ public class RepeatCustomYearPickerPreference extends Preference implements Comp
     year = MainEditFragment.repeat.getYear();
 
     year_table = view.findViewById(R.id.year_table);
-    if(repeat == MainEditFragment.repeat || year != 0) {
+    if(year != 0) {
       for(int i = 0; i < year_table.getChildCount(); i++) {
         tableRow = (TableRow)year_table.getChildAt(i);
         for(int j = 0; j < tableRow.getChildCount(); j++) {
@@ -73,7 +72,6 @@ public class RepeatCustomYearPickerPreference extends Preference implements Comp
       }
 
       MainEditFragment.repeat.setYear(year);
-      repeat = MainEditFragment.repeat;
     }
   }
 

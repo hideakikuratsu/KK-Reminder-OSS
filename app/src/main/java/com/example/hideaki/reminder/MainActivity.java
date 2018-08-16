@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ExpandableListView;
 
@@ -145,7 +146,13 @@ public class MainActivity
 
     @Override
     public int compare(Item o1, Item o2) {
-      return (int)(o1.getDate().getTimeInMillis() - o2.getDate().getTimeInMillis());
+      if(o1.getDate().getTimeInMillis() < o2.getDate().getTimeInMillis()) {
+        return -1;
+      }
+      else if(o1.getDate().getTimeInMillis() == o2.getDate().getTimeInMillis()) {
+        return 0;
+      }
+      else return 1;
     }
   }
 
@@ -212,6 +219,10 @@ public class MainActivity
 
     for(Item item : queryAllDB(table)) {
 
+      if(!isAlarmSetted(item) && !item.isAlarm_stopped()) {
+        setAlarm(item);
+      }
+
       int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
       long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
       long sub_day = sub_time / (1000 * 60 * 60 * 24);
@@ -240,6 +251,9 @@ public class MainActivity
     children.add(week_list);
     children.add(future_list);
 
+    for(List<Item> itemList : children) {
+      Collections.sort(itemList, comparator);
+    }
     return children;
   }
 
@@ -281,6 +295,11 @@ public class MainActivity
     accessor.executeUpdate(item.getId(), serialize(item), table);
   }
 
+  public void deleteDB(Item item, String table) throws IOException {
+
+    accessor.executeDelete(item.getId(), table);
+  }
+
   //指定されたテーブルからオブジェクトのバイト列をすべて取り出し、デシリアライズしてオブジェクトのリストで返す。
   public List<Item> queryAllDB(String table) throws IOException, ClassNotFoundException {
 
@@ -291,6 +310,14 @@ public class MainActivity
     }
 
     return itemList;
+  }
+
+  public boolean isItemExists(Item item, String table) {
+
+    if(accessor.executeQueryById(item.getId(), table) != null) {
+      return true;
+    }
+    else return false;
   }
 
   //シリアライズメソッド
@@ -348,6 +375,12 @@ public class MainActivity
         .replace(android.R.id.content, NotesFragment.newInstance(item))
         .addToBackStack(null)
         .commit();
+  }
+
+  public void showDateAlterDialogFragment() {
+
+    DialogFragment dialog = new DateAlterDialogFragment();
+    dialog.show(getSupportFragmentManager(), "dialog");
   }
 
   public void notifyDataSetChanged() {

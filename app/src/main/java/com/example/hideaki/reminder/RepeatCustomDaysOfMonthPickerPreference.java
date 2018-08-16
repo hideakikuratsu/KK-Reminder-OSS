@@ -20,8 +20,6 @@ public class RepeatCustomDaysOfMonthPickerPreference extends Preference implemen
   private CheckableTextView day;
   private int mask_num;
   static int days_of_month;
-  private static Repeat repeat;
-  private int cal_day_of_month;
 
   public RepeatCustomDaysOfMonthPickerPreference(Context context, AttributeSet attrs) {
 

@@ -68,6 +68,29 @@ public class DBAccessor {
     }
   }
 
+  public void executeDelete(long id, String table) {
+
+    sdb = helper.getWritableDatabase();
+    state_str = "DELETE FROM " + table + " WHERE item_id = ?";
+
+    sdb.beginTransaction();
+    try {
+      statement = sdb.compileStatement(state_str);
+      statement.bindLong(1, id);
+
+      statement.executeUpdateDelete();
+
+      sdb.setTransactionSuccessful();
+    }
+    catch(SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      sdb.endTransaction();
+      sdb.close();
+    }
+  }
+
   public void executeDeleteAll(String table) {
 
     sdb = helper.getWritableDatabase();
@@ -92,13 +115,13 @@ public class DBAccessor {
 
   public List<byte[]> executeQueryAll(String table) {
 
-    sdb = helper.getWritableDatabase();
+    sdb = helper.getReadableDatabase();
     Cursor cursor = null;
     state_str = "SELECT * FROM " + table;
 
     try {
       cursor = sdb.rawQuery(state_str, null);
-      return readCursor(cursor);
+      return readCursorBySerial(cursor);
     }
     finally {
       if(cursor != null) cursor.close();
@@ -106,7 +129,35 @@ public class DBAccessor {
     }
   }
 
-  private List<byte[]> readCursor(Cursor cursor) {
+  public byte[] executeQueryById(long id, String table) {
+
+    sdb = helper.getReadableDatabase();
+    Cursor cursor = null;
+    state_str = "SELECT * FROM " + table + " WHERE item_id = ?";
+
+    try {
+      cursor = sdb.rawQuery(state_str, new String[] {Long.toString(id)});
+      return readCursorById(cursor);
+    }
+    finally {
+      if(cursor != null) cursor.close();
+      sdb.close();
+    }
+  }
+
+  private byte[] readCursorById(Cursor cursor) {
+
+    int indexSerial;
+
+    indexSerial = cursor.getColumnIndex("serial");
+
+    if(cursor.moveToNext()) {
+      return cursor.getBlob(indexSerial);
+    }
+    else return null;
+  }
+
+  private List<byte[]> readCursorBySerial(Cursor cursor) {
 
     List<byte[]> list = new ArrayList<>();
     int indexSerial;

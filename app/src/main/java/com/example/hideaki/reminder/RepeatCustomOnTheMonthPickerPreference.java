@@ -9,7 +9,7 @@ import android.widget.NumberPicker;
 
 public class RepeatCustomOnTheMonthPickerPreference extends Preference {
 
-  private final String[] ORDINAL_NUMBER_LIST = {"第一", "第二", "第三", "第四", "第五", "最終"};
+  private final String[] ORDINAL_NUMBER_LIST = {"第一", "第二", "第三", "第四", "最終"};
   private static final String[] DAY_OF_WEEK_LIST = {"月曜日", "火曜日", "水曜日", "木曜日", "金曜日",
       "土曜日", "日曜日", "平日", "週末"};
 

@@ -19,7 +19,6 @@ public class RepeatCustomWeekPickerPreference extends Preference implements Comp
   private CheckBox checkBox;
   private int mask_num;
   static int week;
-  private static Repeat repeat;
   private int cal_day_of_week;
 
   public RepeatCustomWeekPickerPreference(Context context, AttributeSet attrs) {
@@ -43,7 +42,7 @@ public class RepeatCustomWeekPickerPreference extends Preference implements Comp
     week = MainEditFragment.repeat.getWeek();
 
     week_table = view.findViewById(R.id.week_table);
-    if(repeat == MainEditFragment.repeat || week != 0) {
+    if(week != 0) {
       for(int i = 0; i < week_table.getChildCount(); i++) {
         tableRow = (TableRow)week_table.getChildAt(i);
         for(int j = 0; j < tableRow.getChildCount(); j++) {
@@ -73,7 +72,6 @@ public class RepeatCustomWeekPickerPreference extends Preference implements Comp
       }
 
       MainEditFragment.repeat.setWeek(week);
-      repeat = MainEditFragment.repeat;
     }
   }
 

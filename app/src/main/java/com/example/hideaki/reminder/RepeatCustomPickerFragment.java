@@ -8,7 +8,6 @@ import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +31,7 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
   private int cal_month;
   private boolean match_to_template;
   private String tmp = "";
+  private int mask_num;
 
   public static RepeatCustomPickerFragment newInstance() {
 
@@ -74,66 +74,65 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
   public boolean onOptionsItemSelected(MenuItem item) {
 
     match_to_template = false;
-    if(RepeatCustomPickerPreference.day && MainEditFragment.repeat.getInterval() == 1) {
-      match_to_template = true;
-      RepeatEditFragment.everyday.setChecked(true);
-      RepeatEditFragment.custom.setChecked(false);
-      MainEditFragment.repeat.setSetted(1 << 0);
-      MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.everyday));
-      RepeatEditFragment.label.setSummary(R.string.everyday);
-    }
-    else if(RepeatCustomPickerPreference.week && MainEditFragment.repeat.getInterval() == 1) {
-      cal_day_of_week = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
-      if(RepeatCustomWeekPickerPreference.week == (1 << (cal_day_of_week - 2)) ||
-          RepeatCustomWeekPickerPreference.week == (1 << (cal_day_of_week + 5))) {
+    if(MainEditFragment.repeat.getInterval() == 1) {
+      if(RepeatCustomPickerPreference.day) {
         match_to_template = true;
-        RepeatEditFragment.everyweek.setChecked(true);
+        RepeatEditFragment.everyday.setChecked(true);
         RepeatEditFragment.custom.setChecked(false);
-        RepeatEditFragment.label_str = getActivity().getResources().getString(R.string.everyweek)
-            + DateFormat.format("E曜日", MainEditFragment.final_cal);
-        MainEditFragment.repeat.setSetted(1 << 1);
-        MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str);
-        RepeatEditFragment.label.setSummary(RepeatEditFragment.label_str);
+        MainEditFragment.repeat.setSetted(1 << 0);
+        MainEditFragment.repeat.setWhich_template(1 << 0);
+        MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.everyday));
+        RepeatEditFragment.label.setSummary(R.string.everyday);
       }
+      else if(RepeatCustomPickerPreference.week) {
+        cal_day_of_week = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
+        if(RepeatCustomWeekPickerPreference.week == (1 << (cal_day_of_week - 2)) ||
+            RepeatCustomWeekPickerPreference.week == (1 << (cal_day_of_week + 5))) {
+          match_to_template = true;
+          RepeatEditFragment.everyweek.setChecked(true);
+          RepeatEditFragment.custom.setChecked(false);
+          MainEditFragment.repeat.setSetted(1 << 1);
+          MainEditFragment.repeat.setWhich_template(1 << 2);
+          MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str_everyweek);
+        }
 
-      if(RepeatCustomWeekPickerPreference.week == Integer.parseInt("11111", 2)) {
-        match_to_template = true;
-        RepeatEditFragment.everyweekday.setChecked(true);
-        RepeatEditFragment.custom.setChecked(false);
-        MainEditFragment.repeat.setSetted(1 << 1);
-        MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.everyweekday));
-        RepeatEditFragment.label.setSummary(R.string.everyweekday);
+        if(RepeatCustomWeekPickerPreference.week == Integer.parseInt("11111", 2)) {
+          match_to_template = true;
+          RepeatEditFragment.everyweekday.setChecked(true);
+          RepeatEditFragment.custom.setChecked(false);
+          MainEditFragment.repeat.setSetted(1 << 1);
+          MainEditFragment.repeat.setWhich_template(1 << 1);
+          MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.everyweekday));
+          RepeatEditFragment.label.setSummary(R.string.everyweekday);
+        }
       }
-    }
-    else if(RepeatCustomPickerPreference.month && MainEditFragment.repeat.isDays_of_month_setted()
-        && MainEditFragment.repeat.getInterval() == 1) {
-      cal_day_of_month = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
-      if(RepeatCustomDaysOfMonthPickerPreference.days_of_month == (1 << (cal_day_of_month - 1))) {
-        match_to_template = true;
-        RepeatEditFragment.everymonth.setChecked(true);
-        RepeatEditFragment.custom.setChecked(false);
-        RepeatEditFragment.label_str = getActivity().getResources().getString(R.string.everymonth)
-            + DateFormat.format("d日", MainEditFragment.final_cal);
-        MainEditFragment.repeat.setSetted(1 << 2);
-        MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str);
-        RepeatEditFragment.label.setSummary(RepeatEditFragment.label_str);
+      else if(RepeatCustomPickerPreference.month && MainEditFragment.repeat.isDays_of_month_setted()) {
+        cal_day_of_month = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
+        if(RepeatCustomDaysOfMonthPickerPreference.days_of_month == (1 << (cal_day_of_month - 1))) {
+          match_to_template = true;
+          RepeatEditFragment.everymonth.setChecked(true);
+          RepeatEditFragment.custom.setChecked(false);
+          MainEditFragment.repeat.setSetted(1 << 2);
+          MainEditFragment.repeat.setWhich_template(1 << 3);
+          MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str_everymonth);
+        }
       }
-    }
-    else if(RepeatCustomPickerPreference.year && MainEditFragment.repeat.getInterval() == 1) {
-      cal_month = MainEditFragment.final_cal.get(Calendar.MONTH);
-      if(RepeatCustomYearPickerPreference.year == (1 << cal_month)) {
-        match_to_template = true;
-        RepeatEditFragment.everyyear.setChecked(true);
-        RepeatEditFragment.custom.setChecked(false);
-        RepeatEditFragment.label_str = getActivity().getResources().getString(R.string.everyyear)
-            + DateFormat.format("M月d日", MainEditFragment.final_cal);
-        MainEditFragment.repeat.setSetted(1 << 3);
-        MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str);
-        RepeatEditFragment.label.setSummary(RepeatEditFragment.label_str);
+      else if(RepeatCustomPickerPreference.year) {
+        cal_month = MainEditFragment.final_cal.get(Calendar.MONTH);
+        if(RepeatCustomYearPickerPreference.year == (1 << cal_month)) {
+          match_to_template = true;
+          RepeatEditFragment.everyyear.setChecked(true);
+          RepeatEditFragment.custom.setChecked(false);
+          MainEditFragment.repeat.setSetted(1 << 3);
+          MainEditFragment.repeat.setWhich_template(1 << 4);
+          MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str_everyyear);
+          MainEditFragment.repeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
+        }
       }
     }
 
     if(!match_to_template) {
+      MainEditFragment.repeat.setWhich_template(1 << 5);
       if(RepeatEditFragment.everyday.isChecked()) RepeatEditFragment.everyday.setChecked(false);
       if(RepeatEditFragment.everyweekday.isChecked()) RepeatEditFragment.everyweekday.setChecked(false);
       if(RepeatEditFragment.everyweek.isChecked()) RepeatEditFragment.everyweek.setChecked(false);
@@ -143,12 +142,12 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
 
       if(RepeatCustomPickerPreference.day) {
         MainEditFragment.repeat.setSetted(1 << 0);
-        RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "日おき";
+        RepeatEditFragment.label_str_custom = MainEditFragment.repeat.getInterval() - 1 + "日おき";
       }
       else if(RepeatCustomPickerPreference.week) {
         MainEditFragment.repeat.setSetted(1 << 1);
-        if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str = "毎週";
-        else RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "週間おきの";
+        if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str_custom = "毎週";
+        else RepeatEditFragment.label_str_custom = MainEditFragment.repeat.getInterval() - 1 + "週間おきの";
 
         for(int i = 0; i < 7; i++) {
           if((MainEditFragment.repeat.getWeek() & (1 << i)) != 0) {
@@ -156,13 +155,13 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
           }
         }
         tmp = tmp.substring(0, tmp.length() - 2);
-        RepeatEditFragment.label_str += tmp + "曜日";
+        RepeatEditFragment.label_str_custom += tmp + "曜日";
       }
       else if(RepeatCustomPickerPreference.month) {
         MainEditFragment.repeat.setSetted(1 << 2);
         if(MainEditFragment.repeat.isDays_of_month_setted()) {
-          if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str = "毎月";
-          else RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "ヶ月おきの";
+          if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str_custom = "毎月";
+          else RepeatEditFragment.label_str_custom = MainEditFragment.repeat.getInterval() - 1 + "ヶ月おきの";
 
           for(int i = 0; i < MainEditFragment.final_cal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
             if((MainEditFragment.repeat.getDays_of_month() & (1 << i)) != 0) {
@@ -171,34 +170,35 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
           }
           if((MainEditFragment.repeat.getDays_of_month() & (1 << 30)) != 0) tmp += "最終, ";
           tmp = tmp.substring(0, tmp.length() - 2);
-          RepeatEditFragment.label_str += tmp + "日";
+          RepeatEditFragment.label_str_custom += tmp + "日";
 
         }
         else if(!MainEditFragment.repeat.isDays_of_month_setted()) {
-          if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str = "毎月";
-          else RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "ヶ月おきの";
+          if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str_custom = "毎月";
+          else RepeatEditFragment.label_str_custom = MainEditFragment.repeat.getInterval() - 1 + "ヶ月おきの";
 
-          if(MainEditFragment.repeat.getOrdinal_number() < 6) {
-            RepeatEditFragment.label_str += "第" + MainEditFragment.repeat.getOrdinal_number();
+          if(MainEditFragment.repeat.getOrdinal_number() < 5) {
+            RepeatEditFragment.label_str_custom += "第" + MainEditFragment.repeat.getOrdinal_number();
           }
-          else RepeatEditFragment.label_str += "最終週の";
+          else RepeatEditFragment.label_str_custom += "最終週の";
 
           if(MainEditFragment.repeat.getOn_the_month().ordinal() < 7) {
-            RepeatEditFragment.label_str +=
+            RepeatEditFragment.label_str_custom +=
                 DAY_OF_WEEK_LIST[MainEditFragment.repeat.getOn_the_month().ordinal()] + "曜日";
           }
           else if(MainEditFragment.repeat.getOn_the_month().ordinal() == 7) {
-            RepeatEditFragment.label_str += "平日";
+            RepeatEditFragment.label_str_custom += "平日";
           }
           else if(MainEditFragment.repeat.getOn_the_month().ordinal() == 8) {
-            RepeatEditFragment.label_str += "週末";
+            RepeatEditFragment.label_str_custom += "週末";
           }
         }
       }
       else if(RepeatCustomPickerPreference.year) {
         MainEditFragment.repeat.setSetted(1 << 3);
-        if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str = "毎年";
-        else RepeatEditFragment.label_str = MainEditFragment.repeat.getInterval() - 1 + "年おきの";
+        MainEditFragment.repeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
+        if(MainEditFragment.repeat.getInterval() == 1) RepeatEditFragment.label_str_custom = "毎年";
+        else RepeatEditFragment.label_str_custom = MainEditFragment.repeat.getInterval() - 1 + "年おきの";
 
         for(int i = 0; i < 12; i++) {
           if((MainEditFragment.repeat.getYear() & (1 << i)) != 0) {
@@ -207,12 +207,11 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
         }
         tmp = tmp.substring(0, tmp.length() - 2);
 
-        RepeatEditFragment.label_str +=
+        RepeatEditFragment.label_str_custom +=
             tmp + "月の" + MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH) + "日";
       }
 
-      MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str);
-      RepeatEditFragment.label.setSummary(RepeatEditFragment.label_str);
+      MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str_custom);
     }
 
     actionBar.setTitle(R.string.repeat);
@@ -270,6 +269,10 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
     switch(preference.getKey()) {
       case "days_of_month":
         if(days_of_month.isChecked()) {
+          if(MainEditFragment.repeat.getDays_of_month() == 0) {
+            mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
+            MainEditFragment.repeat.setDays_of_month(1 << (mask_num - 1));
+          }
           MainEditFragment.repeat.setDays_of_month_setted(true);
           on_the_month.setChecked(false);
         }

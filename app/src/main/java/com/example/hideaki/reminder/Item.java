@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 public class Item implements Serializable {
-  private static final long serialVersionUID = 1502373802647981974L;
+  private static final long serialVersionUID = -3034988800437990975L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
@@ -15,7 +15,9 @@ public class Item implements Serializable {
   private Repeat repeat = new Repeat();
   private String notes;
   private long time_altered; //子ビューのコントロールパネルで時間を変えたとき、変えた総時間を保持する
+  private long org_time_altered; //リピート設定による変更をスナックバーから元に戻すのに用いる
   private boolean alarm_stopped;
+  private boolean org_alarm_stopped; //リピート設定による変更をスナックバーから元に戻すのに用いる
 
   public Item() {
   }
@@ -56,20 +58,28 @@ public class Item implements Serializable {
     return time_altered;
   }
 
+  public long getOrg_time_altered() {
+    return org_time_altered;
+  }
+
   public boolean isAlarm_stopped() {
     return alarm_stopped;
+  }
+
+  public boolean isOrg_alarm_stopped() {
+    return org_alarm_stopped;
   }
 
   public void setDetail(String detail) {
     this.detail = detail;
   }
 
-  public void setOrg_date(Calendar org_date) {
-    this.org_date = org_date;
-  }
-
   public void setDate(Calendar date) {
     this.date = date;
+  }
+
+  public void setOrg_date(Calendar org_date) {
+    this.org_date = org_date;
   }
 
   public void setTag(Tag tag) {
@@ -96,7 +106,15 @@ public class Item implements Serializable {
     this.time_altered = time_altered;
   }
 
+  public void setOrg_time_altered(long org_time_altered) {
+    this.org_time_altered = org_time_altered;
+  }
+
   public void setAlarm_stopped(boolean alarm_stopped) {
     this.alarm_stopped = alarm_stopped;
+  }
+
+  public void setOrg_alarm_stopped(boolean org_alarm_stopped) {
+    this.org_alarm_stopped = org_alarm_stopped;
   }
 }

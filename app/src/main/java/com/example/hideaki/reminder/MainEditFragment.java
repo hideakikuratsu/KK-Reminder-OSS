@@ -25,23 +25,28 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   public static final String ITEM = "ITEM";
 
-  private OnFragmentInteractionListener mListener;
-  private EditTextPreference detail;
-  private EditTextPreference notes;
-  private PreferenceScreen repeat_item;
-  private Item item = null;
-  private String detail_str;
-  private String notes_str;
-  private ActionBar actionBar;
-  private Context direct_boot_context;
+  static OnFragmentInteractionListener mListener;
+  static EditTextPreference detail;
+  static EditTextPreference notes;
+  static PreferenceScreen repeat_item;
+  static Item item;
+  static String detail_str;
+  static String notes_str;
+  static ActionBar actionBar;
+  static Context direct_boot_context;
   static Calendar final_cal;
   static Repeat repeat;
+  static boolean is_edit;
+  static android.app.FragmentManager fragmentManager;
 
   public static MainEditFragment newInstance() {
 
     MainEditFragment fragment = new MainEditFragment();
 
     Item item = new Item();
+    is_edit = false;
+    detail_str = "";
+    notes_str = "";
     repeat = new Repeat();
     final_cal = Calendar.getInstance();
     Bundle args = new Bundle();
@@ -55,8 +60,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     MainEditFragment fragment = new MainEditFragment();
 
+    is_edit = true;
+    detail_str = item.getDetail();
+    notes_str = item.getNotes();
     repeat = item.getRepeat().clone();
-    final_cal = item.getDate();
+    final_cal = (Calendar)item.getDate().clone();
     Bundle args = new Bundle();
     args.putSerializable(ITEM, item);
     fragment.setArguments(args);
@@ -81,15 +89,15 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     findPreference("interval").setOnPreferenceClickListener(this);
 
     detail = (EditTextPreference)findPreference("detail");
+    detail.setTitle(detail_str);
+    detail.setOnPreferenceChangeListener(this);
     notes = (EditTextPreference)findPreference("notes");
+    notes.setTitle(notes_str);
+    notes.setOnPreferenceChangeListener(this);
     repeat_item = (PreferenceScreen)findPreference("repeat");
-
-    if(repeat.getLabel() == null) repeat_item.setSummary(R.string.non_repeat);
-    else repeat_item.setSummary(repeat.getLabel());
     repeat_item.setOnPreferenceClickListener(this);
 
-    detail.setOnPreferenceChangeListener(this);
-    notes.setOnPreferenceChangeListener(this);
+    fragmentManager = getFragmentManager();
   }
 
   @Override
@@ -114,43 +122,67 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    repeat = new Repeat();
-    actionBar.setDisplayHomeAsUpEnabled(false);
-    actionBar.setTitle(R.string.app_name);
-    getFragmentManager().popBackStack();
     switch(item.getItemId()) {
       case R.id.done:
-        this.item.setDetail(detail_str);
-        this.item.setDate((Calendar)final_cal.clone());
-        this.item.setNotes(notes_str);
-        if(repeat.getSetted() != 0) {
-          if(repeat.getSetted() == (1 << 0)) repeat.dayClear();
-          else if(repeat.getSetted() == (1 << 1)) repeat.weekClear();
-          else if(repeat.getSetted() == (1 << 2)) {
-            if(repeat.isDays_of_month_setted()) repeat.daysOfMonthClear();
-            else repeat.onTheMonthClear();
+        if(is_edit && this.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()) {
+          mListener.showDateAlterDialogFragment();
+        }
+        else {
+          actionBar.setDisplayHomeAsUpEnabled(false);
+          actionBar.setTitle(R.string.app_name);
+          fragmentManager.popBackStack();
+
+          this.item.setDetail(detail_str);
+          this.item.setDate((Calendar)final_cal.clone());
+          this.item.setNotes(notes_str);
+          if(repeat.getSetted() != 0) {
+            if(repeat.getSetted() == (1 << 0)) repeat.dayClear();
+            else if(repeat.getSetted() == (1 << 1)) repeat.weekClear();
+            else if(repeat.getSetted() == (1 << 2)) {
+              if(repeat.isDays_of_month_setted()) repeat.daysOfMonthClear();
+              else repeat.onTheMonthClear();
+            }
+            else if(repeat.getSetted() == (1 << 3)) repeat.yearClear();
           }
-          else if(repeat.getSetted() == (1 << 3)) repeat.yearClear();
-
+          else {
+            repeat.clear();
+          }
           this.item.setRepeat(repeat.clone());
-        }
-        else this.item.getRepeat().setLabel(getActivity().getResources().getString(R.string.non_repeat));
+          if(this.item.isAlarm_stopped()) this.item.setAlarm_stopped(false);
 
-        try {
-          mListener.insertDB(this.item, MyDatabaseHelper.TODO_TABLE);
-        } catch(IOException e) {
-          e.printStackTrace();
-        }
+          if(mListener.isItemExists(this.item, MyDatabaseHelper.TODO_TABLE)) {
+            mListener.notifyDataSetChanged();
+            try {
+              mListener.updateDB(this.item, MyDatabaseHelper.TODO_TABLE);
+            } catch(IOException e) {
+              e.printStackTrace();
+            }
+          }
+          else {
+            mListener.addChildren(this.item);
+            mListener.notifyDataSetChanged();
 
-        //データベースに挿入を行ったら、そのデータベースを端末暗号化ストレージへコピーする
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          direct_boot_context = getActivity().createDeviceProtectedStorageContext();
-          direct_boot_context.moveDatabaseFrom(getActivity(), MyDatabaseHelper.TODO_TABLE);
-        }
+            try {
+              mListener.insertDB(this.item, MyDatabaseHelper.TODO_TABLE);
+            } catch(IOException e) {
+              e.printStackTrace();
+            }
+          }
 
-        mListener.addChildren(this.item);
-        mListener.notifyDataSetChanged();
-        mListener.setAlarm(this.item);
+          //データベースに挿入を行ったら、そのデータベースを端末暗号化ストレージへコピーする
+          if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            direct_boot_context = getActivity().createDeviceProtectedStorageContext();
+            direct_boot_context.moveDatabaseFrom(getActivity(), MyDatabaseHelper.TODO_TABLE);
+          }
+
+          mListener.deleteAlarm(this.item);
+          mListener.setAlarm(this.item);
+        }
+        return true;
+      case android.R.id.home:
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setTitle(R.string.app_name);
+        fragmentManager.popBackStack();
         return true;
       default:
         return super.onOptionsItemSelected(item);
@@ -221,8 +253,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public interface OnFragmentInteractionListener {
 
     void insertDB(Item item, String table) throws IOException;
+    void updateDB(Item item, String table) throws IOException;
+    boolean isItemExists(Item item, String table);
     void addChildren(Item item);
     void setAlarm(Item item);
+    void deleteAlarm(Item item);
     void notifyDataSetChanged();
+    void showDateAlterDialogFragment();
   }
 }
