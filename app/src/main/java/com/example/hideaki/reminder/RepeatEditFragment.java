@@ -46,7 +46,7 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
     setHasOptionsMenu(true);
 
     actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-    actionBar.setTitle(R.string.repeat);
+    actionBar.setTitle(R.string.repeat_day_unit);
 
     never = (CheckBoxPreference)findPreference("never");
     everyday = (CheckBoxPreference)findPreference("everyday");
@@ -173,7 +173,7 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
           if(custom.isChecked()) custom.setChecked(false);
           label.setSummary(R.string.non_repeat);
 
-          MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.non_repeat));
+          MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.none));
           MainEditFragment.repeat.setSetted(0);
           MainEditFragment.repeat.setWhich_template(0);
         }

@@ -4,15 +4,18 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 public class Item implements Serializable {
-  private static final long serialVersionUID = -3034988800437990975L;
+
+  private static final long serialVersionUID = -2547782122130839927L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
   //子ビューのコントロールパネルで時間を変えたときだけ時間を元に戻すのに用いる
   private Calendar org_date = (Calendar)date.clone();
+  private Calendar org_date2 = (Calendar)date.clone(); //MinuteRepeatで元の時間を保持しておくのに用いる
   private Tag tag = null;
   private NotifyInterval notify_interval = new NotifyInterval();
   private Repeat repeat = new Repeat();
+  private MinuteRepeat minuteRepeat = new MinuteRepeat();
   private String notes;
   private long time_altered; //子ビューのコントロールパネルで時間を変えたとき、変えた総時間を保持する
   private long org_time_altered; //リピート設定による変更をスナックバーから元に戻すのに用いる
@@ -30,12 +33,16 @@ public class Item implements Serializable {
     return detail;
   }
 
+  public Calendar getDate() {
+    return date;
+  }
+
   public Calendar getOrg_date() {
     return org_date;
   }
 
-  public Calendar getDate() {
-    return date;
+  public Calendar getOrg_date2() {
+    return org_date2;
   }
 
   public Tag getTag() {
@@ -48,6 +55,10 @@ public class Item implements Serializable {
 
   public Repeat getRepeat() {
     return repeat;
+  }
+
+  public MinuteRepeat getMinuteRepeat() {
+    return minuteRepeat;
   }
 
   public String getNotes() {
@@ -82,6 +93,10 @@ public class Item implements Serializable {
     this.org_date = org_date;
   }
 
+  public void setOrg_date2(Calendar org_date2) {
+    this.org_date2 = org_date2;
+  }
+
   public void setTag(Tag tag) {
     this.tag = tag;
   }
@@ -92,6 +107,10 @@ public class Item implements Serializable {
 
   public void setRepeat(Repeat repeat) {
     this.repeat = repeat;
+  }
+
+  public void setMinuteRepeat(MinuteRepeat minuteRepeat) {
+    this.minuteRepeat = minuteRepeat;
   }
 
   public void setNotes(String notes) {

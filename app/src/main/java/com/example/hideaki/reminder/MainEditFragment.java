@@ -28,7 +28,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   static OnFragmentInteractionListener mListener;
   static EditTextPreference detail;
   static EditTextPreference notes;
-  static PreferenceScreen repeat_item;
+  static PreferenceScreen day_repeat_item;
+  static PreferenceScreen minute_repeat_item;
   static Item item;
   static String detail_str;
   static String notes_str;
@@ -36,6 +37,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   static Context direct_boot_context;
   static Calendar final_cal;
   static Repeat repeat;
+  static MinuteRepeat minuteRepeat;
   static boolean is_edit;
   static android.app.FragmentManager fragmentManager;
 
@@ -48,6 +50,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     detail_str = "";
     notes_str = "";
     repeat = new Repeat();
+    minuteRepeat = new MinuteRepeat();
     final_cal = Calendar.getInstance();
     Bundle args = new Bundle();
     args.putSerializable(ITEM, item);
@@ -64,6 +67,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     detail_str = item.getDetail();
     notes_str = item.getNotes();
     repeat = item.getRepeat().clone();
+    minuteRepeat = item.getMinuteRepeat().clone();
     final_cal = (Calendar)item.getDate().clone();
     Bundle args = new Bundle();
     args.putSerializable(ITEM, item);
@@ -94,8 +98,10 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     notes = (EditTextPreference)findPreference("notes");
     notes.setTitle(notes_str);
     notes.setOnPreferenceChangeListener(this);
-    repeat_item = (PreferenceScreen)findPreference("repeat");
-    repeat_item.setOnPreferenceClickListener(this);
+    day_repeat_item = (PreferenceScreen)findPreference("repeat_day_unit");
+    day_repeat_item.setOnPreferenceClickListener(this);
+    minute_repeat_item = (PreferenceScreen)findPreference("repeat_minute_unit");
+    minute_repeat_item.setOnPreferenceClickListener(this);
 
     fragmentManager = getFragmentManager();
   }
@@ -106,8 +112,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     View view = super.onCreateView(inflater, container, savedInstanceState);
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
 
-    if(repeat.getLabel() == null) repeat_item.setSummary(R.string.non_repeat);
-    else repeat_item.setSummary(repeat.getLabel());
+    if(repeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
+    else day_repeat_item.setSummary(repeat.getLabel());
+
+    if(minuteRepeat.getLabel() == null) minute_repeat_item.setSummary(R.string.none);
+    else minute_repeat_item.setSummary(minuteRepeat.getLabel());
 
     return view;
   }
@@ -148,6 +157,9 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
             repeat.clear();
           }
           this.item.setRepeat(repeat.clone());
+          minuteRepeat.setCount(minuteRepeat.getOrg_count());
+          minuteRepeat.setDuration(minuteRepeat.getOrgDuration());
+          this.item.setMinuteRepeat(minuteRepeat.clone());
           if(this.item.isAlarm_stopped()) this.item.setAlarm_stopped(false);
 
           if(mListener.isItemExists(this.item, MyDatabaseHelper.TODO_TABLE)) {
@@ -218,8 +230,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       case "interval":
         transitionFragment(IntervalEditFragment.newInstance());
         return true;
-      case "repeat":
+      case "repeat_day_unit":
         transitionFragment(RepeatEditFragment.newInstance());
+        return true;
+      case "repeat_minute_unit":
+        transitionFragment(MinuteRepeatEditFragment.newInstance());
         return true;
     }
     return false;

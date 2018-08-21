@@ -214,7 +214,7 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
       MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str_custom);
     }
 
-    actionBar.setTitle(R.string.repeat);
+    actionBar.setTitle(R.string.repeat_day_unit);
     getFragmentManager().popBackStack();
     return super.onOptionsItemSelected(item);
   }

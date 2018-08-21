@@ -219,7 +219,8 @@ public class MainActivity
 
     for(Item item : queryAllDB(table)) {
 
-      if(!isAlarmSetted(item) && !item.isAlarm_stopped()) {
+      deleteAlarm(item);
+      if(!item.isAlarm_stopped()) {
         setAlarm(item);
       }
 

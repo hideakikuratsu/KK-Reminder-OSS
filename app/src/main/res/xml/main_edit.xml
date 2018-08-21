@@ -19,8 +19,12 @@
 
     <PreferenceCategory android:title="@string/repeat_option">
         <PreferenceScreen
-            android:key="repeat"
-            android:title="@string/repeat" />
+            android:key="repeat_day_unit"
+            android:title="@string/repeat_day_unit" />
+        <PreferenceScreen
+            android:key="repeat_minute_unit"
+            android:title="@string/repeat_minute_unit"
+            android:summary="@string/none"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/notes">

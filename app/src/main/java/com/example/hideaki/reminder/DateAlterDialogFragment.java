@@ -19,6 +19,7 @@ import static com.example.hideaki.reminder.MainEditFragment.final_cal;
 import static com.example.hideaki.reminder.MainEditFragment.fragmentManager;
 import static com.example.hideaki.reminder.MainEditFragment.item;
 import static com.example.hideaki.reminder.MainEditFragment.mListener;
+import static com.example.hideaki.reminder.MainEditFragment.minuteRepeat;
 import static com.example.hideaki.reminder.MainEditFragment.notes_str;
 import static com.example.hideaki.reminder.MainEditFragment.repeat;
 
@@ -87,6 +88,9 @@ public class DateAlterDialogFragment extends DialogFragment implements DialogInt
       repeat.clear();
     }
     item.setRepeat(repeat.clone());
+    minuteRepeat.setCount(minuteRepeat.getOrg_count());
+    minuteRepeat.setDuration(minuteRepeat.getOrgDuration());
+    item.setMinuteRepeat(minuteRepeat.clone());
     if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
     if(mListener.isItemExists(item, MyDatabaseHelper.TODO_TABLE)) {

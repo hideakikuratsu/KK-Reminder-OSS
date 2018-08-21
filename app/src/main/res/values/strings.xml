@@ -23,7 +23,12 @@
     <string name="notify_option">通知設定</string>
     <string name="interval">通知頻度</string>
     <string name="repeat_option">繰り返し設定</string>
-    <string name="repeat">繰り返し</string>
+    <string name="repeat_day_unit">繰り返し(日単位)</string>
+    <string name="repeat_minute_unit">繰り返し(分単位)</string>
+    <string name="repeat_minute_count">繰り返す回数</string>
+    <string name="repeat_minute_duration">繰り返す長さ</string>
+    <string name="autocomplete">自動で完了済みにする</string>
+    <string name="times">回</string>
     <string name="none">なし</string>
     <string name="home">家事</string>
     <string name="work">仕事</string>

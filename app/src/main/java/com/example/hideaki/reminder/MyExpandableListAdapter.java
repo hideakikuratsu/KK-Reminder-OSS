@@ -34,7 +34,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private static Calendar tmp;
   private static Calendar tmp2;
   private static Calendar tmp3;
-  private static Calendar tmp4;
   private static boolean[] display_groups = new boolean[5];
   static final List<String> groups;
   public static List<List<Item>> children;
@@ -57,10 +56,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private int day_of_month_last;
   private int month;
   private int month_last;
-  private int max_day_of_month;
   private int max_bit;
   private boolean match_to_ordinal_num;
   private boolean sunday_match;
+  private boolean in_minute_repeat;
+  private boolean is_control_panel_locked;
 
   static {
     groups = new ArrayList<>();
@@ -196,7 +196,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         case R.id.child_card:
           if(viewHolder.control_panel.getVisibility() == View.GONE) {
             has_panel = item.getId();
-            viewHolder.control_panel.setVisibility(View.VISIBLE);
+            if(!is_control_panel_locked) {
+              viewHolder.control_panel.setVisibility(View.VISIBLE);
+            }
           }
           else viewHolder.control_panel.setVisibility(View.GONE);
           break;
@@ -386,7 +388,79 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         else {
           item.setDate((Calendar)item.getOrg_date().clone());
         }
-        if((item.getRepeat().getSetted() & (1 << 0)) != 0) {
+
+        if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0
+            && item.getMinuteRepeat().getCount() == 0) {
+
+          item.setDate((Calendar)item.getOrg_date2().clone());
+        }
+        else if((item.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0
+            && item.getMinuteRepeat().getInterval() > item.getMinuteRepeat().getDuration()) {
+
+          item.setDate((Calendar)item.getOrg_date2().clone());
+        }
+
+        in_minute_repeat = false;
+        if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0) {
+          item.getMinuteRepeat().setOrg_count2(item.getMinuteRepeat().getCount());
+        }
+        else if((item.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0) {
+          item.getMinuteRepeat().setOrg_duration2(item.getMinuteRepeat().getDuration());
+        }
+
+        if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0 && item.getMinuteRepeat().getCount() != 0) {
+
+          //countリピート設定時
+          in_minute_repeat = true;
+          now = Calendar.getInstance();
+
+          if(item.getMinuteRepeat().getCount() == item.getMinuteRepeat().getOrg_count()) {
+            item.setOrg_date2((Calendar)item.getOrg_date().clone());
+          }
+
+          if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
+            tmp = (Calendar)item.getDate().clone();
+          }
+          else {
+            tmp = (Calendar)now.clone();
+          }
+          tmp.set(Calendar.HOUR_OF_DAY, tmp.get(Calendar.HOUR_OF_DAY) + item.getMinuteRepeat().getHour());
+          tmp.add(Calendar.MINUTE, item.getMinuteRepeat().getMinute());
+
+          item.setOrg_alarm_stopped(item.isAlarm_stopped());
+          item.setOrg_time_altered(item.getTime_altered());
+          item.setTime_altered(0);
+          item.setAlarm_stopped(false);
+          item.getMinuteRepeat().setCount(item.getMinuteRepeat().getCount() - 1);
+        }
+        else if((item.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0
+            && item.getMinuteRepeat().getInterval() <= item.getMinuteRepeat().getDuration()) {
+
+          //durationリピート設定時
+          in_minute_repeat = true;
+          now = Calendar.getInstance();
+
+          if(item.getMinuteRepeat().getDuration() == item.getMinuteRepeat().getOrgDuration()) {
+            item.setOrg_date2((Calendar)item.getOrg_date().clone());
+          }
+
+          if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
+            tmp = (Calendar)item.getDate().clone();
+          }
+          else {
+            tmp = (Calendar)now.clone();
+          }
+          tmp.set(Calendar.HOUR_OF_DAY, tmp.get(Calendar.HOUR_OF_DAY) + item.getMinuteRepeat().getHour());
+          tmp.add(Calendar.MINUTE, item.getMinuteRepeat().getMinute());
+          item.setOrg_alarm_stopped(item.isAlarm_stopped());
+          item.setOrg_time_altered(item.getTime_altered());
+          item.setTime_altered(0);
+          item.setAlarm_stopped(false);
+          item.getMinuteRepeat().setDuration(
+              item.getMinuteRepeat().getDuration() - item.getMinuteRepeat().getInterval()
+          );
+        }
+        else if((item.getRepeat().getSetted() & (1 << 0)) != 0) {
 
           //Dayリピート設定時
           now = Calendar.getInstance();
@@ -1112,15 +1186,31 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
         }
 
+        if(!in_minute_repeat) {
+          if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0
+              && item.getMinuteRepeat().getCount() == 0) {
+
+            item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrg_count());
+            item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrgDuration());
+          }
+          else if((item.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0
+              && item.getMinuteRepeat().getInterval() > item.getMinuteRepeat().getDuration()) {
+
+            item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrg_count());
+            item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrgDuration());
+          }
+        }
+
 
         //tmp設定後の処理
-        if(item.getRepeat().getSetted() != 0) {
-          item.setOrg_alarm_stopped(item.isAlarm_stopped());
-          item.setOrg_time_altered(item.getTime_altered());
+        if(item.getRepeat().getSetted() != 0 || item.getMinuteRepeat().getWhich_setted() != 0) {
+          if(!in_minute_repeat) {
+            item.setOrg_alarm_stopped(item.isAlarm_stopped());
+            item.setOrg_time_altered(item.getTime_altered());
+            if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
+            if(item.getTime_altered() != 0) item.setTime_altered(0);
+          }
           item.setDate((Calendar)tmp.clone());
-
-          if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
-          if(item.getTime_altered() != 0) item.setTime_altered(0);
 
           mListener.deleteAlarm(item);
           mListener.setAlarm(item);
@@ -1142,13 +1232,38 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
 
         Snackbar.make(convertView, context.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
+            .addCallback(new Snackbar.Callback() {
+              @Override
+              public void onShown(Snackbar sb) {
+
+                super.onShown(sb);
+                if(viewHolder.control_panel.getVisibility() == View.VISIBLE) {
+                  viewHolder.control_panel.setVisibility(View.GONE);
+                }
+                is_control_panel_locked = true;
+              }
+
+              @Override
+              public void onDismissed(Snackbar transientBottomBar, int event) {
+
+                super.onDismissed(transientBottomBar, event);
+                is_control_panel_locked = false;
+              }
+            })
             .setAction(R.string.undo, new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                if(item.getRepeat().getSetted() != 0) {
+                if(item.getRepeat().getSetted() != 0 || item.getMinuteRepeat().getWhich_setted() != 0) {
                   item.setAlarm_stopped(item.isOrg_alarm_stopped());
                   item.setTime_altered(item.getOrg_time_altered());
+                  if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0) {
+                    item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrg_count2());
+                  }
+                  else if((item.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0) {
+                    item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrg_duration2());
+                  }
                   item.getDate().setTimeInMillis(item.getOrg_date().getTimeInMillis() + item.getTime_altered());
+                  notifyDataSetChanged();
 
                   mListener.deleteAlarm(item);
                   if(!item.isAlarm_stopped()) {

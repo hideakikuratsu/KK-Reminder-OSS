@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceScreen
+        android:key="label"
+        android:summary="@string/non_repeat"/>
+
+    <com.example.hideaki.reminder.MinuteRepeatIntervalPickerPreference/>
+
+    <CheckBoxPreference
+        android:key="never"
+        android:defaultValue="true"
+        android:title="@string/none"/>
+
+    <CheckBoxPreference
+        android:key="count"
+        android:defaultValue="false"
+        android:title="@string/repeat_minute_count"/>
+
+    <CheckBoxPreference
+        android:key="duration"
+        android:defaultValue="false"
+        android:title="@string/repeat_minute_duration"/>
+
+    <com.example.hideaki.reminder.MinuteRepeatCountPickerPreference android:key="count_picker"/>
+
+    <com.example.hideaki.reminder.MinuteRepeatDurationPickerPreference android:key="duration_picker"/>
+
+</PreferenceScreen>

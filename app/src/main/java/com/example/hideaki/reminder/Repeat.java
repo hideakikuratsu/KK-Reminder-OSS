@@ -3,6 +3,7 @@ package com.example.hideaki.reminder;
 import java.io.Serializable;
 
 public class Repeat implements Serializable, Cloneable {
+
   private static final long serialVersionUID = 4430799135714799779L;
   private String label = null;
   private int interval = 0;

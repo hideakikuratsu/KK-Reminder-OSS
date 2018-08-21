@@ -15,8 +15,8 @@ public class DatePickerPreference extends Preference {
 
   private final String[] DAY_OF_WEEK_LIST = {"日", "月", "火", "水", "木", "金", "土"};
   private List<String> day_list = new ArrayList<>();
-  private List<String> hour_list = new ArrayList<>();
-  private List<String> minute_list = new ArrayList<>();
+  private static List<String> hour_list = new ArrayList<>();
+  private static List<String> minute_list = new ArrayList<>();
   private static Calendar cal;
   private Calendar norm = Calendar.getInstance();
   private static Calendar now = (Calendar)MainEditFragment.final_cal.clone();
@@ -29,8 +29,17 @@ public class DatePickerPreference extends Preference {
   private NumberPicker day_picker;
   private NumberPicker hour_picker;
   private NumberPicker minute_picker;
-  private int mask_num;
-  private String label_str;
+
+  static {
+
+    for(int i = 0; i < 24; i++) {
+      hour_list.add(i + "時");
+    }
+
+    for(int i = 0; i < 60; i++) {
+      minute_list.add(i + "分");
+    }
+  }
 
   public DatePickerPreference(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -105,44 +114,11 @@ public class DatePickerPreference extends Preference {
             Calendar tmp = (Calendar)norm.clone();
             tmp.add(Calendar.DAY_OF_MONTH, day_picker.getValue());
             MainEditFragment.final_cal.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), tmp.get(Calendar.DAY_OF_MONTH));
-//            if(!MainEditFragment.is_edit && RepeatEditFragment.never != null) {
-//              if(RepeatEditFragment.everyweek.isChecked()) {
-//                label_str = getContext().getResources().getString(R.string.everyweek)
-//                    + DateFormat.format("E曜日", MainEditFragment.final_cal);
-//                MainEditFragment.repeat_item.setSummary(label_str);
-//
-//                MainEditFragment.repeat.setLabel(label_str);
-//                mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
-//                mask_num = mask_num < 2 ? mask_num + 5 : mask_num - 2;
-//                MainEditFragment.repeat.setWeek(1 << mask_num);
-//              }
-//              else if(RepeatEditFragment.everymonth.isChecked()) {
-//                label_str = getContext().getResources().getString(R.string.everymonth)
-//                    + DateFormat.format("d日", MainEditFragment.final_cal);
-//                MainEditFragment.repeat_item.setSummary(label_str);
-//
-//                MainEditFragment.repeat.setLabel(label_str);
-//                mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
-//                MainEditFragment.repeat.setDays_of_month(1 << (mask_num - 1));
-//              }
-//              else if(RepeatEditFragment.everyyear.isChecked()) {
-//                label_str = getContext().getResources().getString(R.string.everyyear)
-//                    + DateFormat.format("M月d日", MainEditFragment.final_cal);
-//                MainEditFragment.repeat_item.setSummary(label_str);
-//
-//                MainEditFragment.repeat.setLabel(label_str);
-//                mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
-//                MainEditFragment.repeat.setYear(1 << mask_num);
-//              }
-//            }
         }
       }
     });
 
     //hour_pickerの実装
-    for(int i = 0; i < 24; i++) {
-      hour_list.add(i + "時");
-    }
     hour_picker = view.findViewById(R.id.hour);
     hour_picker.setDisplayedValues(null);
     hour_picker.setMaxValue(23);
@@ -160,9 +136,6 @@ public class DatePickerPreference extends Preference {
     });
 
     //minute_pickerの実装
-    for(int i = 0; i < 60; i++) {
-      minute_list.add(i + "分");
-    }
     minute_picker = view.findViewById(R.id.minute);
     minute_picker.setDisplayedValues(null);
     minute_picker.setMaxValue(59);
