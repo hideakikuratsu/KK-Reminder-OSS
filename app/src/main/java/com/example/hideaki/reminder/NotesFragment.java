@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,6 +50,19 @@ public class NotesFragment extends Fragment {
 
     View view = inflater.inflate(R.layout.notes, container, false);
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    view.setFocusableInTouchMode(true);
+    view.requestFocus();
+    view.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+          actionBar.setDisplayHomeAsUpEnabled(false);
+          actionBar.setTitle(R.string.app_name);
+        }
+        return false;
+      }
+    });
     notes = view.findViewById(R.id.notes);
 
     return view;

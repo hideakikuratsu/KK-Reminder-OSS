@@ -2,16 +2,20 @@ package com.example.hideaki.reminder;
 
 import android.content.Context;
 import android.preference.Preference;
+import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.NumberPicker;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class DatePickerPreference extends Preference {
+public class DatePickerPreference extends Preference implements View.OnClickListener {
 
   private final String[] DAY_OF_WEEK_LIST = {"日", "月", "火", "水", "木", "金", "土"};
   private List<String> day_list = new ArrayList<>();
@@ -29,6 +33,13 @@ public class DatePickerPreference extends Preference {
   private NumberPicker day_picker;
   private NumberPicker hour_picker;
   private NumberPicker minute_picker;
+  private TableLayout above_quick_time_picker;
+  private TableLayout below_quick_time_picker;
+  private TableRow tableRow;
+  private TextView quick_time;
+  private String quick_time_str;
+  private View saved_view;
+  private FragmentManager manager;
 
   static {
 
@@ -42,7 +53,9 @@ public class DatePickerPreference extends Preference {
   }
 
   public DatePickerPreference(Context context, AttributeSet attrs) {
+
     super(context, attrs);
+    manager = ((MainActivity)context).getSupportFragmentManager();
   }
 
   @Override
@@ -57,14 +70,32 @@ public class DatePickerPreference extends Preference {
   protected void onBindView(View view) {
 
     super.onBindView(view);
+    saved_view = view;
 
-    //初期化
+    //quick_time_pickerの初期化
+    above_quick_time_picker = view.findViewById(R.id.above_quick_time_picker);
+    for(int i = 0; i < above_quick_time_picker.getChildCount(); i++) {
+      tableRow = (TableRow)above_quick_time_picker.getChildAt(i);
+      for(int j = 0; j < tableRow.getChildCount(); j++) {
+        quick_time = (TextView)tableRow.getChildAt(j);
+        quick_time.setOnClickListener(this);
+      }
+    }
+
+    below_quick_time_picker = view.findViewById(R.id.below_quick_time_picker);
+    for(int i = 0; i < below_quick_time_picker.getChildCount(); i++) {
+      tableRow = (TableRow)below_quick_time_picker.getChildAt(i);
+      for(int j = 0; j < tableRow.getChildCount(); j++) {
+        quick_time = (TextView)tableRow.getChildAt(j);
+        quick_time.setOnClickListener(this);
+      }
+    }
+
+    //day_pickerの実装
     cal = (Calendar)MainEditFragment.final_cal.clone();
     now = (Calendar)MainEditFragment.final_cal.clone();
     MainEditFragment.final_cal.set(Calendar.SECOND, 0);
     day_list.clear();
-
-    //day_pickerの実装
     now_year = cal.get(Calendar.YEAR);
     norm.set(now_year, 0, 1, 0, 0, 0);
     long day = (cal.getTimeInMillis() - norm.getTimeInMillis()) / (1000 * 60 * 60 * 24);
@@ -109,6 +140,7 @@ public class DatePickerPreference extends Preference {
           day_picker.setDisplayedValues(day_list.toArray(new String[day_list.size()]));
           day_picker.setValue(offset - (whole_list_size - first_list_size));
         }
+
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
             Calendar tmp = (Calendar)norm.clone();
@@ -168,5 +200,39 @@ public class DatePickerPreference extends Preference {
     }
 
     now_year = cal.get(Calendar.YEAR);
+  }
+
+  @Override
+  public void onClick(View v) {
+
+    switch(v.getId()) {
+      case R.id.above_picker1:
+      case R.id.above_picker2:
+      case R.id.above_picker3:
+      case R.id.above_picker4:
+        quick_time = (TextView)v;
+        quick_time_str = quick_time.getText().toString();
+        MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY,
+            Integer.parseInt(quick_time_str.substring(0, quick_time_str.indexOf(':'))));
+        MainEditFragment.final_cal.set(Calendar.MINUTE,
+            Integer.parseInt(quick_time_str.substring(quick_time_str.indexOf(':') + 1)));
+        break;
+      case R.id.below_picker1:
+        MainEditFragment.final_cal = (Calendar)Calendar.getInstance().clone();
+        break;
+      case R.id.below_picker2:
+        MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY, MainEditFragment.final_cal.get(Calendar.HOUR_OF_DAY) + 3);
+        break;
+      case R.id.below_picker3:
+        MainEditFragment.final_cal.add(Calendar.DAY_OF_MONTH, 7);
+        break;
+      case R.id.below_picker4:
+        DatePickerDialogFragment dialog = new DatePickerDialogFragment();
+        dialog.setInstance(this, saved_view);
+        dialog.show(manager, "date_picker_fragment");
+        break;
+    }
+
+    onBindView(saved_view);
   }
 }

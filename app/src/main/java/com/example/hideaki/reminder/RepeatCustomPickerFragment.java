@@ -8,6 +8,7 @@ import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,12 +67,34 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    view.setFocusableInTouchMode(true);
+    view.requestFocus();
+    view.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+          registerCustomRepeat();
+          actionBar.setTitle(R.string.repeat_day_unit);
+        }
+        return false;
+      }
+    });
 
     return view;
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+
+    registerCustomRepeat();
+
+    actionBar.setTitle(R.string.repeat_day_unit);
+    getFragmentManager().popBackStack();
+    return super.onOptionsItemSelected(item);
+  }
+
+  private void registerCustomRepeat() {
 
     match_to_template = false;
     if(MainEditFragment.repeat.getInterval() == 1) {
@@ -213,10 +236,6 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
 
       MainEditFragment.repeat.setLabel(RepeatEditFragment.label_str_custom);
     }
-
-    actionBar.setTitle(R.string.repeat_day_unit);
-    getFragmentManager().popBackStack();
-    return super.onOptionsItemSelected(item);
   }
 
   public static void addPickerPreference() {

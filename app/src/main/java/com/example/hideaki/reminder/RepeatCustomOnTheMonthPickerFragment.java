@@ -5,6 +5,7 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,18 @@ public class RepeatCustomOnTheMonthPickerFragment extends PreferenceFragment {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    view.setFocusableInTouchMode(true);
+    view.requestFocus();
+    view.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+          actionBar.setTitle(R.string.custom);
+        }
+        return false;
+      }
+    });
 
     return view;
   }

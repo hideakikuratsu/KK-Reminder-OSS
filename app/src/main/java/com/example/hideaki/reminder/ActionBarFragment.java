@@ -1,5 +1,6 @@
 package com.example.hideaki.reminder;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -13,7 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 
-public class ActionBarFragment extends android.app.Fragment {
+public class ActionBarFragment extends Fragment {
 
   private SearchView searchView;
   private ToggleButton button;

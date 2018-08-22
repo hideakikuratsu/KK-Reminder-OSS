@@ -8,8 +8,10 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +42,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   static MinuteRepeat minuteRepeat;
   static boolean is_edit;
   static android.app.FragmentManager fragmentManager;
+  private DialogFragment dialog = new DateAlterDialogFragment();
 
   public static MainEditFragment newInstance() {
 
@@ -111,6 +114,19 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    view.setFocusableInTouchMode(true);
+    view.requestFocus();
+    view.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+          actionBar.setDisplayHomeAsUpEnabled(false);
+          actionBar.setTitle(R.string.app_name);
+        }
+        return false;
+      }
+    });
 
     if(repeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
     else day_repeat_item.setSummary(repeat.getLabel());
@@ -134,7 +150,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     switch(item.getItemId()) {
       case R.id.done:
         if(is_edit && this.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()) {
-          mListener.showDateAlterDialogFragment();
+          dialog.show(((MainActivity)getActivity()).getSupportFragmentManager(), "date_alter_dialog");
         }
         else {
           actionBar.setDisplayHomeAsUpEnabled(false);
@@ -274,6 +290,5 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     void setAlarm(Item item);
     void deleteAlarm(Item item);
     void notifyDataSetChanged();
-    void showDateAlterDialogFragment();
   }
 }

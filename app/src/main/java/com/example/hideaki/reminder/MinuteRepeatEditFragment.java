@@ -6,8 +6,10 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
   static CheckBoxPreference duration;
   private Preference count_picker;
   private Preference duration_picker;
+  private DialogFragment dialog = new MinuteRepeatIllegalDurationDialogFragment();
 
   public static MinuteRepeatEditFragment newInstance() {
 
@@ -56,6 +59,29 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    view.setFocusableInTouchMode(true);
+    view.requestFocus();
+    view.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+          if(MainEditFragment.minuteRepeat.getInterval() > MainEditFragment.minuteRepeat.getOrgDuration()
+              && duration.isChecked()) {
+            dialog.show(((MainActivity)getActivity()).getSupportFragmentManager(), "illegal_duration_dialog");
+            return true;
+          }
+          else {
+            actionBar.setTitle(R.string.edit);
+            return false;
+          }
+        }
+        else {
+          return false;
+        }
+
+      }
+    });
 
     //チェック状態の初期化
     never.setChecked(false);
@@ -92,7 +118,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
 
     if(MainEditFragment.minuteRepeat.getInterval() > MainEditFragment.minuteRepeat.getOrgDuration()
         && duration.isChecked()) {
-      //TODO: 警告ダイアログを出す
+      dialog.show(((MainActivity)getActivity()).getSupportFragmentManager(), "illegal_duration_dialog");
     }
     else {
       actionBar.setTitle(R.string.edit);

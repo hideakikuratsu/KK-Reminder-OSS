@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ExpandableListView;
 
@@ -347,14 +346,18 @@ public class MainActivity
 
   //メイン画面のアクションバーを表示
   private void showActionBar() {
-    getFragmentManager()
-        .beginTransaction()
-        .replace(android.R.id.content, ActionBarFragment.newInstance())
-        .commit();
+
+    if(getFragmentManager().findFragmentByTag("ActionBarFragment") == null) {
+      getFragmentManager()
+          .beginTransaction()
+          .replace(android.R.id.content, ActionBarFragment.newInstance(), "ActionBarFragment")
+          .commit();
+    }
   }
 
   //編集画面を表示(引数にitemを渡すとそのitemの情報が入力された状態で表示)
   public void showMainEditFragment() {
+
     getFragmentManager()
         .beginTransaction()
         .replace(android.R.id.content, MainEditFragment.newInstance())
@@ -363,6 +366,7 @@ public class MainActivity
   }
 
   public void showMainEditFragment(Item item) {
+
     getFragmentManager()
         .beginTransaction()
         .replace(android.R.id.content, MainEditFragment.newInstance(item))
@@ -371,17 +375,12 @@ public class MainActivity
   }
 
   public void showNotesFragment(Item item) {
+
     getFragmentManager()
         .beginTransaction()
         .replace(android.R.id.content, NotesFragment.newInstance(item))
         .addToBackStack(null)
         .commit();
-  }
-
-  public void showDateAlterDialogFragment() {
-
-    DialogFragment dialog = new DateAlterDialogFragment();
-    dialog.show(getSupportFragmentManager(), "dialog");
   }
 
   public void notifyDataSetChanged() {

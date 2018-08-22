@@ -127,7 +127,7 @@
                 android:background="@android:color/white"
                 android:clickable="true"
                 android:gravity="center"
-                android:text="@string/below_picker1_default" />
+                android:text="@string/below_picker1" />
 
             <TextView
                 android:id="@+id/below_picker2"
@@ -139,7 +139,7 @@
                 android:background="@android:color/white"
                 android:clickable="true"
                 android:gravity="center"
-                android:text="@string/below_picker2_default" />
+                android:text="@string/below_picker2" />
 
             <TextView
                 android:id="@+id/below_picker3"
@@ -151,7 +151,7 @@
                 android:background="@android:color/white"
                 android:clickable="true"
                 android:gravity="center"
-                android:text="@string/below_picker3_default" />
+                android:text="@string/below_picker3" />
 
             <TextView
                 android:id="@+id/below_picker4"
@@ -162,7 +162,7 @@
                 android:background="@android:color/white"
                 android:clickable="true"
                 android:gravity="center"
-                android:text="@string/below_picker4_default" />
+                android:text="@string/below_picker4" />
 
         </TableRow>
 

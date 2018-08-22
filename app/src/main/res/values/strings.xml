@@ -15,10 +15,10 @@
     <string name="above_picker2_default">12:00</string>
     <string name="above_picker3_default">15:00</string>
     <string name="above_picker4_default">18:00</string>
-    <string name="below_picker1_default">今日</string>
-    <string name="below_picker2_default">+3時間</string>
-    <string name="below_picker3_default">+1週間</string>
-    <string name="below_picker4_default">カレンダー</string>
+    <string name="below_picker1">今</string>
+    <string name="below_picker2">+3時間</string>
+    <string name="below_picker3">+1週間</string>
+    <string name="below_picker4">カレンダー</string>
     <string name="tag">タグ</string>
     <string name="notify_option">通知設定</string>
     <string name="interval">通知頻度</string>
@@ -27,6 +27,7 @@
     <string name="repeat_minute_unit">繰り返し(分単位)</string>
     <string name="repeat_minute_count">繰り返す回数</string>
     <string name="repeat_minute_duration">繰り返す長さ</string>
+    <string name="repeat_minute_illegal_dialog">繰り返しの間隔が繰り返す長さを超えています\n繰り返す長さよりも短い間隔を設定し直してください</string>
     <string name="autocomplete">自動で完了済みにする</string>
     <string name="times">回</string>
     <string name="none">なし</string>
