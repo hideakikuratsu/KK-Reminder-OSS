@@ -13,6 +13,10 @@
         android:key="on_the_month"
         android:title="@string/on_the_month"/>
 
+    <com.example.hideaki.reminder.RepeatCustomDaysOfMonthPickerPreference android:key="days_of_month_picker"/>
+
+    <com.example.hideaki.reminder.RepeatCustomOnTheMonthPickerPreference android:key="on_the_month_picker"/>
+
     <com.example.hideaki.reminder.RepeatCustomYearPickerPreference android:key="year"/>
 
 </PreferenceScreen>

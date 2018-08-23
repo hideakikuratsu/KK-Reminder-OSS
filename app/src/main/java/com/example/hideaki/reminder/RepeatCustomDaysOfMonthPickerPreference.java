@@ -59,6 +59,11 @@ public class RepeatCustomDaysOfMonthPickerPreference extends Preference implemen
     }
 
     calendar_table = view.findViewById(R.id.calendar_table);
+    if(days_of_month == 0) {
+      mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
+      days_of_month |= (1 << (mask_num - 1));
+      MainEditFragment.repeat.setDays_of_month(days_of_month);
+    }
     for(int i = 0; i < calendar_table.getChildCount(); i++) {
       tableRow = (TableRow)calendar_table.getChildAt(i);
       for(int j = 0; j < tableRow.getChildCount(); j++) {

@@ -19,7 +19,7 @@ public class RepeatCustomWeekPickerPreference extends Preference implements Comp
   private CheckBox checkBox;
   private int mask_num;
   static int week;
-  private int cal_day_of_week;
+  private int day_of_week;
 
   public RepeatCustomWeekPickerPreference(Context context, AttributeSet attrs) {
 
@@ -42,36 +42,19 @@ public class RepeatCustomWeekPickerPreference extends Preference implements Comp
     week = MainEditFragment.repeat.getWeek();
 
     week_table = view.findViewById(R.id.week_table);
-    if(week != 0) {
-      for(int i = 0; i < week_table.getChildCount(); i++) {
-        tableRow = (TableRow)week_table.getChildAt(i);
-        for(int j = 0; j < tableRow.getChildCount(); j++) {
-          checkBox = (CheckBox)tableRow.getChildAt(j);
-          if((week & (1 << i)) != 0) checkBox.setChecked(true);
-          checkBox.setOnCheckedChangeListener(this);
-        }
-      }
-    }
-    else {
-      week = 0;
-      cal_day_of_week = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
-
-      for(int i = 0; i < week_table.getChildCount(); i++) {
-        tableRow = (TableRow)week_table.getChildAt(i);
-        for(int j = 0; j < tableRow.getChildCount(); j++) {
-          checkBox = (CheckBox)tableRow.getChildAt(j);
-          mask_num = Integer.parseInt(checkBox.getTag().toString());
-
-          if(mask_num + 2 == cal_day_of_week || mask_num - 5 == cal_day_of_week) {
-            week |= (1 << mask_num);
-            checkBox.setChecked(true);
-          }
-
-          checkBox.setOnCheckedChangeListener(this);
-        }
-      }
-
+    if(week == 0) {
+      day_of_week = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
+      mask_num = day_of_week == 1 ? day_of_week + 5 : day_of_week - 2;
+      week |= (1 << mask_num);
       MainEditFragment.repeat.setWeek(week);
+    }
+    for(int i = 0; i < week_table.getChildCount(); i++) {
+      tableRow = (TableRow)week_table.getChildAt(i);
+      for(int j = 0; j < tableRow.getChildCount(); j++) {
+        checkBox = (CheckBox)tableRow.getChildAt(j);
+        if((week & (1 << (i * 5 + j))) != 0) checkBox.setChecked(true);
+        checkBox.setOnCheckedChangeListener(this);
+      }
     }
   }
 

@@ -84,6 +84,12 @@ public class RepeatCustomPickerPreference extends Preference {
       month = true;
       RepeatCustomPickerFragment.addDaysOfMonthPreference();
       RepeatCustomPickerFragment.addOnTheMonthPreference();
+      if(MainEditFragment.repeat.isDays_of_month_setted()) {
+        RepeatCustomPickerFragment.addDaysOfMonthPickerPreference();
+      }
+      else {
+        RepeatCustomPickerFragment.addOnTheMonthPickerPreference();
+      }
     }
     else if(MainEditFragment.repeat.getScale() == 4) {
       year = true;
@@ -106,6 +112,12 @@ public class RepeatCustomPickerPreference extends Preference {
               else if(month) {
                 RepeatCustomPickerFragment.removeDaysOfMonthPreference();
                 RepeatCustomPickerFragment.removeOnTheMonthPreference();
+                if(MainEditFragment.repeat.isDays_of_month_setted()) {
+                  RepeatCustomPickerFragment.removeDaysOfMonthPickerPreference();
+                }
+                else {
+                  RepeatCustomPickerFragment.removeOnTheMonthPickerPreference();
+                }
                 month = false;
               }
               else if(year) {
@@ -121,6 +133,12 @@ public class RepeatCustomPickerPreference extends Preference {
               else if(month) {
                 RepeatCustomPickerFragment.removeDaysOfMonthPreference();
                 RepeatCustomPickerFragment.removeOnTheMonthPreference();
+                if(MainEditFragment.repeat.isDays_of_month_setted()) {
+                  RepeatCustomPickerFragment.removeDaysOfMonthPickerPreference();
+                }
+                else {
+                  RepeatCustomPickerFragment.removeOnTheMonthPickerPreference();
+                }
                 month = false;
               }
               else if(year) {
@@ -145,6 +163,12 @@ public class RepeatCustomPickerPreference extends Preference {
 
               RepeatCustomPickerFragment.addDaysOfMonthPreference();
               RepeatCustomPickerFragment.addOnTheMonthPreference();
+              if(MainEditFragment.repeat.isDays_of_month_setted()) {
+                RepeatCustomPickerFragment.addDaysOfMonthPickerPreference();
+              }
+              else {
+                RepeatCustomPickerFragment.addOnTheMonthPickerPreference();
+              }
               month = true;
 
               if(MainEditFragment.repeat.getDays_of_month() == 0) {
@@ -165,6 +189,12 @@ public class RepeatCustomPickerPreference extends Preference {
               else if(month) {
                 RepeatCustomPickerFragment.removeDaysOfMonthPreference();
                 RepeatCustomPickerFragment.removeOnTheMonthPreference();
+                if(MainEditFragment.repeat.isDays_of_month_setted()) {
+                  RepeatCustomPickerFragment.removeDaysOfMonthPickerPreference();
+                }
+                else {
+                  RepeatCustomPickerFragment.removeOnTheMonthPickerPreference();
+                }
                 month = false;
               }
 

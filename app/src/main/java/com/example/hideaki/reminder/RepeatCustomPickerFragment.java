@@ -25,7 +25,9 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
   private static Preference picker;
   private static Preference week;
   static CheckBoxPreference days_of_month;
+  private static Preference days_of_month_picker;
   static CheckBoxPreference on_the_month;
+  private static Preference on_the_month_picker;
   private static Preference year;
   private int cal_day_of_week;
   private int cal_day_of_month;
@@ -54,9 +56,11 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
     days_of_month = (CheckBoxPreference)findPreference("days_of_month");
     days_of_month.setChecked(MainEditFragment.repeat.isDays_of_month_setted());
     days_of_month.setOnPreferenceClickListener(this);
+    days_of_month_picker = findPreference("days_of_month_picker");
     on_the_month = (CheckBoxPreference)findPreference("on_the_month");
     on_the_month.setChecked(!MainEditFragment.repeat.isDays_of_month_setted());
     on_the_month.setOnPreferenceClickListener(this);
+    on_the_month_picker = findPreference("on_the_month_picker");
     year = findPreference("year");
     rootPreferenceScreen.removeAll();
     addPickerPreference();
@@ -250,8 +254,16 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
     rootPreferenceScreen.addPreference(days_of_month);
   }
 
+  public static void addDaysOfMonthPickerPreference() {
+    rootPreferenceScreen.addPreference(days_of_month_picker);
+  }
+
   public static void addOnTheMonthPreference() {
     rootPreferenceScreen.addPreference(on_the_month);
+  }
+
+  public static void addOnTheMonthPickerPreference() {
+    rootPreferenceScreen.addPreference(on_the_month_picker);
   }
 
   public static void addYearPreference() {
@@ -266,20 +278,20 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
     rootPreferenceScreen.removePreference(days_of_month);
   }
 
+  public static void removeDaysOfMonthPickerPreference() {
+    rootPreferenceScreen.removePreference(days_of_month_picker);
+  }
+
   public static void removeOnTheMonthPreference() {
     rootPreferenceScreen.removePreference(on_the_month);
   }
 
-  public static void removeYearPreference() {
-    rootPreferenceScreen.removePreference(year);
+  public static void removeOnTheMonthPickerPreference() {
+    rootPreferenceScreen.removePreference(on_the_month_picker);
   }
 
-  private void transitionFragment(PreferenceFragment next) {
-    getFragmentManager()
-        .beginTransaction()
-        .replace(android.R.id.content, next)
-        .addToBackStack(null)
-        .commit();
+  public static void removeYearPreference() {
+    rootPreferenceScreen.removePreference(year);
   }
 
   @Override
@@ -288,23 +300,21 @@ public class RepeatCustomPickerFragment extends PreferenceFragment implements Pr
     switch(preference.getKey()) {
       case "days_of_month":
         if(days_of_month.isChecked()) {
-          if(MainEditFragment.repeat.getDays_of_month() == 0) {
-            mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
-            MainEditFragment.repeat.setDays_of_month(1 << (mask_num - 1));
-          }
           MainEditFragment.repeat.setDays_of_month_setted(true);
           on_the_month.setChecked(false);
+          addDaysOfMonthPickerPreference();
+          removeOnTheMonthPickerPreference();
         }
         else days_of_month.setChecked(true);
-        transitionFragment(RepeatCustomDaysOfMonthPickerFragment.newInstance());
         return true;
       case "on_the_month":
         if(on_the_month.isChecked()) {
           MainEditFragment.repeat.setDays_of_month_setted(false);
           days_of_month.setChecked(false);
+          addOnTheMonthPickerPreference();
+          removeDaysOfMonthPickerPreference();
         }
         else on_the_month.setChecked(true);
-        transitionFragment(RepeatCustomOnTheMonthPickerFragment.newInstance());
         return true;
     }
     return false;

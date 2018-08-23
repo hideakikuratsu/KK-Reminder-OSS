@@ -19,7 +19,6 @@ public class RepeatCustomYearPickerPreference extends Preference implements Comp
   private CheckBox checkBox;
   private int mask_num;
   static int year;
-  private int cal_month;
 
   public RepeatCustomYearPickerPreference(Context context, AttributeSet attrs) {
 
@@ -42,36 +41,18 @@ public class RepeatCustomYearPickerPreference extends Preference implements Comp
     year = MainEditFragment.repeat.getYear();
 
     year_table = view.findViewById(R.id.year_table);
-    if(year != 0) {
-      for(int i = 0; i < year_table.getChildCount(); i++) {
-        tableRow = (TableRow)year_table.getChildAt(i);
-        for(int j = 0; j < tableRow.getChildCount(); j++) {
-          checkBox = (CheckBox)tableRow.getChildAt(j);
-          if((year & (1 << i)) != 0) checkBox.setChecked(true);
-          checkBox.setOnCheckedChangeListener(this);
-        }
-      }
-    }
-    else {
-      year = 0;
-      cal_month = MainEditFragment.final_cal.get(Calendar.MONTH);
-
-      for(int i = 0; i < year_table.getChildCount(); i++) {
-        tableRow = (TableRow)year_table.getChildAt(i);
-        for(int j = 0; j < tableRow.getChildCount(); j++) {
-          checkBox = (CheckBox)tableRow.getChildAt(j);
-          mask_num = Integer.parseInt(checkBox.getTag().toString());
-
-          if(mask_num == cal_month) {
-            year |= (1 << mask_num);
-            checkBox.setChecked(true);
-          }
-
-          checkBox.setOnCheckedChangeListener(this);
-        }
-      }
-
+    if(year == 0) {
+      mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
+      year |= (1 << mask_num);
       MainEditFragment.repeat.setYear(year);
+    }
+    for(int i = 0; i < year_table.getChildCount(); i++) {
+      tableRow = (TableRow)year_table.getChildAt(i);
+      for(int j = 0; j < tableRow.getChildCount(); j++) {
+        checkBox = (CheckBox)tableRow.getChildAt(j);
+        if((year & (1 << (i * 6 + j))) != 0) checkBox.setChecked(true);
+        checkBox.setOnCheckedChangeListener(this);
+      }
     }
   }
 
