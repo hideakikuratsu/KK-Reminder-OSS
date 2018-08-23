@@ -12,7 +12,7 @@ import android.widget.TableRow;
 
 import java.util.Calendar;
 
-public class RepeatCustomWeekPickerPreference extends Preference implements CompoundButton.OnCheckedChangeListener {
+public class DayRepeatCustomWeekPickerPreference extends Preference implements CompoundButton.OnCheckedChangeListener {
 
   private TableLayout week_table;
   private TableRow tableRow;
@@ -21,7 +21,7 @@ public class RepeatCustomWeekPickerPreference extends Preference implements Comp
   static int week;
   private int day_of_week;
 
-  public RepeatCustomWeekPickerPreference(Context context, AttributeSet attrs) {
+  public DayRepeatCustomWeekPickerPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
   }
@@ -39,14 +39,14 @@ public class RepeatCustomWeekPickerPreference extends Preference implements Comp
 
     super.onBindView(view);
 
-    week = MainEditFragment.repeat.getWeek();
+    week = MainEditFragment.dayRepeat.getWeek();
 
     week_table = view.findViewById(R.id.week_table);
     if(week == 0) {
       day_of_week = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
       mask_num = day_of_week == 1 ? day_of_week + 5 : day_of_week - 2;
       week |= (1 << mask_num);
-      MainEditFragment.repeat.setWeek(week);
+      MainEditFragment.dayRepeat.setWeek(week);
     }
     for(int i = 0; i < week_table.getChildCount(); i++) {
       tableRow = (TableRow)week_table.getChildAt(i);
@@ -73,6 +73,6 @@ public class RepeatCustomWeekPickerPreference extends Preference implements Comp
       }
     }
 
-    MainEditFragment.repeat.setWeek(week);
+    MainEditFragment.dayRepeat.setWeek(week);
   }
 }

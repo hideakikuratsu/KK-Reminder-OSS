@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 
 import java.util.Calendar;
 
-public class RepeatEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+public class DayRepeatEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
   private ActionBar actionBar;
   static CheckBoxPreference never;
@@ -34,9 +34,9 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
   static String label_str_custom;
   private int mask_num;
 
-  public static RepeatEditFragment newInstance() {
+  public static DayRepeatEditFragment newInstance() {
 
-    return new RepeatEditFragment();
+    return new DayRepeatEditFragment();
   }
 
   @Override
@@ -105,7 +105,7 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
     everymonth.setChecked(false);
     everyyear.setChecked(false);
     custom.setChecked(false);
-    switch(MainEditFragment.repeat.getWhich_template()) {
+    switch(MainEditFragment.dayRepeat.getWhich_template()) {
       case 0:
         never.setChecked(true);
         break;
@@ -118,36 +118,36 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
       case 1 << 2:
         everyweek.setChecked(true);
 
-        MainEditFragment.repeat.setLabel(label_str_everyweek);
+        MainEditFragment.dayRepeat.setLabel(label_str_everyweek);
         mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
         mask_num = mask_num < 2 ? mask_num + 5 : mask_num - 2;
-        MainEditFragment.repeat.setWeek(1 << mask_num);
+        MainEditFragment.dayRepeat.setWeek(1 << mask_num);
         break;
       case 1 << 3:
         everymonth.setChecked(true);
 
-        MainEditFragment.repeat.setLabel(label_str_everymonth);
+        MainEditFragment.dayRepeat.setLabel(label_str_everymonth);
         mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
-        MainEditFragment.repeat.setDays_of_month(1 << (mask_num - 1));
+        MainEditFragment.dayRepeat.setDays_of_month(1 << (mask_num - 1));
         break;
       case 1 << 4:
         everyyear.setChecked(true);
 
-        MainEditFragment.repeat.setLabel(label_str_everyyear);
+        MainEditFragment.dayRepeat.setLabel(label_str_everyyear);
         mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
-        MainEditFragment.repeat.setYear(1 << mask_num);
-        MainEditFragment.repeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
+        MainEditFragment.dayRepeat.setYear(1 << mask_num);
+        MainEditFragment.dayRepeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
         break;
       case 1 << 5:
         custom.setChecked(true);
         break;
     }
 
-    if(MainEditFragment.repeat.getLabel() == null) {
+    if(MainEditFragment.dayRepeat.getLabel() == null) {
       label.setSummary(R.string.non_repeat);
     }
     else {
-      label.setSummary(MainEditFragment.repeat.getLabel());
+      label.setSummary(MainEditFragment.dayRepeat.getLabel());
     }
 
     return view;
@@ -173,7 +173,7 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
   @Override
   public boolean onPreferenceClick(Preference preference) {
 
-    label.setSummary(MainEditFragment.repeat.getLabel());
+    label.setSummary(MainEditFragment.dayRepeat.getLabel());
 
     switch(preference.getKey()) {
       case "never":
@@ -186,9 +186,9 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
           if(custom.isChecked()) custom.setChecked(false);
           label.setSummary(R.string.non_repeat);
 
-          MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.none));
-          MainEditFragment.repeat.setSetted(0);
-          MainEditFragment.repeat.setWhich_template(0);
+          MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.none));
+          MainEditFragment.dayRepeat.setSetted(0);
+          MainEditFragment.dayRepeat.setWhich_template(0);
         }
         else never.setChecked(true);
         return true;
@@ -202,11 +202,11 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
           if(custom.isChecked()) custom.setChecked(false);
           label.setSummary(R.string.everyday);
 
-          MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.everyday));
-          MainEditFragment.repeat.setSetted(1 << 0);
-          MainEditFragment.repeat.setWhich_template(1 << 0);
-          MainEditFragment.repeat.setInterval(1);
-          MainEditFragment.repeat.setDay(true);
+          MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.everyday));
+          MainEditFragment.dayRepeat.setSetted(1 << 0);
+          MainEditFragment.dayRepeat.setWhich_template(1 << 0);
+          MainEditFragment.dayRepeat.setInterval(1);
+          MainEditFragment.dayRepeat.setDay(true);
         }
         else everyday.setChecked(true);
         return true;
@@ -220,11 +220,11 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
           if(custom.isChecked()) custom.setChecked(false);
           label.setSummary(R.string.everyweekday);
 
-          MainEditFragment.repeat.setLabel(getActivity().getResources().getString(R.string.everyweekday));
-          MainEditFragment.repeat.setSetted(1 << 1);
-          MainEditFragment.repeat.setWhich_template(1 << 1);
-          MainEditFragment.repeat.setInterval(1);
-          MainEditFragment.repeat.setWeek(Integer.parseInt("11111", 2));
+          MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.everyweekday));
+          MainEditFragment.dayRepeat.setSetted(1 << 1);
+          MainEditFragment.dayRepeat.setWhich_template(1 << 1);
+          MainEditFragment.dayRepeat.setInterval(1);
+          MainEditFragment.dayRepeat.setWeek(Integer.parseInt("11111", 2));
         }
         else everyweekday.setChecked(true);
         return true;
@@ -238,13 +238,13 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
           if(custom.isChecked()) custom.setChecked(false);
           label.setSummary(label_str_everyweek);
 
-          MainEditFragment.repeat.setLabel(label_str_everyweek);
-          MainEditFragment.repeat.setSetted(1 << 1);
-          MainEditFragment.repeat.setWhich_template(1 << 2);
-          MainEditFragment.repeat.setInterval(1);
+          MainEditFragment.dayRepeat.setLabel(label_str_everyweek);
+          MainEditFragment.dayRepeat.setSetted(1 << 1);
+          MainEditFragment.dayRepeat.setWhich_template(1 << 2);
+          MainEditFragment.dayRepeat.setInterval(1);
           mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
           mask_num = mask_num < 2 ? mask_num + 5 : mask_num - 2;
-          MainEditFragment.repeat.setWeek(1 << mask_num);
+          MainEditFragment.dayRepeat.setWeek(1 << mask_num);
         }
         else everyweek.setChecked(true);
         return true;
@@ -258,14 +258,14 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
           if(custom.isChecked()) custom.setChecked(false);
           label.setSummary(label_str_everymonth);
 
-          MainEditFragment.repeat.setLabel(label_str_everymonth);
-          MainEditFragment.repeat.setSetted(1 << 2);
-          MainEditFragment.repeat.setWhich_template(1 << 3);
-          MainEditFragment.repeat.setInterval(1);
+          MainEditFragment.dayRepeat.setLabel(label_str_everymonth);
+          MainEditFragment.dayRepeat.setSetted(1 << 2);
+          MainEditFragment.dayRepeat.setWhich_template(1 << 3);
+          MainEditFragment.dayRepeat.setInterval(1);
           mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
-          MainEditFragment.repeat.setDays_of_month(1 << (mask_num - 1));
-          if(!MainEditFragment.repeat.isDays_of_month_setted()) {
-            MainEditFragment.repeat.setDays_of_month_setted(true);
+          MainEditFragment.dayRepeat.setDays_of_month(1 << (mask_num - 1));
+          if(!MainEditFragment.dayRepeat.isDays_of_month_setted()) {
+            MainEditFragment.dayRepeat.setDays_of_month_setted(true);
           }
         }
         else everymonth.setChecked(true);
@@ -280,13 +280,13 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
           if(custom.isChecked()) custom.setChecked(false);
           label.setSummary(label_str_everyyear);
 
-          MainEditFragment.repeat.setLabel(label_str_everyyear);
-          MainEditFragment.repeat.setSetted(1 << 3);
-          MainEditFragment.repeat.setWhich_template(1 << 4);
-          MainEditFragment.repeat.setInterval(1);
+          MainEditFragment.dayRepeat.setLabel(label_str_everyyear);
+          MainEditFragment.dayRepeat.setSetted(1 << 3);
+          MainEditFragment.dayRepeat.setWhich_template(1 << 4);
+          MainEditFragment.dayRepeat.setInterval(1);
           mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
-          MainEditFragment.repeat.setYear(1 << mask_num);
-          MainEditFragment.repeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
+          MainEditFragment.dayRepeat.setYear(1 << mask_num);
+          MainEditFragment.dayRepeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
         }
         else everyyear.setChecked(true);
         return true;
@@ -300,7 +300,7 @@ public class RepeatEditFragment extends PreferenceFragment implements Preference
           if(everyyear.isChecked()) everyyear.setChecked(false);
         }
         else custom.setChecked(true);
-        transitionFragment(RepeatCustomPickerFragment.newInstance());
+        transitionFragment(DayRepeatCustomPickerFragment.newInstance());
         return true;
     }
     return false;

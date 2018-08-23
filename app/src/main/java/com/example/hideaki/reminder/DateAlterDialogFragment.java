@@ -21,7 +21,7 @@ import static com.example.hideaki.reminder.MainEditFragment.item;
 import static com.example.hideaki.reminder.MainEditFragment.mListener;
 import static com.example.hideaki.reminder.MainEditFragment.minuteRepeat;
 import static com.example.hideaki.reminder.MainEditFragment.notes_str;
-import static com.example.hideaki.reminder.MainEditFragment.repeat;
+import static com.example.hideaki.reminder.MainEditFragment.dayRepeat;
 
 public class DateAlterDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
 
@@ -75,19 +75,19 @@ public class DateAlterDialogFragment extends DialogFragment implements DialogInt
     item.setDetail(detail_str);
     item.setDate((Calendar)final_cal.clone());
     item.setNotes(notes_str);
-    if(repeat.getSetted() != 0) {
-      if(repeat.getSetted() == (1 << 0)) repeat.dayClear();
-      else if(repeat.getSetted() == (1 << 1)) repeat.weekClear();
-      else if(repeat.getSetted() == (1 << 2)) {
-        if(repeat.isDays_of_month_setted()) repeat.daysOfMonthClear();
-        else repeat.onTheMonthClear();
+    if(dayRepeat.getSetted() != 0) {
+      if(dayRepeat.getSetted() == (1 << 0)) dayRepeat.dayClear();
+      else if(dayRepeat.getSetted() == (1 << 1)) dayRepeat.weekClear();
+      else if(dayRepeat.getSetted() == (1 << 2)) {
+        if(dayRepeat.isDays_of_month_setted()) dayRepeat.daysOfMonthClear();
+        else dayRepeat.onTheMonthClear();
       }
-      else if(repeat.getSetted() == (1 << 3)) repeat.yearClear();
+      else if(dayRepeat.getSetted() == (1 << 3)) dayRepeat.yearClear();
     }
     else {
-      repeat.clear();
+      dayRepeat.clear();
     }
-    item.setRepeat(repeat.clone());
+    item.setDayRepeat(dayRepeat.clone());
     minuteRepeat.setCount(minuteRepeat.getOrg_count());
     minuteRepeat.setDuration(minuteRepeat.getOrgDuration());
     item.setMinuteRepeat(minuteRepeat.clone());

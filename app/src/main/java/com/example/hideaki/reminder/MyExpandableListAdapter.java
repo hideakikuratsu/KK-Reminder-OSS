@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ExpandableListView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -61,6 +62,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private boolean sunday_match;
   private boolean in_minute_repeat;
   private boolean is_control_panel_locked;
+  private String repeat_str;
 
   static {
     groups = new ArrayList<>();
@@ -460,14 +462,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               item.getMinuteRepeat().getDuration() - item.getMinuteRepeat().getInterval()
           );
         }
-        else if((item.getRepeat().getSetted() & (1 << 0)) != 0) {
+        else if((item.getDayRepeat().getSetted() & (1 << 0)) != 0) {
 
           //Dayリピート設定時
           now = Calendar.getInstance();
 
           if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
             tmp = (Calendar)item.getDate().clone();
-            tmp.add(Calendar.DAY_OF_MONTH, item.getRepeat().getInterval());
+            tmp.add(Calendar.DAY_OF_MONTH, item.getDayRepeat().getInterval());
           }
           else {
             tmp = (Calendar)now.clone();
@@ -475,10 +477,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
             tmp.set(Calendar.SECOND, 0);
 
-            if(tmp.before(now)) tmp.add(Calendar.DAY_OF_MONTH, item.getRepeat().getInterval());
+            if(tmp.before(now)) tmp.add(Calendar.DAY_OF_MONTH, item.getDayRepeat().getInterval());
           }
         }
-        else if((item.getRepeat().getSetted() & (1 << 1)) != 0) {
+        else if((item.getDayRepeat().getSetted() & (1 << 1)) != 0) {
 
           //Weekリピート設定時
           now = Calendar.getInstance();
@@ -491,18 +493,18 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             //intervalの処理
             max_bit = 0;
             for(int i = 0; i < 7; i++) {
-              if((item.getRepeat().getWeek() & (1 << i)) != 0) {
+              if((item.getDayRepeat().getWeek() & (1 << i)) != 0) {
                 max_bit = i;
               }
             }
             day_of_week_last = max_bit;
             if(day_of_week >= day_of_week_last) {
-              tmp.add(Calendar.DAY_OF_MONTH, (item.getRepeat().getInterval() - 1) * 7);
+              tmp.add(Calendar.DAY_OF_MONTH, (item.getDayRepeat().getInterval() - 1) * 7);
             }
 
             int i = 1;
             while(i < 7 - day_of_week + 1) {
-              if((item.getRepeat().getWeek() & (1 << (day_of_week + i))) != 0) {
+              if((item.getDayRepeat().getWeek() & (1 << (day_of_week + i))) != 0) {
                 tmp.add(Calendar.DAY_OF_MONTH, i);
 
                 break;
@@ -530,7 +532,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             //intervalの処理
             max_bit = 0;
             for(int i = 0; i < 7; i++) {
-              if((item.getRepeat().getWeek() & (1 << i)) != 0) {
+              if((item.getDayRepeat().getWeek() & (1 << i)) != 0) {
                 max_bit = i;
               }
             }
@@ -540,7 +542,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               if(tmp.after(now)) {
                 tmp.add(Calendar.DAY_OF_MONTH, -7);
               }
-              tmp.add(Calendar.DAY_OF_MONTH, (item.getRepeat().getInterval()) * 7);
+              tmp.add(Calendar.DAY_OF_MONTH, (item.getDayRepeat().getInterval()) * 7);
               day_of_week = 0;
             }
             else if(day_of_week == day_of_week_last) {
@@ -549,14 +551,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 if(tmp.after(now)) {
                   tmp.add(Calendar.DAY_OF_MONTH, -7);
                 }
-                tmp.add(Calendar.DAY_OF_MONTH, (item.getRepeat().getInterval()) * 7);
+                tmp.add(Calendar.DAY_OF_MONTH, (item.getDayRepeat().getInterval()) * 7);
                 day_of_week = 0;
               }
             }
 
             int i = 0;
             while(i < 7 - day_of_week) {
-              if((item.getRepeat().getWeek() & (1 << (day_of_week + i))) != 0) {
+              if((item.getDayRepeat().getWeek() & (1 << (day_of_week + i))) != 0) {
                 tmp.add(Calendar.DAY_OF_MONTH, i);
 
                 if(tmp.after(now)) {
@@ -571,18 +573,18 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 if(tmp.after(now)) {
                   tmp.add(Calendar.DAY_OF_MONTH, -7);
                 }
-                tmp.add(Calendar.DAY_OF_MONTH, (item.getRepeat().getInterval()) * 7);
+                tmp.add(Calendar.DAY_OF_MONTH, (item.getDayRepeat().getInterval()) * 7);
                 day_of_week = 0;
               }
             }
           }
         }
-        else if((item.getRepeat().getSetted() & (1 << 2)) != 0) {
+        else if((item.getDayRepeat().getSetted() & (1 << 2)) != 0) {
 
           //Monthリピート設定時
           now = Calendar.getInstance();
 
-          if(item.getRepeat().isDays_of_month_setted()) {
+          if(item.getDayRepeat().isDays_of_month_setted()) {
 
             //DaysOfMonthリピート設定時
             if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
@@ -592,7 +594,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               //intervalの処理
               max_bit = 0;
               for(int i = 0; i < 31; i++) {
-                if((item.getRepeat().getDays_of_month() & (1 << i)) != 0) {
+                if((item.getDayRepeat().getDays_of_month() & (1 << i)) != 0) {
                   max_bit = i;
                 }
               }
@@ -602,13 +604,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               }
               if(tmp.get(Calendar.DAY_OF_MONTH) >= day_of_month_last) {
                 tmp.set(Calendar.DAY_OF_MONTH, 1);
-                tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                 day_of_month = 1;
               }
 
               int i = 0;
               while(i < 31 - day_of_month + 1) {
-                if((item.getRepeat().getDays_of_month() & (1 << (day_of_month - 1 + i))) != 0) {
+                if((item.getDayRepeat().getDays_of_month() & (1 << (day_of_month - 1 + i))) != 0) {
                   if((day_of_month - 1 + i) >= tmp.getActualMaximum(Calendar.DAY_OF_MONTH)) {
                     tmp.set(Calendar.DAY_OF_MONTH, tmp.getActualMaximum(Calendar.DAY_OF_MONTH));
                   }
@@ -625,7 +627,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 if(i >= 31 - day_of_month + 1) {
                   i = 0;
                   tmp.set(Calendar.DAY_OF_MONTH, 1);
-                  tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                  tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                   day_of_month = 1;
                 }
               }
@@ -640,7 +642,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               //intervalの処理
               max_bit = 0;
               for(int i = 0; i < 31; i++) {
-                if((item.getRepeat().getDays_of_month() & (1 << i)) != 0) {
+                if((item.getDayRepeat().getDays_of_month() & (1 << i)) != 0) {
                   max_bit = i;
                 }
               }
@@ -650,20 +652,20 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               }
               if(tmp.get(Calendar.DAY_OF_MONTH) > day_of_month_last) {
                 tmp.set(Calendar.DAY_OF_MONTH, 1);
-                tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                 day_of_month = 1;
               }
               else if(tmp.get(Calendar.DAY_OF_MONTH) == day_of_month_last) {
                 if(tmp.before(now)) {
                   tmp.set(Calendar.DAY_OF_MONTH, 1);
-                  tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                  tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                   day_of_month = 1;
                 }
               }
 
               int i = 0;
               while(i < 31 - day_of_month + 1) {
-                if((item.getRepeat().getDays_of_month() & (1 << (day_of_month - 1 + i))) != 0) {
+                if((item.getDayRepeat().getDays_of_month() & (1 << (day_of_month - 1 + i))) != 0) {
                   if((day_of_month - 1 + i) >= tmp.getActualMaximum(Calendar.DAY_OF_MONTH)) {
                     tmp.set(Calendar.DAY_OF_MONTH, tmp.getActualMaximum(Calendar.DAY_OF_MONTH));
                   }
@@ -680,7 +682,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 if(i >= 31 - day_of_month + 1) {
                   i = 0;
                   tmp.set(Calendar.DAY_OF_MONTH, 1);
-                  tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                  tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                   day_of_month = 1;
                 }
               }
@@ -690,14 +692,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
             //OnTheMonthリピート設定時
             now = Calendar.getInstance();
-            if(item.getRepeat().getOn_the_month().ordinal() < 6) {
-              day_of_week = item.getRepeat().getOn_the_month().ordinal() + 2;
+            if(item.getDayRepeat().getOn_the_month().ordinal() < 6) {
+              day_of_week = item.getDayRepeat().getOn_the_month().ordinal() + 2;
             }
-            else if(item.getRepeat().getOn_the_month().ordinal() == 6) {
+            else if(item.getDayRepeat().getOn_the_month().ordinal() == 6) {
               day_of_week = 1;
             }
             else {
-              day_of_week = item.getRepeat().getOn_the_month().ordinal() + 1;
+              day_of_week = item.getDayRepeat().getOn_the_month().ordinal() + 1;
             }
 
             if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
@@ -723,9 +725,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 while(true) {
 
                   //intervalの処理
-                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getRepeat().getOrdinal_number()) {
+                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getDayRepeat().getOrdinal_number()) {
                     tmp.set(Calendar.DAY_OF_MONTH, 1);
-                    tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                    tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                     tmp2 = (Calendar)tmp.clone();
 
                     tmp.set(Calendar.DAY_OF_WEEK, day_of_week);
@@ -734,7 +736,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     }
                   }
 
-                  while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getRepeat().getOrdinal_number()
+                  while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getDayRepeat().getOrdinal_number()
                       && tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < tmp.getActualMaximum(Calendar.DAY_OF_WEEK_IN_MONTH)) {
                     tmp.add(Calendar.DAY_OF_MONTH, 7);
                   }
@@ -742,7 +744,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   if(tmp.after(item.getDate())) break;
                   else {
                     tmp.set(Calendar.DAY_OF_MONTH, 1);
-                    tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                    tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                     tmp2 = (Calendar)tmp.clone();
 
                     tmp.set(Calendar.DAY_OF_WEEK, day_of_week);
@@ -770,9 +772,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   tmp.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
                   //intervalの処理
-                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getRepeat().getOrdinal_number()) {
+                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getDayRepeat().getOrdinal_number()) {
                     tmp.set(Calendar.DAY_OF_MONTH, 1);
-                    tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                    tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                     tmp2 = (Calendar)tmp.clone();
 
                     tmp.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -783,22 +785,22 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     month = tmp.get(Calendar.MONTH);
                   }
 
-                  while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getRepeat().getOrdinal_number()
+                  while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getDayRepeat().getOrdinal_number()
                       && tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < tmp.getActualMaximum(Calendar.DAY_OF_WEEK_IN_MONTH)) {
                     tmp.add(Calendar.DAY_OF_MONTH, 7);
                   }
 
-                  tmp.add(Calendar.DAY_OF_MONTH, item.getRepeat().getWeekday_num());
-                  item.getRepeat().setWeekday_num(item.getRepeat().getWeekday_num() + 1);
+                  tmp.add(Calendar.DAY_OF_MONTH, item.getDayRepeat().getWeekday_num());
+                  item.getDayRepeat().setWeekday_num(item.getDayRepeat().getWeekday_num() + 1);
 
                   if(tmp.after(item.getDate()) && month == tmp.get(Calendar.MONTH)) {
-                    item.getRepeat().setWeekday_num(0);
+                    item.getDayRepeat().setWeekday_num(0);
                     break;
                   }
-                  else if(item.getRepeat().getWeekday_num() > 4 || month != tmp.get(Calendar.MONTH)) {
-                    tmp.add(Calendar.DAY_OF_MONTH, -item.getRepeat().getWeekday_num() + 1);
+                  else if(item.getDayRepeat().getWeekday_num() > 4 || month != tmp.get(Calendar.MONTH)) {
+                    tmp.add(Calendar.DAY_OF_MONTH, -item.getDayRepeat().getWeekday_num() + 1);
                     tmp.set(Calendar.DAY_OF_MONTH, 1);
-                    tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                    tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                     tmp2 = (Calendar)tmp.clone();
 
                     tmp.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -807,7 +809,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     }
 
                     month = tmp.get(Calendar.MONTH);
-                    item.getRepeat().setWeekday_num(0);
+                    item.getDayRepeat().setWeekday_num(0);
                   }
                 }
               }
@@ -817,13 +819,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 tmp2.add(Calendar.DAY_OF_MONTH, 1);
 
                 match_to_ordinal_num = false;
-                if(item.getRepeat().getOrdinal_number() == 5) {
+                if(item.getDayRepeat().getOrdinal_number() == 5) {
                   if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) == tmp.getActualMaximum(Calendar.DAY_OF_WEEK_IN_MONTH)) {
                     match_to_ordinal_num = true;
                   }
                 }
                 else {
-                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) == item.getRepeat().getOrdinal_number()) {
+                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) == item.getDayRepeat().getOrdinal_number()) {
                     match_to_ordinal_num = true;
                   }
                 }
@@ -851,9 +853,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   while(true) {
 
                     //intervalの処理
-                    if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getRepeat().getOrdinal_number()) {
+                    if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getDayRepeat().getOrdinal_number()) {
                       tmp.set(Calendar.DAY_OF_MONTH, 1);
-                      tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                      tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                       tmp2 = (Calendar)tmp.clone();
 
                       tmp.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
@@ -862,7 +864,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                       }
                     }
 
-                    while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getRepeat().getOrdinal_number()
+                    while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getDayRepeat().getOrdinal_number()
                         && tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < tmp.getActualMaximum(Calendar.DAY_OF_WEEK_IN_MONTH)) {
                       tmp.add(Calendar.DAY_OF_MONTH, 7);
                     }
@@ -870,7 +872,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     if(tmp.after(item.getDate())) break;
                     else {
                       tmp.set(Calendar.DAY_OF_MONTH, 1);
-                      tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                      tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                       tmp2 = (Calendar)tmp.clone();
 
                       tmp.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
@@ -907,9 +909,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 while(true) {
 
                   //intervalの処理
-                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getRepeat().getOrdinal_number()) {
+                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getDayRepeat().getOrdinal_number()) {
                     tmp.set(Calendar.DAY_OF_MONTH, 1);
-                    tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                    tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                     tmp2 = (Calendar)tmp.clone();
 
                     tmp.set(Calendar.DAY_OF_WEEK, day_of_week);
@@ -918,7 +920,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     }
                   }
 
-                  while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getRepeat().getOrdinal_number()
+                  while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getDayRepeat().getOrdinal_number()
                       && tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < tmp.getActualMaximum(Calendar.DAY_OF_WEEK_IN_MONTH)) {
                     tmp.add(Calendar.DAY_OF_MONTH, 7);
                   }
@@ -926,7 +928,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   if(tmp.after(now)) break;
                   else {
                     tmp.set(Calendar.DAY_OF_MONTH, 1);
-                    tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                    tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                     tmp2 = (Calendar)tmp.clone();
 
                     tmp.set(Calendar.DAY_OF_WEEK, day_of_week);
@@ -954,9 +956,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   tmp.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
                   //intervalの処理
-                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getRepeat().getOrdinal_number()) {
+                  if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getDayRepeat().getOrdinal_number()) {
                     tmp.set(Calendar.DAY_OF_MONTH, 1);
-                    tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                    tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                     tmp2 = (Calendar)tmp.clone();
 
                     tmp.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -967,22 +969,22 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     month = tmp.get(Calendar.MONTH);
                   }
 
-                  while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getRepeat().getOrdinal_number()
+                  while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getDayRepeat().getOrdinal_number()
                       && tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < tmp.getActualMaximum(Calendar.DAY_OF_WEEK_IN_MONTH)) {
                     tmp.add(Calendar.DAY_OF_MONTH, 7);
                   }
 
-                  tmp.add(Calendar.DAY_OF_MONTH, item.getRepeat().getWeekday_num());
-                  item.getRepeat().setWeekday_num(item.getRepeat().getWeekday_num() + 1);
+                  tmp.add(Calendar.DAY_OF_MONTH, item.getDayRepeat().getWeekday_num());
+                  item.getDayRepeat().setWeekday_num(item.getDayRepeat().getWeekday_num() + 1);
 
                   if(tmp.after(now) && month == tmp.get(Calendar.MONTH)) {
-                    item.getRepeat().setWeekday_num(0);
+                    item.getDayRepeat().setWeekday_num(0);
                     break;
                   }
-                  else if(item.getRepeat().getWeekday_num() > 4 || month != tmp.get(Calendar.MONTH)) {
-                    tmp.add(Calendar.DAY_OF_MONTH, -item.getRepeat().getWeekday_num() + 1);
+                  else if(item.getDayRepeat().getWeekday_num() > 4 || month != tmp.get(Calendar.MONTH)) {
+                    tmp.add(Calendar.DAY_OF_MONTH, -item.getDayRepeat().getWeekday_num() + 1);
                     tmp.set(Calendar.DAY_OF_MONTH, 1);
-                    tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                    tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                     tmp2 = (Calendar)tmp.clone();
 
                     tmp.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -991,7 +993,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     }
 
                     month = tmp.get(Calendar.MONTH);
-                    item.getRepeat().setWeekday_num(0);
+                    item.getDayRepeat().setWeekday_num(0);
                   }
                 }
               }
@@ -1001,7 +1003,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   tmp2 = (Calendar)tmp.clone();
                   tmp2.add(Calendar.DAY_OF_MONTH, -1);
 
-                  if(tmp2.get(Calendar.DAY_OF_WEEK_IN_MONTH) == item.getRepeat().getOrdinal_number()) {
+                  if(tmp2.get(Calendar.DAY_OF_WEEK_IN_MONTH) == item.getDayRepeat().getOrdinal_number()) {
                     sunday_match = true;
                   }
                 }
@@ -1013,13 +1015,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   tmp2.add(Calendar.DAY_OF_MONTH, 1);
 
                   match_to_ordinal_num = false;
-                  if(item.getRepeat().getOrdinal_number() == 5) {
+                  if(item.getDayRepeat().getOrdinal_number() == 5) {
                     if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) == tmp.getActualMaximum(Calendar.DAY_OF_WEEK_IN_MONTH)) {
                       match_to_ordinal_num = true;
                     }
                   }
                   else {
-                    if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) == item.getRepeat().getOrdinal_number()) {
+                    if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) == item.getDayRepeat().getOrdinal_number()) {
                       match_to_ordinal_num = true;
                     }
                   }
@@ -1046,9 +1048,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     while(true) {
 
                       //intervalの処理
-                      if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getRepeat().getOrdinal_number()) {
+                      if(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) > item.getDayRepeat().getOrdinal_number()) {
                         tmp.set(Calendar.DAY_OF_MONTH, 1);
-                        tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                        tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                         tmp2 = (Calendar)tmp.clone();
 
                         tmp.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
@@ -1057,7 +1059,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                         }
                       }
 
-                      while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getRepeat().getOrdinal_number()
+                      while(tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < item.getDayRepeat().getOrdinal_number()
                           && tmp.get(Calendar.DAY_OF_WEEK_IN_MONTH) < tmp.getActualMaximum(Calendar.DAY_OF_WEEK_IN_MONTH)) {
                         tmp.add(Calendar.DAY_OF_MONTH, 7);
                       }
@@ -1065,7 +1067,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                       if(tmp.after(now)) break;
                       else {
                         tmp.set(Calendar.DAY_OF_MONTH, 1);
-                        tmp.add(Calendar.MONTH, item.getRepeat().getInterval());
+                        tmp.add(Calendar.MONTH, item.getDayRepeat().getInterval());
                         tmp2 = (Calendar)tmp.clone();
 
                         tmp.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
@@ -1080,7 +1082,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             }
           }
         }
-        else if((item.getRepeat().getSetted() & (1 << 3)) != 0) {
+        else if((item.getDayRepeat().getSetted() & (1 << 3)) != 0) {
 
           //Yearリピート設定時
           now = Calendar.getInstance();
@@ -1092,24 +1094,24 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             //intervalの処理
             max_bit = 0;
             for(int i = 0; i < 12; i++) {
-              if((item.getRepeat().getYear() & (1 << i)) != 0) {
+              if((item.getDayRepeat().getYear() & (1 << i)) != 0) {
                 max_bit = i;
               }
             }
             month_last = max_bit;
             if(month >= month_last) {
               tmp.set(Calendar.MONTH, 0);
-              tmp.add(Calendar.YEAR, item.getRepeat().getInterval());
+              tmp.add(Calendar.YEAR, item.getDayRepeat().getInterval());
               month = 0;
             }
 
             int i = 0;
             while(i < 12 - month) {
-              if((item.getRepeat().getYear() & (1 << (month + i))) != 0) {
+              if((item.getDayRepeat().getYear() & (1 << (month + i))) != 0) {
                 tmp.add(Calendar.MONTH, i);
-                if(tmp.get(Calendar.DAY_OF_MONTH) < item.getRepeat().getDay_of_month_of_year()
-                    && item.getRepeat().getDay_of_month_of_year() <= tmp.getActualMaximum(Calendar.DAY_OF_MONTH)) {
-                  tmp.set(Calendar.DAY_OF_MONTH, item.getRepeat().getDay_of_month_of_year());
+                if(tmp.get(Calendar.DAY_OF_MONTH) < item.getDayRepeat().getDay_of_month_of_year()
+                    && item.getDayRepeat().getDay_of_month_of_year() <= tmp.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+                  tmp.set(Calendar.DAY_OF_MONTH, item.getDayRepeat().getDay_of_month_of_year());
                 }
 
                 if(tmp.after(item.getDate())) {
@@ -1121,7 +1123,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               if(i >= 12 - month) {
                 i = 0;
                 tmp.set(Calendar.MONTH, 0);
-                tmp.add(Calendar.YEAR, item.getRepeat().getInterval());
+                tmp.add(Calendar.YEAR, item.getDayRepeat().getInterval());
                 month = 0;
               }
             }
@@ -1143,31 +1145,31 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             //intervalの処理
             max_bit = 0;
             for(int i = 0; i < 12; i++) {
-              if((item.getRepeat().getYear() & (1 << i)) != 0) {
+              if((item.getDayRepeat().getYear() & (1 << i)) != 0) {
                 max_bit = i;
               }
             }
             month_last = max_bit;
             if(month > month_last) {
               tmp.set(Calendar.MONTH, 0);
-              tmp.add(Calendar.YEAR, item.getRepeat().getInterval());
+              tmp.add(Calendar.YEAR, item.getDayRepeat().getInterval());
               month = 0;
             }
             else if(month == month_last) {
               if(tmp.before(now)) {
                 tmp.set(Calendar.MONTH, 0);
-                tmp.add(Calendar.YEAR, item.getRepeat().getInterval());
+                tmp.add(Calendar.YEAR, item.getDayRepeat().getInterval());
                 month = 0;
               }
             }
 
             int i = 0;
             while(i < 12 - month) {
-              if((item.getRepeat().getYear() & (1 << (month + i))) != 0) {
+              if((item.getDayRepeat().getYear() & (1 << (month + i))) != 0) {
                 tmp.add(Calendar.MONTH, i);
-                if(tmp.get(Calendar.DAY_OF_MONTH) < item.getRepeat().getDay_of_month_of_year()
-                    && item.getRepeat().getDay_of_month_of_year() <= tmp.getActualMaximum(Calendar.DAY_OF_MONTH)) {
-                  tmp.set(Calendar.DAY_OF_MONTH, item.getRepeat().getDay_of_month_of_year());
+                if(tmp.get(Calendar.DAY_OF_MONTH) < item.getDayRepeat().getDay_of_month_of_year()
+                    && item.getDayRepeat().getDay_of_month_of_year() <= tmp.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+                  tmp.set(Calendar.DAY_OF_MONTH, item.getDayRepeat().getDay_of_month_of_year());
                 }
 
                 if(tmp.after(now)) {
@@ -1179,7 +1181,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               if(i >= 12 - month) {
                 i = 0;
                 tmp.set(Calendar.MONTH, 0);
-                tmp.add(Calendar.YEAR, item.getRepeat().getInterval());
+                tmp.add(Calendar.YEAR, item.getDayRepeat().getInterval());
                 month = 0;
               }
             }
@@ -1203,7 +1205,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
 
         //tmp設定後の処理
-        if(item.getRepeat().getSetted() != 0 || item.getMinuteRepeat().getWhich_setted() != 0) {
+        if(item.getDayRepeat().getSetted() != 0 || item.getMinuteRepeat().getWhich_setted() != 0) {
           if(!in_minute_repeat) {
             item.setOrg_alarm_stopped(item.isAlarm_stopped());
             item.setOrg_time_altered(item.getTime_altered());
@@ -1253,7 +1255,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             .setAction(R.string.undo, new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                if(item.getRepeat().getSetted() != 0 || item.getMinuteRepeat().getWhich_setted() != 0) {
+                if(item.getDayRepeat().getSetted() != 0 || item.getMinuteRepeat().getWhich_setted() != 0) {
                   item.setAlarm_stopped(item.isOrg_alarm_stopped());
                   item.setTime_altered(item.getOrg_time_altered());
                   if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0) {
@@ -1389,6 +1391,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       convertView = LayoutInflater
           .from(viewGroup.getContext())
           .inflate(R.layout.parent_layout, null);
+
+      ((ExpandableListView)viewGroup).expandGroup(i);
     }
 
     ((TextView)convertView.findViewById(R.id.day)).setText(getGroup(i).toString());
@@ -1409,7 +1413,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       viewHolder = new ChildViewHolder();
       viewHolder.time = convertView.findViewById(R.id.date);
       viewHolder.detail = convertView.findViewById(R.id.detail);
-      viewHolder.repeat = convertView.findViewById(R.id.repeat);
+      viewHolder.repeat = convertView.findViewById(R.id.day_repeat);
       viewHolder.child_card = convertView.findViewById(R.id.child_card);
       viewHolder.clock_image = convertView.findViewById(R.id.clock_image);
       viewHolder.check_item = convertView.findViewById(R.id.check_item);
@@ -1434,8 +1438,30 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //設定された時間、詳細、リピート通知のインターバルを表示
     displayDate(viewHolder, item);
     viewHolder.detail.setText(item.getDetail());
-    if(item.getRepeat().getLabel() == null) viewHolder.repeat.setText(R.string.non_repeat);
-    else viewHolder.repeat.setText(item.getRepeat().getLabel());
+    repeat_str = "";
+    if(item.getDayRepeat().getLabel() != null
+        && !item.getDayRepeat().getLabel().equals(context.getString(R.string.none))) {
+      repeat_str += item.getDayRepeat().getLabel();
+      if(!item.getDayRepeat().getLabel().equals(context.getString(R.string.everyday))) {
+        repeat_str += "に";
+      }
+    }
+    if(item.getMinuteRepeat().getLabel() != null
+        && !item.getMinuteRepeat().getLabel().equals(context.getString(R.string.none))) {
+      repeat_str += item.getMinuteRepeat().getLabel();
+    }
+    if(item.getDayRepeat().getLabel() != null
+        && !item.getDayRepeat().getLabel().equals(context.getString(R.string.none))
+        && (item.getMinuteRepeat().getLabel() == null
+        || item.getMinuteRepeat().getLabel().equals(context.getString(R.string.none)))) {
+      repeat_str += "繰り返す";
+    }
+    if(repeat_str.equals("")) {
+      viewHolder.repeat.setText(R.string.non_repeat);
+    }
+    else {
+      viewHolder.repeat.setText(repeat_str);
+    }
 
     //チェックが入っている場合、チェックを外す
     if(viewHolder.check_item.isChecked()) {

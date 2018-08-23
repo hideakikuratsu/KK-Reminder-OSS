@@ -2,7 +2,7 @@ package com.example.hideaki.reminder;
 
 import java.io.Serializable;
 
-public class Repeat implements Serializable, Cloneable {
+public class DayRepeat implements Serializable, Cloneable {
 
   private static final long serialVersionUID = 4430799135714799779L;
   private String label = null;
@@ -134,26 +134,26 @@ public class Repeat implements Serializable, Cloneable {
     this.which_template = which_template;
   }
 
-  public Repeat clone() {
+  public DayRepeat clone() {
 
-    Repeat repeat = new Repeat();
+    DayRepeat dayRepeat = new DayRepeat();
 
-    repeat.setLabel(this.label);
-    repeat.setInterval(this.interval);
-    repeat.setScale(this.scale);
-    repeat.setDay(this.day);
-    repeat.setWeek(this.week);
-    repeat.setDays_of_month(this.days_of_month);
-    repeat.setOrdinal_number(this.ordinal_number);
-    repeat.setOn_the_month(this.on_the_month);
-    repeat.setWeekday_num(this.weekday_num);
-    repeat.setDays_of_month_setted(this.days_of_month_setted);
-    repeat.setYear(this.year);
-    repeat.setDay_of_month_of_year(this.day_of_month_of_year);
-    repeat.setSetted(this.setted);
-    repeat.setWhich_template(this.which_template);
+    dayRepeat.setLabel(this.label);
+    dayRepeat.setInterval(this.interval);
+    dayRepeat.setScale(this.scale);
+    dayRepeat.setDay(this.day);
+    dayRepeat.setWeek(this.week);
+    dayRepeat.setDays_of_month(this.days_of_month);
+    dayRepeat.setOrdinal_number(this.ordinal_number);
+    dayRepeat.setOn_the_month(this.on_the_month);
+    dayRepeat.setWeekday_num(this.weekday_num);
+    dayRepeat.setDays_of_month_setted(this.days_of_month_setted);
+    dayRepeat.setYear(this.year);
+    dayRepeat.setDay_of_month_of_year(this.day_of_month_of_year);
+    dayRepeat.setSetted(this.setted);
+    dayRepeat.setWhich_template(this.which_template);
 
-    return repeat;
+    return dayRepeat;
   }
 
   public void clear() {

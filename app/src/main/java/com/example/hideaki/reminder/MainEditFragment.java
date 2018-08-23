@@ -38,7 +38,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   static ActionBar actionBar;
   static Context direct_boot_context;
   static Calendar final_cal;
-  static Repeat repeat;
+  static DayRepeat dayRepeat;
   static MinuteRepeat minuteRepeat;
   static boolean is_edit;
   static android.app.FragmentManager fragmentManager;
@@ -52,7 +52,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     is_edit = false;
     detail_str = "";
     notes_str = "";
-    repeat = new Repeat();
+    dayRepeat = new DayRepeat();
     minuteRepeat = new MinuteRepeat();
     final_cal = Calendar.getInstance();
     Bundle args = new Bundle();
@@ -69,7 +69,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     is_edit = true;
     detail_str = item.getDetail();
     notes_str = item.getNotes();
-    repeat = item.getRepeat().clone();
+    dayRepeat = item.getDayRepeat().clone();
     minuteRepeat = item.getMinuteRepeat().clone();
     final_cal = (Calendar)item.getDate().clone();
     Bundle args = new Bundle();
@@ -128,8 +128,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       }
     });
 
-    if(repeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
-    else day_repeat_item.setSummary(repeat.getLabel());
+    if(dayRepeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
+    else day_repeat_item.setSummary(dayRepeat.getLabel());
 
     if(minuteRepeat.getLabel() == null) minute_repeat_item.setSummary(R.string.none);
     else minute_repeat_item.setSummary(minuteRepeat.getLabel());
@@ -160,19 +160,19 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
           this.item.setDetail(detail_str);
           this.item.setDate((Calendar)final_cal.clone());
           this.item.setNotes(notes_str);
-          if(repeat.getSetted() != 0) {
-            if(repeat.getSetted() == (1 << 0)) repeat.dayClear();
-            else if(repeat.getSetted() == (1 << 1)) repeat.weekClear();
-            else if(repeat.getSetted() == (1 << 2)) {
-              if(repeat.isDays_of_month_setted()) repeat.daysOfMonthClear();
-              else repeat.onTheMonthClear();
+          if(dayRepeat.getSetted() != 0) {
+            if(dayRepeat.getSetted() == (1 << 0)) dayRepeat.dayClear();
+            else if(dayRepeat.getSetted() == (1 << 1)) dayRepeat.weekClear();
+            else if(dayRepeat.getSetted() == (1 << 2)) {
+              if(dayRepeat.isDays_of_month_setted()) dayRepeat.daysOfMonthClear();
+              else dayRepeat.onTheMonthClear();
             }
-            else if(repeat.getSetted() == (1 << 3)) repeat.yearClear();
+            else if(dayRepeat.getSetted() == (1 << 3)) dayRepeat.yearClear();
           }
           else {
-            repeat.clear();
+            dayRepeat.clear();
           }
-          this.item.setRepeat(repeat.clone());
+          this.item.setDayRepeat(dayRepeat.clone());
           minuteRepeat.setCount(minuteRepeat.getOrg_count());
           minuteRepeat.setDuration(minuteRepeat.getOrgDuration());
           this.item.setMinuteRepeat(minuteRepeat.clone());
@@ -247,7 +247,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         transitionFragment(IntervalEditFragment.newInstance());
         return true;
       case "repeat_day_unit":
-        transitionFragment(RepeatEditFragment.newInstance());
+        transitionFragment(DayRepeatEditFragment.newInstance());
         return true;
       case "repeat_minute_unit":
         transitionFragment(MinuteRepeatEditFragment.newInstance());

@@ -11,7 +11,7 @@ import android.widget.TableRow;
 
 import java.util.Calendar;
 
-public class RepeatCustomDaysOfMonthPickerPreference extends Preference implements View.OnClickListener {
+public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference implements View.OnClickListener {
 
   private TableRow last_table_row;
   private TableLayout calendar_table;
@@ -21,7 +21,7 @@ public class RepeatCustomDaysOfMonthPickerPreference extends Preference implemen
   private int mask_num;
   static int days_of_month;
 
-  public RepeatCustomDaysOfMonthPickerPreference(Context context, AttributeSet attrs) {
+  public DayRepeatCustomDaysOfMonthPickerPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
   }
@@ -40,7 +40,7 @@ public class RepeatCustomDaysOfMonthPickerPreference extends Preference implemen
     super.onBindView(view);
 
     //その月の最大日数に応じた日にちの表示処理
-    days_of_month = MainEditFragment.repeat.getDays_of_month();
+    days_of_month = MainEditFragment.dayRepeat.getDays_of_month();
     last_table_row = view.findViewById(R.id.last_table_row);
     max_days_of_month = MainEditFragment.final_cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
@@ -62,7 +62,7 @@ public class RepeatCustomDaysOfMonthPickerPreference extends Preference implemen
     if(days_of_month == 0) {
       mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
       days_of_month |= (1 << (mask_num - 1));
-      MainEditFragment.repeat.setDays_of_month(days_of_month);
+      MainEditFragment.dayRepeat.setDays_of_month(days_of_month);
     }
     for(int i = 0; i < calendar_table.getChildCount(); i++) {
       tableRow = (TableRow)calendar_table.getChildAt(i);
@@ -100,6 +100,6 @@ public class RepeatCustomDaysOfMonthPickerPreference extends Preference implemen
       else day.setBackgroundColor(getContext().getResources().getColor(android.R.color.background_light));
     }
 
-    MainEditFragment.repeat.setDays_of_month(days_of_month);
+    MainEditFragment.dayRepeat.setDays_of_month(days_of_month);
   }
 }

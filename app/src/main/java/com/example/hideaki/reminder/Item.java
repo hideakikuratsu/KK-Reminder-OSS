@@ -14,7 +14,7 @@ public class Item implements Serializable {
   private Calendar org_date2 = (Calendar)date.clone(); //MinuteRepeatで元の時間を保持しておくのに用いる
   private Tag tag = null;
   private NotifyInterval notify_interval = new NotifyInterval();
-  private Repeat repeat = new Repeat();
+  private DayRepeat dayRepeat = new DayRepeat();
   private MinuteRepeat minuteRepeat = new MinuteRepeat();
   private String notes;
   private long time_altered; //子ビューのコントロールパネルで時間を変えたとき、変えた総時間を保持する
@@ -53,8 +53,8 @@ public class Item implements Serializable {
     return notify_interval;
   }
 
-  public Repeat getRepeat() {
-    return repeat;
+  public DayRepeat getDayRepeat() {
+    return dayRepeat;
   }
 
   public MinuteRepeat getMinuteRepeat() {
@@ -105,8 +105,8 @@ public class Item implements Serializable {
     this.notify_interval = notify_interval;
   }
 
-  public void setRepeat(Repeat repeat) {
-    this.repeat = repeat;
+  public void setDayRepeat(DayRepeat dayRepeat) {
+    this.dayRepeat = dayRepeat;
   }
 
   public void setMinuteRepeat(MinuteRepeat minuteRepeat) {

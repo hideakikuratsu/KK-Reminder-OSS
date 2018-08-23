@@ -12,7 +12,7 @@ import android.widget.TableRow;
 
 import java.util.Calendar;
 
-public class RepeatCustomYearPickerPreference extends Preference implements CompoundButton.OnCheckedChangeListener {
+public class DayRepeatCustomYearPickerPreference extends Preference implements CompoundButton.OnCheckedChangeListener {
 
   private TableLayout year_table;
   private TableRow tableRow;
@@ -20,7 +20,7 @@ public class RepeatCustomYearPickerPreference extends Preference implements Comp
   private int mask_num;
   static int year;
 
-  public RepeatCustomYearPickerPreference(Context context, AttributeSet attrs) {
+  public DayRepeatCustomYearPickerPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
   }
@@ -38,13 +38,13 @@ public class RepeatCustomYearPickerPreference extends Preference implements Comp
 
     super.onBindView(view);
 
-    year = MainEditFragment.repeat.getYear();
+    year = MainEditFragment.dayRepeat.getYear();
 
     year_table = view.findViewById(R.id.year_table);
     if(year == 0) {
       mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
       year |= (1 << mask_num);
-      MainEditFragment.repeat.setYear(year);
+      MainEditFragment.dayRepeat.setYear(year);
     }
     for(int i = 0; i < year_table.getChildCount(); i++) {
       tableRow = (TableRow)year_table.getChildAt(i);
@@ -71,6 +71,6 @@ public class RepeatCustomYearPickerPreference extends Preference implements Comp
       }
     }
 
-    MainEditFragment.repeat.setYear(year);
+    MainEditFragment.dayRepeat.setYear(year);
   }
 }
