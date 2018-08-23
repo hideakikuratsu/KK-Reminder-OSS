@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,6 +63,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private boolean in_minute_repeat;
   private boolean is_control_panel_locked;
   private String repeat_str;
+  private MainActivity activity;
 
   static {
     groups = new ArrayList<>();
@@ -77,6 +78,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   public MyExpandableListAdapter(List<List<Item>> children, Context context) {
     this.children = children;
     this.context = context;
+    this.activity = (MainActivity)context;
 
     if(context instanceof OnFragmentInteractionListener) {
       mListener = (OnFragmentInteractionListener)context;
@@ -146,20 +148,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     };
 
     return filter;
-  }
-
-  private class MyComparator implements Comparator<Item> {
-
-    @Override
-    public int compare(Item o1, Item o2) {
-      if(o1.getDate().getTimeInMillis() < o2.getDate().getTimeInMillis()) {
-        return -1;
-      }
-      else if(o1.getDate().getTimeInMillis() == o2.getDate().getTimeInMillis()) {
-        return 0;
-      }
-      else return 1;
-    }
   }
 
   private static class ChildViewHolder {
@@ -1213,6 +1201,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             if(item.getTime_altered() != 0) item.setTime_altered(0);
           }
           item.setDate((Calendar)tmp.clone());
+          if(MainActivity.timer != null){
+            MainActivity.timer.cancel();
+            MainActivity.timer = null;
+          }
+          MainActivity.timer = new Timer();
+          MainActivity.timerTask = activity.new UpdateListTimerTask();
+          MainActivity.timer.schedule(MainActivity.timerTask, 400, 1000);
 
           mListener.deleteAlarm(item);
           mListener.setAlarm(item);
@@ -1224,6 +1219,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
         else {
           children.get(group_position).remove(child_position);
+          if(MainActivity.timer != null){
+            MainActivity.timer.cancel();
+            MainActivity.timer = null;
+          }
+          MainActivity.timer = new Timer();
+          MainActivity.timerTask = activity.new UpdateListTimerTask();
+          MainActivity.timer.schedule(MainActivity.timerTask, 400, 1000);
 
           mListener.deleteAlarm(item);
           try {

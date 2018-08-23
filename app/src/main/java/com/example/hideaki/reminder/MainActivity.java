@@ -18,7 +18,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,8 +28,8 @@ public class MainActivity
     MyExpandableListAdapter.OnFragmentInteractionListener {
 
   private byte[] ob_array;
-  private Timer timer = new Timer();
-  private TimerTask timerTask = new UpdateList();
+  static Timer timer;
+  static TimerTask timerTask;
   private Handler handler = new Handler();
   private ExpandableListView expandableListView;
   private DBAccessor accessor = null;
@@ -63,10 +62,32 @@ public class MainActivity
     expandableListView.setTextFilterEnabled(true);
 
     showActionBar();
+  }
+
+  @Override
+  protected void onResume() {
+
+    super.onResume();
+    if(timer != null) {
+      timer.cancel();
+      timer = null;
+    }
+    timer = new Timer();
+    timerTask = new UpdateListTimerTask();
     timer.schedule(timerTask, 0, 1000);
   }
 
-  private class UpdateList extends TimerTask {
+  @Override
+  protected void onPause() {
+
+    super.onPause();
+    if(timer != null) {
+      timer.cancel();
+      timer = null;
+    }
+  }
+
+  public class UpdateListTimerTask extends TimerTask {
 
     @Override
     public void run() {
@@ -138,20 +159,6 @@ public class MainActivity
           expandableListAdapter.notifyDataSetChanged();
         }
       });
-    }
-  }
-
-  private class MyComparator implements Comparator<Item> {
-
-    @Override
-    public int compare(Item o1, Item o2) {
-      if(o1.getDate().getTimeInMillis() < o2.getDate().getTimeInMillis()) {
-        return -1;
-      }
-      else if(o1.getDate().getTimeInMillis() == o2.getDate().getTimeInMillis()) {
-        return 0;
-      }
-      else return 1;
     }
   }
 
