@@ -31,15 +31,15 @@ public class MainActivity
   static Timer timer;
   static TimerTask timerTask;
   private Handler handler = new Handler();
-  private ExpandableListView expandableListView;
   private DBAccessor accessor = null;
-  private MyExpandableListAdapter expandableListAdapter;
   private Intent intent;
   private PendingIntent sender;
   private AlarmManager alarmManager;
   private int group_changed; //groupの変化があったかどうかのフラグをビットで表す
   private int group_changed_num; //groupの変化があったchildの個数を保持する
   private final MyComparator comparator = new MyComparator();
+  public ExpandableListView expandableListView;
+  public MyExpandableListAdapter expandableListAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +56,7 @@ public class MainActivity
     } catch(ClassNotFoundException e) {
       e.printStackTrace();
     }
-
-    expandableListView = findViewById(R.id.expandable_list);
-    expandableListView.setAdapter(expandableListAdapter);
-    expandableListView.setTextFilterEnabled(true);
-
+    showExpandableListViewFragment();
     showActionBar();
   }
 
@@ -156,7 +152,7 @@ public class MainActivity
           for(List<Item> itemList : MyExpandableListAdapter.children) {
             Collections.sort(itemList, comparator);
           }
-          expandableListAdapter.notifyDataSetChanged();
+          notifyDataSetChanged();
         }
       });
     }
@@ -349,6 +345,16 @@ public class MainActivity
     ois.close();
 
     return data;
+  }
+
+  public void showExpandableListViewFragment() {
+
+    if(getFragmentManager().findFragmentByTag("ExpandableListViewFragment") == null) {
+      getFragmentManager()
+          .beginTransaction()
+          .replace(R.id.content, ExpandableListViewFragment.newInstance(), "ExpandableListViewFragment")
+          .commit();
+    }
   }
 
   //メイン画面のアクションバーを表示

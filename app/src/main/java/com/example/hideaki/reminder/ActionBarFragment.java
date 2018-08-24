@@ -21,11 +21,13 @@ public class ActionBarFragment extends Fragment {
   private OnFragmentInteractionListener mListener = null;
 
   public static ActionBarFragment newInstance() {
+
     return new ActionBarFragment();
   }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+
     super.onCreate(savedInstanceState);
     this.setHasOptionsMenu(true);
   }
@@ -33,11 +35,13 @@ public class ActionBarFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
+
     return inflater.inflate(R.layout.fragment_search, container, false);
   }
 
   @Override
   public void onAttach(Context context) {
+
     super.onAttach(context);
     if(context instanceof OnFragmentInteractionListener) {
       mListener = (OnFragmentInteractionListener)context;
@@ -49,6 +53,7 @@ public class ActionBarFragment extends Fragment {
 
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.reminder_menu, menu);
 
@@ -104,6 +109,7 @@ public class ActionBarFragment extends Fragment {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+
     switch(item.getItemId()) {
       case R.id.add_item:
         mListener.showMainEditFragment();
@@ -114,11 +120,13 @@ public class ActionBarFragment extends Fragment {
 
   @Override
   public void onDetach() {
+
     super.onDetach();
     mListener = null;
   }
 
   public interface OnFragmentInteractionListener {
+
     void showMainEditFragment();
     void clearTextFilter();
     void setFilterText(String text);
