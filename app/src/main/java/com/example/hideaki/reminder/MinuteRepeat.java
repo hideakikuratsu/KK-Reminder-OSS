@@ -2,9 +2,9 @@ package com.example.hideaki.reminder;
 
 import java.io.Serializable;
 
-public class MinuteRepeat implements Serializable {
+public class MinuteRepeat implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = 8849669547056447406L;
+  private static final long serialVersionUID = 7970637305322150439L;
   private String label = null;
   private int hour = 0;
   private int minute = 10;
@@ -44,14 +44,6 @@ public class MinuteRepeat implements Serializable {
 
   public int getOrg_count2() {
     return org_count2;
-  }
-
-  public int getDuration_hour() {
-    return duration_hour;
-  }
-
-  public int getDuration_minute() {
-    return duration_minute;
   }
 
   public long getDuration() {
@@ -106,14 +98,6 @@ public class MinuteRepeat implements Serializable {
     this.org_count2 = org_count2;
   }
 
-  public void setDuration_hour(int duration_hour) {
-    this.duration_hour = duration_hour;
-  }
-
-  public void setDuration_minute(int duration_minute) {
-    this.duration_minute = duration_minute;
-  }
-
   public void setDuration(long rest) {
     this.duration_hour = (int)(rest / (1000 * 60 * 60));
     this.duration_minute = (int)(rest / (1000 * 60) - this.duration_hour * 60);
@@ -135,22 +119,16 @@ public class MinuteRepeat implements Serializable {
     this.which_setted = which_setted;
   }
 
+  @Override
   public MinuteRepeat clone() {
 
-    MinuteRepeat minuteRepeat = new MinuteRepeat();
+    MinuteRepeat minuteRepeat = null;
 
-    minuteRepeat.setLabel(this.label);
-    minuteRepeat.setHour(this.hour);
-    minuteRepeat.setMinute(this.minute);
-    minuteRepeat.setCount(this.count);
-    minuteRepeat.setOrg_count(this.org_count);
-    minuteRepeat.setOrg_count2(this.org_count2);
-    minuteRepeat.setDuration_hour(this.duration_hour);
-    minuteRepeat.setDuration_minute(this.duration_minute);
-    minuteRepeat.setOrg_duration_hour(this.org_duration_hour);
-    minuteRepeat.setOrg_duration_minute(this.org_duration_minute);
-    minuteRepeat.setOrg_duration2(this.org_duration2);
-    minuteRepeat.setWhich_setted(this.which_setted);
+    try {
+      minuteRepeat = (MinuteRepeat)super.clone();
+    } catch(CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
 
     return minuteRepeat;
   }

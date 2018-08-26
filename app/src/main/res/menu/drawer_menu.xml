@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/scheduled_item"
+            android:icon="@drawable/ic_time"
+            android:title="@string/nav_scheduled_item"/>
+
+    </group>
+
+        <item
+            android:id="@+id/sub_header"
+            android:title="@string/nav_other">
+
+            <menu android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/settings"
+                    android:icon="@drawable/ic_settings"
+                    android:title="@string/nav_settings"/>
+
+                <item
+                    android:id="@+id/help"
+                    android:icon="@drawable/ic_help"
+                    android:title="@string/nav_help"/>
+
+                <item
+                    android:id="@+id/feedback"
+                    android:icon="@drawable/ic_feedback"
+                    android:title="@string/nav_feedback"/>
+
+            </menu>
+
+        </item>
+
+</menu>

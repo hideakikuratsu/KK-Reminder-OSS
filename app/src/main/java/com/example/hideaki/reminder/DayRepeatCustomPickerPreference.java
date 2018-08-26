@@ -30,8 +30,7 @@ public class DayRepeatCustomPickerPreference extends Preference {
   protected View onCreateView(ViewGroup parent) {
 
     super.onCreateView(parent);
-    View view = View.inflate(getContext(), R.layout.repeat_custom_picker, null);
-    return view;
+    return View.inflate(getContext(), R.layout.repeat_custom_picker, null);
   }
 
   @Override
@@ -54,6 +53,10 @@ public class DayRepeatCustomPickerPreference extends Preference {
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
             MainEditFragment.dayRepeat.setInterval(interval.getValue());
+            break;
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL:
+            break;
         }
       }
     });
@@ -201,6 +204,10 @@ public class DayRepeatCustomPickerPreference extends Preference {
               DayRepeatCustomPickerFragment.addYearPreference();
               year = true;
             }
+            break;
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL:
+            break;
         }
       }
     });

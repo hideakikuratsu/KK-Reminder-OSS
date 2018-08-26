@@ -25,8 +25,7 @@ public class DayRepeatCustomOnTheMonthPickerPreference extends Preference {
   protected View onCreateView(ViewGroup parent) {
 
     super.onCreateView(parent);
-    View view = View.inflate(getContext(), R.layout.repeat_custom_on_the_month_picker, null);
-    return view;
+    return View.inflate(getContext(), R.layout.repeat_custom_on_the_month_picker, null);
   }
 
   @Override
@@ -50,6 +49,10 @@ public class DayRepeatCustomOnTheMonthPickerPreference extends Preference {
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
             MainEditFragment.dayRepeat.setOrdinal_number(ordinal_number.getValue());
+            break;
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL:
+            break;
         }
       }
     });
@@ -70,6 +73,10 @@ public class DayRepeatCustomOnTheMonthPickerPreference extends Preference {
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
             MainEditFragment.dayRepeat.setOn_the_month(Week.values()[day_of_week.getValue()]);
+            break;
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL:
+            break;
         }
       }
     });

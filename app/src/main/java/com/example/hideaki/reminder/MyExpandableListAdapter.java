@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
 import android.text.format.DateFormat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -31,38 +30,18 @@ import java.util.regex.Pattern;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 
-  private static String set_time;
   private static Calendar tmp;
-  private static Calendar tmp2;
-  private static Calendar tmp3;
   private static boolean[] display_groups = new boolean[5];
   static final List<String> groups;
   public static List<List<Item>> children;
   private static List<List<Item>> org_children;
   private Context context;
-  private OnFragmentInteractionListener mListener;
   private Pattern pattern;
   private Matcher matcher;
-  private TableRow tableRow;
-  private TextView panel_item;
-  private boolean date_is_minus;
-  private Item item;
   private MyOnClickListener listener;
   private static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
   private MyComparator comparator = new MyComparator();
-  private Calendar now;
-  private int day_of_week;
-  private int day_of_week_last;
-  private int day_of_month;
-  private int day_of_month_last;
-  private int month;
-  private int month_last;
-  private int max_bit;
-  private boolean match_to_ordinal_num;
-  private boolean sunday_match;
-  private boolean in_minute_repeat;
   private boolean is_control_panel_locked;
-  private String repeat_str;
   private MainActivity activity;
 
   static {
@@ -75,22 +54,17 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     groups.add("一週間以上");
   }
 
-  public MyExpandableListAdapter(List<List<Item>> children, Context context) {
-    this.children = children;
+  MyExpandableListAdapter(List<List<Item>> children, Context context) {
+    
+    MyExpandableListAdapter.children = children;
     this.context = context;
     this.activity = (MainActivity)context;
-
-    if(context instanceof OnFragmentInteractionListener) {
-      mListener = (OnFragmentInteractionListener)context;
-    } else {
-      throw new RuntimeException(context.toString()
-          + " must implement OnFragmentInteractionListener");
-    }
   }
 
   @Override
   public Filter getFilter() {
-    Filter filter = new Filter() {
+
+    return new Filter() {
       @Override
       protected FilterResults performFiltering(CharSequence constraint) {
         FilterResults results = new FilterResults();
@@ -139,6 +113,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       }
 
       @Override
+      @SuppressWarnings("unchecked")
       protected void publishResults(CharSequence constraint, FilterResults results) {
         children = (List<List<Item>>)results.values;
 
@@ -146,8 +121,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         notifyDataSetChanged();
       }
     };
-
-    return filter;
   }
 
   private static class ChildViewHolder {
@@ -169,7 +142,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     private View convertView;
     private ChildViewHolder viewHolder;
 
-    public MyOnClickListener(int group_position, int child_position, Item item, View convertView,
+    private MyOnClickListener(int group_position, int child_position, Item item, View convertView,
                              ChildViewHolder viewHolder) {
 
       this.group_position = group_position;
@@ -193,26 +166,26 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           else viewHolder.control_panel.setVisibility(View.GONE);
           break;
         case R.id.clock_image:
-          if(item.getTime_altered() == 0 && mListener.isAlarmSetted(item)) {
+          if(item.getTime_altered() == 0 && activity.isAlarmSetted(item)) {
             item.setAlarm_stopped(true);
-            mListener.deleteAlarm(item);
+            activity.deleteAlarm(item);
           }
           else if(item.getTime_altered() == 0 && !item.isAlarm_stopped()) {
             item.setAlarm_stopped(true);
           }
           else if(item.getTime_altered() == 0 && item.isAlarm_stopped()) {
             item.setAlarm_stopped(false);
-            mListener.setAlarm(item);
+            activity.setAlarm(item);
           }
           else if(item.getTime_altered() != 0) {
             item.setDate((Calendar)item.getOrg_date().clone());
             item.setTime_altered(0);
-            mListener.deleteAlarm(item);
-            mListener.setAlarm(item);
+            activity.deleteAlarm(item);
+            activity.setAlarm(item);
           }
 
           try {
-            mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
           } catch(IOException e) {
             e.printStackTrace();
           }
@@ -229,10 +202,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             item.addTime_altered(-5 * 60 * 1000);
             if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-            mListener.deleteAlarm(item);
-            mListener.setAlarm(item);
+            activity.deleteAlarm(item);
+            activity.setAlarm(item);
             try {
-              mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+              activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
             } catch(IOException e) {
               e.printStackTrace();
             }
@@ -241,7 +214,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
           break;
         case R.id.m1h:
-          if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 1 * 60 * 60 * 1000) {
+          if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 60 * 60 * 1000) {
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
             }
@@ -250,10 +223,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             item.addTime_altered(-1 * 60 * 60 * 1000);
             if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-            mListener.deleteAlarm(item);
-            mListener.setAlarm(item);
+            activity.deleteAlarm(item);
+            activity.setAlarm(item);
             try {
-              mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+              activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
             } catch(IOException e) {
               e.printStackTrace();
             }
@@ -271,10 +244,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             item.addTime_altered(-24 * 60 * 60 * 1000);
             if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-            mListener.deleteAlarm(item);
-            mListener.setAlarm(item);
+            activity.deleteAlarm(item);
+            activity.setAlarm(item);
             try {
-              mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+              activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
             } catch(IOException e) {
               e.printStackTrace();
             }
@@ -283,7 +256,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
           break;
         case R.id.edit:
-          mListener.showMainEditFragment(item);
+          activity.showMainEditFragment(item);
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
         case R.id.p5m:
@@ -301,10 +274,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           item.addTime_altered(5 * 60 * 1000);
           if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-          mListener.deleteAlarm(item);
-          mListener.setAlarm(item);
+          activity.deleteAlarm(item);
+          activity.setAlarm(item);
           try {
-            mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
           } catch(IOException e) {
             e.printStackTrace();
           }
@@ -317,19 +290,19 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
 
           if(item.getDate().getTimeInMillis() < System.currentTimeMillis()) {
-            item.getDate().setTimeInMillis(System.currentTimeMillis() + 1 * 60 * 60 * 1000);
+            item.getDate().setTimeInMillis(System.currentTimeMillis() + 60 * 60 * 1000);
           }
           else {
-            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + 1 * 60 * 60 * 1000);
+            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + 60 * 60 * 1000);
           }
 
-          item.addTime_altered(1 * 60 * 60 * 1000);
+          item.addTime_altered(60 * 60 * 1000);
           if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-          mListener.deleteAlarm(item);
-          mListener.setAlarm(item);
+          activity.deleteAlarm(item);
+          activity.setAlarm(item);
           try {
-            mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
           } catch(IOException e) {
             e.printStackTrace();
           }
@@ -351,10 +324,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           item.addTime_altered(24 * 60 * 60 * 1000);
           if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
-          mListener.deleteAlarm(item);
-          mListener.setAlarm(item);
+          activity.deleteAlarm(item);
+          activity.setAlarm(item);
           try {
-            mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
           } catch(IOException e) {
             e.printStackTrace();
           }
@@ -362,7 +335,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           displayDate(viewHolder, item);
           break;
         case R.id.notes:
-          mListener.showNotesFragment(item);
+          activity.showNotesFragment(item);
           break;
       }
     }
@@ -379,7 +352,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           item.setDate((Calendar)item.getOrg_date().clone());
         }
 
-        if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0
+        if((item.getMinuteRepeat().getWhich_setted() & 1) != 0
             && item.getMinuteRepeat().getCount() == 0) {
 
           item.setDate((Calendar)item.getOrg_date2().clone());
@@ -390,15 +363,20 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           item.setDate((Calendar)item.getOrg_date2().clone());
         }
 
-        in_minute_repeat = false;
-        if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0) {
+        boolean in_minute_repeat = false;
+        if((item.getMinuteRepeat().getWhich_setted() & 1) != 0) {
           item.getMinuteRepeat().setOrg_count2(item.getMinuteRepeat().getCount());
         }
         else if((item.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0) {
           item.getMinuteRepeat().setOrg_duration2(item.getMinuteRepeat().getDuration());
         }
 
-        if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0 && item.getMinuteRepeat().getCount() != 0) {
+        Calendar now;
+        int day_of_week;
+        int month;
+        int max_bit;
+        
+        if((item.getMinuteRepeat().getWhich_setted() & 1) != 0 && item.getMinuteRepeat().getCount() != 0) {
 
           //countリピート設定時
           in_minute_repeat = true;
@@ -450,7 +428,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               item.getMinuteRepeat().getDuration() - item.getMinuteRepeat().getInterval()
           );
         }
-        else if((item.getDayRepeat().getSetted() & (1 << 0)) != 0) {
+        else if((item.getDayRepeat().getSetted() & 1) != 0) {
 
           //Dayリピート設定時
           now = Calendar.getInstance();
@@ -472,7 +450,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           //Weekリピート設定時
           now = Calendar.getInstance();
-
+          int day_of_week_last;
+          
           if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
             tmp = (Calendar)item.getDate().clone();
             day_of_week = item.getDate().get(Calendar.DAY_OF_WEEK) < 2 ?
@@ -575,6 +554,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           if(item.getDayRepeat().isDays_of_month_setted()) {
 
             //DaysOfMonthリピート設定時
+            int day_of_month;
+            int day_of_month_last;
+            
             if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
               tmp = (Calendar)item.getDate().clone();
               day_of_month = item.getDate().get(Calendar.DAY_OF_MONTH);
@@ -679,6 +661,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           else {
 
             //OnTheMonthリピート設定時
+            boolean match_to_ordinal_num;
+            Calendar tmp2;
+            Calendar tmp3;
             now = Calendar.getInstance();
             if(item.getDayRepeat().getOn_the_month().ordinal() < 6) {
               day_of_week = item.getDayRepeat().getOn_the_month().ordinal() + 2;
@@ -986,7 +971,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 }
               }
               else if(day_of_week == 9) {
-                sunday_match = false;
+                boolean sunday_match = false;
+                
                 if(tmp.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY && tmp.after(now)) {
                   tmp2 = (Calendar)tmp.clone();
                   tmp2.add(Calendar.DAY_OF_MONTH, -1);
@@ -1074,7 +1060,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           //Yearリピート設定時
           now = Calendar.getInstance();
-
+          int month_last;
+          
           if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
             tmp = (Calendar)item.getDate().clone();
             month = item.getDate().get(Calendar.MONTH);
@@ -1177,7 +1164,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
 
         if(!in_minute_repeat) {
-          if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0
+          if((item.getMinuteRepeat().getWhich_setted() & 1) != 0
               && item.getMinuteRepeat().getCount() == 0) {
 
             item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrg_count());
@@ -1201,38 +1188,34 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             if(item.getTime_altered() != 0) item.setTime_altered(0);
           }
           item.setDate((Calendar)tmp.clone());
-          if(MainActivity.timer != null){
-            MainActivity.timer.cancel();
-            MainActivity.timer = null;
+          if(activity.timer != null){
+            activity.timer.cancel();
+            activity.timer = null;
           }
-          MainActivity.timer = new Timer();
-          MainActivity.timerTask = activity.new UpdateListTimerTask();
-          MainActivity.timer.schedule(MainActivity.timerTask, 400, 1000);
+          activity.timer = new Timer();
+          activity.timerTask = activity.new UpdateListTimerTask();
+          activity.timer.schedule(activity.timerTask, 400, 1000);
 
-          mListener.deleteAlarm(item);
-          mListener.setAlarm(item);
+          activity.deleteAlarm(item);
+          activity.setAlarm(item);
           try {
-            mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
           } catch(IOException e) {
             e.printStackTrace();
           }
         }
         else {
           children.get(group_position).remove(child_position);
-          if(MainActivity.timer != null){
-            MainActivity.timer.cancel();
-            MainActivity.timer = null;
+          if(activity.timer != null){
+            activity.timer.cancel();
+            activity.timer = null;
           }
-          MainActivity.timer = new Timer();
-          MainActivity.timerTask = activity.new UpdateListTimerTask();
-          MainActivity.timer.schedule(MainActivity.timerTask, 400, 1000);
+          activity.timer = new Timer();
+          activity.timerTask = activity.new UpdateListTimerTask();
+          activity.timer.schedule(activity.timerTask, 400, 1000);
 
-          mListener.deleteAlarm(item);
-          try {
-            mListener.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
-          } catch(IOException e) {
-            e.printStackTrace();
-          }
+          activity.deleteAlarm(item);
+          activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
         }
 
         Snackbar.make(convertView, context.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
@@ -1260,7 +1243,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 if(item.getDayRepeat().getSetted() != 0 || item.getMinuteRepeat().getWhich_setted() != 0) {
                   item.setAlarm_stopped(item.isOrg_alarm_stopped());
                   item.setTime_altered(item.getOrg_time_altered());
-                  if((item.getMinuteRepeat().getWhich_setted() & (1 << 0)) != 0) {
+                  if((item.getMinuteRepeat().getWhich_setted() & 1) != 0) {
                     item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrg_count2());
                   }
                   else if((item.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0) {
@@ -1269,12 +1252,12 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   item.getDate().setTimeInMillis(item.getOrg_date().getTimeInMillis() + item.getTime_altered());
                   notifyDataSetChanged();
 
-                  mListener.deleteAlarm(item);
+                  activity.deleteAlarm(item);
                   if(!item.isAlarm_stopped()) {
-                    mListener.setAlarm(item);
+                    activity.setAlarm(item);
                   }
                   try {
-                    mListener.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+                    activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
                   } catch(IOException e) {
                     e.printStackTrace();
                   }
@@ -1288,10 +1271,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   notifyDataSetChanged();
 
                   if(!item.isAlarm_stopped()) {
-                    mListener.setAlarm(item);
+                    activity.setAlarm(item);
                   }
                   try {
-                    mListener.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                    activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
                   } catch(IOException e) {
                     e.printStackTrace();
                   }
@@ -1390,9 +1373,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   public View getGroupView(int i, boolean b, View convertView, ViewGroup viewGroup) {
 
     if(convertView == null) {
-      convertView = LayoutInflater
-          .from(viewGroup.getContext())
-          .inflate(R.layout.parent_layout, null);
+      convertView = View.inflate(viewGroup.getContext(), R.layout.parent_layout, null);
 
       ((ExpandableListView)viewGroup).expandGroup(i);
     }
@@ -1408,9 +1389,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     final ChildViewHolder viewHolder;
 
     if(convertView == null) {
-      convertView = LayoutInflater
-          .from(viewGroup.getContext())
-          .inflate(R.layout.child_layout, null);
+      convertView = View.inflate(viewGroup.getContext(), R.layout.child_layout, null);
 
       viewHolder = new ChildViewHolder();
       viewHolder.time = convertView.findViewById(R.id.date);
@@ -1428,7 +1407,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     }
 
     //現在のビュー位置でのitemの取得とリスナーの初期化
-    item = (Item)getChild(i, i1);
+    Item item = (Item)getChild(i, i1);
     int count = 0;
     for(int j = 0; j < groups.size(); j++) {
       if(display_groups[j]) {
@@ -1440,7 +1419,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //設定された時間、詳細、リピート通知のインターバルを表示
     displayDate(viewHolder, item);
     viewHolder.detail.setText(item.getDetail());
-    repeat_str = "";
+    String repeat_str = "";
     if(item.getDayRepeat().getLabel() != null
         && !item.getDayRepeat().getLabel().equals(context.getString(R.string.none))) {
       repeat_str += item.getDayRepeat().getLabel();
@@ -1480,9 +1459,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     viewHolder.check_item.setOnCheckedChangeListener(listener);
 
     for(int j = 0; j < viewHolder.control_panel.getChildCount(); j++) {
-      tableRow = (TableRow)viewHolder.control_panel.getChildAt(j);
+      TableRow tableRow = (TableRow)viewHolder.control_panel.getChildAt(j);
       for(int k = 0; k < tableRow.getChildCount(); k++) {
-        panel_item = (TextView)tableRow.getChildAt(k);
+        TextView panel_item = (TextView)tableRow.getChildAt(k);
         panel_item.setOnClickListener(listener);
       }
     }
@@ -1494,6 +1473,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private void displayDate(ChildViewHolder viewHolder, Item item) {
 
     Calendar now = Calendar.getInstance();
+    String set_time;
     if(now.get(Calendar.YEAR) == item.getDate().get(Calendar.YEAR)) {
       set_time = (String)DateFormat.format("M月d日(E)H:mm", item.getDate());
     }
@@ -1502,7 +1482,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     }
     long date_sub = item.getDate().getTimeInMillis() - now.getTimeInMillis();
 
-    date_is_minus = false;
+    boolean date_is_minus = false;
     if(date_sub < 0) {
       date_sub = -date_sub;
       date_is_minus = true;
@@ -1612,16 +1592,5 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   @Override
   public boolean isChildSelectable(int i, int i1) {
     return true;
-  }
-
-  public interface OnFragmentInteractionListener {
-    void showMainEditFragment(Item item);
-    void showNotesFragment(Item item);
-    void setAlarm(Item item);
-    void deleteAlarm(Item item);
-    boolean isAlarmSetted(Item item);
-    void insertDB(Item item, String table) throws IOException;
-    void updateDB(Item item, String table) throws IOException;
-    void deleteDB(Item item, String table) throws IOException;
   }
 }

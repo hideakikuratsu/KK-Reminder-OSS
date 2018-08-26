@@ -37,8 +37,7 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
   protected View onCreateView(ViewGroup parent) {
 
     super.onCreateView(parent);
-    View view = View.inflate(getContext(), R.layout.minute_repeat_interval_picker, null);
-    return view;
+    return View.inflate(getContext(), R.layout.minute_repeat_interval_picker, null);
   }
 
   @Override
@@ -62,7 +61,7 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
               hour_picker.setValue(1);
             }
             MainEditFragment.minuteRepeat.setHour(hour_picker.getValue());
-            
+
             if(MinuteRepeatEditFragment.count.isChecked()) {
 
               MinuteRepeatEditFragment.label_str = "タスク完了から";
@@ -98,6 +97,10 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
 
               MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
             }
+            break;
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL:
+            break;
         }
       }
     });
@@ -154,6 +157,10 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
 
               MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
             }
+            break;
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL:
+            break;
         }
       }
     });

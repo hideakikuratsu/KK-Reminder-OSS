@@ -22,8 +22,7 @@ public class Item implements Serializable {
   private boolean alarm_stopped;
   private boolean org_alarm_stopped; //リピート設定による変更をスナックバーから元に戻すのに用いる
 
-  public Item() {
-  }
+  Item() {}
 
   public long getId() {
     return id;

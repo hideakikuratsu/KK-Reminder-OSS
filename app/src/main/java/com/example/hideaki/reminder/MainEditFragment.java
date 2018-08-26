@@ -1,6 +1,8 @@
 package com.example.hideaki.reminder;
 
+import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -8,10 +10,9 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,26 +24,24 @@ import java.io.IOException;
 import java.util.Calendar;
 
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
-    Preference.OnPreferenceChangeListener {
+    Preference.OnPreferenceChangeListener, DialogInterface.OnClickListener {
 
   public static final String ITEM = "ITEM";
 
-  static OnFragmentInteractionListener mListener;
-  static EditTextPreference detail;
-  static EditTextPreference notes;
-  static PreferenceScreen day_repeat_item;
-  static PreferenceScreen minute_repeat_item;
+  private EditTextPreference detail;
+  private EditTextPreference notes;
+  private PreferenceScreen day_repeat_item;
+  private PreferenceScreen minute_repeat_item;
   static Item item;
   static String detail_str;
   static String notes_str;
-  static ActionBar actionBar;
-  static Context direct_boot_context;
+  private ActionBar actionBar;
   static Calendar final_cal;
   static DayRepeat dayRepeat;
   static MinuteRepeat minuteRepeat;
   static boolean is_edit;
-  static android.app.FragmentManager fragmentManager;
-  private DialogFragment dialog = new DateAlterDialogFragment();
+  private FragmentManager fragmentManager;
+  private MainActivity activity;
 
   public static MainEditFragment newInstance() {
 
@@ -80,17 +79,30 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   }
 
   @Override
+  public void onAttach(Context context) {
+
+    super.onAttach(context);
+    activity = (MainActivity)getActivity();
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    activity.drawerToggle.setDrawerIndicatorEnabled(false);
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    actionBar.setDisplayHomeAsUpEnabled(true);
+  }
+
+  @Override
   public void onCreate(Bundle savedInstanceState) {
+
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.main_edit);
     setHasOptionsMenu(true);
 
     Bundle args = getArguments();
     item = (Item)args.getSerializable(ITEM);
-
-    actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-    actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setTitle(R.string.edit);
 
     findPreference("tag").setOnPreferenceClickListener(this);
     findPreference("interval").setOnPreferenceClickListener(this);
@@ -113,20 +125,10 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
-    view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
-    view.setFocusableInTouchMode(true);
-    view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    assert view != null;
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-          actionBar.setDisplayHomeAsUpEnabled(false);
-          actionBar.setTitle(R.string.app_name);
-        }
-        return false;
-      }
-    });
+    view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    actionBar.setTitle(R.string.edit);
 
     if(dayRepeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
     else day_repeat_item.setSummary(dayRepeat.getLabel());
@@ -149,91 +151,24 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     switch(item.getItemId()) {
       case R.id.done:
-        if(is_edit && this.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()) {
-          dialog.show(((MainActivity)getActivity()).getSupportFragmentManager(), "date_alter_dialog");
+        if(is_edit && MainEditFragment.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()) {
+          new AlertDialog.Builder(getActivity())
+              .setMessage(R.string.repeat_conflict_dialog_message)
+              .setPositiveButton(R.string.yes, this)
+              .setNegativeButton(R.string.no, this)
+              .setNeutralButton(R.string.cancel, this)
+              .show();
         }
         else {
-          actionBar.setDisplayHomeAsUpEnabled(false);
-          actionBar.setTitle(R.string.app_name);
-          fragmentManager.popBackStack();
-
-          this.item.setDetail(detail_str);
-          this.item.setDate((Calendar)final_cal.clone());
-          this.item.setNotes(notes_str);
-          if(dayRepeat.getSetted() != 0) {
-            if(dayRepeat.getSetted() == (1 << 0)) dayRepeat.dayClear();
-            else if(dayRepeat.getSetted() == (1 << 1)) dayRepeat.weekClear();
-            else if(dayRepeat.getSetted() == (1 << 2)) {
-              if(dayRepeat.isDays_of_month_setted()) dayRepeat.daysOfMonthClear();
-              else dayRepeat.onTheMonthClear();
-            }
-            else if(dayRepeat.getSetted() == (1 << 3)) dayRepeat.yearClear();
-          }
-          else {
-            dayRepeat.clear();
-          }
-          this.item.setDayRepeat(dayRepeat.clone());
-          minuteRepeat.setCount(minuteRepeat.getOrg_count());
-          minuteRepeat.setDuration(minuteRepeat.getOrgDuration());
-          this.item.setMinuteRepeat(minuteRepeat.clone());
-          if(this.item.isAlarm_stopped()) this.item.setAlarm_stopped(false);
-
-          if(mListener.isItemExists(this.item, MyDatabaseHelper.TODO_TABLE)) {
-            mListener.notifyDataSetChanged();
-            try {
-              mListener.updateDB(this.item, MyDatabaseHelper.TODO_TABLE);
-            } catch(IOException e) {
-              e.printStackTrace();
-            }
-          }
-          else {
-            mListener.addChildren(this.item);
-            mListener.notifyDataSetChanged();
-
-            try {
-              mListener.insertDB(this.item, MyDatabaseHelper.TODO_TABLE);
-            } catch(IOException e) {
-              e.printStackTrace();
-            }
-          }
-
-          //データベースに挿入を行ったら、そのデータベースを端末暗号化ストレージへコピーする
-          if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            direct_boot_context = getActivity().createDeviceProtectedStorageContext();
-            direct_boot_context.moveDatabaseFrom(getActivity(), MyDatabaseHelper.TODO_TABLE);
-          }
-
-          mListener.deleteAlarm(this.item);
-          mListener.setAlarm(this.item);
+          registerItem();
         }
         return true;
       case android.R.id.home:
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setTitle(R.string.app_name);
         fragmentManager.popBackStack();
         return true;
       default:
         return super.onOptionsItemSelected(item);
     }
-  }
-
-  @Override
-  public void onAttach(Context context) {
-
-    super.onAttach(context);
-    if(context instanceof OnFragmentInteractionListener) {
-      mListener = (OnFragmentInteractionListener)context;
-    } else {
-      throw new RuntimeException(context.toString()
-          + " must implement OnFragmentInteractionListener");
-    }
-  }
-
-  @Override
-  public void onDetach() {
-
-    super.onDetach();
-    mListener = null;
   }
 
   @Override
@@ -276,19 +211,87 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     getFragmentManager()
         .beginTransaction()
-        .replace(android.R.id.content, next)
+        .replace(R.id.content, next)
         .addToBackStack(null)
         .commit();
   }
 
-  public interface OnFragmentInteractionListener {
+  @Override
+  public void onClick(DialogInterface dialog, int which) {
 
-    void insertDB(Item item, String table) throws IOException;
-    void updateDB(Item item, String table) throws IOException;
-    boolean isItemExists(Item item, String table);
-    void addChildren(Item item);
-    void setAlarm(Item item);
-    void deleteAlarm(Item item);
-    void notifyDataSetChanged();
+    switch(which) {
+      case DialogInterface.BUTTON_POSITIVE:
+        if(item.getTime_altered() == 0) {
+          item.setOrg_date((Calendar)item.getDate().clone());
+        }
+        long altered_time = (final_cal.getTimeInMillis()
+            - item.getDate().getTimeInMillis()) / (1000 * 60);
+        item.addTime_altered(altered_time * 60 * 1000);
+
+        registerItem();
+        break;
+      case DialogInterface.BUTTON_NEGATIVE:
+        item.setOrg_date((Calendar)final_cal.clone());
+        item.setTime_altered(0);
+
+        registerItem();
+        break;
+      case DialogInterface.BUTTON_NEUTRAL:
+        break;
+    }
+  }
+  
+  private void registerItem() {
+
+    fragmentManager.popBackStack();
+
+    item.setDetail(detail_str);
+    item.setDate((Calendar)final_cal.clone());
+    item.setNotes(notes_str);
+    if(dayRepeat.getSetted() != 0) {
+      if(dayRepeat.getSetted() == 1) dayRepeat.dayClear();
+      else if(dayRepeat.getSetted() == (1 << 1)) dayRepeat.weekClear();
+      else if(dayRepeat.getSetted() == (1 << 2)) {
+        if(dayRepeat.isDays_of_month_setted()) dayRepeat.daysOfMonthClear();
+        else dayRepeat.onTheMonthClear();
+      }
+      else if(dayRepeat.getSetted() == (1 << 3)) dayRepeat.yearClear();
+    }
+    else {
+      dayRepeat.clear();
+    }
+    item.setDayRepeat(dayRepeat.clone());
+    minuteRepeat.setCount(minuteRepeat.getOrg_count());
+    minuteRepeat.setDuration(minuteRepeat.getOrgDuration());
+    item.setMinuteRepeat(minuteRepeat.clone());
+    if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
+
+    if(activity.isItemExists(item, MyDatabaseHelper.TODO_TABLE)) {
+      activity.expandableListAdapter.notifyDataSetChanged();
+      try {
+        activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+      } catch(IOException e) {
+        e.printStackTrace();
+      }
+    }
+    else {
+      activity.addChildren(item);
+      activity.expandableListAdapter.notifyDataSetChanged();
+
+      try {
+        activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+      } catch(IOException e) {
+        e.printStackTrace();
+      }
+    }
+
+    //データベースに挿入を行ったら、そのデータベースを端末暗号化ストレージへコピーする
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      Context direct_boot_context = getActivity().createDeviceProtectedStorageContext();
+      direct_boot_context.moveDatabaseFrom(getActivity(), MyDatabaseHelper.TODO_TABLE);
+    }
+
+    activity.deleteAlarm(item);
+    activity.setAlarm(item);
   }
 }

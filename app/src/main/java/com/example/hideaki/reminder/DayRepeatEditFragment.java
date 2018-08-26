@@ -1,5 +1,6 @@
 package com.example.hideaki.reminder;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -7,9 +8,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,10 +33,25 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
   static String label_str_everyyear;
   static String label_str_custom;
   private int mask_num;
+  MainActivity activity;
 
   public static DayRepeatEditFragment newInstance() {
 
     return new DayRepeatEditFragment();
+  }
+
+  @Override
+  public void onAttach(Context context) {
+
+    super.onAttach(context);
+    activity = (MainActivity)context;
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
   }
 
   @Override
@@ -45,9 +60,6 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.repeat_edit);
     setHasOptionsMenu(true);
-
-    actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-    actionBar.setTitle(R.string.repeat_day_unit);
 
     never = (CheckBoxPreference)findPreference("never");
     everyday = (CheckBoxPreference)findPreference("everyday");
@@ -71,19 +83,10 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
-    view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
-    view.setFocusableInTouchMode(true);
-    view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    assert view != null;
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-          actionBar.setTitle(R.string.edit);
-        }
-        return false;
-      }
-    });
+    view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    actionBar.setTitle(R.string.repeat_day_unit);
 
     label_str_everyweek = getActivity().getResources().getString(R.string.everyweek)
         + DateFormat.format("E曜日", MainEditFragment.final_cal);
@@ -109,7 +112,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
       case 0:
         never.setChecked(true);
         break;
-      case 1 << 0:
+      case 1:
         everyday.setChecked(true);
         break;
       case 1 << 1:
@@ -156,7 +159,6 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    actionBar.setTitle(R.string.edit);
     getFragmentManager().popBackStack();
     return super.onOptionsItemSelected(item);
   }
@@ -165,7 +167,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
 
     getFragmentManager()
         .beginTransaction()
-        .replace(android.R.id.content, next)
+        .replace(R.id.content, next)
         .addToBackStack(null)
         .commit();
   }
@@ -203,8 +205,8 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           label.setSummary(R.string.everyday);
 
           MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.everyday));
-          MainEditFragment.dayRepeat.setSetted(1 << 0);
-          MainEditFragment.dayRepeat.setWhich_template(1 << 0);
+          MainEditFragment.dayRepeat.setSetted(1);
+          MainEditFragment.dayRepeat.setWhich_template(1);
           MainEditFragment.dayRepeat.setInterval(1);
           MainEditFragment.dayRepeat.setDay(true);
         }

@@ -31,7 +31,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/detail"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_power" />
+                app:srcCompat="@drawable/ic_time" />
 
             <TextView
                 android:id="@+id/date"

@@ -3,7 +3,9 @@ package com.example.hideaki.reminder;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,13 +18,23 @@ import android.widget.ToggleButton;
 
 public class ActionBarFragment extends Fragment {
 
-  private SearchView searchView;
-  private ToggleButton button;
-  private OnFragmentInteractionListener mListener = null;
+  private MainActivity activity;
+  private ActionBar actionBar;
 
   public static ActionBarFragment newInstance() {
 
     return new ActionBarFragment();
+  }
+
+  @Override
+  public void onAttach(Context context) {
+
+    super.onAttach(context);
+    activity = (MainActivity)getActivity();
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    actionBar = activity.getSupportActionBar();
   }
 
   @Override
@@ -36,19 +48,9 @@ public class ActionBarFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
+    activity.drawerToggle.setDrawerIndicatorEnabled(true);
+    actionBar.setTitle(R.string.app_name);
     return inflater.inflate(R.layout.fragment_search, container, false);
-  }
-
-  @Override
-  public void onAttach(Context context) {
-
-    super.onAttach(context);
-    if(context instanceof OnFragmentInteractionListener) {
-      mListener = (OnFragmentInteractionListener)context;
-    } else {
-      throw new RuntimeException(context.toString()
-          + " must implement OnFragmentInteractionListener");
-    }
   }
 
   @Override
@@ -59,7 +61,7 @@ public class ActionBarFragment extends Fragment {
 
     //検索メニューの実装
     MenuItem search_item = menu.findItem(R.id.search_item);
-    searchView = (SearchView)search_item.getActionView();
+    SearchView searchView = (SearchView)search_item.getActionView();
 
     searchView.setIconifiedByDefault(true);
     searchView.setSubmitButtonEnabled(false);
@@ -74,10 +76,10 @@ public class ActionBarFragment extends Fragment {
       @Override
       public boolean onQueryTextChange(String text) {
         if(text == null || text.equals("")) {
-          mListener.clearTextFilter();
+          activity.expandableListView.clearTextFilter();
         }
         else {
-          mListener.setFilterText(text);
+          activity.expandableListView.setFilterText(text);
         }
 
         return false;
@@ -86,7 +88,7 @@ public class ActionBarFragment extends Fragment {
 
     //To-doメニューの実装
     MenuItem toggle_button = menu.findItem(R.id.toggle);
-    button = (ToggleButton)toggle_button.getActionView();
+    ToggleButton button = (ToggleButton)toggle_button.getActionView();
 
     button.setTextOff(getResources().getString(R.string.todo));
     button.setTextOn(getResources().getString(R.string.done));
@@ -112,23 +114,9 @@ public class ActionBarFragment extends Fragment {
 
     switch(item.getItemId()) {
       case R.id.add_item:
-        mListener.showMainEditFragment();
+        activity.showMainEditFragment();
         return true;
     }
     return false;
-  }
-
-  @Override
-  public void onDetach() {
-
-    super.onDetach();
-    mListener = null;
-  }
-
-  public interface OnFragmentInteractionListener {
-
-    void showMainEditFragment();
-    void clearTextFilter();
-    void setFilterText(String text);
   }
 }

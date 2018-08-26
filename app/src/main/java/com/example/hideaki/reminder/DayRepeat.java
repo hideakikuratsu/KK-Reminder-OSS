@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class DayRepeat implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = 4430799135714799779L;
+  private static final long serialVersionUID = -7795729519613215465L;
   private String label = null;
   private int interval = 0;
   private int scale = 0;
@@ -134,24 +134,16 @@ public class DayRepeat implements Serializable, Cloneable {
     this.which_template = which_template;
   }
 
+  @Override
   public DayRepeat clone() {
 
-    DayRepeat dayRepeat = new DayRepeat();
+    DayRepeat dayRepeat = null;
 
-    dayRepeat.setLabel(this.label);
-    dayRepeat.setInterval(this.interval);
-    dayRepeat.setScale(this.scale);
-    dayRepeat.setDay(this.day);
-    dayRepeat.setWeek(this.week);
-    dayRepeat.setDays_of_month(this.days_of_month);
-    dayRepeat.setOrdinal_number(this.ordinal_number);
-    dayRepeat.setOn_the_month(this.on_the_month);
-    dayRepeat.setWeekday_num(this.weekday_num);
-    dayRepeat.setDays_of_month_setted(this.days_of_month_setted);
-    dayRepeat.setYear(this.year);
-    dayRepeat.setDay_of_month_of_year(this.day_of_month_of_year);
-    dayRepeat.setSetted(this.setted);
-    dayRepeat.setWhich_template(this.which_template);
+    try {
+      dayRepeat = (DayRepeat)super.clone();
+    } catch(CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
 
     return dayRepeat;
   }

@@ -14,8 +14,6 @@ import java.util.Calendar;
 
 public class DayRepeatCustomYearPickerPreference extends Preference implements CompoundButton.OnCheckedChangeListener {
 
-  private TableLayout year_table;
-  private TableRow tableRow;
   private CheckBox checkBox;
   private int mask_num;
   static int year;
@@ -29,8 +27,7 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
   protected View onCreateView(ViewGroup parent) {
 
     super.onCreateView(parent);
-    View view = View.inflate(getContext(), R.layout.repeat_custom_year_picker, null);
-    return view;
+    return View.inflate(getContext(), R.layout.repeat_custom_year_picker, null);
   }
 
   @Override
@@ -40,14 +37,14 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
 
     year = MainEditFragment.dayRepeat.getYear();
 
-    year_table = view.findViewById(R.id.year_table);
+    TableLayout year_table = view.findViewById(R.id.year_table);
     if(year == 0) {
       mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
       year |= (1 << mask_num);
       MainEditFragment.dayRepeat.setYear(year);
     }
     for(int i = 0; i < year_table.getChildCount(); i++) {
-      tableRow = (TableRow)year_table.getChildAt(i);
+      TableRow tableRow = (TableRow)year_table.getChildAt(i);
       for(int j = 0; j < tableRow.getChildCount(); j++) {
         checkBox = (CheckBox)tableRow.getChildAt(j);
         if((year & (1 << (i * 6 + j))) != 0) checkBox.setChecked(true);

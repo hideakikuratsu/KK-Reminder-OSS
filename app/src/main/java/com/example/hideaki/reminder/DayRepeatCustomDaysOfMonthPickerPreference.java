@@ -13,10 +13,7 @@ import java.util.Calendar;
 
 public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference implements View.OnClickListener {
 
-  private TableRow last_table_row;
-  private TableLayout calendar_table;
   private int max_days_of_month;
-  private TableRow tableRow;
   private CheckableTextView day;
   private int mask_num;
   static int days_of_month;
@@ -30,8 +27,7 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
   protected View onCreateView(ViewGroup parent) {
 
     super.onCreateView(parent);
-    View view = View.inflate(getContext(), R.layout.repeat_custom_days_of_month_picker, null);
-    return view;
+    return View.inflate(getContext(), R.layout.repeat_custom_days_of_month_picker, null);
   }
 
   @Override
@@ -41,7 +37,7 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
 
     //その月の最大日数に応じた日にちの表示処理
     days_of_month = MainEditFragment.dayRepeat.getDays_of_month();
-    last_table_row = view.findViewById(R.id.last_table_row);
+    TableRow last_table_row = view.findViewById(R.id.last_table_row);
     max_days_of_month = MainEditFragment.final_cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
     last_table_row.setVisibility(View.VISIBLE);
@@ -58,14 +54,14 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
       }
     }
 
-    calendar_table = view.findViewById(R.id.calendar_table);
+    TableLayout calendar_table = view.findViewById(R.id.calendar_table);
     if(days_of_month == 0) {
       mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
       days_of_month |= (1 << (mask_num - 1));
       MainEditFragment.dayRepeat.setDays_of_month(days_of_month);
     }
     for(int i = 0; i < calendar_table.getChildCount(); i++) {
-      tableRow = (TableRow)calendar_table.getChildAt(i);
+      TableRow tableRow = (TableRow)calendar_table.getChildAt(i);
       for(int j = 0; j < tableRow.getChildCount(); j++) {
         day = (CheckableTextView)tableRow.getChildAt(j);
         if((days_of_month & (1 << (i * 7 + j))) != 0) {

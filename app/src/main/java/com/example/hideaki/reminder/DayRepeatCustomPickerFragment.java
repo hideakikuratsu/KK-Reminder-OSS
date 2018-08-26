@@ -1,5 +1,6 @@
 package com.example.hideaki.reminder;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -7,7 +8,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -29,12 +30,6 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
   static CheckBoxPreference on_the_month;
   private static Preference on_the_month_picker;
   private static Preference year;
-  private int cal_day_of_week;
-  private int cal_day_of_month;
-  private int cal_month;
-  private boolean match_to_template;
-  private String tmp = "";
-  private int mask_num;
 
   public static DayRepeatCustomPickerFragment newInstance() {
 
@@ -42,13 +37,24 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
   }
 
   @Override
+  public void onAttach(Context context) {
+
+    super.onAttach(context);
+    MainActivity activity = (MainActivity)context;
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
+  }
+
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.repeat_custom_item);
     setHasOptionsMenu(true);
-
-    actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-    actionBar.setTitle(R.string.custom);
 
     rootPreferenceScreen = getPreferenceScreen();
     picker = findPreference("picker");
@@ -70,6 +76,8 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
+    assert view != null;
+
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
     view.setFocusableInTouchMode(true);
     view.requestFocus();
@@ -79,11 +87,11 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
 
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
           registerCustomRepeat();
-          actionBar.setTitle(R.string.repeat_day_unit);
         }
         return false;
       }
     });
+    actionBar.setTitle(R.string.custom);
 
     return view;
   }
@@ -93,26 +101,25 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
 
     registerCustomRepeat();
 
-    actionBar.setTitle(R.string.repeat_day_unit);
     getFragmentManager().popBackStack();
     return super.onOptionsItemSelected(item);
   }
 
   private void registerCustomRepeat() {
 
-    match_to_template = false;
+    boolean match_to_template = false;
     if(MainEditFragment.dayRepeat.getInterval() == 1) {
       if(DayRepeatCustomPickerPreference.day) {
         match_to_template = true;
         DayRepeatEditFragment.everyday.setChecked(true);
         DayRepeatEditFragment.custom.setChecked(false);
-        MainEditFragment.dayRepeat.setSetted(1 << 0);
-        MainEditFragment.dayRepeat.setWhich_template(1 << 0);
+        MainEditFragment.dayRepeat.setSetted(1);
+        MainEditFragment.dayRepeat.setWhich_template(1);
         MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.everyday));
         DayRepeatEditFragment.label.setSummary(R.string.everyday);
       }
       else if(DayRepeatCustomPickerPreference.week) {
-        cal_day_of_week = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
+        int cal_day_of_week = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
         if(DayRepeatCustomWeekPickerPreference.week == (1 << (cal_day_of_week - 2)) ||
             DayRepeatCustomWeekPickerPreference.week == (1 << (cal_day_of_week + 5))) {
           match_to_template = true;
@@ -134,7 +141,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         }
       }
       else if(DayRepeatCustomPickerPreference.month && MainEditFragment.dayRepeat.isDays_of_month_setted()) {
-        cal_day_of_month = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
+        int cal_day_of_month = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
         if(DayRepeatCustomDaysOfMonthPickerPreference.days_of_month == (1 << (cal_day_of_month - 1))) {
           match_to_template = true;
           DayRepeatEditFragment.everymonth.setChecked(true);
@@ -145,7 +152,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         }
       }
       else if(DayRepeatCustomPickerPreference.year) {
-        cal_month = MainEditFragment.final_cal.get(Calendar.MONTH);
+        int cal_month = MainEditFragment.final_cal.get(Calendar.MONTH);
         if(DayRepeatCustomYearPickerPreference.year == (1 << cal_month)) {
           match_to_template = true;
           DayRepeatEditFragment.everyyear.setChecked(true);
@@ -167,8 +174,11 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
       if(DayRepeatEditFragment.everyyear.isChecked()) DayRepeatEditFragment.everyyear.setChecked(false);
       if(!DayRepeatEditFragment.custom.isChecked()) DayRepeatEditFragment.custom.setChecked(true);
 
+      String tmp = "";
+      StringBuilder stringBuilder;
+
       if(DayRepeatCustomPickerPreference.day) {
-        MainEditFragment.dayRepeat.setSetted(1 << 0);
+        MainEditFragment.dayRepeat.setSetted(1);
         DayRepeatEditFragment.label_str_custom = MainEditFragment.dayRepeat.getInterval() - 1 + "日おき";
       }
       else if(DayRepeatCustomPickerPreference.week) {
@@ -176,12 +186,13 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         if(MainEditFragment.dayRepeat.getInterval() == 1) DayRepeatEditFragment.label_str_custom = "毎週";
         else DayRepeatEditFragment.label_str_custom = MainEditFragment.dayRepeat.getInterval() - 1 + "週間おきの";
 
+        stringBuilder = new StringBuilder(tmp);
         for(int i = 0; i < 7; i++) {
           if((MainEditFragment.dayRepeat.getWeek() & (1 << i)) != 0) {
-            tmp += DAY_OF_WEEK_LIST[i] + ", ";
+            stringBuilder.append(DAY_OF_WEEK_LIST[i]).append(", ");
           }
         }
-        tmp = tmp.substring(0, tmp.length() - 2);
+        tmp = stringBuilder.substring(0, stringBuilder.length() - 2);
         DayRepeatEditFragment.label_str_custom += tmp + "曜日";
       }
       else if(DayRepeatCustomPickerPreference.month) {
@@ -190,13 +201,16 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
           if(MainEditFragment.dayRepeat.getInterval() == 1) DayRepeatEditFragment.label_str_custom = "毎月";
           else DayRepeatEditFragment.label_str_custom = MainEditFragment.dayRepeat.getInterval() - 1 + "ヶ月おきの";
 
+          stringBuilder = new StringBuilder(tmp);
           for(int i = 0; i < MainEditFragment.final_cal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
             if((MainEditFragment.dayRepeat.getDays_of_month() & (1 << i)) != 0) {
-              tmp += (i + 1) + ", ";
+              stringBuilder.append(i + 1).append(", ");
             }
           }
-          if((MainEditFragment.dayRepeat.getDays_of_month() & (1 << 30)) != 0) tmp += "最終, ";
-          tmp = tmp.substring(0, tmp.length() - 2);
+          if((MainEditFragment.dayRepeat.getDays_of_month() & (1 << 30)) != 0) {
+            stringBuilder.append("最終, ");
+          }
+          tmp = stringBuilder.substring(0, stringBuilder.length() - 2);
           DayRepeatEditFragment.label_str_custom += tmp + "日";
 
         }
@@ -227,12 +241,13 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         if(MainEditFragment.dayRepeat.getInterval() == 1) DayRepeatEditFragment.label_str_custom = "毎年";
         else DayRepeatEditFragment.label_str_custom = MainEditFragment.dayRepeat.getInterval() - 1 + "年おきの";
 
+        stringBuilder = new StringBuilder(tmp);
         for(int i = 0; i < 12; i++) {
           if((MainEditFragment.dayRepeat.getYear() & (1 << i)) != 0) {
-            tmp += (i + 1) + ", ";
+            stringBuilder.append(i + 1).append(", ");
           }
         }
-        tmp = tmp.substring(0, tmp.length() - 2);
+        tmp = stringBuilder.substring(0, stringBuilder.length() - 2);
 
         DayRepeatEditFragment.label_str_custom +=
             tmp + "月の" + MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH) + "日";

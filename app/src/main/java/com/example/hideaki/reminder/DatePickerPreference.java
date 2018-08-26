@@ -23,7 +23,6 @@ public class DatePickerPreference extends Preference implements View.OnClickList
   private static List<String> minute_list = new ArrayList<>();
   private static Calendar cal;
   private Calendar norm = Calendar.getInstance();
-  private static Calendar now = (Calendar)MainEditFragment.final_cal.clone();
   private int now_year;
   private int offset;
   private int whole_list_size;
@@ -33,11 +32,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
   private NumberPicker day_picker;
   private NumberPicker hour_picker;
   private NumberPicker minute_picker;
-  private TableLayout above_quick_time_picker;
-  private TableLayout below_quick_time_picker;
-  private TableRow tableRow;
   private TextView quick_time;
-  private String quick_time_str;
   private View saved_view;
   private FragmentManager manager;
 
@@ -62,8 +57,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
   protected View onCreateView(ViewGroup parent) {
 
     super.onCreateView(parent);
-    View view = View.inflate(getContext(), R.layout.date_picker, null);
-    return view;
+    return View.inflate(getContext(), R.layout.date_picker, null);
   }
 
   @Override
@@ -73,7 +67,8 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     saved_view = view;
 
     //quick_time_pickerの初期化
-    above_quick_time_picker = view.findViewById(R.id.above_quick_time_picker);
+    TableRow tableRow;
+    TableLayout above_quick_time_picker = view.findViewById(R.id.above_quick_time_picker);
     for(int i = 0; i < above_quick_time_picker.getChildCount(); i++) {
       tableRow = (TableRow)above_quick_time_picker.getChildAt(i);
       for(int j = 0; j < tableRow.getChildCount(); j++) {
@@ -82,7 +77,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
       }
     }
 
-    below_quick_time_picker = view.findViewById(R.id.below_quick_time_picker);
+    TableLayout below_quick_time_picker = view.findViewById(R.id.below_quick_time_picker);
     for(int i = 0; i < below_quick_time_picker.getChildCount(); i++) {
       tableRow = (TableRow)below_quick_time_picker.getChildAt(i);
       for(int j = 0; j < tableRow.getChildCount(); j++) {
@@ -93,7 +88,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
 
     //day_pickerの実装
     cal = (Calendar)MainEditFragment.final_cal.clone();
-    now = (Calendar)MainEditFragment.final_cal.clone();
+    Calendar now = (Calendar)MainEditFragment.final_cal.clone();
     MainEditFragment.final_cal.set(Calendar.SECOND, 0);
     day_list.clear();
     now_year = cal.get(Calendar.YEAR);
@@ -146,6 +141,10 @@ public class DatePickerPreference extends Preference implements View.OnClickList
             Calendar tmp = (Calendar)norm.clone();
             tmp.add(Calendar.DAY_OF_MONTH, day_picker.getValue());
             MainEditFragment.final_cal.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), tmp.get(Calendar.DAY_OF_MONTH));
+            break;
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL:
+            break;
         }
       }
     });
@@ -163,6 +162,10 @@ public class DatePickerPreference extends Preference implements View.OnClickList
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
             MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY, hour_picker.getValue());
+            break;
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL:
+            break;
         }
       }
     });
@@ -180,6 +183,10 @@ public class DatePickerPreference extends Preference implements View.OnClickList
         switch(scrollState) {
           case SCROLL_STATE_IDLE:
             MainEditFragment.final_cal.set(Calendar.MINUTE, minute_picker.getValue());
+            break;
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL:
+            break;
         }
       }
     });
@@ -211,7 +218,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
       case R.id.above_picker3:
       case R.id.above_picker4:
         quick_time = (TextView)v;
-        quick_time_str = quick_time.getText().toString();
+        String quick_time_str = quick_time.getText().toString();
         MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY,
             Integer.parseInt(quick_time_str.substring(0, quick_time_str.indexOf(':'))));
         MainEditFragment.final_cal.set(Calendar.MINUTE,

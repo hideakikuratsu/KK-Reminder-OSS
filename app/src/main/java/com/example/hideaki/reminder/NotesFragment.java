@@ -1,10 +1,10 @@
 package com.example.hideaki.reminder;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +17,6 @@ public class NotesFragment extends Fragment {
 
   private ActionBar actionBar;
   private Item item = null;
-  private EditText notes;
 
   public static NotesFragment newInstance(Item item) {
 
@@ -31,6 +30,21 @@ public class NotesFragment extends Fragment {
   }
 
   @Override
+  public void onAttach(Context context) {
+
+    super.onAttach(context);
+    MainActivity activity = (MainActivity)context;
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    actionBar.setDisplayHomeAsUpEnabled(true);
+  }
+
+  @Override
   public void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
@@ -38,10 +52,6 @@ public class NotesFragment extends Fragment {
 
     Bundle args = getArguments();
     item = (Item)args.getSerializable(MainEditFragment.ITEM);
-
-    actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-    actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setTitle(R.string.notes);
   }
 
   @Override
@@ -50,20 +60,9 @@ public class NotesFragment extends Fragment {
 
     View view = inflater.inflate(R.layout.notes, container, false);
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
-    view.setFocusableInTouchMode(true);
-    view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    actionBar.setTitle(R.string.notes);
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-          actionBar.setDisplayHomeAsUpEnabled(false);
-          actionBar.setTitle(R.string.app_name);
-        }
-        return false;
-      }
-    });
-    notes = view.findViewById(R.id.notes);
+    EditText notes = view.findViewById(R.id.notes);
 
     return view;
   }
@@ -78,8 +77,6 @@ public class NotesFragment extends Fragment {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    actionBar.setDisplayHomeAsUpEnabled(false);
-    actionBar.setTitle(R.string.app_name);
     getFragmentManager().popBackStack();
 
     switch(item.getItemId()) {

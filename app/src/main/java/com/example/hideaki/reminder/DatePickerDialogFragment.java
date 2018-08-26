@@ -13,9 +13,6 @@ import java.util.Calendar;
 
 public class DatePickerDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-  private int year;
-  private int month;
-  private int day;
   private DatePickerPreference datePickerPreference;
   private View view;
 
@@ -29,11 +26,14 @@ public class DatePickerDialogFragment extends DialogFragment implements DatePick
   @Override
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-    year = MainEditFragment.final_cal.get(Calendar.YEAR);
-    month = MainEditFragment.final_cal.get(Calendar.MONTH);
-    day = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
+    int year = MainEditFragment.final_cal.get(Calendar.YEAR);
+    int month = MainEditFragment.final_cal.get(Calendar.MONTH);
+    int day = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
 
-    return new DatePickerDialog(getActivity(), this, year, month, day);
+    MainActivity activity = (MainActivity)getActivity();
+    assert activity != null;
+
+    return new DatePickerDialog(activity, this, year, month, day);
   }
 
   @Override

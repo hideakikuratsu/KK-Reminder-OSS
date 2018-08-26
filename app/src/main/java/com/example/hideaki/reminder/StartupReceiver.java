@@ -14,27 +14,23 @@ public class StartupReceiver extends BroadcastReceiver {
   private DBAccessor accessor;
   private Item item;
   private byte[] ob_array;
-  private Intent set_alarm;
-  private PendingIntent sender;
-  private AlarmManager alarmManager;
-  private Context direct_boot_context;
 
   @Override
   public void onReceive(Context context, Intent intent) {
 
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      if(intent.getAction().equals(Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
-        direct_boot_context = context.createDeviceProtectedStorageContext();
+      if(intent.getAction() != null && intent.getAction().equals(Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
+        Context direct_boot_context = context.createDeviceProtectedStorageContext();
         accessor = new DBAccessor(direct_boot_context);
         resetAlarm(context);
       }
-      else if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+      else if(intent.getAction() != null && intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
         accessor = new DBAccessor(context);
         resetAlarm(context);
       }
     }
     else {
-      if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+      if(intent.getAction() != null && intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
         accessor = new DBAccessor(context);
         resetAlarm(context);
       }
@@ -54,17 +50,19 @@ public class StartupReceiver extends BroadcastReceiver {
       }
 
       if(item.getDate().getTimeInMillis() > System.currentTimeMillis()) {
-        set_alarm = new Intent(context, AlarmReceiver.class);
+        Intent set_alarm = new Intent(context, AlarmReceiver.class);
         try {
           ob_array = MainActivity.serialize(item);
         } catch(IOException e) {
           e.printStackTrace();
         }
         set_alarm.putExtra(MainEditFragment.ITEM, ob_array);
-        sender = PendingIntent.getBroadcast(
+        PendingIntent sender = PendingIntent.getBroadcast(
             context, (int)item.getId(), set_alarm, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        assert alarmManager != null;
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
           alarmManager.setAlarmClock(
               new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);

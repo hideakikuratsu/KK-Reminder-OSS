@@ -4,10 +4,22 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ExpandableListView;
 
 import java.io.ByteArrayInputStream;
@@ -22,14 +34,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity
-    extends AppCompatActivity
-    implements ActionBarFragment.OnFragmentInteractionListener, MainEditFragment.OnFragmentInteractionListener,
-    MyExpandableListAdapter.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
-  private byte[] ob_array;
-  static Timer timer;
-  static TimerTask timerTask;
+  Timer timer;
+  TimerTask timerTask;
   private Handler handler = new Handler();
   private DBAccessor accessor = null;
   private Intent intent;
@@ -38,8 +46,12 @@ public class MainActivity
   private int group_changed; //groupの変化があったかどうかのフラグをビットで表す
   private int group_changed_num; //groupの変化があったchildの個数を保持する
   private final MyComparator comparator = new MyComparator();
-  public ExpandableListView expandableListView;
-  public MyExpandableListAdapter expandableListAdapter;
+  private byte[] ob_array;
+  ExpandableListView expandableListView;
+  MyExpandableListAdapter expandableListAdapter;
+  DrawerLayout drawerLayout;
+  ActionBarDrawerToggle drawerToggle;
+  Drawable upArrow;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +70,41 @@ public class MainActivity
     }
     showExpandableListViewFragment();
     showActionBar();
+
+    drawerLayout = findViewById(R.id.drawer_layout);
+    drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+        R.string.drawer_open, R.string.drawer_close
+    );
+    drawerToggle.setDrawerIndicatorEnabled(true);
+    drawerLayout.addDrawerListener(drawerToggle);
+
+    upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
+    assert upArrow != null;
+    upArrow.setColorFilter(Color.WHITE, PorterDuff.Mode.DST_IN);
+
+    Toolbar toolbar = findViewById(R.id.toolbar_layout);
+    setSupportActionBar(toolbar);
+    ActionBar actionBar = getSupportActionBar();
+    assert actionBar != null;
+
+    actionBar.setDisplayHomeAsUpEnabled(true);
+    actionBar.setDisplayShowHomeEnabled(true);
+
+    NavigationView navigationView = findViewById(R.id.nav_view);
+    navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+      @Override
+      public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        menuItem.setChecked(true);
+        drawerLayout.closeDrawers();
+        return false;
+      }
+    });
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+
+    return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -81,6 +128,18 @@ public class MainActivity
       timer.cancel();
       timer = null;
     }
+  }
+
+  @Override
+  protected void onPostCreate(Bundle savedInstanceState) {
+    super.onPostCreate(savedInstanceState);
+    drawerToggle.syncState();
+  }
+
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    drawerToggle.onConfigurationChanged(newConfig);
   }
 
   public class UpdateListTimerTask extends TimerTask {
@@ -152,7 +211,7 @@ public class MainActivity
           for(List<Item> itemList : MyExpandableListAdapter.children) {
             Collections.sort(itemList, comparator);
           }
-          notifyDataSetChanged();
+          expandableListAdapter.notifyDataSetChanged();
         }
       });
     }
@@ -190,7 +249,9 @@ public class MainActivity
       intent = new Intent(this, AlarmReceiver.class);
       sender = PendingIntent.getBroadcast(
           this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
       alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      assert alarmManager != null;
 
       alarmManager.cancel(sender);
       sender.cancel();
@@ -203,8 +264,7 @@ public class MainActivity
     sender = PendingIntent.getBroadcast(
         this, (int)item.getId(), intent, PendingIntent.FLAG_NO_CREATE);
 
-    if(sender == null) return false;
-    else return true;
+    return sender != null;
   }
 
   private List<List<Item>> getChildren(String table) throws IOException, ClassNotFoundException {
@@ -298,7 +358,7 @@ public class MainActivity
     accessor.executeUpdate(item.getId(), serialize(item), table);
   }
 
-  public void deleteDB(Item item, String table) throws IOException {
+  public void deleteDB(Item item, String table) {
 
     accessor.executeDelete(item.getId(), table);
   }
@@ -317,10 +377,7 @@ public class MainActivity
 
   public boolean isItemExists(Item item, String table) {
 
-    if(accessor.executeQueryById(item.getId(), table) != null) {
-      return true;
-    }
-    else return false;
+    return accessor.executeQueryById(item.getId(), table) != null;
   }
 
   //シリアライズメソッド
@@ -363,7 +420,7 @@ public class MainActivity
     if(getFragmentManager().findFragmentByTag("ActionBarFragment") == null) {
       getFragmentManager()
           .beginTransaction()
-          .replace(android.R.id.content, ActionBarFragment.newInstance(), "ActionBarFragment")
+          .add(R.id.content, ActionBarFragment.newInstance(), "ActionBarFragment")
           .commit();
     }
   }
@@ -373,7 +430,7 @@ public class MainActivity
 
     getFragmentManager()
         .beginTransaction()
-        .replace(android.R.id.content, MainEditFragment.newInstance())
+        .replace(R.id.content, MainEditFragment.newInstance())
         .addToBackStack(null)
         .commit();
   }
@@ -382,7 +439,7 @@ public class MainActivity
 
     getFragmentManager()
         .beginTransaction()
-        .replace(android.R.id.content, MainEditFragment.newInstance(item))
+        .replace(R.id.content, MainEditFragment.newInstance(item))
         .addToBackStack(null)
         .commit();
   }
@@ -391,20 +448,8 @@ public class MainActivity
 
     getFragmentManager()
         .beginTransaction()
-        .replace(android.R.id.content, NotesFragment.newInstance(item))
+        .replace(R.id.content, NotesFragment.newInstance(item))
         .addToBackStack(null)
         .commit();
-  }
-
-  public void notifyDataSetChanged() {
-    expandableListAdapter.notifyDataSetChanged();
-  }
-
-  public void clearTextFilter() {
-    expandableListView.clearTextFilter();
-  }
-
-  public void setFilterText(String text) {
-    expandableListView.setFilterText(text);
   }
 }

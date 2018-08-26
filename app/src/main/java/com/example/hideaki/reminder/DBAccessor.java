@@ -15,7 +15,7 @@ public class DBAccessor {
   private String state_str;
   private SQLiteStatement statement;
 
-  public DBAccessor(Context context) {
+  DBAccessor(Context context) {
 
     this.helper = new MyDatabaseHelper(context);
   }
@@ -77,28 +77,6 @@ public class DBAccessor {
     try {
       statement = sdb.compileStatement(state_str);
       statement.bindLong(1, id);
-
-      statement.executeUpdateDelete();
-
-      sdb.setTransactionSuccessful();
-    }
-    catch(SQLException e) {
-      e.printStackTrace();
-    }
-    finally {
-      sdb.endTransaction();
-      sdb.close();
-    }
-  }
-
-  public void executeDeleteAll(String table) {
-
-    sdb = helper.getWritableDatabase();
-    state_str = "DELETE FROM " + table;
-
-    sdb.beginTransaction();
-    try {
-      statement = sdb.compileStatement(state_str);
 
       statement.executeUpdateDelete();
 

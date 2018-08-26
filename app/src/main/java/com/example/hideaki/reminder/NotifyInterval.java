@@ -3,14 +3,14 @@ package com.example.hideaki.reminder;
 import java.io.Serializable;
 
 public class NotifyInterval implements Serializable {
+
   private static final long serialVersionUID = 2239628138775849215L;
   private int hour = 0;
   private int minute = 1;
   private int time = 5;
   private int org_time = time;
 
-  public NotifyInterval() {
-  }
+  NotifyInterval() {}
 
   public NotifyInterval(int hour, int minute, int time) {
     this.hour = hour;
