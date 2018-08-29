@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 
 public class MinuteRepeatEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
-  private ActionBar actionBar;
   private PreferenceScreen rootPreferenceScreen;
   static PreferenceScreen label;
   static String label_str;
@@ -27,6 +26,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
   static CheckBoxPreference duration;
   private Preference count_picker;
   private Preference duration_picker;
+  private MainActivity activity;
 
   public static MinuteRepeatEditFragment newInstance() {
 
@@ -37,14 +37,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    MainActivity activity = (MainActivity)context;
-
-    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
-    activity.setSupportActionBar(toolbar);
-    actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
-
-    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    activity = (MainActivity)context;
   }
 
   @Override
@@ -92,6 +85,15 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
         else return false;
       }
     });
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    ActionBar actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    activity.drawerToggle.setDrawerIndicatorEnabled(false);
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.repeat_minute_unit);
 
     //チェック状態の初期化

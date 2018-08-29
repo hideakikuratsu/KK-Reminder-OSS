@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 public class TagEditFragment extends PreferenceFragment {
 
-  private ActionBar actionBar;
+  private MainActivity activity;
 
   public static TagEditFragment newInstance() {
 
@@ -26,14 +26,7 @@ public class TagEditFragment extends PreferenceFragment {
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    MainActivity activity = (MainActivity)context;
-
-    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
-    activity.setSupportActionBar(toolbar);
-    actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
-
-    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    activity = (MainActivity)context;
   }
 
   @Override
@@ -51,6 +44,15 @@ public class TagEditFragment extends PreferenceFragment {
     assert view != null;
 
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    ActionBar actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    activity.drawerToggle.setDrawerIndicatorEnabled(false);
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.tag);
 
     return view;

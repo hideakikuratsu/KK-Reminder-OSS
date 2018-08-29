@@ -15,8 +15,8 @@ import android.widget.EditText;
 
 public class NotesFragment extends Fragment {
 
-  private ActionBar actionBar;
   private Item item = null;
+  private MainActivity activity;
 
   public static NotesFragment newInstance(Item item) {
 
@@ -33,15 +33,7 @@ public class NotesFragment extends Fragment {
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    MainActivity activity = (MainActivity)context;
-
-    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
-    activity.setSupportActionBar(toolbar);
-    actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
-
-    actionBar.setHomeAsUpIndicator(activity.upArrow);
-    actionBar.setDisplayHomeAsUpEnabled(true);
+    activity = (MainActivity)context;
   }
 
   @Override
@@ -60,6 +52,15 @@ public class NotesFragment extends Fragment {
 
     View view = inflater.inflate(R.layout.notes, container, false);
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    ActionBar actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    activity.drawerToggle.setDrawerIndicatorEnabled(false);
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.notes);
 
     EditText notes = view.findViewById(R.id.notes);

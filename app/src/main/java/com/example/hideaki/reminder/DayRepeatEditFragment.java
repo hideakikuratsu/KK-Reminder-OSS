@@ -19,7 +19,6 @@ import java.util.Calendar;
 
 public class DayRepeatEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
-  private ActionBar actionBar;
   static CheckBoxPreference never;
   static CheckBoxPreference everyday;
   static CheckBoxPreference everyweekday;
@@ -45,13 +44,6 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
 
     super.onAttach(context);
     activity = (MainActivity)context;
-
-    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
-    activity.setSupportActionBar(toolbar);
-    actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
-
-    actionBar.setHomeAsUpIndicator(activity.upArrow);
   }
 
   @Override
@@ -86,6 +78,15 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
     assert view != null;
 
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    ActionBar actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    activity.drawerToggle.setDrawerIndicatorEnabled(false);
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.repeat_day_unit);
 
     label_str_everyweek = getActivity().getResources().getString(R.string.everyweek)

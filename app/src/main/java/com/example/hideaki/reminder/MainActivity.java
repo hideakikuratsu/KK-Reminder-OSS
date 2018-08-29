@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -14,12 +15,15 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.widget.ExpandableListView;
 
 import java.io.ByteArrayInputStream;
@@ -36,6 +40,10 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
+  private static final String SAVED_DATA = "SAVED_DATA";
+  private static final String MENU_POSITION = "MENU_POSITION";
+  private static final String SUBMENU_POSITION = "SUBMENU_POSITION";
+
   Timer timer;
   TimerTask timerTask;
   private Handler handler = new Handler();
@@ -47,9 +55,12 @@ public class MainActivity extends AppCompatActivity {
   private int group_changed_num; //groupの変化があったchildの個数を保持する
   private final MyComparator comparator = new MyComparator();
   private byte[] ob_array;
+  private int which_menu_open;
+  private int which_submenu_open;
   ExpandableListView expandableListView;
   MyExpandableListAdapter expandableListAdapter;
   DrawerLayout drawerLayout;
+  NavigationView navigationView;
   ActionBarDrawerToggle drawerToggle;
   Drawable upArrow;
 
@@ -68,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
     } catch(ClassNotFoundException e) {
       e.printStackTrace();
     }
-    showExpandableListViewFragment();
-    showActionBar();
 
     drawerLayout = findViewById(R.id.drawer_layout);
     drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
@@ -90,15 +99,39 @@ public class MainActivity extends AppCompatActivity {
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setDisplayShowHomeEnabled(true);
 
-    NavigationView navigationView = findViewById(R.id.nav_view);
+    navigationView = findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
       @Override
       public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        Menu menu = navigationView.getMenu();
+        for(int i = 0; i < menu.size(); i++) {
+          if(menuItem.getItemId() == menu.getItem(i).getItemId()) {
+            which_menu_open = i;
+          }
+
+          if(menu.getItem(i).hasSubMenu()) {
+            SubMenu subMenu = menu.getItem(i).getSubMenu();
+            for(int j = 0; j < subMenu.size(); j++) {
+              if(menuItem.getItemId() == subMenu.getItem(j).getItemId()) {
+                which_menu_open = i;
+                which_submenu_open = j;
+              }
+
+              subMenu.getItem(j).setChecked(false);
+            }
+          }
+          else {
+            menu.getItem(i).setChecked(false);
+          }
+        }
         menuItem.setChecked(true);
-        drawerLayout.closeDrawers();
+        drawerLayout.closeDrawer(GravityCompat.START);
         return false;
       }
     });
+
+    showExpandableListViewFragment();
+    showActionBar();
   }
 
   @Override
@@ -118,16 +151,35 @@ public class MainActivity extends AppCompatActivity {
     timer = new Timer();
     timerTask = new UpdateListTimerTask();
     timer.schedule(timerTask, 0, 1000);
+
+    SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
+    which_menu_open = preferences.getInt(MENU_POSITION, 0);
+    which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
+
+    MenuItem menuItem = navigationView.getMenu().getItem(which_menu_open);
+    if(menuItem.hasSubMenu()) {
+      menuItem.getSubMenu().getItem(which_submenu_open).setChecked(true);
+    }
+    else {
+      menuItem.setChecked(true);
+    }
   }
 
   @Override
   protected void onPause() {
 
     super.onPause();
+
     if(timer != null) {
       timer.cancel();
       timer = null;
     }
+
+    SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
+    SharedPreferences.Editor editor = preferences.edit();
+    editor.putInt(MENU_POSITION, which_menu_open);
+    editor.putInt(SUBMENU_POSITION, which_submenu_open);
+    editor.apply();
   }
 
   @Override

@@ -21,7 +21,6 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
 
   private static final String[] DAY_OF_WEEK_LIST = {"月", "火", "水", "木", "金", "土", "日"};
 
-  private ActionBar actionBar;
   private static PreferenceScreen rootPreferenceScreen;
   private static Preference picker;
   private static Preference week;
@@ -30,6 +29,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
   static CheckBoxPreference on_the_month;
   private static Preference on_the_month_picker;
   private static Preference year;
+  private MainActivity activity;
 
   public static DayRepeatCustomPickerFragment newInstance() {
 
@@ -40,14 +40,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    MainActivity activity = (MainActivity)context;
-
-    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
-    activity.setSupportActionBar(toolbar);
-    actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
-
-    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    activity = (MainActivity)context;
   }
 
   @Override
@@ -91,6 +84,15 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         return false;
       }
     });
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    ActionBar actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    activity.drawerToggle.setDrawerIndicatorEnabled(false);
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.custom);
 
     return view;

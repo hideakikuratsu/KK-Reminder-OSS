@@ -33,6 +33,6 @@ public class ExpandableListViewFragment extends Fragment {
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    this.activity = (MainActivity)context;
+    activity = (MainActivity)context;
   }
 }

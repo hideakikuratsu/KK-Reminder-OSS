@@ -35,7 +35,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   static Item item;
   static String detail_str;
   static String notes_str;
-  private ActionBar actionBar;
   static Calendar final_cal;
   static DayRepeat dayRepeat;
   static MinuteRepeat minuteRepeat;
@@ -82,16 +81,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    activity = (MainActivity)getActivity();
-
-    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
-    activity.setSupportActionBar(toolbar);
-    actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
-
-    activity.drawerToggle.setDrawerIndicatorEnabled(false);
-    actionBar.setHomeAsUpIndicator(activity.upArrow);
-    actionBar.setDisplayHomeAsUpEnabled(true);
+    activity = (MainActivity)context;
   }
 
   @Override
@@ -128,6 +118,15 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     assert view != null;
 
     view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
+    ActionBar actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
+    activity.drawerToggle.setDrawerIndicatorEnabled(false);
+    actionBar.setHomeAsUpIndicator(activity.upArrow);
+    actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.edit);
 
     if(dayRepeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
@@ -151,7 +150,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     switch(item.getItemId()) {
       case R.id.done:
-        if(is_edit && MainEditFragment.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()) {
+        if(is_edit && MainEditFragment.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()
+            && (MainEditFragment.dayRepeat.getSetted() != 0 || MainEditFragment.minuteRepeat.getWhich_setted() != 0)) {
           new AlertDialog.Builder(getActivity())
               .setMessage(R.string.repeat_conflict_dialog_message)
               .setPositiveButton(R.string.yes, this)

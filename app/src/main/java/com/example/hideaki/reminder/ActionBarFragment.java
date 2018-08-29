@@ -19,7 +19,6 @@ import android.widget.ToggleButton;
 public class ActionBarFragment extends Fragment {
 
   private MainActivity activity;
-  private ActionBar actionBar;
 
   public static ActionBarFragment newInstance() {
 
@@ -30,11 +29,7 @@ public class ActionBarFragment extends Fragment {
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    activity = (MainActivity)getActivity();
-
-    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
-    activity.setSupportActionBar(toolbar);
-    actionBar = activity.getSupportActionBar();
+    activity = (MainActivity)context;
   }
 
   @Override
@@ -48,7 +43,12 @@ public class ActionBarFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
+    Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    activity.setSupportActionBar(toolbar);
     activity.drawerToggle.setDrawerIndicatorEnabled(true);
+    ActionBar actionBar = activity.getSupportActionBar();
+    assert actionBar != null;
+
     actionBar.setTitle(R.string.app_name);
     return inflater.inflate(R.layout.fragment_search, container, false);
   }
