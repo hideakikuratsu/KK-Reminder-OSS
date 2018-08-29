@@ -13,26 +13,15 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
-import java.io.IOException;
-
 public class AlarmReceiver extends BroadcastReceiver {
 
-  private Item item;
   private Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
   @Override
   public void onReceive(Context context, Intent intent) {
 
     byte[] ob_array = intent.getByteArrayExtra(MainEditFragment.ITEM);
-    if(ob_array == null) throw new NullPointerException("ob_array is null");
-    try {
-      item = (Item)MainActivity.deserialize(ob_array);
-    } catch(IOException e) {
-      e.printStackTrace();
-    } catch(ClassNotFoundException e) {
-      e.printStackTrace();
-    }
-    if(item == null) throw new NullPointerException("item is null");
+    Item item = (Item)MainActivity.deserialize(ob_array);
 
     Intent open_activity = new Intent(context, MainActivity.class);
     PendingIntent sender = PendingIntent.getActivity(
@@ -80,11 +69,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     if(time > 0 || time < 0) {
       item.getNotify_interval().setTime(--time);
       Intent recursive_alarm = new Intent(context, AlarmReceiver.class);
-      try {
-        ob_array = MainActivity.serialize(item);
-      } catch(IOException e) {
-        e.printStackTrace();
-      }
+      ob_array = MainActivity.serialize(item);
       recursive_alarm.putExtra(MainEditFragment.ITEM, ob_array);
       PendingIntent recursive_sender = PendingIntent.getBroadcast(
           context, (int)item.getId(), recursive_alarm, PendingIntent.FLAG_UPDATE_CURRENT);

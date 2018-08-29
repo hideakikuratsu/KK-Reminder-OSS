@@ -76,10 +76,16 @@ public class ActionBarFragment extends Fragment {
       @Override
       public boolean onQueryTextChange(String text) {
         if(text == null || text.equals("")) {
-          activity.expandableListView.clearTextFilter();
+          if(activity.menuItem.getOrder() == 1) {
+            activity.listView.clearTextFilter();
+          }
+          else activity.expandableListView.clearTextFilter();
         }
         else {
-          activity.expandableListView.setFilterText(text);
+          if(activity.menuItem.getOrder() == 1) {
+            activity.listView.setFilterText(text);
+          }
+          else activity.expandableListView.setFilterText(text);
         }
 
         return false;

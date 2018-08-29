@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 public class Item implements Serializable {
 
-  private static final long serialVersionUID = -2547782122130839927L;
+  private static final long serialVersionUID = 1638801559411488363L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
@@ -21,6 +21,8 @@ public class Item implements Serializable {
   private long org_time_altered; //リピート設定による変更をスナックバーから元に戻すのに用いる
   private boolean alarm_stopped;
   private boolean org_alarm_stopped; //リピート設定による変更をスナックバーから元に戻すのに用いる
+  private long which_list_belongs;
+  private int order = -1;
 
   Item() {}
 
@@ -80,6 +82,14 @@ public class Item implements Serializable {
     return org_alarm_stopped;
   }
 
+  public long getWhich_list_belongs() {
+    return which_list_belongs;
+  }
+
+  public int getOrder() {
+    return order;
+  }
+
   public void setDetail(String detail) {
     this.detail = detail;
   }
@@ -134,5 +144,13 @@ public class Item implements Serializable {
 
   public void setOrg_alarm_stopped(boolean org_alarm_stopped) {
     this.org_alarm_stopped = org_alarm_stopped;
+  }
+
+  public void setWhich_list_belongs(long which_list_belongs) {
+    this.which_list_belongs = which_list_belongs;
+  }
+
+  public void setOrder(int order) {
+    this.order = order;
   }
 }

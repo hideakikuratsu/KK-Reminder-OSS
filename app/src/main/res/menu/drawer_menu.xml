@@ -1,35 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/reminder_list"
+        android:checkableBehavior="single">
 
         <item
             android:id="@+id/scheduled_item"
             android:icon="@drawable/ic_time"
-            android:title="@string/nav_scheduled_item"/>
+            android:title="@string/nav_scheduled_item"
+            android:checkable="true"
+            android:orderInCategory="0"/>
+
+        <item
+            android:id="@+id/add_list"
+            android:icon="@drawable/ic_add_24dp"
+            android:title="@string/add_list"
+            android:orderInCategory="2"/>
 
     </group>
 
     <item
         android:id="@+id/sub_header"
-        android:title="@string/nav_other">
+        android:title="@string/nav_other"
+        android:orderInCategory="3">
 
         <menu android:checkableBehavior="single">
 
+            <!--orderInCategoryは<item>にのみ有効。また、ここで指定した順序は<menu>の直接の子にあたる<item>
+            同士のみで比較されるため、<item>の中に新しく<menu>を入れ子した場合、その<menu>の親にあたる<item>は
+            あくまでその<item>が所属するコンテキストと同じコンテキストを持つ<item>のorderInCategoryだけが参照され、
+            その<menu>の子はその<menu>の子であるというコンテキストが同じ同士である子の<item>しかorderInCategory
+            の参照は行われない。orderInCategoryを指定しなかった場合、0が割り当てられる。また、orderInCategory
+            は同じ数値を指定しても良く、その場合は、xml上での順番または動的に追加した場合は追加した順番通り上から
+            並べられる。-->
             <item
                 android:id="@+id/settings"
                 android:icon="@drawable/ic_settings"
-                android:title="@string/nav_settings"/>
+                android:title="@string/nav_settings"
+                android:checkable="true"
+                android:orderInCategory="3"/>
 
             <item
                 android:id="@+id/help"
                 android:icon="@drawable/ic_help"
-                android:title="@string/nav_help"/>
+                android:title="@string/nav_help"
+                android:checkable="true"
+                android:orderInCategory="4"/>
 
             <item
                 android:id="@+id/feedback"
                 android:icon="@drawable/ic_feedback"
-                android:title="@string/nav_feedback"/>
+                android:title="@string/nav_feedback"
+                android:checkable="true"
+                android:orderInCategory="5"/>
 
         </menu>
 

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class MinuteRepeat implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = 7970637305322150439L;
+  private static final long serialVersionUID = 1481675552108704976L;
   private String label = null;
   private int hour = 0;
   private int minute = 10;
@@ -131,5 +131,37 @@ public class MinuteRepeat implements Serializable, Cloneable {
     }
 
     return minuteRepeat;
+  }
+
+  public void clear() {
+
+    this.label = null;
+    this.hour = 0;
+    this.minute = 10;
+    this.count = 3;
+    this.org_count = 3;
+    this.org_count2 = 3;
+    this.duration_hour = 1;
+    this.duration_minute = 0;
+    this.org_duration_hour = 1;
+    this.org_duration_minute = 0;
+    this.org_duration2 = 0;
+    this.which_setted = 0;
+  }
+
+  public void countClear() {
+
+    this.duration_hour = 1;
+    this.duration_minute = 0;
+    this.org_duration_hour = 1;
+    this.org_duration_minute = 0;
+    this.org_duration2 = 0;
+  }
+
+  public void durationClear() {
+
+    this.count = 3;
+    this.org_count = 3;
+    this.org_count2 = 3;
   }
 }

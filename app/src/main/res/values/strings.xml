@@ -78,6 +78,8 @@
     <string name="drawer_open">ドロワーを開く</string>
     <string name="drawer_close">ドロワーを閉じる</string>
     <string name="nav_scheduled_item">期限付きリマインダー</string>
+    <string name="add_list">新しいリストを追加</string>
+    <string name="add">追加</string>
     <string name="nav_other">その他</string>
     <string name="nav_settings">設定</string>
     <string name="nav_help">ヘルプ</string>

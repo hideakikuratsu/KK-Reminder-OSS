@@ -8,11 +8,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
   static final String TODO_TABLE = "todo";
   static final String DONE_TABLE = "done";
+  static final String SETTINGS_TABLE = "settings";
   private static final String DATABASE = "reminder.db";
   private static final String CREATE_TODO_TABLE =
       "CREATE TABLE todo(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, item_id INTEGER NOT NULL, serial BLOB NOT NULL)";
   private static final String CREATE_DONE_TABLE =
       "CREATE TABLE done(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, item_id INTEGER NOT NULL, serial BLOB NOT NULL)";
+  private static final String CREATE_SETTINGS_TABLE =
+      "CREATE TABLE settings(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, item_id INTEGER NOT NULL, serial BLOB NOT NULL)";
 
   MyDatabaseHelper(Context context) {
 
@@ -24,6 +27,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     db.execSQL(CREATE_TODO_TABLE);
     db.execSQL(CREATE_DONE_TABLE);
+    db.execSQL(CREATE_SETTINGS_TABLE);
   }
 
   @Override

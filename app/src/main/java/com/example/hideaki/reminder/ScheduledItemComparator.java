@@ -2,7 +2,7 @@ package com.example.hideaki.reminder;
 
 import java.util.Comparator;
 
-public class MyComparator implements Comparator<Item> {
+public class ScheduledItemComparator implements Comparator<Item> {
 
   @Override
   public int compare(Item o1, Item o2) {

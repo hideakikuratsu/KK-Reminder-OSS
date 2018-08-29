@@ -27,7 +27,9 @@
             android:summary="@string/none"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/notes">
+    <PreferenceCategory
+        android:key="notes_category"
+        android:title="@string/notes">
         <EditTextPreference
             android:key="notes"
             android:height="60dp"

@@ -9,13 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ExpandableListViewFragment extends Fragment {
+public class ListViewFragment extends Fragment {
 
   private MainActivity activity;
 
-  public static ExpandableListViewFragment newInstance() {
+  public static ListViewFragment newInstance() {
 
-    return new ExpandableListViewFragment();
+    return new ListViewFragment();
   }
 
   @Override
@@ -30,10 +30,11 @@ public class ExpandableListViewFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-    View view = inflater.inflate(R.layout.expandable_listview, container, false);
-    activity.expandableListView = view.findViewById(R.id.expandable_list);
-    activity.expandableListView.setAdapter(activity.expandableListAdapter);
-    activity.expandableListView.setTextFilterEnabled(true);
+    View view = inflater.inflate(R.layout.listview, container, false);
+    activity.listAdapter = new MyListAdapter(activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE), activity);
+    activity.listView = view.findViewById(R.id.listView);
+    activity.listView.setAdapter(activity.listAdapter);
+    activity.listView.setTextFilterEnabled(true);
 
     return view;
   }

@@ -7,13 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
-import java.io.IOException;
-
 public class StartupReceiver extends BroadcastReceiver {
 
   private DBAccessor accessor;
-  private Item item;
-  private byte[] ob_array;
 
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -41,21 +37,11 @@ public class StartupReceiver extends BroadcastReceiver {
 
     for(byte[] stream : accessor.executeQueryAll(MyDatabaseHelper.TODO_TABLE)) {
 
-      try {
-        item = (Item)MainActivity.deserialize(stream);
-      } catch(IOException e) {
-        e.printStackTrace();
-      } catch(ClassNotFoundException e) {
-        e.printStackTrace();
-      }
+      Item item = (Item)MainActivity.deserialize(stream);
 
-      if(item.getDate().getTimeInMillis() > System.currentTimeMillis()) {
+      if(item.getDate().getTimeInMillis() > System.currentTimeMillis() && item.getWhich_list_belongs() == 0) {
         Intent set_alarm = new Intent(context, AlarmReceiver.class);
-        try {
-          ob_array = MainActivity.serialize(item);
-        } catch(IOException e) {
-          e.printStackTrace();
-        }
+        byte[] ob_array = MainActivity.serialize(item);
         set_alarm.putExtra(MainEditFragment.ITEM, ob_array);
         PendingIntent sender = PendingIntent.getBroadcast(
             context, (int)item.getId(), set_alarm, PendingIntent.FLAG_UPDATE_CURRENT);

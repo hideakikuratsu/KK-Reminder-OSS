@@ -18,7 +18,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,14 +32,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private static Calendar tmp;
   private static boolean[] display_groups = new boolean[5];
   static final List<String> groups;
-  public static List<List<Item>> children;
-  private static List<List<Item>> org_children;
+  static List<List<Item>> children;
   private Context context;
-  private Pattern pattern;
-  private Matcher matcher;
   private MyOnClickListener listener;
   private static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
-  private MyComparator comparator = new MyComparator();
+  private ScheduledItemComparator scheduledItemComparator = new ScheduledItemComparator();
   private boolean is_control_panel_locked;
   private MainActivity activity;
 
@@ -67,8 +63,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     return new Filter() {
       @Override
       protected FilterResults performFiltering(CharSequence constraint) {
-        FilterResults results = new FilterResults();
-        List<List<Item>> filteredList = new ArrayList<>();
 
         //入力文字列が大文字を含むかどうか調べる
         boolean is_upper = false;
@@ -80,9 +74,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
 
         //検索処理
-        if(org_children == null) org_children = children;
-        else children = org_children;
+        children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
 
+        List<List<Item>> filteredList = new ArrayList<>();
         for(List<Item> itemList : children) {
           List<Item> filteredItem = new ArrayList<>();
 
@@ -94,8 +88,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 detail = detail.toLowerCase();
               }
 
-              pattern = Pattern.compile(constraint.toString());
-              matcher = pattern.matcher(detail);
+              Pattern pattern = Pattern.compile(constraint.toString());
+              Matcher matcher = pattern.matcher(detail);
 
               if(matcher.find()) {
                 filteredItem.add(item);
@@ -106,6 +100,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           filteredList.add(filteredItem);
         }
 
+        FilterResults results = new FilterResults();
         results.count = filteredList.size();
         results.values = filteredList;
 
@@ -115,6 +110,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       @Override
       @SuppressWarnings("unchecked")
       protected void publishResults(CharSequence constraint, FilterResults results) {
+
         children = (List<List<Item>>)results.values;
 
         //リストの表示更新
@@ -184,11 +180,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.setAlarm(item);
           }
 
-          try {
-            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-          } catch(IOException e) {
-            e.printStackTrace();
-          }
+          activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
           displayDate(viewHolder, item);
           break;
@@ -204,11 +196,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
             activity.deleteAlarm(item);
             activity.setAlarm(item);
-            try {
-              activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-            } catch(IOException e) {
-              e.printStackTrace();
-            }
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
             displayDate(viewHolder, item);
           }
@@ -225,11 +213,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
             activity.deleteAlarm(item);
             activity.setAlarm(item);
-            try {
-              activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-            } catch(IOException e) {
-              e.printStackTrace();
-            }
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
             displayDate(viewHolder, item);
           }
@@ -246,11 +230,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
             activity.deleteAlarm(item);
             activity.setAlarm(item);
-            try {
-              activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-            } catch(IOException e) {
-              e.printStackTrace();
-            }
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
             displayDate(viewHolder, item);
           }
@@ -276,11 +256,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           activity.deleteAlarm(item);
           activity.setAlarm(item);
-          try {
-            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-          } catch(IOException e) {
-            e.printStackTrace();
-          }
+          activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
           displayDate(viewHolder, item);
           break;
@@ -301,11 +277,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           activity.deleteAlarm(item);
           activity.setAlarm(item);
-          try {
-            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-          } catch(IOException e) {
-            e.printStackTrace();
-          }
+          activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
           displayDate(viewHolder, item);
           break;
@@ -326,11 +298,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           activity.deleteAlarm(item);
           activity.setAlarm(item);
-          try {
-            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-          } catch(IOException e) {
-            e.printStackTrace();
-          }
+          activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
           displayDate(viewHolder, item);
           break;
@@ -1188,34 +1156,32 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             if(item.getTime_altered() != 0) item.setTime_altered(0);
           }
           item.setDate((Calendar)tmp.clone());
-          if(activity.timer != null){
-            activity.timer.cancel();
-            activity.timer = null;
-          }
-          activity.timer = new Timer();
-          activity.timerTask = activity.new UpdateListTimerTask();
-          activity.timer.schedule(activity.timerTask, 400, 1000);
 
           activity.deleteAlarm(item);
           activity.setAlarm(item);
-          try {
-            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-          } catch(IOException e) {
-            e.printStackTrace();
-          }
-        }
-        else {
-          children.get(group_position).remove(child_position);
-          if(activity.timer != null){
+          activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+
+          if(activity.timer != null) {
             activity.timer.cancel();
             activity.timer = null;
           }
           activity.timer = new Timer();
           activity.timerTask = activity.new UpdateListTimerTask();
           activity.timer.schedule(activity.timerTask, 400, 1000);
+        }
+        else {
+          children.get(group_position).remove(child_position);
 
           activity.deleteAlarm(item);
           activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
+
+          if(activity.timer != null) {
+            activity.timer.cancel();
+            activity.timer = null;
+          }
+          activity.timer = new Timer();
+          activity.timerTask = activity.new UpdateListTimerTask();
+          activity.timer.schedule(activity.timerTask, 400, 1000);
         }
 
         Snackbar.make(convertView, context.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
@@ -1256,28 +1222,20 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   if(!item.isAlarm_stopped()) {
                     activity.setAlarm(item);
                   }
-                  try {
-                    activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-                  } catch(IOException e) {
-                    e.printStackTrace();
-                  }
+                  activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
                 }
                 else {
                   item.getDate().setTimeInMillis(item.getOrg_date().getTimeInMillis() + item.getTime_altered());
                   children.get(group_position).add(item);
                   for(List<Item> itemList : children) {
-                    Collections.sort(itemList, comparator);
+                    Collections.sort(itemList, scheduledItemComparator);
                   }
                   notifyDataSetChanged();
 
                   if(!item.isAlarm_stopped()) {
                     activity.setAlarm(item);
                   }
-                  try {
-                    activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
-                  } catch(IOException e) {
-                    e.printStackTrace();
-                  }
+                  activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
                 }
               }
             })
