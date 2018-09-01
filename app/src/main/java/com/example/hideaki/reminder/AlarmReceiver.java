@@ -27,7 +27,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     PendingIntent sender = PendingIntent.getActivity(
         context, 0, open_activity, PendingIntent.FLAG_UPDATE_CURRENT);
 
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "reminder")
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "reminder_01")
         .setContentTitle("Reminder")
         .setContentText(item.getDetail())
         .setSmallIcon(R.mipmap.ic_launcher_round)

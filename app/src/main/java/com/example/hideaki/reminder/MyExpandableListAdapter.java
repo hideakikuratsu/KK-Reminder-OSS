@@ -34,7 +34,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   static final List<String> groups;
   static List<List<Item>> children;
   private Context context;
-  private MyOnClickListener listener;
   private static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
   private ScheduledItemComparator scheduledItemComparator = new ScheduledItemComparator();
   private boolean is_control_panel_locked;
@@ -57,76 +56,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     this.activity = (MainActivity)context;
   }
 
-  @Override
-  public Filter getFilter() {
-
-    return new Filter() {
-      @Override
-      protected FilterResults performFiltering(CharSequence constraint) {
-
-        //入力文字列が大文字を含むかどうか調べる
-        boolean is_upper = false;
-        for(int i = 0; i < constraint.length(); i++) {
-          if(Character.isUpperCase(constraint.charAt(i))) {
-            is_upper = true;
-            break;
-          }
-        }
-
-        //検索処理
-        children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
-
-        List<List<Item>> filteredList = new ArrayList<>();
-        for(List<Item> itemList : children) {
-          List<Item> filteredItem = new ArrayList<>();
-
-          for(Item item : itemList) {
-            if(item.getDetail() != null) {
-              String detail = item.getDetail();
-
-              if(!is_upper) {
-                detail = detail.toLowerCase();
-              }
-
-              Pattern pattern = Pattern.compile(constraint.toString());
-              Matcher matcher = pattern.matcher(detail);
-
-              if(matcher.find()) {
-                filteredItem.add(item);
-              }
-            }
-          }
-
-          filteredList.add(filteredItem);
-        }
-
-        FilterResults results = new FilterResults();
-        results.count = filteredList.size();
-        results.values = filteredList;
-
-        return results;
-      }
-
-      @Override
-      @SuppressWarnings("unchecked")
-      protected void publishResults(CharSequence constraint, FilterResults results) {
-
-        children = (List<List<Item>>)results.values;
-
-        //リストの表示更新
-        notifyDataSetChanged();
-      }
-    };
-  }
-
   private static class ChildViewHolder {
 
+    CardView child_card;
+    ImageView clock_image;
     TextView time;
     TextView detail;
     TextView repeat;
-    CardView child_card;
-    ImageView clock_image;
-    CheckBox check_item;
+    CheckBox checkBox;
     TableLayout control_panel;
   }
 
@@ -157,6 +94,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             has_panel = item.getId();
             if(!is_control_panel_locked) {
               viewHolder.control_panel.setVisibility(View.VISIBLE);
+              notifyDataSetChanged();
             }
           }
           else viewHolder.control_panel.setVisibility(View.GONE);
@@ -1245,6 +1183,68 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   }
 
   @Override
+  public Filter getFilter() {
+
+    return new Filter() {
+      @Override
+      protected FilterResults performFiltering(CharSequence constraint) {
+
+        //入力文字列が大文字を含むかどうか調べる
+        boolean is_upper = false;
+        for(int i = 0; i < constraint.length(); i++) {
+          if(Character.isUpperCase(constraint.charAt(i))) {
+            is_upper = true;
+            break;
+          }
+        }
+
+        //検索処理
+        children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+
+        List<List<Item>> filteredList = new ArrayList<>();
+        for(List<Item> itemList : children) {
+          List<Item> filteredItem = new ArrayList<>();
+
+          for(Item item : itemList) {
+            if(item.getDetail() != null) {
+              String detail = item.getDetail();
+
+              if(!is_upper) {
+                detail = detail.toLowerCase();
+              }
+
+              Pattern pattern = Pattern.compile(constraint.toString());
+              Matcher matcher = pattern.matcher(detail);
+
+              if(matcher.find()) {
+                filteredItem.add(item);
+              }
+            }
+          }
+
+          filteredList.add(filteredItem);
+        }
+
+        FilterResults results = new FilterResults();
+        results.count = filteredList.size();
+        results.values = filteredList;
+
+        return results;
+      }
+
+      @Override
+      @SuppressWarnings("unchecked")
+      protected void publishResults(CharSequence constraint, FilterResults results) {
+
+        children = (List<List<Item>>)results.values;
+
+        //リストの表示更新
+        notifyDataSetChanged();
+      }
+    };
+  }
+
+  @Override
   public int getGroupCount() {
 
     //表示するgroupsのサイズを返す。
@@ -1350,12 +1350,12 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       convertView = View.inflate(viewGroup.getContext(), R.layout.child_layout, null);
 
       viewHolder = new ChildViewHolder();
+      viewHolder.child_card = convertView.findViewById(R.id.child_card);
+      viewHolder.clock_image = convertView.findViewById(R.id.clock_image);
       viewHolder.time = convertView.findViewById(R.id.date);
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.repeat = convertView.findViewById(R.id.day_repeat);
-      viewHolder.child_card = convertView.findViewById(R.id.child_card);
-      viewHolder.clock_image = convertView.findViewById(R.id.clock_image);
-      viewHolder.check_item = convertView.findViewById(R.id.check_item);
+      viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
 
       convertView.setTag(viewHolder);
@@ -1367,6 +1367,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //現在のビュー位置でのitemの取得とリスナーの初期化
     Item item = (Item)getChild(i, i1);
     int count = 0;
+    MyOnClickListener listener = null;
     for(int j = 0; j < groups.size(); j++) {
       if(display_groups[j]) {
         if(count == i) listener = new MyOnClickListener(j, i1, item, convertView, viewHolder);
@@ -1403,8 +1404,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     }
 
     //チェックが入っている場合、チェックを外す
-    if(viewHolder.check_item.isChecked()) {
-      viewHolder.check_item.setChecked(false);
+    if(viewHolder.checkBox.isChecked()) {
+      viewHolder.checkBox.setChecked(false);
     }
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
@@ -1414,7 +1415,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     viewHolder.child_card.setOnClickListener(listener);
     viewHolder.clock_image.setOnClickListener(listener);
-    viewHolder.check_item.setOnCheckedChangeListener(listener);
+    viewHolder.checkBox.setOnCheckedChangeListener(listener);
 
     for(int j = 0; j < viewHolder.control_panel.getChildCount(); j++) {
       TableRow tableRow = (TableRow)viewHolder.control_panel.getChildAt(j);

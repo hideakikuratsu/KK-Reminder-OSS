@@ -1,6 +1,8 @@
 package com.example.hideaki.reminder;
 
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -132,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       menuItem.getSubMenu().getItem(which_submenu_open).setChecked(true);
     }
     else {
-      System.out.println(which_menu_open);
       menuItem.setChecked(true);
     }
 
@@ -141,6 +142,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     else showExpandableListViewFragment();
     showActionBar();
+
+    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+      assert notificationManager != null;
+      NotificationChannel notificationChannel = new NotificationChannel("reminder_01",
+          getString(R.string.notification_channel_name), NotificationManager.IMPORTANCE_HIGH);
+
+      notificationManager.createNotificationChannel(notificationChannel);
+    }
   }
 
   @Override
@@ -519,8 +529,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     List<Item> itemList = new ArrayList<>();
     for(Item item : queryAllDB(table)) {
       if(item.getWhich_list_belongs() == generalSettings.getNonScheduledList(which_menu_open - 1).getId()) {
-//        System.out.println(which_menu_open);
-//        System.out.println(generalSettings.getNonScheduledList(which_menu_open - 1).getId());
         itemList.add(item);
       }
     }

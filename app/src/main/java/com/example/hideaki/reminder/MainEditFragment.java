@@ -20,17 +20,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import java.util.Calendar;
+import java.util.Collections;
 
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
     Preference.OnPreferenceChangeListener, DialogInterface.OnClickListener {
 
   public static final String ITEM = "ITEM";
 
-  private PreferenceScreen rootPreferenceScreen;
-  private PreferenceScreen tag;
-  private PreferenceScreen interval;
   private EditTextPreference detail;
-  private PreferenceCategory notes_category;
   private EditTextPreference notes;
   private PreferenceScreen day_repeat_item;
   private PreferenceScreen minute_repeat_item;
@@ -41,6 +38,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   static DayRepeat dayRepeat;
   static MinuteRepeat minuteRepeat;
   static boolean is_edit;
+  private final NonScheduledItemComparator nonScheduledItemComparator = new NonScheduledItemComparator();
   private MainActivity activity;
 
   public static MainEditFragment newInstance() {
@@ -95,19 +93,19 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     Bundle args = getArguments();
     item = (Item)args.getSerializable(ITEM);
 
-    rootPreferenceScreen = getPreferenceScreen();
+    PreferenceScreen rootPreferenceScreen = getPreferenceScreen();
     detail = (EditTextPreference)findPreference("detail");
     detail.setTitle(detail_str);
     detail.setOnPreferenceChangeListener(this);
-    tag =(PreferenceScreen)findPreference("tag");
+    PreferenceScreen tag = (PreferenceScreen)findPreference("tag");
     tag.setOnPreferenceClickListener(this);
-    interval = (PreferenceScreen)findPreference("interval");
+    PreferenceScreen interval = (PreferenceScreen)findPreference("interval");
     interval.setOnPreferenceClickListener(this);
     day_repeat_item = (PreferenceScreen)findPreference("repeat_day_unit");
     day_repeat_item.setOnPreferenceClickListener(this);
     minute_repeat_item = (PreferenceScreen)findPreference("repeat_minute_unit");
     minute_repeat_item.setOnPreferenceClickListener(this);
-    notes_category = (PreferenceCategory)findPreference("notes_category");
+    PreferenceCategory notes_category = (PreferenceCategory)findPreference("notes_category");
     notes = (EditTextPreference)findPreference("notes");
     notes.setTitle(notes_str);
     notes.setOnPreferenceChangeListener(this);
@@ -291,16 +289,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     item.setAlarm_stopped(false);
 
-    //スケジュールなしリストの場合はリストのIDと順番をitemに登録する
+    //スケジュールなしリストの場合はリストのIDをitemに登録する
     if(activity.menuItem.getOrder() == 1) {
       item.setWhich_list_belongs(
           activity.generalSettings.getNonScheduledList(activity.which_menu_open - 1).getId()
       );
-
-      MyListAdapter.itemList.add(0, item);
-      for(int i = 0; i < MyListAdapter.itemList.size(); i++) {
-        MyListAdapter.itemList.get(i).setOrder(i);
-      }
     }
 
     if(activity.isItemExists(item, MyDatabaseHelper.TODO_TABLE)) {
@@ -314,8 +307,16 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     }
     else {
       if(activity.menuItem.getOrder() == 1) {
+        MyListAdapter.itemList.add(0, item);
+        int size = MyListAdapter.itemList.size();
+        for(int i = 0; i < size; i++) {
+          Item item = MyListAdapter.itemList.get(i);
+          item.setOrder(i);
+          if(i == 0) activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+          else activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+        }
+
         activity.listAdapter.notifyDataSetChanged();
-        activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
       }
       else {
         activity.addChildren(item, MyDatabaseHelper.TODO_TABLE);
