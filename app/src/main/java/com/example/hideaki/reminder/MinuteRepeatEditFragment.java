@@ -7,6 +7,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -65,7 +66,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
     View view = super.onCreateView(inflater, container, savedInstanceState);
     assert view != null;
 
-    view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    view.setBackgroundColor(ContextCompat.getColor(activity ,android.R.color.background_light));
     view.setFocusableInTouchMode(true);
     view.requestFocus();
     view.setOnKeyListener(new View.OnKeyListener() {

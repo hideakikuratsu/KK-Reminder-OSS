@@ -65,6 +65,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     TextView repeat;
     CheckBox checkBox;
     TableLayout control_panel;
+    Item item;
   }
 
   private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -88,6 +89,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     @Override
     public void onClick(View v) {
 
+      activity.actionBarFragment.searchView.clearFocus();
       switch(v.getId()) {
         case R.id.child_card:
           if(viewHolder.control_panel.getVisibility() == View.GONE) {
@@ -174,6 +176,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
           break;
         case R.id.edit:
+          activity.expandableListView.clearTextFilter();
           activity.showMainEditFragment(item);
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
@@ -241,6 +244,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           displayDate(viewHolder, item);
           break;
         case R.id.notes:
+          activity.expandableListView.clearTextFilter();
           activity.showNotesFragment(item);
           break;
       }
@@ -251,6 +255,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
       if(isChecked) {
 
+        activity.actionBarFragment.searchView.clearFocus();
         if(item.getTime_altered() == 0) {
           item.setOrg_date((Calendar)item.getDate().clone());
         }
@@ -1357,6 +1362,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       viewHolder.repeat = convertView.findViewById(R.id.day_repeat);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
+      viewHolder.item = (Item)getChild(i, i1);
 
       convertView.setTag(viewHolder);
     }
@@ -1370,7 +1376,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     MyOnClickListener listener = null;
     for(int j = 0; j < groups.size(); j++) {
       if(display_groups[j]) {
-        if(count == i) listener = new MyOnClickListener(j, i1, item, convertView, viewHolder);
+        if(count == i) {
+          listener = new MyOnClickListener(j, i1, item, convertView, viewHolder);
+          break;
+        }
         count++;
       }
     }
@@ -1378,51 +1387,32 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //設定された時間、詳細、リピート通知のインターバルを表示
     displayDate(viewHolder, item);
     viewHolder.detail.setText(item.getDetail());
-    String repeat_str = "";
-    if(item.getDayRepeat().getLabel() != null
-        && !item.getDayRepeat().getLabel().equals(context.getString(R.string.none))) {
-      repeat_str += item.getDayRepeat().getLabel();
-      if(!item.getDayRepeat().getLabel().equals(context.getString(R.string.everyday))) {
-        repeat_str += "に";
+    displayRepeat(viewHolder, item);
+
+    //各リスナーの設定
+    viewHolder.child_card.setOnClickListener(listener);
+    viewHolder.clock_image.setOnClickListener(listener);
+    viewHolder.checkBox.setOnCheckedChangeListener(listener);
+
+    int control_panel_size = viewHolder.control_panel.getChildCount();
+    for(int j = 0; j < control_panel_size; j++) {
+      TableRow tableRow = (TableRow)viewHolder.control_panel.getChildAt(j);
+      int table_row_size = tableRow.getChildCount();
+      for(int k = 0; k < table_row_size; k++) {
+        TextView panel_item = (TextView)tableRow.getChildAt(k);
+        panel_item.setOnClickListener(listener);
       }
     }
-    if(item.getMinuteRepeat().getLabel() != null
-        && !item.getMinuteRepeat().getLabel().equals(context.getString(R.string.none))) {
-      repeat_str += item.getMinuteRepeat().getLabel();
-    }
-    if(item.getDayRepeat().getLabel() != null
-        && !item.getDayRepeat().getLabel().equals(context.getString(R.string.none))
-        && (item.getMinuteRepeat().getLabel() == null
-        || item.getMinuteRepeat().getLabel().equals(context.getString(R.string.none)))) {
-      repeat_str += "繰り返す";
-    }
-    if(repeat_str.equals("")) {
-      viewHolder.repeat.setText(R.string.non_repeat);
-    }
-    else {
-      viewHolder.repeat.setText(repeat_str);
+
+    //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
+    if(item.getId() != has_panel && viewHolder.control_panel.getVisibility() == View.VISIBLE
+        && viewHolder.item.getId() != has_panel) {
+      viewHolder.control_panel.setVisibility(View.GONE);
     }
 
     //チェックが入っている場合、チェックを外す
     if(viewHolder.checkBox.isChecked()) {
       viewHolder.checkBox.setChecked(false);
-    }
-
-    //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
-    if(item.getId() != has_panel && viewHolder.control_panel.getVisibility() == View.VISIBLE) {
-      viewHolder.control_panel.setVisibility(View.GONE);
-    }
-
-    viewHolder.child_card.setOnClickListener(listener);
-    viewHolder.clock_image.setOnClickListener(listener);
-    viewHolder.checkBox.setOnCheckedChangeListener(listener);
-
-    for(int j = 0; j < viewHolder.control_panel.getChildCount(); j++) {
-      TableRow tableRow = (TableRow)viewHolder.control_panel.getChildAt(j);
-      for(int k = 0; k < tableRow.getChildCount(); k++) {
-        TextView panel_item = (TextView)tableRow.getChildAt(k);
-        panel_item.setOnClickListener(listener);
-      }
     }
 
     return convertView;
@@ -1546,6 +1536,35 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     if(item.isAlarm_stopped()) viewHolder.clock_image.setColorFilter(Color.GRAY);
     else if(item.getTime_altered() != 0) viewHolder.clock_image.setColorFilter(Color.BLUE);
     else viewHolder.clock_image.setColorFilter(0xFF09C858);
+  }
+
+  //リピートを表示する処理
+  private void displayRepeat(ChildViewHolder viewHolder, Item item) {
+
+    String repeat_str = "";
+    if(item.getDayRepeat().getLabel() != null
+        && !item.getDayRepeat().getLabel().equals(context.getString(R.string.none))) {
+      repeat_str += item.getDayRepeat().getLabel();
+      if(!item.getDayRepeat().getLabel().equals(context.getString(R.string.everyday))) {
+        repeat_str += "に";
+      }
+    }
+    if(item.getMinuteRepeat().getLabel() != null
+        && !item.getMinuteRepeat().getLabel().equals(context.getString(R.string.none))) {
+      repeat_str += item.getMinuteRepeat().getLabel();
+    }
+    if(item.getDayRepeat().getLabel() != null
+        && !item.getDayRepeat().getLabel().equals(context.getString(R.string.none))
+        && (item.getMinuteRepeat().getLabel() == null
+        || item.getMinuteRepeat().getLabel().equals(context.getString(R.string.none)))) {
+      repeat_str += "繰り返す";
+    }
+    if(repeat_str.equals("")) {
+      viewHolder.repeat.setText(R.string.non_repeat);
+    }
+    else {
+      viewHolder.repeat.setText(repeat_str);
+    }
   }
 
   @Override

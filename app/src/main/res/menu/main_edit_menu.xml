@@ -3,7 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/delete"
+        android:icon="@drawable/ic_delete_24dp"
+        android:title="Item"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/done"
-        android:title="@string/done"
+        android:title="@string/done_ja"
         app:showAsAction="always" />
 </menu>

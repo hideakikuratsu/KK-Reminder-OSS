@@ -69,18 +69,22 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     //quick_time_pickerの初期化
     TableRow tableRow;
     TableLayout above_quick_time_picker = view.findViewById(R.id.above_quick_time_picker);
-    for(int i = 0; i < above_quick_time_picker.getChildCount(); i++) {
+    int above_quick_time_picker_size = above_quick_time_picker.getChildCount();
+    for(int i = 0; i < above_quick_time_picker_size; i++) {
       tableRow = (TableRow)above_quick_time_picker.getChildAt(i);
-      for(int j = 0; j < tableRow.getChildCount(); j++) {
+      int table_row_size = tableRow.getChildCount();
+      for(int j = 0; j < table_row_size; j++) {
         quick_time = (TextView)tableRow.getChildAt(j);
         quick_time.setOnClickListener(this);
       }
     }
 
     TableLayout below_quick_time_picker = view.findViewById(R.id.below_quick_time_picker);
-    for(int i = 0; i < below_quick_time_picker.getChildCount(); i++) {
+    int below_quick_time_picker_size = below_quick_time_picker.getChildCount();
+    for(int i = 0; i < below_quick_time_picker_size; i++) {
       tableRow = (TableRow)below_quick_time_picker.getChildAt(i);
-      for(int j = 0; j < tableRow.getChildCount(); j++) {
+      int table_row_size = tableRow.getChildCount();
+      for(int j = 0; j < table_row_size; j++) {
         quick_time = (TextView)tableRow.getChildAt(j);
         quick_time.setOnClickListener(this);
       }

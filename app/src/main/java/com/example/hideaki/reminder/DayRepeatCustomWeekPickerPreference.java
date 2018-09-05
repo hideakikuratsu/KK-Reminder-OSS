@@ -44,9 +44,11 @@ public class DayRepeatCustomWeekPickerPreference extends Preference implements C
       week |= (1 << mask_num);
       MainEditFragment.dayRepeat.setWeek(week);
     }
-    for(int i = 0; i < week_table.getChildCount(); i++) {
+    int week_table_size = week_table.getChildCount();
+    for(int i = 0; i < week_table_size; i++) {
       TableRow tableRow = (TableRow)week_table.getChildAt(i);
-      for(int j = 0; j < tableRow.getChildCount(); j++) {
+      int table_row_size = tableRow.getChildCount();
+      for(int j = 0; j < table_row_size; j++) {
         checkBox = (CheckBox)tableRow.getChildAt(j);
         if((week & (1 << (i * 5 + j))) != 0) checkBox.setChecked(true);
         checkBox.setOnCheckedChangeListener(this);

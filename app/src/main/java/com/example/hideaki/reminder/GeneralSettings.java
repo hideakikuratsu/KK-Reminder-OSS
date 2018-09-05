@@ -6,7 +6,7 @@ import java.util.List;
 
 public class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = -5856381661201858299L;
+  private static final long serialVersionUID = 7547092849110283632L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
 
   public NonScheduledList getNonScheduledList(int position) {
@@ -14,6 +14,10 @@ public class GeneralSettings implements Serializable {
   }
 
   public List<NonScheduledList> getNonScheduledLists() {
+    return new ArrayList<>(nonScheduledLists);
+  }
+
+  public List<NonScheduledList> getOrgNonScheduledLists() {
     return nonScheduledLists;
   }
 
@@ -22,6 +26,6 @@ public class GeneralSettings implements Serializable {
   }
 
   public void addNonScheduledList(NonScheduledList nonScheduledList) {
-    this.nonScheduledLists.add(nonScheduledList);
+    this.nonScheduledLists.add(0, nonScheduledList);
   }
 }

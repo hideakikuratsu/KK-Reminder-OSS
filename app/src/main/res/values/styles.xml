@@ -9,7 +9,7 @@
     </style>
 
     <style name="drawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="color">@color/white</item>
+        <item name="color">@android:color/white</item>
     </style>
 
 </resources>

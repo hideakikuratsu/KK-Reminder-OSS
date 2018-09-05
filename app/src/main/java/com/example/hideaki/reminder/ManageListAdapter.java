@@ -1,13 +1,11 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -16,47 +14,42 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MyListAdapter extends BaseAdapter implements Filterable {
+public class ManageListAdapter extends BaseAdapter implements Filterable {
 
-  static List<Item> itemList;
+  static List<NonScheduledList> nonScheduledLists;
   private static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
-  private boolean is_control_panel_locked;
-  private final NonScheduledItemComparator nonScheduledItemComparator = new NonScheduledItemComparator();
-  private Context context;
   private MainActivity activity;
 
-  MyListAdapter(List<Item> itemList, Context context) {
+  ManageListAdapter(List<NonScheduledList> nonScheduledLists, Context context) {
 
-    MyListAdapter.itemList = itemList;
-    this.context = context;
+    ManageListAdapter.nonScheduledLists = nonScheduledLists;
     this.activity = (MainActivity)context;
   }
 
   private static class ViewHolder {
 
-    CardView item_card;
+    CardView list_card;
     ImageView order_icon;
+    ImageView list_icon;
     TextView detail;
-    CheckBox checkBox;
     TableLayout control_panel;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+  private class MyOnClickListener implements View.OnClickListener {
 
     private int position;
-    private Item item;
+    private NonScheduledList list;
     private View convertView;
     private ViewHolder viewHolder;
 
-    MyOnClickListener(int position, Item item, View convertView, ViewHolder viewHolder) {
+    MyOnClickListener(int position, NonScheduledList list, View convertView, ViewHolder viewHolder) {
 
       this.position = position;
-      this.item = item;
+      this.list = list;
       this.convertView = convertView;
       this.viewHolder = viewHolder;
     }
@@ -66,68 +59,23 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
       activity.actionBarFragment.searchView.clearFocus();
       switch(v.getId()) {
-        case R.id.item_card:
+        case R.id.list_card:
           if(viewHolder.control_panel.getVisibility() == View.GONE) {
-            has_panel = item.getId();
-            if(!is_control_panel_locked) {
-              viewHolder.control_panel.setVisibility(View.VISIBLE);
-              notifyDataSetChanged();
-            }
+            has_panel = list.getId();
+            viewHolder.control_panel.setVisibility(View.VISIBLE);
+            notifyDataSetChanged();
           }
           else viewHolder.control_panel.setVisibility(View.GONE);
           break;
         case R.id.edit:
           activity.listView.clearTextFilter();
-          activity.showMainEditFragment(item);
+          activity.showMainEditFragmentForList(list);
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
         case R.id.notes:
           activity.listView.clearTextFilter();
-          activity.showNotesFragment(item);
+//          activity.showNotesFragment(list);
           break;
-      }
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-      if(isChecked) {
-
-        activity.actionBarFragment.searchView.clearFocus();
-        itemList.remove(position);
-        activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
-        notifyDataSetChanged();
-
-        Snackbar.make(convertView, context.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
-            .addCallback(new Snackbar.Callback() {
-              @Override
-              public void onShown(Snackbar sb) {
-
-                super.onShown(sb);
-                if(viewHolder.control_panel.getVisibility() == View.VISIBLE) {
-                  viewHolder.control_panel.setVisibility(View.GONE);
-                }
-                is_control_panel_locked = true;
-              }
-
-              @Override
-              public void onDismissed(Snackbar transientBottomBar, int event) {
-
-                super.onDismissed(transientBottomBar, event);
-                is_control_panel_locked = false;
-              }
-            })
-            .setAction(R.string.undo, new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                itemList.add(item);
-                Collections.sort(itemList, nonScheduledItemComparator);
-                notifyDataSetChanged();
-
-                activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
-              }
-            })
-            .show();
       }
     }
   }
@@ -149,12 +97,12 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         }
 
         //検索処理
-        itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+        nonScheduledLists = activity.generalSettings.getNonScheduledLists();
 
-        List<Item> filteredItem = new ArrayList<>();
-        for(Item item : itemList) {
-          if(item.getDetail() != null) {
-            String detail = item.getDetail();
+        List<NonScheduledList> filteredLists = new ArrayList<>();
+        for(NonScheduledList list : nonScheduledLists) {
+          if(list.getTitle() != null) {
+            String detail = list.getTitle();
 
             if(!is_upper) {
               detail = detail.toLowerCase();
@@ -164,14 +112,14 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
             Matcher matcher = pattern.matcher(detail);
 
             if(matcher.find()) {
-              filteredItem.add(item);
+              filteredLists.add(list);
             }
           }
         }
 
         FilterResults results = new FilterResults();
-        results.count = filteredItem.size();
-        results.values = filteredItem;
+        results.count = filteredLists.size();
+        results.values = filteredLists;
 
         return results;
       }
@@ -180,7 +128,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       @SuppressWarnings("unchecked")
       protected void publishResults(CharSequence constraint, FilterResults results) {
 
-        itemList = (List<Item>)results.values;
+        nonScheduledLists = (List<NonScheduledList>)results.values;
 
         //リストの表示更新
         notifyDataSetChanged();
@@ -191,13 +139,13 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
   @Override
   public int getCount() {
 
-    return itemList.size();
+    return nonScheduledLists.size();
   }
 
   @Override
   public Object getItem(int position) {
 
-    return itemList.get(position);
+    return nonScheduledLists.get(position);
   }
 
   @Override
@@ -212,13 +160,13 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     final ViewHolder viewHolder;
 
     if(convertView == null) {
-      convertView = View.inflate(parent.getContext(), R.layout.non_sheduled_item_layout, null);
+      convertView = View.inflate(parent.getContext(), R.layout.non_scheduled_list_layout, null);
 
       viewHolder = new ViewHolder();
-      viewHolder.item_card = convertView.findViewById(R.id.item_card);
+      viewHolder.list_card = convertView.findViewById(R.id.list_card);
       viewHolder.order_icon = convertView.findViewById(R.id.order_icon);
+      viewHolder.list_icon = convertView.findViewById(R.id.list_icon);
       viewHolder.detail = convertView.findViewById(R.id.detail);
-      viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
 
       convertView.setTag(viewHolder);
@@ -227,23 +175,17 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       viewHolder = (ViewHolder)convertView.getTag();
     }
 
-    Item item = (Item)getItem(position);
-    MyOnClickListener listener = new MyOnClickListener(position, item, convertView, viewHolder);
+    NonScheduledList list = (NonScheduledList)getItem(position);
+    MyOnClickListener listener = new MyOnClickListener(position, list, convertView, viewHolder);
 
-    viewHolder.detail.setText(item.getDetail());
-
-    //チェックが入っている場合、チェックを外す
-    if(viewHolder.checkBox.isChecked()) {
-      viewHolder.checkBox.setChecked(false);
-    }
+    viewHolder.detail.setText(list.getTitle());
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
-    if(item.getId() != has_panel && viewHolder.control_panel.getVisibility() == View.VISIBLE) {
+    if(list.getId() != has_panel && viewHolder.control_panel.getVisibility() == View.VISIBLE) {
       viewHolder.control_panel.setVisibility(View.GONE);
     }
 
-    viewHolder.item_card.setOnClickListener(listener);
-    viewHolder.checkBox.setOnCheckedChangeListener(listener);
+    viewHolder.list_card.setOnClickListener(listener);
 
     int control_panel_size = viewHolder.control_panel.getChildCount();
     for(int i = 0; i < control_panel_size; i++) {
@@ -253,6 +195,14 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         TextView panel_item = (TextView)tableRow.getChildAt(j);
         panel_item.setOnClickListener(listener);
       }
+    }
+
+    //パレットの色を設定
+    if(list.getColor() != 0) {
+      viewHolder.list_icon.setColorFilter(list.getColor());
+    }
+    else {
+      viewHolder.list_icon.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray));
     }
 
     return convertView;

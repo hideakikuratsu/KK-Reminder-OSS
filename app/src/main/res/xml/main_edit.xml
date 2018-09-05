@@ -8,6 +8,10 @@
     <com.example.hideaki.reminder.DatePickerPreference android:persistent="false" />
 
     <PreferenceScreen
+        android:key="color"
+        android:title="@string/pick_color"/>
+
+    <PreferenceScreen
         android:key="tag"
         android:title="@string/tag" />
 

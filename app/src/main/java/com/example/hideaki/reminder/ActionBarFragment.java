@@ -19,6 +19,7 @@ import android.widget.ToggleButton;
 public class ActionBarFragment extends Fragment {
 
   private MainActivity activity;
+  SearchView searchView;
 
   public static ActionBarFragment newInstance() {
 
@@ -45,10 +46,10 @@ public class ActionBarFragment extends Fragment {
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
-    activity.drawerToggle.setDrawerIndicatorEnabled(true);
     ActionBar actionBar = activity.getSupportActionBar();
     assert actionBar != null;
 
+    activity.drawerToggle.setDrawerIndicatorEnabled(true);
     actionBar.setTitle(R.string.app_name);
     return inflater.inflate(R.layout.fragment_search, container, false);
   }
@@ -61,7 +62,7 @@ public class ActionBarFragment extends Fragment {
 
     //検索メニューの実装
     MenuItem search_item = menu.findItem(R.id.search_item);
-    SearchView searchView = (SearchView)search_item.getActionView();
+    searchView = (SearchView)search_item.getActionView();
 
     searchView.setIconifiedByDefault(true);
     searchView.setSubmitButtonEnabled(false);
@@ -76,16 +77,20 @@ public class ActionBarFragment extends Fragment {
       @Override
       public boolean onQueryTextChange(String text) {
         if(text == null || text.equals("")) {
-          if(activity.menuItem.getOrder() == 1) {
+          if(activity.menuItem.getOrder() == 0) {
+            activity.expandableListView.clearTextFilter();
+          }
+          else if(activity.menuItem.getOrder() == 1 || activity.menuItem.getOrder() == 3) {
             activity.listView.clearTextFilter();
           }
-          else activity.expandableListView.clearTextFilter();
         }
         else {
-          if(activity.menuItem.getOrder() == 1) {
+          if(activity.menuItem.getOrder() == 0) {
+            activity.expandableListView.setFilterText(text);
+          }
+          else if(activity.menuItem.getOrder() == 1 || activity.menuItem.getOrder() == 3) {
             activity.listView.setFilterText(text);
           }
-          else activity.expandableListView.setFilterText(text);
         }
 
         return false;
@@ -97,7 +102,7 @@ public class ActionBarFragment extends Fragment {
     ToggleButton button = (ToggleButton)toggle_button.getActionView();
 
     button.setTextOff(getResources().getString(R.string.todo));
-    button.setTextOn(getResources().getString(R.string.done));
+    button.setTextOn(getResources().getString(R.string.done_en));
     button.setChecked(false);
     button.setBackgroundResource(R.drawable.toggle_button);
 
@@ -120,7 +125,12 @@ public class ActionBarFragment extends Fragment {
 
     switch(item.getItemId()) {
       case R.id.add_item:
-        activity.showMainEditFragment();
+        if(activity.menuItem.getOrder() == 3) {
+          activity.showMainEditFragmentForList();
+        }
+        else {
+          activity.showMainEditFragment();
+        }
         return true;
     }
     return false;

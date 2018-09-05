@@ -43,9 +43,11 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
       year |= (1 << mask_num);
       MainEditFragment.dayRepeat.setYear(year);
     }
-    for(int i = 0; i < year_table.getChildCount(); i++) {
+    int year_table_size = year_table.getChildCount();
+    for(int i = 0; i < year_table_size; i++) {
       TableRow tableRow = (TableRow)year_table.getChildAt(i);
-      for(int j = 0; j < tableRow.getChildCount(); j++) {
+      int table_row_size = tableRow.getChildCount();
+      for(int j = 0; j < table_row_size; j++) {
         checkBox = (CheckBox)tableRow.getChildAt(j);
         if((year & (1 << (i * 6 + j))) != 0) checkBox.setChecked(true);
         checkBox.setOnCheckedChangeListener(this);

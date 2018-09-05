@@ -6,7 +6,7 @@
         android:checkableBehavior="single">
 
         <item
-            android:id="@+id/scheduled_item"
+            android:id="@+id/scheduled_list"
             android:icon="@drawable/ic_time"
             android:title="@string/nav_scheduled_item"
             android:checkable="true"
@@ -35,25 +35,32 @@
             は同じ数値を指定しても良く、その場合は、xml上での順番または動的に追加した場合は追加した順番通り上から
             並べられる。-->
             <item
+                android:id="@+id/manage_lists"
+                android:icon="@drawable/ic_manage_lists_24dp"
+                android:title="@string/manage_lists"
+                android:checkable="true"
+                android:orderInCategory="3"/>
+
+            <item
                 android:id="@+id/settings"
                 android:icon="@drawable/ic_settings"
                 android:title="@string/nav_settings"
                 android:checkable="true"
-                android:orderInCategory="3"/>
+                android:orderInCategory="4"/>
 
             <item
                 android:id="@+id/help"
                 android:icon="@drawable/ic_help"
                 android:title="@string/nav_help"
                 android:checkable="true"
-                android:orderInCategory="4"/>
+                android:orderInCategory="5"/>
 
             <item
                 android:id="@+id/feedback"
                 android:icon="@drawable/ic_feedback"
                 android:title="@string/nav_feedback"
                 android:checkable="true"
-                android:orderInCategory="5"/>
+                android:orderInCategory="6"/>
 
         </menu>
 

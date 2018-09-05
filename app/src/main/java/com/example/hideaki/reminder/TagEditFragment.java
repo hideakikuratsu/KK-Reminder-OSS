@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -43,7 +44,7 @@ public class TagEditFragment extends PreferenceFragment {
     View view = super.onCreateView(inflater, container, savedInstanceState);
     assert view != null;
 
-    view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);

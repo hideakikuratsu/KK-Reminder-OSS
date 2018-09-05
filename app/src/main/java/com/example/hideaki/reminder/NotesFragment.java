@@ -3,6 +3,7 @@ package com.example.hideaki.reminder;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -51,7 +52,7 @@ public class NotesFragment extends Fragment {
                            Bundle savedInstanceState) {
 
     View view = inflater.inflate(R.layout.notes, container, false);
-    view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+    view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);

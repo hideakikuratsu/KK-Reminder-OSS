@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.Window;
@@ -71,13 +72,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   MyExpandableListAdapter expandableListAdapter;
   ListView listView;
   MyListAdapter listAdapter;
+  ManageListAdapter manageListAdapter;
+  ColorPickerListAdapter colorPickerListAdapter;
   DrawerLayout drawerLayout;
   NavigationView navigationView;
   ActionBarDrawerToggle drawerToggle;
   Drawable upArrow;
-  private Menu menu;
+  Menu menu;
   MenuItem menuItem;
   GeneralSettings generalSettings;
+  ActionBarFragment actionBarFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -87,12 +91,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     accessor = new DBAccessor(this);
 
-    expandableListAdapter = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
-
     //DisplayHomeAsUpEnabledに指定する戻るボタンの色を白色に指定
     upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
     assert upArrow != null;
-    upArrow.setColorFilter(Color.WHITE, PorterDuff.Mode.DST_IN);
+    upArrow.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
 
     //ToolbarをActionBarに互換を持たせて設定
     Toolbar toolbar = findViewById(R.id.toolbar_layout);
@@ -113,16 +115,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     navigationView = findViewById(R.id.nav_view);
     menu = navigationView.getMenu();
+    navigationView.setItemIconTintList(null);
     navigationView.setNavigationItemSelectedListener(this);
 
     //共通設定と新しく追加したリストのリストア
     generalSettings = querySettingsDB();
     if(generalSettings == null) generalSettings = new GeneralSettings();
-    for(NonScheduledList list : generalSettings.getNonScheduledLists()) {
+    for(NonScheduledList list : generalSettings.getOrgNonScheduledLists()) {
+      Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_my_list_24dp);
+      assert drawable != null;
+      drawable = drawable.mutate();
+      if(list.getColor() != 0) {
+        drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
+      }
+      else {
+        drawable.setColorFilter(ContextCompat.getColor(this, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
+      }
       menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
-          .setIcon(R.drawable.ic_my_list_24dp)
+          .setIcon(drawable)
           .setCheckable(true);
     }
+
+    //Adapterの初期化
+    expandableListAdapter = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
+    manageListAdapter = new ManageListAdapter(generalSettings.getNonScheduledLists(), this);
+    colorPickerListAdapter = new ColorPickerListAdapter(this);
 
     //前回開いていたNavigationDrawer上のメニューをリストアする
     SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
@@ -254,10 +271,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             showActionBar();
             break;
           case 3:
+            showManageListViewFragment();
+            showActionBar();
             break;
           case 4:
             break;
           case 5:
+            break;
+          case 6:
             break;
         }
       }
@@ -284,11 +305,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-              menu.add(R.id.reminder_list, Menu.NONE, 1, editText.getText())
-                  .setIcon(R.drawable.ic_my_list_24dp)
-                  .setCheckable(true);
 
+              //GeneralSettingsとManageListAdapterへの反映
               generalSettings.addNonScheduledList(new NonScheduledList(editText.getText().toString()));
+              int size = generalSettings.getOrgNonScheduledLists().size();
+              for(int i = 0; i < size; i++) {
+                generalSettings.getOrgNonScheduledLists().get(i).setOrder(i);
+              }
+              ManageListAdapter.nonScheduledLists = generalSettings.getNonScheduledLists();
+              manageListAdapter.notifyDataSetChanged();
+
+              //一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
+
+              //デフォルトアイテムのリストア
+              menu.removeGroup(R.id.reminder_list);
+              menu.add(R.id.reminder_list, R.id.scheduled_list, 0, R.string.nav_scheduled_item)
+                  .setIcon(R.drawable.ic_time)
+                  .setCheckable(true);
+              menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
+                  .setIcon(R.drawable.ic_add_24dp)
+                  .setCheckable(false);
+
+              //新しく追加したリストのリストア
+              for(NonScheduledList list : generalSettings.getOrgNonScheduledLists()) {
+                Drawable drawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_my_list_24dp);
+                assert drawable != null;
+                drawable = drawable.mutate();
+                if(list.getColor() != 0) {
+                  drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
+                }
+                else {
+                  drawable.setColorFilter(
+                      ContextCompat.getColor(MainActivity.this, R.color.icon_gray), PorterDuff.Mode.SRC_IN
+                  );
+                }
+                menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
+                    .setIcon(drawable)
+                    .setCheckable(true);
+              }
+
+              //データベースへの反映
               if(querySettingsDB() == null) {
                 insertSettingsDB();
               }
@@ -622,6 +678,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
   }
 
+  public void showColorPickerListViewFragment() {
+
+    getFragmentManager()
+        .beginTransaction()
+        .replace(R.id.content, ColorPickerListViewFragment.newInstance())
+        .addToBackStack(null)
+        .commit();
+  }
+
+  private void showManageListViewFragment() {
+
+    getFragmentManager()
+        .beginTransaction()
+        .replace(R.id.content, ManageListViewFragment.newInstance())
+        .commit();
+  }
+
   private void showListViewFragment() {
 
     getFragmentManager()
@@ -641,9 +714,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   //メイン画面のアクションバーを表示
   private void showActionBar() {
 
+    actionBarFragment = ActionBarFragment.newInstance();
     getFragmentManager()
         .beginTransaction()
-        .add(R.id.content, ActionBarFragment.newInstance())
+        .add(R.id.content, actionBarFragment)
         .commit();
   }
 
@@ -662,6 +736,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     getFragmentManager()
         .beginTransaction()
         .replace(R.id.content, MainEditFragment.newInstance(item))
+        .addToBackStack(null)
+        .commit();
+  }
+
+  public void showMainEditFragmentForList() {
+
+    getFragmentManager()
+        .beginTransaction()
+        .replace(R.id.content, MainEditFragment.newInstanceForList())
+        .addToBackStack(null)
+        .commit();
+  }
+
+  public void showMainEditFragmentForList(NonScheduledList list) {
+
+    getFragmentManager()
+        .beginTransaction()
+        .replace(R.id.content, MainEditFragment.newInstanceForList(list))
         .addToBackStack(null)
         .commit();
   }

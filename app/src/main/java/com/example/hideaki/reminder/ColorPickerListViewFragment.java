@@ -1,10 +1,9 @@
 package com.example.hideaki.reminder;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -12,13 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class IntervalEditFragment extends PreferenceFragment {
+public class ColorPickerListViewFragment extends Fragment {
 
   private MainActivity activity;
 
-  public static IntervalEditFragment newInstance() {
+  public static ColorPickerListViewFragment newInstance() {
 
-    return new IntervalEditFragment();
+    return new ColorPickerListViewFragment();
   }
 
   @Override
@@ -29,20 +28,19 @@ public class IntervalEditFragment extends PreferenceFragment {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public void onCreate(@Nullable Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
-    addPreferencesFromResource(R.xml.interval_edit);
-    setHasOptionsMenu(true);
+    this.setHasOptionsMenu(true);
   }
 
+  @Nullable
   @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-    View view = super.onCreateView(inflater, container, savedInstanceState);
-    assert view != null;
-
-    view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
+    View view = inflater.inflate(R.layout.listview, container, false);
+    activity.listView = view.findViewById(R.id.listView);
+    activity.listView.setAdapter(activity.colorPickerListAdapter);
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
@@ -52,7 +50,7 @@ public class IntervalEditFragment extends PreferenceFragment {
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
     actionBar.setHomeAsUpIndicator(activity.upArrow);
     actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setTitle(R.string.interval);
+    actionBar.setTitle(R.string.pick_color);
 
     return view;
   }
@@ -60,7 +58,13 @@ public class IntervalEditFragment extends PreferenceFragment {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    getFragmentManager().popBackStack();
-    return super.onOptionsItemSelected(item);
+    switch(item.getItemId()) {
+
+      case android.R.id.home:
+        getFragmentManager().popBackStack();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
   }
 }

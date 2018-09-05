@@ -3,6 +3,7 @@ package com.example.hideaki.reminder;
 import android.content.Context;
 import android.graphics.Color;
 import android.preference.Preference;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,9 +61,11 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
       days_of_month |= (1 << (mask_num - 1));
       MainEditFragment.dayRepeat.setDays_of_month(days_of_month);
     }
-    for(int i = 0; i < calendar_table.getChildCount(); i++) {
+    int calendar_table_size = calendar_table.getChildCount();
+    for(int i = 0; i < calendar_table_size; i++) {
       TableRow tableRow = (TableRow)calendar_table.getChildAt(i);
-      for(int j = 0; j < tableRow.getChildCount(); j++) {
+      int table_row_size = tableRow.getChildCount();
+      for(int j = 0; j < table_row_size; j++) {
         day = (CheckableTextView)tableRow.getChildAt(j);
         if((days_of_month & (1 << (i * 7 + j))) != 0) {
           day.setBackgroundColor(Color.RED);
@@ -93,7 +96,7 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
         if(mask_num == max_days_of_month && mask_num != 31) days_of_month |= (1 << 30);
         day.setChecked(true);
       }
-      else day.setBackgroundColor(getContext().getResources().getColor(android.R.color.background_light));
+      else day.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.background_light));
     }
 
     MainEditFragment.dayRepeat.setDays_of_month(days_of_month);

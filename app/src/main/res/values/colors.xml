@@ -3,6 +3,1334 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="white">#FFFFFF</color>
     <color name="icon_gray">#7f7f7f</color>
+    <color name="red0PrimaryColor">#ffebee</color>
+    <color name="red0PrimaryLightColor">#ffffff</color>
+    <color name="red0PrimaryDarkColor">#ccb9bc</color>
+    <color name="red0PrimaryTextColor">#000000</color>
+    <color name="red1PrimaryColor">#ffcdd2</color>
+    <color name="red1PrimaryLightColor">#ffffff</color>
+    <color name="red1PrimaryDarkColor">#cb9ca1</color>
+    <color name="red1PrimaryTextColor">#000000</color>
+    <color name="red2PrimaryColor">#ef9a9a</color>
+    <color name="red2PrimaryLightColor">#ffcccb</color>
+    <color name="red2PrimaryDarkColor">#ba6b6c</color>
+    <color name="red2PrimaryTextColor">#000000</color>
+    <color name="red3PrimaryColor">#e57373</color>
+    <color name="red3PrimaryLightColor">#ffa4a2</color>
+    <color name="red3PrimaryDarkColor">#af4448</color>
+    <color name="red3PrimaryTextColor">#000000</color>
+    <color name="red4PrimaryColor">#ef5350</color>
+    <color name="red4PrimaryLightColor">#ff867c</color>
+    <color name="red4PrimaryDarkColor">#b61827</color>
+    <color name="red4PrimaryTextColor">#000000</color>
+    <color name="red5PrimaryColor">#f44336</color>
+    <color name="red5PrimaryLightColor">#ff7961</color>
+    <color name="red5PrimaryDarkColor">#ba000d</color>
+    <color name="red5PrimaryTextColor">#000000</color>
+    <color name="red6PrimaryColor">#e53935</color>
+    <color name="red6PrimaryLightColor">#ff6f60</color>
+    <color name="red6PrimaryDarkColor">#ab000d</color>
+    <color name="red6PrimaryTextColor">#000000</color>
+    <color name="red7PrimaryColor">#d32f2f</color>
+    <color name="red7PrimaryLightColor">#ff6659</color>
+    <color name="red7PrimaryDarkColor">#9a0007</color>
+    <color name="red7PrimaryTextColor">#ffffff</color>
+    <color name="red8PrimaryColor">#c62828</color>
+    <color name="red8PrimaryLightColor">#ff5f52</color>
+    <color name="red8PrimaryDarkColor">#8e0000</color>
+    <color name="red8PrimaryTextColor">#ffffff</color>
+    <color name="red9PrimaryColor">#b71c1c</color>
+    <color name="red9PrimaryLightColor">#f05545</color>
+    <color name="red9PrimaryDarkColor">#7f0000</color>
+    <color name="red9PrimaryTextColor">#ffffff</color>
+    <color name="red10PrimaryColor">#ff8a80</color>
+    <color name="red10PrimaryLightColor">#ffbcaf</color>
+    <color name="red10PrimaryDarkColor">#c85a54</color>
+    <color name="red10PrimaryTextColor">#000000</color>
+    <color name="red11PrimaryColor">#ff5252</color>
+    <color name="red11PrimaryLightColor">#ff867f</color>
+    <color name="red11PrimaryDarkColor">#c50e29</color>
+    <color name="red11PrimaryTextColor">#000000</color>
+    <color name="red12PrimaryColor">#ff1744</color>
+    <color name="red12PrimaryLightColor">#ff616f</color>
+    <color name="red12PrimaryDarkColor">#c4001d</color>
+    <color name="red12PrimaryTextColor">#000000</color>
+    <color name="red13PrimaryColor">#d50000</color>
+    <color name="red13PrimaryLightColor">#ff5131</color>
+    <color name="red13PrimaryDarkColor">#9b0000</color>
+    <color name="red13PrimaryTextColor">#ffffff</color>
+    <color name="pink0PrimaryColor">#fce4ec</color>
+    <color name="pink0PrimaryLightColor">#ffffff</color>
+    <color name="pink0PrimaryDarkColor">#c9b2ba</color>
+    <color name="pink0PrimaryTextColor">#000000</color>
+    <color name="pink1PrimaryColor">#f8bbd0</color>
+    <color name="pink1PrimaryLightColor">#ffeeff</color>
+    <color name="pink1PrimaryDarkColor">#c48b9f</color>
+    <color name="pink1PrimaryTextColor">#000000</color>
+    <color name="pink2PrimaryColor">#f48fb1</color>
+    <color name="pink2PrimaryLightColor">#ffc1e3</color>
+    <color name="pink2PrimaryDarkColor">#bf5f82</color>
+    <color name="pink2PrimaryTextColor">#000000</color>
+    <color name="pink3PrimaryColor">#f06292</color>
+    <color name="pink3PrimaryLightColor">#ff94c2</color>
+    <color name="pink3PrimaryDarkColor">#ba2d65</color>
+    <color name="pink3PrimaryTextColor">#000000</color>
+    <color name="pink4PrimaryColor">#ec407a</color>
+    <color name="pink4PrimaryLightColor">#ff77a9</color>
+    <color name="pink4PrimaryDarkColor">#b4004e</color>
+    <color name="pink4PrimaryTextColor">#000000</color>
+    <color name="pink5PrimaryColor">#e91e63</color>
+    <color name="pink5PrimaryLightColor">#ff6090</color>
+    <color name="pink5PrimaryDarkColor">#b0003a</color>
+    <color name="pink5PrimaryTextColor">#000000</color>
+    <color name="pink6PrimaryColor">#d81b60</color>
+    <color name="pink6PrimaryLightColor">#ff5c8d</color>
+    <color name="pink6PrimaryDarkColor">#a00037</color>
+    <color name="pink6PrimaryTextColor">#ffffff</color>
+    <color name="pink7PrimaryColor">#c2185b</color>
+    <color name="pink7PrimaryLightColor">#fa5788</color>
+    <color name="pink7PrimaryDarkColor">#8c0032</color>
+    <color name="pink7PrimaryTextColor">#ffffff</color>
+    <color name="pink8PrimaryColor">#ad1457</color>
+    <color name="pink8PrimaryLightColor">#e35183</color>
+    <color name="pink8PrimaryDarkColor">#78002e</color>
+    <color name="pink8PrimaryTextColor">#ffffff</color>
+    <color name="pink9PrimaryColor">#880e4f</color>
+    <color name="pink9PrimaryLightColor">#bc477b</color>
+    <color name="pink9PrimaryDarkColor">#560027</color>
+    <color name="pink9PrimaryTextColor">#ffffff</color>
+    <color name="pink10PrimaryColor">#ff80ab</color>
+    <color name="pink10PrimaryLightColor">#ffb2dd</color>
+    <color name="pink10PrimaryDarkColor">#c94f7c</color>
+    <color name="pink10PrimaryTextColor">#000000</color>
+    <color name="pink11PrimaryColor">#ff4081</color>
+    <color name="pink11PrimaryLightColor">#ff79b0</color>
+    <color name="pink11PrimaryDarkColor">#c60055</color>
+    <color name="pink11PrimaryTextColor">#000000</color>
+    <color name="pink12PrimaryColor">#f50057</color>
+    <color name="pink12PrimaryLightColor">#ff5983</color>
+    <color name="pink12PrimaryDarkColor">#bb002f</color>
+    <color name="pink12PrimaryTextColor">#000000</color>
+    <color name="pink13PrimaryColor">#c51162</color>
+    <color name="pink13PrimaryLightColor">#fd558f</color>
+    <color name="pink13PrimaryDarkColor">#8e0038</color>
+    <color name="pink13PrimaryTextColor">#ffffff</color>
+    <color name="purple0PrimaryColor">#f3e5f5</color>
+    <color name="purple0PrimaryLightColor">#ffffff</color>
+    <color name="purple0PrimaryDarkColor">#c0b3c2</color>
+    <color name="purple0PrimaryTextColor">#000000</color>
+    <color name="purple1PrimaryColor">#e1bee7</color>
+    <color name="purple1PrimaryLightColor">#fff1ff</color>
+    <color name="purple1PrimaryDarkColor">#af8eb5</color>
+    <color name="purple1PrimaryTextColor">#000000</color>
+    <color name="purple2PrimaryColor">#ce93d8</color>
+    <color name="purple2PrimaryLightColor">#ffc4ff</color>
+    <color name="purple2PrimaryDarkColor">#9c64a6</color>
+    <color name="purple2PrimaryTextColor">#000000</color>
+    <color name="purple3PrimaryColor">#ba68c8</color>
+    <color name="purple3PrimaryLightColor">#ee98fb</color>
+    <color name="purple3PrimaryDarkColor">#883997</color>
+    <color name="purple3PrimaryTextColor">#000000</color>
+    <color name="purple4PrimaryColor">#ab47bc</color>
+    <color name="purple4PrimaryLightColor">#df78ef</color>
+    <color name="purple4PrimaryDarkColor">#790e8b</color>
+    <color name="purple4PrimaryTextColor">#ffffff</color>
+    <color name="purple5PrimaryColor">#9c27b0</color>
+    <color name="purple5PrimaryLightColor">#d05ce3</color>
+    <color name="purple5PrimaryDarkColor">#6a0080</color>
+    <color name="purple5PrimaryTextColor">#ffffff</color>
+    <color name="purple6PrimaryColor">#8e24aa</color>
+    <color name="purple6PrimaryLightColor">#c158dc</color>
+    <color name="purple6PrimaryDarkColor">#5c007a</color>
+    <color name="purple6PrimaryTextColor">#ffffff</color>
+    <color name="purple7PrimaryColor">#7b1fa2</color>
+    <color name="purple7PrimaryLightColor">#ae52d4</color>
+    <color name="purple7PrimaryDarkColor">#4a0072</color>
+    <color name="purple7PrimaryTextColor">#ffffff</color>
+    <color name="purple8PrimaryColor">#6a1b9a</color>
+    <color name="purple8PrimaryLightColor">#9c4dcc</color>
+    <color name="purple8PrimaryDarkColor">#38006b</color>
+    <color name="purple8PrimaryTextColor">#ffffff</color>
+    <color name="purple9PrimaryColor">#4a148c</color>
+    <color name="purple9PrimaryLightColor">#7c43bd</color>
+    <color name="purple9PrimaryDarkColor">#12005e</color>
+    <color name="purple9PrimaryTextColor">#ffffff</color>
+    <color name="purple10PrimaryColor">#ea80fc</color>
+    <color name="purple10PrimaryLightColor">#ffb2ff</color>
+    <color name="purple10PrimaryDarkColor">#b64fc8</color>
+    <color name="purple10PrimaryTextColor">#000000</color>
+    <color name="purple11PrimaryColor">#e040fb</color>
+    <color name="purple11PrimaryLightColor">#ff79ff</color>
+    <color name="purple11PrimaryDarkColor">#aa00c7</color>
+    <color name="purple11PrimaryTextColor">#000000</color>
+    <color name="purple12PrimaryColor">#d500f9</color>
+    <color name="purple12PrimaryLightColor">#ff5bff</color>
+    <color name="purple12PrimaryDarkColor">#9e00c5</color>
+    <color name="purple12PrimaryTextColor">#000000</color>
+    <color name="purple13PrimaryColor">#aa00ff</color>
+    <color name="purple13PrimaryLightColor">#e254ff</color>
+    <color name="purple13PrimaryDarkColor">#7200ca</color>
+    <color name="purple13PrimaryTextColor">#ffffff</color>
+    <color name="deepPurple0PrimaryColor">#ede7f6</color>
+    <color name="deepPurple0PrimaryLightColor">#ffffff</color>
+    <color name="deepPurple0PrimaryDarkColor">#bbb5c3</color>
+    <color name="deepPurple0PrimaryTextColor">#000000</color>
+    <color name="deepPurple1PrimaryColor">#d1c4e9</color>
+    <color name="deepPurple1PrimaryLightColor">#fff7ff</color>
+    <color name="deepPurple1PrimaryDarkColor">#a094b7</color>
+    <color name="deepPurple1PrimaryTextColor">#000000</color>
+    <color name="deepPurple2PrimaryColor">#b39ddb</color>
+    <color name="deepPurple2PrimaryLightColor">#e6ceff</color>
+    <color name="deepPurple2PrimaryDarkColor">#836fa9</color>
+    <color name="deepPurple2PrimaryTextColor">#000000</color>
+    <color name="deepPurple3PrimaryColor">#9575cd</color>
+    <color name="deepPurple3PrimaryLightColor">#c7a4ff</color>
+    <color name="deepPurple3PrimaryDarkColor">#65499c</color>
+    <color name="deepPurple3PrimaryTextColor">#000000</color>
+    <color name="deepPurple4PrimaryColor">#7e57c2</color>
+    <color name="deepPurple4PrimaryLightColor">#b085f5</color>
+    <color name="deepPurple4PrimaryDarkColor">#4d2c91</color>
+    <color name="deepPurple4PrimaryTextColor">#ffffff</color>
+    <color name="deepPurple5PrimaryColor">#673ab7</color>
+    <color name="deepPurple5PrimaryLightColor">#9a67ea</color>
+    <color name="deepPurple5PrimaryDarkColor">#320b86</color>
+    <color name="deepPurple5PrimaryTextColor">#ffffff</color>
+    <color name="deepPurple6PrimaryColor">#5e35b1</color>
+    <color name="deepPurple6PrimaryLightColor">#9162e4</color>
+    <color name="deepPurple6PrimaryDarkColor">#280680</color>
+    <color name="deepPurple6PrimaryTextColor">#ffffff</color>
+    <color name="deepPurple7PrimaryColor">#512da8</color>
+    <color name="deepPurple7PrimaryLightColor">#8559da</color>
+    <color name="deepPurple7PrimaryDarkColor">#140078</color>
+    <color name="deepPurple7PrimaryTextColor">#ffffff</color>
+    <color name="deepPurple8PrimaryColor">#4527a0</color>
+    <color name="deepPurple8PrimaryLightColor">#7953d2</color>
+    <color name="deepPurple8PrimaryDarkColor">#000070</color>
+    <color name="deepPurple8PrimaryTextColor">#ffffff</color>
+    <color name="deepPurple9PrimaryColor">#311b92</color>
+    <color name="deepPurple9PrimaryLightColor">#6746c3</color>
+    <color name="deepPurple9PrimaryDarkColor">#000063</color>
+    <color name="deepPurple9PrimaryTextColor">#ffffff</color>
+    <color name="deepPurple10PrimaryColor">#b388ff</color>
+    <color name="deepPurple10PrimaryLightColor">#e7b9ff</color>
+    <color name="deepPurple10PrimaryDarkColor">#805acb</color>
+    <color name="deepPurple10PrimaryTextColor">#000000</color>
+    <color name="deepPurple11PrimaryColor">#7c4dff</color>
+    <color name="deepPurple11PrimaryLightColor">#b47cff</color>
+    <color name="deepPurple11PrimaryDarkColor">#3f1dcb</color>
+    <color name="deepPurple11PrimaryTextColor">#ffffff</color>
+    <color name="deepPurple12PrimaryColor">#651fff</color>
+    <color name="deepPurple12PrimaryLightColor">#a255ff</color>
+    <color name="deepPurple12PrimaryDarkColor">#0100ca</color>
+    <color name="deepPurple12PrimaryTextColor">#ffffff</color>
+    <color name="deepPurple13PrimaryColor">#6200ea</color>
+    <color name="deepPurple13PrimaryLightColor">#9d46ff</color>
+    <color name="deepPurple13PrimaryDarkColor">#0a00b6</color>
+    <color name="deepPurple13PrimaryTextColor">#ffffff</color>
+    <color name="indigo0PrimaryColor">#e8eaf6</color>
+    <color name="indigo0PrimaryLightColor">#ffffff</color>
+    <color name="indigo0PrimaryDarkColor">#b6b8c3</color>
+    <color name="indigo0PrimaryTextColor">#000000</color>
+    <color name="indigo1PrimaryColor">#c5cae9</color>
+    <color name="indigo1PrimaryLightColor">#f8fdff</color>
+    <color name="indigo1PrimaryDarkColor">#9499b7</color>
+    <color name="indigo1PrimaryTextColor">#000000</color>
+    <color name="indigo2PrimaryColor">#9fa8da</color>
+    <color name="indigo2PrimaryLightColor">#d1d9ff</color>
+    <color name="indigo2PrimaryDarkColor">#6f79a8</color>
+    <color name="indigo2PrimaryTextColor">#000000</color>
+    <color name="indigo3PrimaryColor">#7986cb</color>
+    <color name="indigo3PrimaryLightColor">#aab6fe</color>
+    <color name="indigo3PrimaryDarkColor">#49599a</color>
+    <color name="indigo3PrimaryTextColor">#000000</color>
+    <color name="indigo4PrimaryColor">#5c6bc0</color>
+    <color name="indigo4PrimaryLightColor">#8e99f3</color>
+    <color name="indigo4PrimaryDarkColor">#26418f</color>
+    <color name="indigo4PrimaryTextColor">#ffffff</color>
+    <color name="indigo5PrimaryColor">#3f51b5</color>
+    <color name="indigo5PrimaryLightColor">#757de8</color>
+    <color name="indigo5PrimaryDarkColor">#002984</color>
+    <color name="indigo5PrimaryTextColor">#ffffff</color>
+    <color name="indigo6PrimaryColor">#3949ab</color>
+    <color name="indigo6PrimaryLightColor">#6f74dd</color>
+    <color name="indigo6PrimaryDarkColor">#00227b</color>
+    <color name="indigo6PrimaryTextColor">#ffffff</color>
+    <color name="indigo7PrimaryColor">#303f9f</color>
+    <color name="indigo7PrimaryLightColor">#666ad1</color>
+    <color name="indigo7PrimaryDarkColor">#001970</color>
+    <color name="indigo7PrimaryTextColor">#ffffff</color>
+    <color name="indigo8PrimaryColor">#283593</color>
+    <color name="indigo8PrimaryLightColor">#5f5fc4</color>
+    <color name="indigo8PrimaryDarkColor">#001064</color>
+    <color name="indigo8PrimaryTextColor">#ffffff</color>
+    <color name="indigo9PrimaryColor">#1a237e</color>
+    <color name="indigo9PrimaryLightColor">#534bae</color>
+    <color name="indigo9PrimaryDarkColor">#000051</color>
+    <color name="indigo9PrimaryTextColor">#ffffff</color>
+    <color name="indigo10PrimaryColor">#8c9eff</color>
+    <color name="indigo10PrimaryLightColor">#c0cfff</color>
+    <color name="indigo10PrimaryDarkColor">#5870cb</color>
+    <color name="indigo10PrimaryTextColor">#000000</color>
+    <color name="indigo11PrimaryColor">#536dfe</color>
+    <color name="indigo11PrimaryLightColor">#8f9bff</color>
+    <color name="indigo11PrimaryDarkColor">#0043ca</color>
+    <color name="indigo11PrimaryTextColor">#000000</color>
+    <color name="indigo12PrimaryColor">#3d5afe</color>
+    <color name="indigo12PrimaryLightColor">#8187ff</color>
+    <color name="indigo12PrimaryDarkColor">#0031ca</color>
+    <color name="indigo12PrimaryTextColor">#ffffff</color>
+    <color name="indigo13PrimaryColor">#304ffe</color>
+    <color name="indigo13PrimaryLightColor">#7a7cff</color>
+    <color name="indigo13PrimaryDarkColor">#0026ca</color>
+    <color name="indigo13PrimaryTextColor">#ffffff</color>
+    <color name="blue0PrimaryColor">#e3f2fd</color>
+    <color name="blue0PrimaryLightColor">#ffffff</color>
+    <color name="blue0PrimaryDarkColor">#b1bfca</color>
+    <color name="blue0PrimaryTextColor">#000000</color>
+    <color name="blue1PrimaryColor">#bbdefb</color>
+    <color name="blue1PrimaryLightColor">#eeffff</color>
+    <color name="blue1PrimaryDarkColor">#8aacc8</color>
+    <color name="blue1PrimaryTextColor">#000000</color>
+    <color name="blue2PrimaryColor">#90caf9</color>
+    <color name="blue2PrimaryLightColor">#c3fdff</color>
+    <color name="blue2PrimaryDarkColor">#5d99c6</color>
+    <color name="blue2PrimaryTextColor">#000000</color>
+    <color name="blue3PrimaryColor">#64b5f6</color>
+    <color name="blue3PrimaryLightColor">#9be7ff</color>
+    <color name="blue3PrimaryDarkColor">#2286c3</color>
+    <color name="blue3PrimaryTextColor">#000000</color>
+    <color name="blue4PrimaryColor">#42a5f5</color>
+    <color name="blue4PrimaryLightColor">#80d6ff</color>
+    <color name="blue4PrimaryDarkColor">#0077c2</color>
+    <color name="blue4PrimaryTextColor">#000000</color>
+    <color name="blue5PrimaryColor">#2196f3</color>
+    <color name="blue5PrimaryLightColor">#6ec6ff</color>
+    <color name="blue5PrimaryDarkColor">#0069c0</color>
+    <color name="blue5PrimaryTextColor">#000000</color>
+    <color name="blue6PrimaryColor">#1e88e5</color>
+    <color name="blue6PrimaryLightColor">#6ab7ff</color>
+    <color name="blue6PrimaryDarkColor">#005cb2</color>
+    <color name="blue6PrimaryTextColor">#000000</color>
+    <color name="blue7PrimaryColor">#1976d2</color>
+    <color name="blue7PrimaryLightColor">#63a4ff</color>
+    <color name="blue7PrimaryDarkColor">#004ba0</color>
+    <color name="blue7PrimaryTextColor">#ffffff</color>
+    <color name="blue8PrimaryColor">#1565c0</color>
+    <color name="blue8PrimaryLightColor">#5e92f3</color>
+    <color name="blue8PrimaryDarkColor">#003c8f</color>
+    <color name="blue8PrimaryTextColor">#ffffff</color>
+    <color name="blue9PrimaryColor">#0d47a1</color>
+    <color name="blue9PrimaryLightColor">#5472d3</color>
+    <color name="blue9PrimaryDarkColor">#002171</color>
+    <color name="blue9PrimaryTextColor">#ffffff</color>
+    <color name="blue10PrimaryColor">#82b1ff</color>
+    <color name="blue10PrimaryLightColor">#b6e3ff</color>
+    <color name="blue10PrimaryDarkColor">#4d82cb</color>
+    <color name="blue10PrimaryTextColor">#000000</color>
+    <color name="blue11PrimaryColor">#448aff</color>
+    <color name="blue11PrimaryLightColor">#83b9ff</color>
+    <color name="blue11PrimaryDarkColor">#005ecb</color>
+    <color name="blue11PrimaryTextColor">#000000</color>
+    <color name="blue12PrimaryColor">#2979ff</color>
+    <color name="blue12PrimaryLightColor">#75a7ff</color>
+    <color name="blue12PrimaryDarkColor">#004ecb</color>
+    <color name="blue12PrimaryTextColor">#000000</color>
+    <color name="blue13PrimaryColor">#2962ff</color>
+    <color name="blue13PrimaryLightColor">#768fff</color>
+    <color name="blue13PrimaryDarkColor">#0039cb</color>
+    <color name="blue13PrimaryTextColor">#ffffff</color>
+    <color name="lightBlue0PrimaryColor">#e1f5fe</color>
+    <color name="lightBlue0PrimaryLightColor">#ffffff</color>
+    <color name="lightBlue0PrimaryDarkColor">#afc2cb</color>
+    <color name="lightBlue0PrimaryTextColor">#000000</color>
+    <color name="lightBlue1PrimaryColor">#b3e5fc</color>
+    <color name="lightBlue1PrimaryLightColor">#e6ffff</color>
+    <color name="lightBlue1PrimaryDarkColor">#82b3c9</color>
+    <color name="lightBlue1PrimaryTextColor">#000000</color>
+    <color name="lightBlue2PrimaryColor">#81d4fa</color>
+    <color name="lightBlue2PrimaryLightColor">#b6ffff</color>
+    <color name="lightBlue2PrimaryDarkColor">#4ba3c7</color>
+    <color name="lightBlue2PrimaryTextColor">#000000</color>
+    <color name="lightBlue3PrimaryColor">#4fc3f7</color>
+    <color name="lightBlue3PrimaryLightColor">#8bf6ff</color>
+    <color name="lightBlue3PrimaryDarkColor">#0093c4</color>
+    <color name="lightBlue3PrimaryTextColor">#000000</color>
+    <color name="lightBlue4PrimaryColor">#29b6f6</color>
+    <color name="lightBlue4PrimaryLightColor">#73e8ff</color>
+    <color name="lightBlue4PrimaryDarkColor">#0086c3</color>
+    <color name="lightBlue4PrimaryTextColor">#000000</color>
+    <color name="lightBlue5PrimaryColor">#03a9f4</color>
+    <color name="lightBlue5PrimaryLightColor">#67daff</color>
+    <color name="lightBlue5PrimaryDarkColor">#007ac1</color>
+    <color name="lightBlue5PrimaryTextColor">#000000</color>
+    <color name="lightBlue6PrimaryColor">#039be5</color>
+    <color name="lightBlue6PrimaryLightColor">#63ccff</color>
+    <color name="lightBlue6PrimaryDarkColor">#006db3</color>
+    <color name="lightBlue6PrimaryTextColor">#000000</color>
+    <color name="lightBlue7PrimaryColor">#0288d1</color>
+    <color name="lightBlue7PrimaryLightColor">#5eb8ff</color>
+    <color name="lightBlue7PrimaryDarkColor">#005b9f</color>
+    <color name="lightBlue7PrimaryTextColor">#000000</color>
+    <color name="lightBlue8PrimaryColor">#0277bd</color>
+    <color name="lightBlue8PrimaryLightColor">#58a5f0</color>
+    <color name="lightBlue8PrimaryDarkColor">#004c8c</color>
+    <color name="lightBlue8PrimaryTextColor">#ffffff</color>
+    <color name="lightBlue9PrimaryColor">#01579b</color>
+    <color name="lightBlue9PrimaryLightColor">#4f83cc</color>
+    <color name="lightBlue9PrimaryDarkColor">#002f6c</color>
+    <color name="lightBlue9PrimaryTextColor">#ffffff</color>
+    <color name="lightBlue10PrimaryColor">#80d8ff</color>
+    <color name="lightBlue10PrimaryLightColor">#b5ffff</color>
+    <color name="lightBlue10PrimaryDarkColor">#49a7cc</color>
+    <color name="lightBlue10PrimaryTextColor">#000000</color>
+    <color name="lightBlue11PrimaryColor">#40c4ff</color>
+    <color name="lightBlue11PrimaryLightColor">#82f7ff</color>
+    <color name="lightBlue11PrimaryDarkColor">#0094cc</color>
+    <color name="lightBlue11PrimaryTextColor">#000000</color>
+    <color name="lightBlue12PrimaryColor">#00b0ff</color>
+    <color name="lightBlue12PrimaryLightColor">#69e2ff</color>
+    <color name="lightBlue12PrimaryDarkColor">#0081cb</color>
+    <color name="lightBlue12PrimaryTextColor">#000000</color>
+    <color name="lightBlue13PrimaryColor">#0091ea</color>
+    <color name="lightBlue13PrimaryLightColor">#64c1ff</color>
+    <color name="lightBlue13PrimaryDarkColor">#0064b7</color>
+    <color name="lightBlue13PrimaryTextColor">#000000</color>
+    <color name="cyan0PrimaryColor">#e0f7fa</color>
+    <color name="cyan0PrimaryLightColor">#ffffff</color>
+    <color name="cyan0PrimaryDarkColor">#aec4c7</color>
+    <color name="cyan0PrimaryTextColor">#000000</color>
+    <color name="cyan1PrimaryColor">#b2ebf2</color>
+    <color name="cyan1PrimaryLightColor">#e5ffff</color>
+    <color name="cyan1PrimaryDarkColor">#81b9bf</color>
+    <color name="cyan1PrimaryTextColor">#000000</color>
+    <color name="cyan2PrimaryColor">#80deea</color>
+    <color name="cyan2PrimaryLightColor">#b4ffff</color>
+    <color name="cyan2PrimaryDarkColor">#4bacb8</color>
+    <color name="cyan2PrimaryTextColor">#000000</color>
+    <color name="cyan3PrimaryColor">#4dd0e1</color>
+    <color name="cyan3PrimaryLightColor">#88ffff</color>
+    <color name="cyan3PrimaryDarkColor">#009faf</color>
+    <color name="cyan3PrimaryTextColor">#000000</color>
+    <color name="cyan4PrimaryColor">#26c6da</color>
+    <color name="cyan4PrimaryLightColor">#6ff9ff</color>
+    <color name="cyan4PrimaryDarkColor">#0095a8</color>
+    <color name="cyan4PrimaryTextColor">#000000</color>
+    <color name="cyan5PrimaryColor">#00bcd4</color>
+    <color name="cyan5PrimaryLightColor">#62efff</color>
+    <color name="cyan5PrimaryDarkColor">#008ba3</color>
+    <color name="cyan5PrimaryTextColor">#000000</color>
+    <color name="cyan6PrimaryColor">#00acc1</color>
+    <color name="cyan6PrimaryLightColor">#5ddef4</color>
+    <color name="cyan6PrimaryDarkColor">#007c91</color>
+    <color name="cyan6PrimaryTextColor">#000000</color>
+    <color name="cyan7PrimaryColor">#0097a7</color>
+    <color name="cyan7PrimaryLightColor">#56c8d8</color>
+    <color name="cyan7PrimaryDarkColor">#006978</color>
+    <color name="cyan7PrimaryTextColor">#000000</color>
+    <color name="cyan8PrimaryColor">#00838f</color>
+    <color name="cyan8PrimaryLightColor">#4fb3bf</color>
+    <color name="cyan8PrimaryDarkColor">#005662</color>
+    <color name="cyan8PrimaryTextColor">#ffffff</color>
+    <color name="cyan9PrimaryColor">#006064</color>
+    <color name="cyan9PrimaryLightColor">#428e92</color>
+    <color name="cyan9PrimaryDarkColor">#00363a</color>
+    <color name="cyan9PrimaryTextColor">#ffffff</color>
+    <color name="cyan10PrimaryColor">#84ffff</color>
+    <color name="cyan10PrimaryLightColor">#baffff</color>
+    <color name="cyan10PrimaryDarkColor">#4bcbcc</color>
+    <color name="cyan10PrimaryTextColor">#000000</color>
+    <color name="cyan11PrimaryColor">#18ffff</color>
+    <color name="cyan11PrimaryLightColor">#76ffff</color>
+    <color name="cyan11PrimaryDarkColor">#00cbcc</color>
+    <color name="cyan11PrimaryTextColor">#000000</color>
+    <color name="cyan12PrimaryColor">#00e5ff</color>
+    <color name="cyan12PrimaryLightColor">#6effff</color>
+    <color name="cyan12PrimaryDarkColor">#00b2cc</color>
+    <color name="cyan12PrimaryTextColor">#000000</color>
+    <color name="cyan13PrimaryColor">#00b8d4</color>
+    <color name="cyan13PrimaryLightColor">#62ebff</color>
+    <color name="cyan13PrimaryDarkColor">#0088a3</color>
+    <color name="cyan13PrimaryTextColor">#000000</color>
+    <color name="teal0PrimaryColor">#e0f2f1</color>
+    <color name="teal0PrimaryLightColor">#ffffff</color>
+    <color name="teal0PrimaryDarkColor">#aebfbe</color>
+    <color name="teal0PrimaryTextColor">#000000</color>
+    <color name="teal1PrimaryColor">#b2dfdb</color>
+    <color name="teal1PrimaryLightColor">#e5ffff</color>
+    <color name="teal1PrimaryDarkColor">#82ada9</color>
+    <color name="teal1PrimaryTextColor">#000000</color>
+    <color name="teal2PrimaryColor">#80cbc4</color>
+    <color name="teal2PrimaryLightColor">#b2fef7</color>
+    <color name="teal2PrimaryDarkColor">#4f9a94</color>
+    <color name="teal2PrimaryTextColor">#000000</color>
+    <color name="teal3PrimaryColor">#4db6ac</color>
+    <color name="teal3PrimaryLightColor">#82e9de</color>
+    <color name="teal3PrimaryDarkColor">#00867d</color>
+    <color name="teal3PrimaryTextColor">#000000</color>
+    <color name="teal4PrimaryColor">#26a69a</color>
+    <color name="teal4PrimaryLightColor">#64d8cb</color>
+    <color name="teal4PrimaryDarkColor">#00766c</color>
+    <color name="teal4PrimaryTextColor">#000000</color>
+    <color name="teal5PrimaryColor">#009688</color>
+    <color name="teal5PrimaryLightColor">#52c7b8</color>
+    <color name="teal5PrimaryDarkColor">#00675b</color>
+    <color name="teal5PrimaryTextColor">#000000</color>
+    <color name="teal6PrimaryColor">#00897b</color>
+    <color name="teal6PrimaryLightColor">#4ebaaa</color>
+    <color name="teal6PrimaryDarkColor">#005b4f</color>
+    <color name="teal6PrimaryTextColor">#000000</color>
+    <color name="teal7PrimaryColor">#00796b</color>
+    <color name="teal7PrimaryLightColor">#48a999</color>
+    <color name="teal7PrimaryDarkColor">#004c40</color>
+    <color name="teal7PrimaryTextColor">#ffffff</color>
+    <color name="teal8PrimaryColor">#00695c</color>
+    <color name="teal8PrimaryLightColor">#439889</color>
+    <color name="teal8PrimaryDarkColor">#003d33</color>
+    <color name="teal8PrimaryTextColor">#ffffff</color>
+    <color name="teal9PrimaryColor">#004d40</color>
+    <color name="teal9PrimaryLightColor">#39796b</color>
+    <color name="teal9PrimaryDarkColor">#00251a</color>
+    <color name="teal9PrimaryTextColor">#ffffff</color>
+    <color name="teal10PrimaryColor">#a7ffeb</color>
+    <color name="teal10PrimaryLightColor">#dbffff</color>
+    <color name="teal10PrimaryDarkColor">#75ccb9</color>
+    <color name="teal10PrimaryTextColor">#000000</color>
+    <color name="teal11PrimaryColor">#64ffda</color>
+    <color name="teal11PrimaryLightColor">#9effff</color>
+    <color name="teal11PrimaryDarkColor">#14cba8</color>
+    <color name="teal11PrimaryTextColor">#000000</color>
+    <color name="teal12PrimaryColor">#1de9b6</color>
+    <color name="teal12PrimaryLightColor">#6effe8</color>
+    <color name="teal12PrimaryDarkColor">#00b686</color>
+    <color name="teal12PrimaryTextColor">#000000</color>
+    <color name="teal13PrimaryColor">#00bfa5</color>
+    <color name="teal13PrimaryLightColor">#5df2d6</color>
+    <color name="teal13PrimaryDarkColor">#008e76</color>
+    <color name="teal13PrimaryTextColor">#000000</color>
+    <color name="green0PrimaryColor">#e8f5e9</color>
+    <color name="green0PrimaryLightColor">#ffffff</color>
+    <color name="green0PrimaryDarkColor">#b6c2b7</color>
+    <color name="green0PrimaryTextColor">#000000</color>
+    <color name="green1PrimaryColor">#c8e6c9</color>
+    <color name="green1PrimaryLightColor">#fbfffc</color>
+    <color name="green1PrimaryDarkColor">#97b498</color>
+    <color name="green1PrimaryTextColor">#000000</color>
+    <color name="green2PrimaryColor">#a5d6a7</color>
+    <color name="green2PrimaryLightColor">#d7ffd9</color>
+    <color name="green2PrimaryDarkColor">#75a478</color>
+    <color name="green2PrimaryTextColor">#000000</color>
+    <color name="green3PrimaryColor">#81c784</color>
+    <color name="green3PrimaryLightColor">#b2fab4</color>
+    <color name="green3PrimaryDarkColor">#519657</color>
+    <color name="green3PrimaryTextColor">#000000</color>
+    <color name="green4PrimaryColor">#66bb6a</color>
+    <color name="green4PrimaryLightColor">#98ee99</color>
+    <color name="green4PrimaryDarkColor">#338a3e</color>
+    <color name="green4PrimaryTextColor">#000000</color>
+    <color name="green5PrimaryColor">#4caf50</color>
+    <color name="green5PrimaryLightColor">#80e27e</color>
+    <color name="green5PrimaryDarkColor">#087f23</color>
+    <color name="green5PrimaryTextColor">#000000</color>
+    <color name="green6PrimaryColor">#43a047</color>
+    <color name="green6PrimaryLightColor">#76d275</color>
+    <color name="green6PrimaryDarkColor">#00701a</color>
+    <color name="green6PrimaryTextColor">#000000</color>
+    <color name="green7PrimaryColor">#388e3c</color>
+    <color name="green7PrimaryLightColor">#6abf69</color>
+    <color name="green7PrimaryDarkColor">#00600f</color>
+    <color name="green7PrimaryTextColor">#000000</color>
+    <color name="green8PrimaryColor">#2e7d32</color>
+    <color name="green8PrimaryLightColor">#60ad5e</color>
+    <color name="green8PrimaryDarkColor">#005005</color>
+    <color name="green8PrimaryTextColor">#ffffff</color>
+    <color name="green9PrimaryColor">#1b5e20</color>
+    <color name="green9PrimaryLightColor">#4c8c4a</color>
+    <color name="green9PrimaryDarkColor">#003300</color>
+    <color name="green9PrimaryTextColor">#ffffff</color>
+    <color name="green10PrimaryColor">#b9f6ca</color>
+    <color name="green10PrimaryLightColor">#ecfffd</color>
+    <color name="green10PrimaryDarkColor">#88c399</color>
+    <color name="green10PrimaryTextColor">#000000</color>
+    <color name="green11PrimaryColor">#69f0ae</color>
+    <color name="green11PrimaryLightColor">#9fffe0</color>
+    <color name="green11PrimaryDarkColor">#2bbd7e</color>
+    <color name="green11PrimaryTextColor">#000000</color>
+    <color name="green12PrimaryColor">#00e676</color>
+    <color name="green12PrimaryLightColor">#66ffa6</color>
+    <color name="green12PrimaryDarkColor">#00b248</color>
+    <color name="green12PrimaryTextColor">#000000</color>
+    <color name="green13PrimaryColor">#00c853</color>
+    <color name="green13PrimaryLightColor">#5efc82</color>
+    <color name="green13PrimaryDarkColor">#009624</color>
+    <color name="green13PrimaryTextColor">#000000</color>
+    <color name="lightGreen0PrimaryColor">#f1f8e9</color>
+    <color name="lightGreen0PrimaryLightColor">#ffffff</color>
+    <color name="lightGreen0PrimaryDarkColor">#bec5b7</color>
+    <color name="lightGreen0PrimaryTextColor">#000000</color>
+    <color name="lightGreen1PrimaryColor">#dcedc8</color>
+    <color name="lightGreen1PrimaryLightColor">#fffffb</color>
+    <color name="lightGreen1PrimaryDarkColor">#aabb97</color>
+    <color name="lightGreen1PrimaryTextColor">#000000</color>
+    <color name="lightGreen2PrimaryColor">#c5e1a5</color>
+    <color name="lightGreen2PrimaryLightColor">#f8ffd7</color>
+    <color name="lightGreen2PrimaryDarkColor">#94af76</color>
+    <color name="lightGreen2PrimaryTextColor">#000000</color>
+    <color name="lightGreen3PrimaryColor">#aed581</color>
+    <color name="lightGreen3PrimaryLightColor">#e1ffb1</color>
+    <color name="lightGreen3PrimaryDarkColor">#7da453</color>
+    <color name="lightGreen3PrimaryTextColor">#000000</color>
+    <color name="lightGreen4PrimaryColor">#9ccc65</color>
+    <color name="lightGreen4PrimaryLightColor">#cfff95</color>
+    <color name="lightGreen4PrimaryDarkColor">#6b9b37</color>
+    <color name="lightGreen4PrimaryTextColor">#000000</color>
+    <color name="lightGreen5PrimaryColor">#8bc34a</color>
+    <color name="lightGreen5PrimaryLightColor">#bef67a</color>
+    <color name="lightGreen5PrimaryDarkColor">#5a9216</color>
+    <color name="lightGreen5PrimaryTextColor">#000000</color>
+    <color name="lightGreen6PrimaryColor">#7cb342</color>
+    <color name="lightGreen6PrimaryLightColor">#aee571</color>
+    <color name="lightGreen6PrimaryDarkColor">#4b830d</color>
+    <color name="lightGreen6PrimaryTextColor">#000000</color>
+    <color name="lightGreen7PrimaryColor">#689f38</color>
+    <color name="lightGreen7PrimaryLightColor">#99d066</color>
+    <color name="lightGreen7PrimaryDarkColor">#387002</color>
+    <color name="lightGreen7PrimaryTextColor">#000000</color>
+    <color name="lightGreen8PrimaryColor">#558b2f</color>
+    <color name="lightGreen8PrimaryLightColor">#85bb5c</color>
+    <color name="lightGreen8PrimaryDarkColor">#255d00</color>
+    <color name="lightGreen8PrimaryTextColor">#000000</color>
+    <color name="lightGreen9PrimaryColor">#33691e</color>
+    <color name="lightGreen9PrimaryLightColor">#629749</color>
+    <color name="lightGreen9PrimaryDarkColor">#003d00</color>
+    <color name="lightGreen9PrimaryTextColor">#ffffff</color>
+    <color name="lightGreen10PrimaryColor">#ccff90</color>
+    <color name="lightGreen10PrimaryLightColor">#ffffc2</color>
+    <color name="lightGreen10PrimaryDarkColor">#99cc60</color>
+    <color name="lightGreen10PrimaryTextColor">#000000</color>
+    <color name="lightGreen11PrimaryColor">#b2ff59</color>
+    <color name="lightGreen11PrimaryLightColor">#e7ff8c</color>
+    <color name="lightGreen11PrimaryDarkColor">#7ecb20</color>
+    <color name="lightGreen11PrimaryTextColor">#000000</color>
+    <color name="lightGreen12PrimaryColor">#76ff03</color>
+    <color name="lightGreen12PrimaryLightColor">#b0ff57</color>
+    <color name="lightGreen12PrimaryDarkColor">#32cb00</color>
+    <color name="lightGreen12PrimaryTextColor">#000000</color>
+    <color name="lightGreen13PrimaryColor">#64dd17</color>
+    <color name="lightGreen13PrimaryLightColor">#9cff57</color>
+    <color name="lightGreen13PrimaryDarkColor">#1faa00</color>
+    <color name="lightGreen13PrimaryTextColor">#000000</color>
+    <color name="lime0PrimaryColor">#f9fbe7</color>
+    <color name="lime0PrimaryLightColor">#ffffff</color>
+    <color name="lime0PrimaryDarkColor">#c6c8b5</color>
+    <color name="lime0PrimaryTextColor">#000000</color>
+    <color name="lime1PrimaryColor">#f0f4c3</color>
+    <color name="lime1PrimaryLightColor">#fffff6</color>
+    <color name="lime1PrimaryDarkColor">#bdc192</color>
+    <color name="lime1PrimaryTextColor">#000000</color>
+    <color name="lime2PrimaryColor">#e6ee9c</color>
+    <color name="lime2PrimaryLightColor">#ffffce</color>
+    <color name="lime2PrimaryDarkColor">#b3bc6d</color>
+    <color name="lime2PrimaryTextColor">#000000</color>
+    <color name="lime3PrimaryColor">#dce775</color>
+    <color name="lime3PrimaryLightColor">#ffffa6</color>
+    <color name="lime3PrimaryDarkColor">#a8b545</color>
+    <color name="lime3PrimaryTextColor">#000000</color>
+    <color name="lime4PrimaryColor">#d4e157</color>
+    <color name="lime4PrimaryLightColor">#ffff89</color>
+    <color name="lime4PrimaryDarkColor">#a0af22</color>
+    <color name="lime4PrimaryTextColor">#000000</color>
+    <color name="lime5PrimaryColor">#cddc39</color>
+    <color name="lime5PrimaryLightColor">#ffff6e</color>
+    <color name="lime5PrimaryDarkColor">#99aa00</color>
+    <color name="lime5PrimaryTextColor">#000000</color>
+    <color name="lime6PrimaryColor">#c0ca33</color>
+    <color name="lime6PrimaryLightColor">#f5fd67</color>
+    <color name="lime6PrimaryDarkColor">#8c9900</color>
+    <color name="lime6PrimaryTextColor">#000000</color>
+    <color name="lime7PrimaryColor">#afb42b</color>
+    <color name="lime7PrimaryLightColor">#e4e65e</color>
+    <color name="lime7PrimaryDarkColor">#7c8500</color>
+    <color name="lime7PrimaryTextColor">#000000</color>
+    <color name="lime8PrimaryColor">#9e9d24</color>
+    <color name="lime8PrimaryLightColor">#d2ce56</color>
+    <color name="lime8PrimaryDarkColor">#6c6f00</color>
+    <color name="lime8PrimaryTextColor">#000000</color>
+    <color name="lime9PrimaryColor">#827717</color>
+    <color name="lime9PrimaryLightColor">#b4a647</color>
+    <color name="lime9PrimaryDarkColor">#524c00</color>
+    <color name="lime9PrimaryTextColor">#ffffff</color>
+    <color name="lime10PrimaryColor">#f4ff81</color>
+    <color name="lime10PrimaryLightColor">#ffffb3</color>
+    <color name="lime10PrimaryDarkColor">#bfcc51</color>
+    <color name="lime10PrimaryTextColor">#000000</color>
+    <color name="lime11PrimaryColor">#eeff41</color>
+    <color name="lime11PrimaryLightColor">#ffff78</color>
+    <color name="lime11PrimaryDarkColor">#b8cc00</color>
+    <color name="lime11PrimaryTextColor">#000000</color>
+    <color name="lime12PrimaryColor">#c6ff00</color>
+    <color name="lime12PrimaryLightColor">#fdff58</color>
+    <color name="lime12PrimaryDarkColor">#90cc00</color>
+    <color name="lime12PrimaryTextColor">#000000</color>
+    <color name="lime13PrimaryColor">#aeea00</color>
+    <color name="lime13PrimaryLightColor">#e4ff54</color>
+    <color name="lime13PrimaryDarkColor">#79b700</color>
+    <color name="lime13PrimaryTextColor">#000000</color>
+    <color name="yellow0PrimaryColor">#fffde7</color>
+    <color name="yellow0PrimaryLightColor">#ffffff</color>
+    <color name="yellow0PrimaryDarkColor">#cccab5</color>
+    <color name="yellow0PrimaryTextColor">#000000</color>
+    <color name="yellow1PrimaryColor">#fff9c4</color>
+    <color name="yellow1PrimaryLightColor">#fffff7</color>
+    <color name="yellow1PrimaryDarkColor">#cbc693</color>
+    <color name="yellow1PrimaryTextColor">#000000</color>
+    <color name="yellow2PrimaryColor">#fff59d</color>
+    <color name="yellow2PrimaryLightColor">#ffffcf</color>
+    <color name="yellow2PrimaryDarkColor">#cbc26d</color>
+    <color name="yellow2PrimaryTextColor">#000000</color>
+    <color name="yellow3PrimaryColor">#fff176</color>
+    <color name="yellow3PrimaryLightColor">#ffffa8</color>
+    <color name="yellow3PrimaryDarkColor">#cabf45</color>
+    <color name="yellow3PrimaryTextColor">#000000</color>
+    <color name="yellow4PrimaryColor">#ffee58</color>
+    <color name="yellow4PrimaryLightColor">#ffff8b</color>
+    <color name="yellow4PrimaryDarkColor">#c9bc1f</color>
+    <color name="yellow4PrimaryTextColor">#000000</color>
+    <color name="yellow5PrimaryColor">#ffeb3b</color>
+    <color name="yellow5PrimaryLightColor">#ffff72</color>
+    <color name="yellow5PrimaryDarkColor">#c8b900</color>
+    <color name="yellow5PrimaryTextColor">#000000</color>
+    <color name="yellow6PrimaryColor">#fdd835</color>
+    <color name="yellow6PrimaryLightColor">#ffff6b</color>
+    <color name="yellow6PrimaryDarkColor">#c6a700</color>
+    <color name="yellow6PrimaryTextColor">#000000</color>
+    <color name="yellow7PrimaryColor">#fbc02d</color>
+    <color name="yellow7PrimaryLightColor">#fff263</color>
+    <color name="yellow7PrimaryDarkColor">#c49000</color>
+    <color name="yellow7PrimaryTextColor">#000000</color>
+    <color name="yellow8PrimaryColor">#f9a825</color>
+    <color name="yellow8PrimaryLightColor">#ffd95a</color>
+    <color name="yellow8PrimaryDarkColor">#c17900</color>
+    <color name="yellow8PrimaryTextColor">#000000</color>
+    <color name="yellow9PrimaryColor">#f57f17</color>
+    <color name="yellow9PrimaryLightColor">#ffb04c</color>
+    <color name="yellow9PrimaryDarkColor">#bc5100</color>
+    <color name="yellow9PrimaryTextColor">#000000</color>
+    <color name="yellow10PrimaryColor">#ffff8d</color>
+    <color name="yellow10PrimaryLightColor">#ffffbf</color>
+    <color name="yellow10PrimaryDarkColor">#cacc5d</color>
+    <color name="yellow10PrimaryTextColor">#000000</color>
+    <color name="yellow11PrimaryColor">#ffff00</color>
+    <color name="yellow11PrimaryLightColor">#ffff5a</color>
+    <color name="yellow11PrimaryDarkColor">#c7cc00</color>
+    <color name="yellow11PrimaryTextColor">#000000</color>
+    <color name="yellow12PrimaryColor">#ffea00</color>
+    <color name="yellow12PrimaryLightColor">#ffff56</color>
+    <color name="yellow12PrimaryDarkColor">#c7b800</color>
+    <color name="yellow12PrimaryTextColor">#000000</color>
+    <color name="yellow13PrimaryColor">#ffd600</color>
+    <color name="yellow13PrimaryLightColor">#ffff52</color>
+    <color name="yellow13PrimaryDarkColor">#c7a500</color>
+    <color name="yellow13PrimaryTextColor">#000000</color>
+    <color name="amber0PrimaryColor">#fff8e1</color>
+    <color name="amber0PrimaryLightColor">#ffffff</color>
+    <color name="amber0PrimaryDarkColor">#ccc5af</color>
+    <color name="amber0PrimaryTextColor">#000000</color>
+    <color name="amber1PrimaryColor">#ffecb3</color>
+    <color name="amber1PrimaryLightColor">#ffffe5</color>
+    <color name="amber1PrimaryDarkColor">#cbba83</color>
+    <color name="amber1PrimaryTextColor">#000000</color>
+    <color name="amber2PrimaryColor">#ffe082</color>
+    <color name="amber2PrimaryLightColor">#ffffb3</color>
+    <color name="amber2PrimaryDarkColor">#caae53</color>
+    <color name="amber2PrimaryTextColor">#000000</color>
+    <color name="amber3PrimaryColor">#ffd54f</color>
+    <color name="amber3PrimaryLightColor">#ffff81</color>
+    <color name="amber3PrimaryDarkColor">#c8a415</color>
+    <color name="amber3PrimaryTextColor">#000000</color>
+    <color name="amber4PrimaryColor">#ffca28</color>
+    <color name="amber4PrimaryLightColor">#fffd61</color>
+    <color name="amber4PrimaryDarkColor">#c79a00</color>
+    <color name="amber4PrimaryTextColor">#000000</color>
+    <color name="amber5PrimaryColor">#ffc107</color>
+    <color name="amber5PrimaryLightColor">#fff350</color>
+    <color name="amber5PrimaryDarkColor">#c79100</color>
+    <color name="amber5PrimaryTextColor">#000000</color>
+    <color name="amber6PrimaryColor">#ffb300</color>
+    <color name="amber6PrimaryLightColor">#ffe54c</color>
+    <color name="amber6PrimaryDarkColor">#c68400</color>
+    <color name="amber6PrimaryTextColor">#000000</color>
+    <color name="amber7PrimaryColor">#ffa000</color>
+    <color name="amber7PrimaryLightColor">#ffd149</color>
+    <color name="amber7PrimaryDarkColor">#c67100</color>
+    <color name="amber7PrimaryTextColor">#000000</color>
+    <color name="amber8PrimaryColor">#ff8f00</color>
+    <color name="amber8PrimaryLightColor">#ffc046</color>
+    <color name="amber8PrimaryDarkColor">#c56000</color>
+    <color name="amber8PrimaryTextColor">#000000</color>
+    <color name="amber9PrimaryColor">#ff6f00</color>
+    <color name="amber9PrimaryLightColor">#ffa040</color>
+    <color name="amber9PrimaryDarkColor">#c43e00</color>
+    <color name="amber9PrimaryTextColor">#000000</color>
+    <color name="amber10PrimaryColor">#ffe57f</color>
+    <color name="amber10PrimaryLightColor">#ffffb0</color>
+    <color name="amber10PrimaryDarkColor">#cab350</color>
+    <color name="amber10PrimaryTextColor">#000000</color>
+    <color name="amber11PrimaryColor">#ffd740</color>
+    <color name="amber11PrimaryLightColor">#ffff74</color>
+    <color name="amber11PrimaryDarkColor">#c8a600</color>
+    <color name="amber11PrimaryTextColor">#000000</color>
+    <color name="amber12PrimaryColor">#ffc400</color>
+    <color name="amber12PrimaryLightColor">#fff64f</color>
+    <color name="amber12PrimaryDarkColor">#c79400</color>
+    <color name="amber12PrimaryTextColor">#000000</color>
+    <color name="amber13PrimaryColor">#ffab00</color>
+    <color name="amber13PrimaryLightColor">#ffdd4b</color>
+    <color name="amber13PrimaryDarkColor">#c67c00</color>
+    <color name="amber13PrimaryTextColor">#000000</color>
+    <color name="orange0PrimaryColor">#ffab00</color>
+    <color name="orange0PrimaryLightColor">#ffdd4b</color>
+    <color name="orange0PrimaryDarkColor">#c67c00</color>
+    <color name="orange0PrimaryTextColor">#000000</color>
+    <color name="orange1PrimaryColor">#ffe0b2</color>
+    <color name="orange1PrimaryLightColor">#ffffe4</color>
+    <color name="orange1PrimaryDarkColor">#cbae82</color>
+    <color name="orange1PrimaryTextColor">#000000</color>
+    <color name="orange2PrimaryColor">#ffcc80</color>
+    <color name="orange2PrimaryLightColor">#ffffb0</color>
+    <color name="orange2PrimaryDarkColor">#ca9b52</color>
+    <color name="orange2PrimaryTextColor">#000000</color>
+    <color name="orange3PrimaryColor">#ffb74d</color>
+    <color name="orange3PrimaryLightColor">#ffe97d</color>
+    <color name="orange3PrimaryDarkColor">#c88719</color>
+    <color name="orange3PrimaryTextColor">#000000</color>
+    <color name="orange4PrimaryColor">#ffa726</color>
+    <color name="orange4PrimaryLightColor">#ffd95b</color>
+    <color name="orange4PrimaryDarkColor">#c77800</color>
+    <color name="orange4PrimaryTextColor">#000000</color>
+    <color name="orange5PrimaryColor">#ff9800</color>
+    <color name="orange5PrimaryLightColor">#ffc947</color>
+    <color name="orange5PrimaryDarkColor">#c66900</color>
+    <color name="orange5PrimaryTextColor">#000000</color>
+    <color name="orange6PrimaryColor">#fb8c00</color>
+    <color name="orange6PrimaryLightColor">#ffbd45</color>
+    <color name="orange6PrimaryDarkColor">#c25e00</color>
+    <color name="orange6PrimaryTextColor">#000000</color>
+    <color name="orange7PrimaryColor">#f57c00</color>
+    <color name="orange7PrimaryLightColor">#ffad42</color>
+    <color name="orange7PrimaryDarkColor">#bb4d00</color>
+    <color name="orange7PrimaryTextColor">#000000</color>
+    <color name="orange8PrimaryColor">#ef6c00</color>
+    <color name="orange8PrimaryLightColor">#ff9d3f</color>
+    <color name="orange8PrimaryDarkColor">#b53d00</color>
+    <color name="orange8PrimaryTextColor">#000000</color>
+    <color name="orange9PrimaryColor">#e65100</color>
+    <color name="orange9PrimaryLightColor">#ff833a</color>
+    <color name="orange9PrimaryDarkColor">#ac1900</color>
+    <color name="orange9PrimaryTextColor">#000000</color>
+    <color name="orange10PrimaryColor">#ffd180</color>
+    <color name="orange10PrimaryLightColor">#ffffb1</color>
+    <color name="orange10PrimaryDarkColor">#caa052</color>
+    <color name="orange10PrimaryTextColor">#000000</color>
+    <color name="orange11PrimaryColor">#ffab40</color>
+    <color name="orange11PrimaryLightColor">#ffdd71</color>
+    <color name="orange11PrimaryDarkColor">#c77c02</color>
+    <color name="orange11PrimaryTextColor">#000000</color>
+    <color name="orange12PrimaryColor">#ff9100</color>
+    <color name="orange12PrimaryLightColor">#ffc246</color>
+    <color name="orange12PrimaryDarkColor">#c56200</color>
+    <color name="orange12PrimaryTextColor">#000000</color>
+    <color name="orange13PrimaryColor">#ff6d00</color>
+    <color name="orange13PrimaryLightColor">#ff9e40</color>
+    <color name="orange13PrimaryDarkColor">#c43c00</color>
+    <color name="orange13PrimaryTextColor">#000000</color>
+    <color name="deepOrange0PrimaryColor">#fbe9e7</color>
+    <color name="deepOrange0PrimaryLightColor">#ffffff</color>
+    <color name="deepOrange0PrimaryDarkColor">#c8b7b5</color>
+    <color name="deepOrange0PrimaryTextColor">#000000</color>
+    <color name="deepOrange1PrimaryColor">#ffccbc</color>
+    <color name="deepOrange1PrimaryLightColor">#ffffee</color>
+    <color name="deepOrange1PrimaryDarkColor">#cb9b8c</color>
+    <color name="deepOrange1PrimaryTextColor">#000000</color>
+    <color name="deepOrange2PrimaryColor">#ffab91</color>
+    <color name="deepOrange2PrimaryLightColor">#ffddc1</color>
+    <color name="deepOrange2PrimaryDarkColor">#c97b63</color>
+    <color name="deepOrange2PrimaryTextColor">#000000</color>
+    <color name="deepOrange3PrimaryColor">#ff8a65</color>
+    <color name="deepOrange3PrimaryLightColor">#ffbb93</color>
+    <color name="deepOrange3PrimaryDarkColor">#c75b39</color>
+    <color name="deepOrange3PrimaryTextColor">#000000</color>
+    <color name="deepOrange4PrimaryColor">#ff7043</color>
+    <color name="deepOrange4PrimaryLightColor">#ffa270</color>
+    <color name="deepOrange4PrimaryDarkColor">#c63f17</color>
+    <color name="deepOrange4PrimaryTextColor">#000000</color>
+    <color name="deepOrange5PrimaryColor">#ff5722</color>
+    <color name="deepOrange5PrimaryLightColor">#ff8a50</color>
+    <color name="deepOrange5PrimaryDarkColor">#c41c00</color>
+    <color name="deepOrange5PrimaryTextColor">#000000</color>
+    <color name="deepOrange6PrimaryColor">#f4511e</color>
+    <color name="deepOrange6PrimaryLightColor">#ff844c</color>
+    <color name="deepOrange6PrimaryDarkColor">#b91400</color>
+    <color name="deepOrange6PrimaryTextColor">#000000</color>
+    <color name="deepOrange7PrimaryColor">#e64a19</color>
+    <color name="deepOrange7PrimaryLightColor">#ff7d47</color>
+    <color name="deepOrange7PrimaryDarkColor">#ac0800</color>
+    <color name="deepOrange7PrimaryTextColor">#000000</color>
+    <color name="deepOrange8PrimaryColor">#d84315</color>
+    <color name="deepOrange8PrimaryLightColor">#ff7543</color>
+    <color name="deepOrange8PrimaryDarkColor">#9f0000</color>
+    <color name="deepOrange8PrimaryTextColor">#000000</color>
+    <color name="deepOrange9PrimaryColor">#bf360c</color>
+    <color name="deepOrange9PrimaryLightColor">#f9683a</color>
+    <color name="deepOrange9PrimaryDarkColor">#870000</color>
+    <color name="deepOrange9PrimaryTextColor">#ffffff</color>
+    <color name="deepOrange10PrimaryColor">#ff9e80</color>
+    <color name="deepOrange10PrimaryLightColor">#ffd0b0</color>
+    <color name="deepOrange10PrimaryDarkColor">#c96f53</color>
+    <color name="deepOrange10PrimaryTextColor">#000000</color>
+    <color name="deepOrange11PrimaryColor">#ff6e40</color>
+    <color name="deepOrange11PrimaryLightColor">#ffa06d</color>
+    <color name="deepOrange11PrimaryDarkColor">#c53d13</color>
+    <color name="deepOrange11PrimaryTextColor">#000000</color>
+    <color name="deepOrange12PrimaryColor">#ff3d00</color>
+    <color name="deepOrange12PrimaryLightColor">#ff7539</color>
+    <color name="deepOrange12PrimaryDarkColor">#c30000</color>
+    <color name="deepOrange12PrimaryTextColor">#000000</color>
+    <color name="deepOrange13PrimaryColor">#dd2c00</color>
+    <color name="deepOrange13PrimaryLightColor">#ff6434</color>
+    <color name="deepOrange13PrimaryDarkColor">#a30000</color>
+    <color name="deepOrange13PrimaryTextColor">#ffffff</color>
+    <color name="brown0PrimaryColor">#efebe9</color>
+    <color name="brown0PrimaryLightColor">#ffffff</color>
+    <color name="brown0PrimaryDarkColor">#bdb9b7</color>
+    <color name="brown0PrimaryTextColor">#000000</color>
+    <color name="brown1PrimaryColor">#d7ccc8</color>
+    <color name="brown1PrimaryLightColor">#fffffb</color>
+    <color name="brown1PrimaryDarkColor">#a69b97</color>
+    <color name="brown1PrimaryTextColor">#000000</color>
+    <color name="brown2PrimaryColor">#bcaaa4</color>
+    <color name="brown2PrimaryLightColor">#efdcd5</color>
+    <color name="brown2PrimaryDarkColor">#8c7b75</color>
+    <color name="brown2PrimaryTextColor">#000000</color>
+    <color name="brown3PrimaryColor">#a1887f</color>
+    <color name="brown3PrimaryLightColor">#d3b8ae</color>
+    <color name="brown3PrimaryDarkColor">#725b53</color>
+    <color name="brown3PrimaryTextColor">#000000</color>
+    <color name="brown4PrimaryColor">#8d6e63</color>
+    <color name="brown4PrimaryLightColor">#be9c91</color>
+    <color name="brown4PrimaryDarkColor">#5f4339</color>
+    <color name="brown4PrimaryTextColor">#ffffff</color>
+    <color name="brown5PrimaryColor">#795548</color>
+    <color name="brown5PrimaryLightColor">#a98274</color>
+    <color name="brown5PrimaryDarkColor">#4b2c20</color>
+    <color name="brown5PrimaryTextColor">#ffffff</color>
+    <color name="brown6PrimaryColor">#6d4c41</color>
+    <color name="brown6PrimaryLightColor">#9c786c</color>
+    <color name="brown6PrimaryDarkColor">#40241a</color>
+    <color name="brown6PrimaryTextColor">#ffffff</color>
+    <color name="brown7PrimaryColor">#5d4037</color>
+    <color name="brown7PrimaryLightColor">#8b6b61</color>
+    <color name="brown7PrimaryDarkColor">#321911</color>
+    <color name="brown7PrimaryTextColor">#ffffff</color>
+    <color name="brown8PrimaryColor">#4e342e</color>
+    <color name="brown8PrimaryLightColor">#7b5e57</color>
+    <color name="brown8PrimaryDarkColor">#260e04</color>
+    <color name="brown8PrimaryTextColor">#ffffff</color>
+    <color name="brown9PrimaryColor">#3e2723</color>
+    <color name="brown9PrimaryLightColor">#6a4f4b</color>
+    <color name="brown9PrimaryDarkColor">#1b0000</color>
+    <color name="brown9PrimaryTextColor">#ffffff</color>
+    <color name="grey0PrimaryColor">#fafafa</color>
+    <color name="grey0PrimaryLightColor">#ffffff</color>
+    <color name="grey0PrimaryDarkColor">#c7c7c7</color>
+    <color name="grey0PrimaryTextColor">#000000</color>
+    <color name="grey1PrimaryColor">#f5f5f5</color>
+    <color name="grey1PrimaryLightColor">#ffffff</color>
+    <color name="grey1PrimaryDarkColor">#c2c2c2</color>
+    <color name="grey1PrimaryTextColor">#000000</color>
+    <color name="grey2PrimaryColor">#eeeeee</color>
+    <color name="grey2PrimaryLightColor">#ffffff</color>
+    <color name="grey2PrimaryDarkColor">#bcbcbc</color>
+    <color name="grey2PrimaryTextColor">#000000</color>
+    <color name="grey3PrimaryColor">#e0e0e0</color>
+    <color name="grey3PrimaryLightColor">#ffffff</color>
+    <color name="grey3PrimaryDarkColor">#aeaeae</color>
+    <color name="grey3PrimaryTextColor">#000000</color>
+    <color name="grey4PrimaryColor">#bdbdbd</color>
+    <color name="grey4PrimaryLightColor">#efefef</color>
+    <color name="grey4PrimaryDarkColor">#8d8d8d</color>
+    <color name="grey4PrimaryTextColor">#000000</color>
+    <color name="grey5PrimaryColor">#9e9e9e</color>
+    <color name="grey5PrimaryLightColor">#cfcfcf</color>
+    <color name="grey5PrimaryDarkColor">#707070</color>
+    <color name="grey5PrimaryTextColor">#000000</color>
+    <color name="grey6PrimaryColor">#757575</color>
+    <color name="grey6PrimaryLightColor">#a4a4a4</color>
+    <color name="grey6PrimaryDarkColor">#494949</color>
+    <color name="grey6PrimaryTextColor">#ffffff</color>
+    <color name="grey7PrimaryColor">#616161</color>
+    <color name="grey7PrimaryLightColor">#8e8e8e</color>
+    <color name="grey7PrimaryDarkColor">#373737</color>
+    <color name="grey7PrimaryTextColor">#ffffff</color>
+    <color name="grey8PrimaryColor">#424242</color>
+    <color name="grey8PrimaryLightColor">#6d6d6d</color>
+    <color name="grey8PrimaryDarkColor">#1b1b1b</color>
+    <color name="grey8PrimaryTextColor">#ffffff</color>
+    <color name="grey9PrimaryColor">#212121</color>
+    <color name="grey9PrimaryLightColor">#484848</color>
+    <color name="grey9PrimaryDarkColor">#000000</color>
+    <color name="grey9PrimaryTextColor">#ffffff</color>
+    <color name="blueGrey0PrimaryColor">#eceff1</color>
+    <color name="blueGrey0PrimaryLightColor">#ffffff</color>
+    <color name="blueGrey0PrimaryDarkColor">#babdbe</color>
+    <color name="blueGrey0PrimaryTextColor">#000000</color>
+    <color name="blueGrey1PrimaryColor">#cfd8dc</color>
+    <color name="blueGrey1PrimaryLightColor">#ffffff</color>
+    <color name="blueGrey1PrimaryDarkColor">#9ea7aa</color>
+    <color name="blueGrey1PrimaryTextColor">#000000</color>
+    <color name="blueGrey2PrimaryColor">#b0bec5</color>
+    <color name="blueGrey2PrimaryLightColor">#e2f1f8</color>
+    <color name="blueGrey2PrimaryDarkColor">#808e95</color>
+    <color name="blueGrey2PrimaryTextColor">#000000</color>
+    <color name="blueGrey3PrimaryColor">#90a4ae</color>
+    <color name="blueGrey3PrimaryLightColor">#c1d5e0</color>
+    <color name="blueGrey3PrimaryDarkColor">#62757f</color>
+    <color name="blueGrey3PrimaryTextColor">#000000</color>
+    <color name="blueGrey4PrimaryColor">#78909c</color>
+    <color name="blueGrey4PrimaryLightColor">#a7c0cd</color>
+    <color name="blueGrey4PrimaryDarkColor">#4b636e</color>
+    <color name="blueGrey4PrimaryTextColor">#000000</color>
+    <color name="blueGrey5PrimaryColor">#607d8b</color>
+    <color name="blueGrey5PrimaryLightColor">#8eacbb</color>
+    <color name="blueGrey5PrimaryDarkColor">#34515e</color>
+    <color name="blueGrey5PrimaryTextColor">#000000</color>
+    <color name="blueGrey6PrimaryColor">#546e7a</color>
+    <color name="blueGrey6PrimaryLightColor">#819ca9</color>
+    <color name="blueGrey6PrimaryDarkColor">#29434e</color>
+    <color name="blueGrey6PrimaryTextColor">#ffffff</color>
+    <color name="blueGrey7PrimaryColor">#455a64</color>
+    <color name="blueGrey7PrimaryLightColor">#718792</color>
+    <color name="blueGrey7PrimaryDarkColor">#1c313a</color>
+    <color name="blueGrey7PrimaryTextColor">#ffffff</color>
+    <color name="blueGrey8PrimaryColor">#37474f</color>
+    <color name="blueGrey8PrimaryLightColor">#62727b</color>
+    <color name="blueGrey8PrimaryDarkColor">#102027</color>
+    <color name="blueGrey8PrimaryTextColor">#ffffff</color>
+    <color name="blueGrey9PrimaryColor">#263238</color>
+    <color name="blueGrey9PrimaryLightColor">#4f5b62</color>
+    <color name="blueGrey9PrimaryDarkColor">#000a12</color>
+    <color name="blueGrey9PrimaryTextColor">#ffffff</color>
+    <array name="redPrimaryColors">
+        <item>@color/red0PrimaryColor</item>
+        <item>@color/red1PrimaryColor</item>
+        <item>@color/red2PrimaryColor</item>
+        <item>@color/red3PrimaryColor</item>
+        <item>@color/red4PrimaryColor</item>
+        <item>@color/red5PrimaryColor</item>
+        <item>@color/red6PrimaryColor</item>
+        <item>@color/red7PrimaryColor</item>
+        <item>@color/red8PrimaryColor</item>
+        <item>@color/red9PrimaryColor</item>
+        <item>@color/red10PrimaryColor</item>
+        <item>@color/red11PrimaryColor</item>
+        <item>@color/red12PrimaryColor</item>
+        <item>@color/red13PrimaryColor</item>
+    </array>
+    <array name="pinkPrimaryColors">
+        <item>@color/pink0PrimaryColor</item>
+        <item>@color/pink1PrimaryColor</item>
+        <item>@color/pink2PrimaryColor</item>
+        <item>@color/pink3PrimaryColor</item>
+        <item>@color/pink4PrimaryColor</item>
+        <item>@color/pink5PrimaryColor</item>
+        <item>@color/pink6PrimaryColor</item>
+        <item>@color/pink7PrimaryColor</item>
+        <item>@color/pink8PrimaryColor</item>
+        <item>@color/pink9PrimaryColor</item>
+        <item>@color/pink10PrimaryColor</item>
+        <item>@color/pink11PrimaryColor</item>
+        <item>@color/pink12PrimaryColor</item>
+        <item>@color/pink13PrimaryColor</item>
+    </array>
+    <array name="purplePrimaryColors">
+        <item>@color/purple0PrimaryColor</item>
+        <item>@color/purple1PrimaryColor</item>
+        <item>@color/purple2PrimaryColor</item>
+        <item>@color/purple3PrimaryColor</item>
+        <item>@color/purple4PrimaryColor</item>
+        <item>@color/purple5PrimaryColor</item>
+        <item>@color/purple6PrimaryColor</item>
+        <item>@color/purple7PrimaryColor</item>
+        <item>@color/purple8PrimaryColor</item>
+        <item>@color/purple9PrimaryColor</item>
+        <item>@color/purple10PrimaryColor</item>
+        <item>@color/purple11PrimaryColor</item>
+        <item>@color/purple12PrimaryColor</item>
+        <item>@color/purple13PrimaryColor</item>
+    </array>
+    <array name="deepPurplePrimaryColors">
+        <item>@color/deepPurple0PrimaryColor</item>
+        <item>@color/deepPurple1PrimaryColor</item>
+        <item>@color/deepPurple2PrimaryColor</item>
+        <item>@color/deepPurple3PrimaryColor</item>
+        <item>@color/deepPurple4PrimaryColor</item>
+        <item>@color/deepPurple5PrimaryColor</item>
+        <item>@color/deepPurple6PrimaryColor</item>
+        <item>@color/deepPurple7PrimaryColor</item>
+        <item>@color/deepPurple8PrimaryColor</item>
+        <item>@color/deepPurple9PrimaryColor</item>
+        <item>@color/deepPurple10PrimaryColor</item>
+        <item>@color/deepPurple11PrimaryColor</item>
+        <item>@color/deepPurple12PrimaryColor</item>
+        <item>@color/deepPurple13PrimaryColor</item>
+    </array>
+    <array name="indigoPrimaryColors">
+        <item>@color/indigo0PrimaryColor</item>
+        <item>@color/indigo1PrimaryColor</item>
+        <item>@color/indigo2PrimaryColor</item>
+        <item>@color/indigo3PrimaryColor</item>
+        <item>@color/indigo4PrimaryColor</item>
+        <item>@color/indigo5PrimaryColor</item>
+        <item>@color/indigo6PrimaryColor</item>
+        <item>@color/indigo7PrimaryColor</item>
+        <item>@color/indigo8PrimaryColor</item>
+        <item>@color/indigo9PrimaryColor</item>
+        <item>@color/indigo10PrimaryColor</item>
+        <item>@color/indigo11PrimaryColor</item>
+        <item>@color/indigo12PrimaryColor</item>
+        <item>@color/indigo13PrimaryColor</item>
+    </array>
+    <array name="bluePrimaryColors">
+        <item>@color/blue0PrimaryColor</item>
+        <item>@color/blue1PrimaryColor</item>
+        <item>@color/blue2PrimaryColor</item>
+        <item>@color/blue3PrimaryColor</item>
+        <item>@color/blue4PrimaryColor</item>
+        <item>@color/blue5PrimaryColor</item>
+        <item>@color/blue6PrimaryColor</item>
+        <item>@color/blue7PrimaryColor</item>
+        <item>@color/blue8PrimaryColor</item>
+        <item>@color/blue9PrimaryColor</item>
+        <item>@color/blue10PrimaryColor</item>
+        <item>@color/blue11PrimaryColor</item>
+        <item>@color/blue12PrimaryColor</item>
+        <item>@color/blue13PrimaryColor</item>
+    </array>
+    <array name="lightBluePrimaryColors">
+        <item>@color/lightBlue0PrimaryColor</item>
+        <item>@color/lightBlue1PrimaryColor</item>
+        <item>@color/lightBlue2PrimaryColor</item>
+        <item>@color/lightBlue3PrimaryColor</item>
+        <item>@color/lightBlue4PrimaryColor</item>
+        <item>@color/lightBlue5PrimaryColor</item>
+        <item>@color/lightBlue6PrimaryColor</item>
+        <item>@color/lightBlue7PrimaryColor</item>
+        <item>@color/lightBlue8PrimaryColor</item>
+        <item>@color/lightBlue9PrimaryColor</item>
+        <item>@color/lightBlue10PrimaryColor</item>
+        <item>@color/lightBlue11PrimaryColor</item>
+        <item>@color/lightBlue12PrimaryColor</item>
+        <item>@color/lightBlue13PrimaryColor</item>
+    </array>
+    <array name="cyanPrimaryColors">
+        <item>@color/cyan0PrimaryColor</item>
+        <item>@color/cyan1PrimaryColor</item>
+        <item>@color/cyan2PrimaryColor</item>
+        <item>@color/cyan3PrimaryColor</item>
+        <item>@color/cyan4PrimaryColor</item>
+        <item>@color/cyan5PrimaryColor</item>
+        <item>@color/cyan6PrimaryColor</item>
+        <item>@color/cyan7PrimaryColor</item>
+        <item>@color/cyan8PrimaryColor</item>
+        <item>@color/cyan9PrimaryColor</item>
+        <item>@color/cyan10PrimaryColor</item>
+        <item>@color/cyan11PrimaryColor</item>
+        <item>@color/cyan12PrimaryColor</item>
+        <item>@color/cyan13PrimaryColor</item>
+    </array>
+    <array name="tealPrimaryColors">
+        <item>@color/teal0PrimaryColor</item>
+        <item>@color/teal1PrimaryColor</item>
+        <item>@color/teal2PrimaryColor</item>
+        <item>@color/teal3PrimaryColor</item>
+        <item>@color/teal4PrimaryColor</item>
+        <item>@color/teal5PrimaryColor</item>
+        <item>@color/teal6PrimaryColor</item>
+        <item>@color/teal7PrimaryColor</item>
+        <item>@color/teal8PrimaryColor</item>
+        <item>@color/teal9PrimaryColor</item>
+        <item>@color/teal10PrimaryColor</item>
+        <item>@color/teal11PrimaryColor</item>
+        <item>@color/teal12PrimaryColor</item>
+        <item>@color/teal13PrimaryColor</item>
+    </array>
+    <array name="greenPrimaryColors">
+        <item>@color/green0PrimaryColor</item>
+        <item>@color/green1PrimaryColor</item>
+        <item>@color/green2PrimaryColor</item>
+        <item>@color/green3PrimaryColor</item>
+        <item>@color/green4PrimaryColor</item>
+        <item>@color/green5PrimaryColor</item>
+        <item>@color/green6PrimaryColor</item>
+        <item>@color/green7PrimaryColor</item>
+        <item>@color/green8PrimaryColor</item>
+        <item>@color/green9PrimaryColor</item>
+        <item>@color/green10PrimaryColor</item>
+        <item>@color/green11PrimaryColor</item>
+        <item>@color/green12PrimaryColor</item>
+        <item>@color/green13PrimaryColor</item>
+    </array>
+    <array name="lightGreenPrimaryColors">
+        <item>@color/lightGreen0PrimaryColor</item>
+        <item>@color/lightGreen1PrimaryColor</item>
+        <item>@color/lightGreen2PrimaryColor</item>
+        <item>@color/lightGreen3PrimaryColor</item>
+        <item>@color/lightGreen4PrimaryColor</item>
+        <item>@color/lightGreen5PrimaryColor</item>
+        <item>@color/lightGreen6PrimaryColor</item>
+        <item>@color/lightGreen7PrimaryColor</item>
+        <item>@color/lightGreen8PrimaryColor</item>
+        <item>@color/lightGreen9PrimaryColor</item>
+        <item>@color/lightGreen10PrimaryColor</item>
+        <item>@color/lightGreen11PrimaryColor</item>
+        <item>@color/lightGreen12PrimaryColor</item>
+        <item>@color/lightGreen13PrimaryColor</item>
+    </array>
+    <array name="limePrimaryColors">
+        <item>@color/lime0PrimaryColor</item>
+        <item>@color/lime1PrimaryColor</item>
+        <item>@color/lime2PrimaryColor</item>
+        <item>@color/lime3PrimaryColor</item>
+        <item>@color/lime4PrimaryColor</item>
+        <item>@color/lime5PrimaryColor</item>
+        <item>@color/lime6PrimaryColor</item>
+        <item>@color/lime7PrimaryColor</item>
+        <item>@color/lime8PrimaryColor</item>
+        <item>@color/lime9PrimaryColor</item>
+        <item>@color/lime10PrimaryColor</item>
+        <item>@color/lime11PrimaryColor</item>
+        <item>@color/lime12PrimaryColor</item>
+        <item>@color/lime13PrimaryColor</item>
+    </array>
+    <array name="yellowPrimaryColors">
+        <item>@color/yellow0PrimaryColor</item>
+        <item>@color/yellow1PrimaryColor</item>
+        <item>@color/yellow2PrimaryColor</item>
+        <item>@color/yellow3PrimaryColor</item>
+        <item>@color/yellow4PrimaryColor</item>
+        <item>@color/yellow5PrimaryColor</item>
+        <item>@color/yellow6PrimaryColor</item>
+        <item>@color/yellow7PrimaryColor</item>
+        <item>@color/yellow8PrimaryColor</item>
+        <item>@color/yellow9PrimaryColor</item>
+        <item>@color/yellow10PrimaryColor</item>
+        <item>@color/yellow11PrimaryColor</item>
+        <item>@color/yellow12PrimaryColor</item>
+        <item>@color/yellow13PrimaryColor</item>
+    </array>
+    <array name="amberPrimaryColors">
+        <item>@color/amber0PrimaryColor</item>
+        <item>@color/amber1PrimaryColor</item>
+        <item>@color/amber2PrimaryColor</item>
+        <item>@color/amber3PrimaryColor</item>
+        <item>@color/amber4PrimaryColor</item>
+        <item>@color/amber5PrimaryColor</item>
+        <item>@color/amber6PrimaryColor</item>
+        <item>@color/amber7PrimaryColor</item>
+        <item>@color/amber8PrimaryColor</item>
+        <item>@color/amber9PrimaryColor</item>
+        <item>@color/amber10PrimaryColor</item>
+        <item>@color/amber11PrimaryColor</item>
+        <item>@color/amber12PrimaryColor</item>
+        <item>@color/amber13PrimaryColor</item>
+    </array>
+    <array name="orangePrimaryColors">
+        <item>@color/orange0PrimaryColor</item>
+        <item>@color/orange1PrimaryColor</item>
+        <item>@color/orange2PrimaryColor</item>
+        <item>@color/orange3PrimaryColor</item>
+        <item>@color/orange4PrimaryColor</item>
+        <item>@color/orange5PrimaryColor</item>
+        <item>@color/orange6PrimaryColor</item>
+        <item>@color/orange7PrimaryColor</item>
+        <item>@color/orange8PrimaryColor</item>
+        <item>@color/orange9PrimaryColor</item>
+        <item>@color/orange10PrimaryColor</item>
+        <item>@color/orange11PrimaryColor</item>
+        <item>@color/orange12PrimaryColor</item>
+        <item>@color/orange13PrimaryColor</item>
+    </array>
+    <array name="deepOrangePrimaryColors">
+        <item>@color/deepOrange0PrimaryColor</item>
+        <item>@color/deepOrange1PrimaryColor</item>
+        <item>@color/deepOrange2PrimaryColor</item>
+        <item>@color/deepOrange3PrimaryColor</item>
+        <item>@color/deepOrange4PrimaryColor</item>
+        <item>@color/deepOrange5PrimaryColor</item>
+        <item>@color/deepOrange6PrimaryColor</item>
+        <item>@color/deepOrange7PrimaryColor</item>
+        <item>@color/deepOrange8PrimaryColor</item>
+        <item>@color/deepOrange9PrimaryColor</item>
+        <item>@color/deepOrange10PrimaryColor</item>
+        <item>@color/deepOrange11PrimaryColor</item>
+        <item>@color/deepOrange12PrimaryColor</item>
+        <item>@color/deepOrange13PrimaryColor</item>
+    </array>
+    <array name="brownPrimaryColors">
+        <item>@color/brown0PrimaryColor</item>
+        <item>@color/brown1PrimaryColor</item>
+        <item>@color/brown2PrimaryColor</item>
+        <item>@color/brown3PrimaryColor</item>
+        <item>@color/brown4PrimaryColor</item>
+        <item>@color/brown5PrimaryColor</item>
+        <item>@color/brown6PrimaryColor</item>
+        <item>@color/brown7PrimaryColor</item>
+        <item>@color/brown8PrimaryColor</item>
+        <item>@color/brown9PrimaryColor</item>
+    </array>
+    <array name="greyPrimaryColors">
+        <item>@color/grey0PrimaryColor</item>
+        <item>@color/grey1PrimaryColor</item>
+        <item>@color/grey2PrimaryColor</item>
+        <item>@color/grey3PrimaryColor</item>
+        <item>@color/grey4PrimaryColor</item>
+        <item>@color/grey5PrimaryColor</item>
+        <item>@color/grey6PrimaryColor</item>
+        <item>@color/grey7PrimaryColor</item>
+        <item>@color/grey8PrimaryColor</item>
+        <item>@color/grey9PrimaryColor</item>
+    </array>
+    <array name="blueGreyPrimaryColors">
+        <item>@color/blueGrey0PrimaryColor</item>
+        <item>@color/blueGrey1PrimaryColor</item>
+        <item>@color/blueGrey2PrimaryColor</item>
+        <item>@color/blueGrey3PrimaryColor</item>
+        <item>@color/blueGrey4PrimaryColor</item>
+        <item>@color/blueGrey5PrimaryColor</item>
+        <item>@color/blueGrey6PrimaryColor</item>
+        <item>@color/blueGrey7PrimaryColor</item>
+        <item>@color/blueGrey8PrimaryColor</item>
+        <item>@color/blueGrey9PrimaryColor</item>
+    </array>
+    <array name="primaryColorsArray">
+        <item>@array/redPrimaryColors</item>
+        <item>@array/pinkPrimaryColors</item>
+        <item>@array/purplePrimaryColors</item>
+        <item>@array/deepPurplePrimaryColors</item>
+        <item>@array/indigoPrimaryColors</item>
+        <item>@array/bluePrimaryColors</item>
+        <item>@array/lightBluePrimaryColors</item>
+        <item>@array/cyanPrimaryColors</item>
+        <item>@array/tealPrimaryColors</item>
+        <item>@array/greenPrimaryColors</item>
+        <item>@array/lightGreenPrimaryColors</item>
+        <item>@array/limePrimaryColors</item>
+        <item>@array/yellowPrimaryColors</item>
+        <item>@array/amberPrimaryColors</item>
+        <item>@array/orangePrimaryColors</item>
+        <item>@array/deepOrangePrimaryColors</item>
+        <item>@array/brownPrimaryColors</item>
+        <item>@array/greyPrimaryColors</item>
+        <item>@array/blueGreyPrimaryColors</item>
+    </array>
 </resources>
