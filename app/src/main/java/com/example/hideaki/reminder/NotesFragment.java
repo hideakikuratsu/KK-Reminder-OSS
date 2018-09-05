@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class NotesFragment extends Fragment {
 
   private Item item = null;
@@ -57,7 +59,7 @@ public class NotesFragment extends Fragment {
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
     ActionBar actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
+    checkNotNull(actionBar);
 
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
     actionBar.setHomeAsUpIndicator(activity.upArrow);

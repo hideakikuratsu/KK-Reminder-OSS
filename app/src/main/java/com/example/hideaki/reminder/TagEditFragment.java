@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class TagEditFragment extends PreferenceFragment {
 
   private MainActivity activity;
@@ -42,14 +44,14 @@ public class TagEditFragment extends PreferenceFragment {
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
-    assert view != null;
+    checkNotNull(view);
 
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
     ActionBar actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
+    checkNotNull(actionBar);
 
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
     actionBar.setHomeAsUpIndicator(activity.upArrow);

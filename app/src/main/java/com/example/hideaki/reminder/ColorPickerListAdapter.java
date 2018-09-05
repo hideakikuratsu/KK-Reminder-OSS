@@ -19,6 +19,9 @@ import java.util.List;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class ColorPickerListAdapter extends BaseAdapter {
 
   private static boolean manually_checked;
@@ -81,26 +84,23 @@ public class ColorPickerListAdapter extends BaseAdapter {
         List<Integer> colorsList = new ArrayList<>();
         TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.primaryColorsArray);
 
-        int default_color;
         int id = typedArraysOfArray.getResourceId(checked_position, -1);
-        if(id != -1) {
-          TypedArray typedArray = res.obtainTypedArray(id);
+        checkArgument(id != -1);
+        TypedArray typedArray = res.obtainTypedArray(id);
 
-          int size = typedArray.length();
-          for(int i = 0; i < size; i++) {
-            int color = typedArray.getColor(i, -1);
+        int size = typedArray.length();
+        for(int i = 0; i < size; i++) {
+          int color = typedArray.getColor(i, -1);
 
-            if(color != -1) colorsList.add(color);
-            else throw new IllegalArgumentException("Argument of colorsList is -1!");
-          }
-          default_color = typedArray.getColor(MainEditFragment.list.getColor_order_child(), -1);
-          if(default_color == -1) throw new IllegalArgumentException("default_color is -1!");
-          typedArray.recycle();
+          checkArgument(color != -1);
+          colorsList.add(color);
         }
-        else throw new IllegalArgumentException("Argument of obtainTypedArray(int id) is -1!");
+        int default_color = typedArray.getColor(MainEditFragment.list.getColor_order_child(), -1);
+        checkArgument(default_color != -1);
+
+        typedArray.recycle();
         typedArraysOfArray.recycle();
 
-        int size = colorsList.size();
         int[] colors_array = new int[size];
         for(int i = 0; i < size; i++) {
           colors_array[i] = colorsList.get(i);
@@ -197,23 +197,20 @@ public class ColorPickerListAdapter extends BaseAdapter {
     Resources res = activity.getResources();
     TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.primaryColorsArray);
 
-    int color;
     int id = typedArraysOfArray.getResourceId(position, -1);
-    if(id != -1) {
-      TypedArray typedArray = res.obtainTypedArray(id);
+    checkArgument(id != -1);
+    TypedArray typedArray = res.obtainTypedArray(id);
 
-      if(position == checked_position) {
-        color = typedArray.getColor(MainEditFragment.list.getColor_order_child(), -1);
-      }
-      else {
-        color = typedArray.getColor(5, -1);
-      }
-
-      if(color == -1) throw new IllegalArgumentException("color value is -1!");
-
-      typedArray.recycle();
+    int color;
+    if(position == checked_position) {
+      color = typedArray.getColor(MainEditFragment.list.getColor_order_child(), -1);
     }
-    else throw new IllegalArgumentException("Argument of obtainTypedArray(int id) is -1!");
+    else {
+      color = typedArray.getColor(5, -1);
+    }
+    checkArgument(color != -1);
+
+    typedArray.recycle();
     typedArraysOfArray.recycle();
 
     viewHolder.pallet.setColorFilter(color);

@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class ColorPickerListViewFragment extends Fragment {
 
   private MainActivity activity;
@@ -45,7 +47,7 @@ public class ColorPickerListViewFragment extends Fragment {
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
     ActionBar actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
+    checkNotNull(actionBar);
 
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
     actionBar.setHomeAsUpIndicator(activity.upArrow);

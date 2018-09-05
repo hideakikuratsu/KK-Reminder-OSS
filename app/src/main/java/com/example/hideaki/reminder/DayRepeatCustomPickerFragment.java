@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 
 import java.util.Calendar;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class DayRepeatCustomPickerFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
   private static final String[] DAY_OF_WEEK_LIST = {"月", "火", "水", "木", "金", "土", "日"};
@@ -70,7 +72,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
-    assert view != null;
+    checkNotNull(view);
 
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
     view.setFocusableInTouchMode(true);
@@ -89,7 +91,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
     ActionBar actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
+    checkNotNull(actionBar);
 
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
     actionBar.setHomeAsUpIndicator(activity.upArrow);

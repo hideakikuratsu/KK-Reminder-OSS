@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 
 import java.util.Calendar;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
     Preference.OnPreferenceChangeListener, DialogInterface.OnClickListener {
 
@@ -129,11 +131,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     Bundle args = getArguments();
     if(order == 3) {
       list = (NonScheduledList)args.getSerializable(LIST);
-      if(list == null) throw new NullPointerException("list is null");
+      checkNotNull(list);
     }
     else {
       item = (Item)args.getSerializable(ITEM);
-      if(item == null) throw new NullPointerException("item is null");
+      checkNotNull(item);
     }
 
     PreferenceScreen rootPreferenceScreen = getPreferenceScreen();
@@ -176,14 +178,14 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
-    assert view != null;
+    checkNotNull(view);
 
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
     ActionBar actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
+    checkNotNull(actionBar);
 
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
     actionBar.setHomeAsUpIndicator(activity.upArrow);
@@ -458,7 +460,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       //新しく追加したリストのリストア
       for(NonScheduledList list : activity.generalSettings.getOrgNonScheduledLists()) {
         Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
-        assert drawable != null;
+        checkNotNull(drawable);
         drawable = drawable.mutate();
         if(list.getColor() != 0) {
           drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);

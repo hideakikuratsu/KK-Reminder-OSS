@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class StartupReceiver extends BroadcastReceiver {
 
   private DBAccessor accessor;
@@ -47,7 +49,7 @@ public class StartupReceiver extends BroadcastReceiver {
             context, (int)item.getId(), set_alarm, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        assert alarmManager != null;
+        checkNotNull(alarmManager);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
           alarmManager.setAlarmClock(

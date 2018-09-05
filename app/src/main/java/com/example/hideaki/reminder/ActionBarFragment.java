@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 
 public class ActionBarFragment extends Fragment {
 
@@ -47,7 +49,7 @@ public class ActionBarFragment extends Fragment {
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
     ActionBar actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
+    checkNotNull(actionBar);
 
     activity.drawerToggle.setDrawerIndicatorEnabled(true);
     actionBar.setTitle(R.string.app_name);

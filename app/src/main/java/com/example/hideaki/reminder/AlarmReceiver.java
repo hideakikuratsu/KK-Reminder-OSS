@@ -13,6 +13,8 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class AlarmReceiver extends BroadcastReceiver {
 
   private Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -45,11 +47,11 @@ public class AlarmReceiver extends BroadcastReceiver {
     else if(time < 0) id = -(item.getId() * (time - 2));
     else id = item.getId();
     NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-    assert manager != null;
+    checkNotNull(manager);
     manager.notify((int)id, builder.build());
 
     PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
-    assert powerManager != null;
+    checkNotNull(powerManager);
     PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
         PowerManager.FULL_WAKE_LOCK |
             PowerManager.ACQUIRE_CAUSES_WAKEUP |
@@ -79,7 +81,7 @@ public class AlarmReceiver extends BroadcastReceiver {
           + item.getNotify_interval().getMinute() * 60 * 1000;
 
       AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-      assert alarmManager != null;
+      checkNotNull(alarmManager);
 
       if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         alarmManager.setAlarmClock(

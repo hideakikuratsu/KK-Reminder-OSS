@@ -11,6 +11,8 @@ import android.widget.DatePicker;
 
 import java.util.Calendar;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class DatePickerDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
   private DatePickerPreference datePickerPreference;
@@ -31,7 +33,7 @@ public class DatePickerDialogFragment extends DialogFragment implements DatePick
     int day = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
 
     MainActivity activity = (MainActivity)getActivity();
-    assert activity != null;
+    checkNotNull(activity);
 
     return new DatePickerDialog(activity, this, year, month, day);
   }

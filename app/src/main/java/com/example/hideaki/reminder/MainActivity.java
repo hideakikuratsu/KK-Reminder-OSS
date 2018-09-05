@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
   private static final String SAVED_DATA = "SAVED_DATA";
@@ -93,14 +95,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //DisplayHomeAsUpEnabledに指定する戻るボタンの色を白色に指定
     upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
-    assert upArrow != null;
+    checkNotNull(upArrow);
     upArrow.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
 
     //ToolbarをActionBarに互換を持たせて設定
     Toolbar toolbar = findViewById(R.id.toolbar_layout);
     setSupportActionBar(toolbar);
     ActionBar actionBar = getSupportActionBar();
-    assert actionBar != null;
+    checkNotNull(actionBar);
 
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setDisplayShowHomeEnabled(true);
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     if(generalSettings == null) generalSettings = new GeneralSettings();
     for(NonScheduledList list : generalSettings.getOrgNonScheduledLists()) {
       Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_my_list_24dp);
-      assert drawable != null;
+      checkNotNull(drawable);
       drawable = drawable.mutate();
       if(list.getColor() != 0) {
         drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
@@ -162,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-      assert notificationManager != null;
+      checkNotNull(notificationManager);
       NotificationChannel notificationChannel = new NotificationChannel("reminder_01",
           getString(R.string.notification_channel_name), NotificationManager.IMPORTANCE_HIGH);
 
@@ -329,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
               //新しく追加したリストのリストア
               for(NonScheduledList list : generalSettings.getOrgNonScheduledLists()) {
                 Drawable drawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_my_list_24dp);
-                assert drawable != null;
+                checkNotNull(drawable);
                 drawable = drawable.mutate();
                 if(list.getColor() != 0) {
                   drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
@@ -364,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void onFocusChange(View v, boolean hasFocus) {
           if(hasFocus) {
             Window dialogWindow = dialog.getWindow();
-            assert dialogWindow != null;
+            checkNotNull(dialogWindow);
 
             dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
           }
@@ -480,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
       alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-      assert alarmManager != null;
+      checkNotNull(alarmManager);
 
       alarmManager.cancel(sender);
       sender.cancel();

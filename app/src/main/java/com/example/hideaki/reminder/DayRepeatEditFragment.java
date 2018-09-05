@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 
 import java.util.Calendar;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class DayRepeatEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
   static CheckBoxPreference never;
@@ -76,14 +78,14 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
-    assert view != null;
+    checkNotNull(view);
 
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
     ActionBar actionBar = activity.getSupportActionBar();
-    assert actionBar != null;
+    checkNotNull(actionBar);
 
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
     actionBar.setHomeAsUpIndicator(activity.upArrow);
