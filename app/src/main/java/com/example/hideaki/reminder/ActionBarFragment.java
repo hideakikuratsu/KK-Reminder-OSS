@@ -1,8 +1,13 @@
 package com.example.hideaki.reminder;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ToggleButton;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -66,6 +72,13 @@ public class ActionBarFragment extends Fragment {
     MenuItem search_item = menu.findItem(R.id.search_item);
     searchView = (SearchView)search_item.getActionView();
 
+//    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_search_white_24dp);
+//    checkNotNull(drawable);
+//    drawable = drawable.mutate();
+//    drawable.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+//    ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+//    searchIcon.setImageDrawable(drawable);
+
     searchView.setIconifiedByDefault(true);
     searchView.setSubmitButtonEnabled(false);
 
@@ -96,28 +109,6 @@ public class ActionBarFragment extends Fragment {
         }
 
         return false;
-      }
-    });
-
-    //To-doメニューの実装
-    MenuItem toggle_button = menu.findItem(R.id.toggle);
-    ToggleButton button = (ToggleButton)toggle_button.getActionView();
-
-    button.setTextOff(getResources().getString(R.string.todo));
-    button.setTextOn(getResources().getString(R.string.done_en));
-    button.setChecked(false);
-    button.setBackgroundResource(R.drawable.toggle_button);
-
-    //To-doメニューボタン押下時の処理
-    button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(isChecked) {
-          //TODO: Doneデータベースからデータを読み込み、レイアウト表示をDone用に変える
-        }
-        else {
-          //TODO: To-doデータベースからデータを読み込み、レイアウト表示を元に戻す。
-        }
       }
     });
   }

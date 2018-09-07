@@ -44,6 +44,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     TextView detail;
     CheckBox checkBox;
     TableLayout control_panel;
+    Item item;
   }
 
   private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -93,6 +94,8 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
       if(isChecked) {
 
+        viewHolder.checkBox.setChecked(false);
+        viewHolder.checkBox.jumpDrawablesToCurrentState();
         activity.actionBarFragment.searchView.clearFocus();
         itemList.remove(position);
         activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
@@ -220,6 +223,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
+      viewHolder.item = (Item)getItem(position);
 
       convertView.setTag(viewHolder);
     }
@@ -232,16 +236,6 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
     viewHolder.detail.setText(item.getDetail());
 
-    //チェックが入っている場合、チェックを外す
-    if(viewHolder.checkBox.isChecked()) {
-      viewHolder.checkBox.setChecked(false);
-    }
-
-    //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
-    if(item.getId() != has_panel && viewHolder.control_panel.getVisibility() == View.VISIBLE) {
-      viewHolder.control_panel.setVisibility(View.GONE);
-    }
-
     viewHolder.item_card.setOnClickListener(listener);
     viewHolder.checkBox.setOnCheckedChangeListener(listener);
 
@@ -253,6 +247,18 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         TextView panel_item = (TextView)tableRow.getChildAt(j);
         panel_item.setOnClickListener(listener);
       }
+    }
+
+    //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
+    if(item.getId() != has_panel && viewHolder.control_panel.getVisibility() == View.VISIBLE
+        && viewHolder.item.getId() != has_panel) {
+      viewHolder.control_panel.setVisibility(View.GONE);
+    }
+
+    //チェックが入っている場合、チェックを外す
+    if(viewHolder.checkBox.isChecked()) {
+      viewHolder.checkBox.setChecked(false);
+      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
 
     return convertView;

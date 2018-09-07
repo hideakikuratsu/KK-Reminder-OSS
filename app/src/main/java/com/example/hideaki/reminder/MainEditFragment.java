@@ -1,5 +1,6 @@
 package com.example.hideaki.reminder;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
@@ -251,10 +252,46 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                   activity.listAdapter.notifyDataSetChanged();
                 }
                 else if(order == 3) {
+                  //GeneralSettingsとManageListAdapterへの反映
                   activity.generalSettings.getOrgNonScheduledLists().remove(list.getOrder());
-                  activity.updateSettingsDB();
+                  int size = activity.generalSettings.getOrgNonScheduledLists().size();
+                  for(int i = 0; i < size; i++) {
+                    activity.generalSettings.getOrgNonScheduledLists().get(i).setOrder(i);
+                  }
+                  ManageListAdapter.nonScheduledLists = activity.generalSettings.getNonScheduledLists();
                   activity.manageListAdapter.notifyDataSetChanged();
+
+                  //一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
+
+                  //デフォルトアイテムのリストア
+                  activity.menu.removeGroup(R.id.reminder_list);
+                  activity.menu.add(R.id.reminder_list, R.id.scheduled_list, 0, R.string.nav_scheduled_item)
+                      .setIcon(R.drawable.ic_time)
+                      .setCheckable(true);
+                  activity.menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
+                      .setIcon(R.drawable.ic_add_24dp)
+                      .setCheckable(false);
+
+                  //新しく追加したリストのリストア
+                  for(NonScheduledList list : activity.generalSettings.getOrgNonScheduledLists()) {
+                    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
+                    checkNotNull(drawable);
+                    drawable = drawable.mutate();
+                    if(list.getColor() != 0) {
+                      drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
+                    }
+                    else {
+                      drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
+                    }
+                    activity.menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
+                        .setIcon(drawable)
+                        .setCheckable(true);
+                  }
+
+                  //データベースへの反映
+                  activity.updateSettingsDB();
                 }
+
                 getFragmentManager().popBackStack();
               }
             })
@@ -313,9 +350,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   private void transitionFragment(PreferenceFragment next) {
 
-    getFragmentManager()
+    FragmentManager manager = getFragmentManager();
+    manager
         .beginTransaction()
-        .replace(R.id.content, next)
+        .remove(this)
+        .add(R.id.content, next)
         .addToBackStack(null)
         .commit();
   }
@@ -346,8 +385,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   }
   
   private void registerItem() {
-
-    getFragmentManager().popBackStack();
 
     if(order == 0 || order == 1) {
 
@@ -391,7 +428,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
         item.setAlarm_stopped(false);
 
-        if(activity.isItemExists(item, MyDatabaseHelper.TODO_TABLE)) {
+        if(is_edit) {
 
           activity.expandableListAdapter.notifyDataSetChanged();
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
@@ -485,5 +522,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       Context direct_boot_context = getActivity().createDeviceProtectedStorageContext();
       direct_boot_context.moveDatabaseFrom(getActivity(), MyDatabaseHelper.TODO_TABLE);
     }
+
+    getFragmentManager().popBackStack();
   }
 }

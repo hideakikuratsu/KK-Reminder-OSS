@@ -171,7 +171,8 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
 
     getFragmentManager()
         .beginTransaction()
-        .replace(R.id.content, next)
+        .remove(this)
+        .add(R.id.content, next)
         .addToBackStack(null)
         .commit();
   }
@@ -179,33 +180,29 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
   @Override
   public boolean onPreferenceClick(Preference preference) {
 
-    label.setSummary(MainEditFragment.dayRepeat.getLabel());
+    if(!preference.getKey().equals("label")) {
 
-    switch(preference.getKey()) {
-      case "never":
-        if(never.isChecked()) {
-          if(everyday.isChecked()) everyday.setChecked(false);
-          if(everyweekday.isChecked()) everyweekday.setChecked(false);
-          if(everyweek.isChecked()) everyweek.setChecked(false);
-          if(everymonth.isChecked()) everymonth.setChecked(false);
-          if(everyyear.isChecked()) everyyear.setChecked(false);
-          if(custom.isChecked()) custom.setChecked(false);
+      label.setSummary(MainEditFragment.dayRepeat.getLabel());
+
+      never.setChecked(false);
+      everyday.setChecked(false);
+      everyweekday.setChecked(false);
+      everyweek.setChecked(false);
+      everymonth.setChecked(false);
+      everyyear.setChecked(false);
+      custom.setChecked(false);
+
+      switch(preference.getKey()) {
+        case "never":
+          never.setChecked(true);
           label.setSummary(R.string.non_repeat);
 
           MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.none));
           MainEditFragment.dayRepeat.setSetted(0);
           MainEditFragment.dayRepeat.setWhich_template(0);
-        }
-        else never.setChecked(true);
-        return true;
-      case "everyday":
-        if(everyday.isChecked()) {
-          if(never.isChecked()) never.setChecked(false);
-          if(everyweekday.isChecked()) everyweekday.setChecked(false);
-          if(everyweek.isChecked()) everyweek.setChecked(false);
-          if(everymonth.isChecked()) everymonth.setChecked(false);
-          if(everyyear.isChecked()) everyyear.setChecked(false);
-          if(custom.isChecked()) custom.setChecked(false);
+          return true;
+        case "everyday":
+          everyday.setChecked(true);
           label.setSummary(R.string.everyday);
 
           MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.everyday));
@@ -213,17 +210,9 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           MainEditFragment.dayRepeat.setWhich_template(1);
           MainEditFragment.dayRepeat.setInterval(1);
           MainEditFragment.dayRepeat.setDay(true);
-        }
-        else everyday.setChecked(true);
-        return true;
-      case "everyweekday":
-        if(everyweekday.isChecked()) {
-          if(never.isChecked()) never.setChecked(false);
-          if(everyday.isChecked()) everyday.setChecked(false);
-          if(everyweek.isChecked()) everyweek.setChecked(false);
-          if(everymonth.isChecked()) everymonth.setChecked(false);
-          if(everyyear.isChecked()) everyyear.setChecked(false);
-          if(custom.isChecked()) custom.setChecked(false);
+          return true;
+        case "everyweekday":
+          everyweekday.setChecked(true);
           label.setSummary(R.string.everyweekday);
 
           MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.everyweekday));
@@ -231,17 +220,9 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           MainEditFragment.dayRepeat.setWhich_template(1 << 1);
           MainEditFragment.dayRepeat.setInterval(1);
           MainEditFragment.dayRepeat.setWeek(Integer.parseInt("11111", 2));
-        }
-        else everyweekday.setChecked(true);
-        return true;
-      case "everyweek":
-        if(everyweek.isChecked()) {
-          if(never.isChecked()) never.setChecked(false);
-          if(everyday.isChecked()) everyday.setChecked(false);
-          if(everyweekday.isChecked()) everyweekday.setChecked(false);
-          if(everymonth.isChecked()) everymonth.setChecked(false);
-          if(everyyear.isChecked()) everyyear.setChecked(false);
-          if(custom.isChecked()) custom.setChecked(false);
+          return true;
+        case "everyweek":
+          everyweek.setChecked(true);
           label.setSummary(label_str_everyweek);
 
           MainEditFragment.dayRepeat.setLabel(label_str_everyweek);
@@ -251,17 +232,9 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
           mask_num = mask_num < 2 ? mask_num + 5 : mask_num - 2;
           MainEditFragment.dayRepeat.setWeek(1 << mask_num);
-        }
-        else everyweek.setChecked(true);
-        return true;
-      case "everymonth":
-        if(everymonth.isChecked()) {
-          if(never.isChecked()) never.setChecked(false);
-          if(everyday.isChecked()) everyday.setChecked(false);
-          if(everyweekday.isChecked()) everyweekday.setChecked(false);
-          if(everyweek.isChecked()) everyweek.setChecked(false);
-          if(everyyear.isChecked()) everyyear.setChecked(false);
-          if(custom.isChecked()) custom.setChecked(false);
+          return true;
+        case "everymonth":
+          everymonth.setChecked(true);
           label.setSummary(label_str_everymonth);
 
           MainEditFragment.dayRepeat.setLabel(label_str_everymonth);
@@ -273,17 +246,9 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           if(!MainEditFragment.dayRepeat.isDays_of_month_setted()) {
             MainEditFragment.dayRepeat.setDays_of_month_setted(true);
           }
-        }
-        else everymonth.setChecked(true);
-        return true;
-      case "everyyear":
-        if(everyyear.isChecked()) {
-          if(never.isChecked()) never.setChecked(false);
-          if(everyday.isChecked()) everyday.setChecked(false);
-          if(everyweekday.isChecked()) everyweekday.setChecked(false);
-          if(everyweek.isChecked()) everyweek.setChecked(false);
-          if(everymonth.isChecked()) everymonth.setChecked(false);
-          if(custom.isChecked()) custom.setChecked(false);
+          return true;
+        case "everyyear":
+          everyyear.setChecked(true);
           label.setSummary(label_str_everyyear);
 
           MainEditFragment.dayRepeat.setLabel(label_str_everyyear);
@@ -293,21 +258,12 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
           MainEditFragment.dayRepeat.setYear(1 << mask_num);
           MainEditFragment.dayRepeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
-        }
-        else everyyear.setChecked(true);
-        return true;
-      case "custom":
-        if(custom.isChecked()) {
-          if(never.isChecked()) never.setChecked(false);
-          if(everyday.isChecked()) everyday.setChecked(false);
-          if(everyweekday.isChecked()) everyweekday.setChecked(false);
-          if(everyweek.isChecked()) everyweek.setChecked(false);
-          if(everymonth.isChecked()) everymonth.setChecked(false);
-          if(everyyear.isChecked()) everyyear.setChecked(false);
-        }
-        else custom.setChecked(true);
-        transitionFragment(DayRepeatCustomPickerFragment.newInstance());
-        return true;
+          return true;
+        case "custom":
+          custom.setChecked(true);
+          transitionFragment(DayRepeatCustomPickerFragment.newInstance());
+          return true;
+      }
     }
     return false;
   }

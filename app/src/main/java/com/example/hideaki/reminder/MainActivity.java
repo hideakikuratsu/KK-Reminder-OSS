@@ -1,6 +1,7 @@
 package com.example.hideaki.reminder;
 
 import android.app.AlarmManager;
+import android.app.FragmentManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,7 +28,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.Window;
@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   Drawable upArrow;
   Menu menu;
   MenuItem menuItem;
+  MenuItem oldMenuItem;
   GeneralSettings generalSettings;
   ActionBarFragment actionBarFragment;
 
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         R.string.drawer_open, R.string.drawer_close
     );
     drawerToggle.setDrawerIndicatorEnabled(true);
+//    drawerToggle.getDrawerArrowDrawable().setColor(Color.RED);
     drawerLayout.addDrawerListener(drawerToggle);
 
     navigationView = findViewById(R.id.nav_view);
@@ -149,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
 
     menuItem = navigationView.getMenu().getItem(which_menu_open);
+    oldMenuItem = menuItem;
     if(menuItem.hasSubMenu()) {
       menuItem.getSubMenu().getItem(which_submenu_open).setChecked(true);
     }
@@ -156,13 +159,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       menuItem.setChecked(true);
     }
 
-    if(menuItem.getOrder() == 1) {
-      showListViewFragment();
+    if(menuItem.getOrder() == 0) {
+      showExpandableListViewFragment();
     }
-    else showExpandableListViewFragment();
-    showActionBar();
+    else if(menuItem.getOrder() == 1) {
+      showListViewFragment();
 
-    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//      toolbar.setBackgroundColor(generalSettings.getNonScheduledList(which_menu_open - 1).getColor());
+//      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//        Window window = getWindow();
+//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//        window.setStatusBarColor();
+//      }
+    }
+    else if(menuItem.getOrder() == 3) {
+      showManageListViewFragment();
+    }
+
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
       checkNotNull(notificationManager);
       NotificationChannel notificationChannel = new NotificationChannel("reminder_01",
@@ -262,19 +277,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menuItem.setChecked(true);
 
         //選択されたmenuItemに対応するフラグメントを表示
+        oldMenuItem = this.menuItem;
         this.menuItem = menuItem;
         switch(menuItem.getOrder()) {
           case 0:
             showExpandableListViewFragment();
-            showActionBar();
             break;
           case 1:
             showListViewFragment();
-            showActionBar();
             break;
           case 3:
             showManageListViewFragment();
-            showActionBar();
             break;
           case 4:
             break;
@@ -682,82 +695,263 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public void showColorPickerListViewFragment() {
 
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content, ColorPickerListViewFragment.newInstance())
-        .addToBackStack(null)
-        .commit();
+    int order = menuItem.getOrder();
+    FragmentManager manager = getFragmentManager();
+    if(order == 4) {
+
+    }
+    else {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("MainEditFragment"))
+          .add(R.id.content, ColorPickerListViewFragment.newInstance(), "ColorPickerListViewFragment")
+          .addToBackStack(null)
+          .commit();
+    }
   }
 
-  private void showManageListViewFragment() {
+  public void showManageListViewFragment() {
 
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content, ManageListViewFragment.newInstance())
-        .commit();
-  }
-
-  private void showListViewFragment() {
-
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content, ListViewFragment.newInstance())
-        .commit();
-  }
-
-  private void showExpandableListViewFragment() {
-
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content, ExpandableListViewFragment.newInstance())
-        .commit();
-  }
-
-  //メイン画面のアクションバーを表示
-  private void showActionBar() {
-
+    int order = oldMenuItem.getOrder();
     actionBarFragment = ActionBarFragment.newInstance();
-    getFragmentManager()
-        .beginTransaction()
-        .add(R.id.content, actionBarFragment)
-        .commit();
+    FragmentManager manager = getFragmentManager();
+    if(order == 0) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ExpandableListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, ManageListViewFragment.newInstance(), "ManageListViewFragment")
+          .add(R.id.content, actionBarFragment, "ActionBarFragment")
+          .commit();
+    }
+    else if(order == 1) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, ManageListViewFragment.newInstance(), "ManageListViewFragment")
+          .add(R.id.content, actionBarFragment, "ActionBarFragment")
+          .commit();
+    }
+    else if(order == 3) {
+      if(manager.findFragmentByTag("ManageListViewFragment") == null) {
+        manager
+            .beginTransaction()
+            .add(R.id.content, ManageListViewFragment.newInstance(), "ManageListViewFragment")
+            .add(R.id.content, actionBarFragment, "ActionBarFragment")
+            .commit();
+      }
+    }
+  }
+
+  public void showListViewFragment() {
+
+    int order = oldMenuItem.getOrder();
+    actionBarFragment = ActionBarFragment.newInstance();
+    FragmentManager manager = getFragmentManager();
+    if(order == 0) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ExpandableListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, ListViewFragment.newInstance(), "ListViewFragment")
+          .add(R.id.content, actionBarFragment, "ActionBarFragment")
+          .commit();
+    }
+    else if(order == 1) {
+      if(manager.findFragmentByTag("ListViewFragment") == null) {
+        manager
+            .beginTransaction()
+            .add(R.id.content, ListViewFragment.newInstance(), "ListViewFragment")
+            .add(R.id.content, actionBarFragment, "ActionBarFragment")
+            .commit();
+      }
+      else {
+        manager
+            .beginTransaction()
+            .remove(manager.findFragmentByTag("ListViewFragment"))
+            .remove(manager.findFragmentByTag("ActionBarFragment"))
+            .add(R.id.content, ListViewFragment.newInstance(), "ListViewFragment")
+            .add(R.id.content, actionBarFragment, "ActionBarFragment")
+            .commit();
+      }
+    }
+    else if(order == 3) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ManageListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, ListViewFragment.newInstance(), "ListViewFragment")
+          .add(R.id.content, actionBarFragment, "ActionBarFragment")
+          .commit();
+    }
+  }
+
+  public void showExpandableListViewFragment() {
+
+    int order = oldMenuItem.getOrder();
+    actionBarFragment = ActionBarFragment.newInstance();
+    FragmentManager manager = getFragmentManager();
+    if(order == 0) {
+      if(manager.findFragmentByTag("ExpandableListViewFragment") == null) {
+        manager
+            .beginTransaction()
+            .add(R.id.content, ExpandableListViewFragment.newInstance(), "ExpandableListViewFragment")
+            .add(R.id.content, actionBarFragment, "ActionBarFragment")
+            .commit();
+      }
+    }
+    else if(order == 1) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, ExpandableListViewFragment.newInstance(), "ExpandableListViewFragment")
+          .add(R.id.content, actionBarFragment, "ActionBarFragment")
+          .commit();
+    }
+    else if(order == 3) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ManageListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, ExpandableListViewFragment.newInstance(), "ExpandableListViewFragment")
+          .add(R.id.content, actionBarFragment, "ActionBarFragment")
+          .commit();
+    }
   }
 
   //編集画面を表示(引数にitemを渡すとそのitemの情報が入力された状態で表示)
   public void showMainEditFragment() {
 
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content, MainEditFragment.newInstance())
-        .addToBackStack(null)
-        .commit();
+    int order = menuItem.getOrder();
+    FragmentManager manager = getFragmentManager();
+    if(order == 0) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ExpandableListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstance(), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 1) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstance(), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 3) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ManageListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstance(), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
   }
 
   public void showMainEditFragment(Item item) {
 
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content, MainEditFragment.newInstance(item))
-        .addToBackStack(null)
-        .commit();
+    int order = menuItem.getOrder();
+    FragmentManager manager = getFragmentManager();
+    if(order == 0) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ExpandableListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstance(item), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 1) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstance(item), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 3) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ManageListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstance(item), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
   }
 
   public void showMainEditFragmentForList() {
 
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content, MainEditFragment.newInstanceForList())
-        .addToBackStack(null)
-        .commit();
+    int order = menuItem.getOrder();
+    FragmentManager manager = getFragmentManager();
+    if(order == 0) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ExpandableListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstanceForList(), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 1) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstanceForList(), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 3) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ManageListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstanceForList(), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
   }
 
   public void showMainEditFragmentForList(NonScheduledList list) {
 
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content, MainEditFragment.newInstanceForList(list))
-        .addToBackStack(null)
-        .commit();
+    int order = menuItem.getOrder();
+    FragmentManager manager = getFragmentManager();
+    if(order == 0) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ExpandableListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstanceForList(list), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 1) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstanceForList(list), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 3) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ManageListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstanceForList(list), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
   }
 
   public void showNotesFragment(Item item) {

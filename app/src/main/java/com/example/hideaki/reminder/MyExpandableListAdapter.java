@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -255,6 +254,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
       if(isChecked) {
 
+        viewHolder.checkBox.setChecked(false);
+        viewHolder.checkBox.jumpDrawablesToCurrentState();
         activity.actionBarFragment.searchView.clearFocus();
         if(item.getTime_altered() == 0) {
           item.setOrg_date((Calendar)item.getDate().clone());
@@ -1103,28 +1104,12 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-
-          if(activity.timer != null) {
-            activity.timer.cancel();
-            activity.timer = null;
-          }
-          activity.timer = new Timer();
-          activity.timerTask = activity.new UpdateListTimerTask();
-          activity.timer.schedule(activity.timerTask, 400, 1000);
         }
         else {
           children.get(group_position).remove(child_position);
 
           activity.deleteAlarm(item);
           activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
-
-          if(activity.timer != null) {
-            activity.timer.cancel();
-            activity.timer = null;
-          }
-          activity.timer = new Timer();
-          activity.timerTask = activity.new UpdateListTimerTask();
-          activity.timer.schedule(activity.timerTask, 400, 1000);
         }
 
         Snackbar.make(convertView, context.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
@@ -1413,6 +1398,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //チェックが入っている場合、チェックを外す
     if(viewHolder.checkBox.isChecked()) {
       viewHolder.checkBox.setChecked(false);
+      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
 
     return convertView;

@@ -60,6 +60,7 @@ public class DayRepeatCustomWeekPickerPreference extends Preference implements C
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
     checkBox = (CheckBox)buttonView;
+    checkBox.jumpDrawablesToCurrentState();
     mask_num = Integer.parseInt(checkBox.getTag().toString());
 
     if(checkBox.isChecked()) week |= (1 << mask_num);
@@ -68,6 +69,7 @@ public class DayRepeatCustomWeekPickerPreference extends Preference implements C
       if(week == 0) {
         week |= (1 << mask_num);
         checkBox.setChecked(true);
+        checkBox.jumpDrawablesToCurrentState();
       }
     }
 

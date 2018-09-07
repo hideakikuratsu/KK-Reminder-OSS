@@ -59,6 +59,7 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
     checkBox = (CheckBox)buttonView;
+    checkBox.jumpDrawablesToCurrentState();
     mask_num = Integer.parseInt(checkBox.getTag().toString());
 
     if(checkBox.isChecked()) year |= (1 << mask_num);
@@ -67,6 +68,7 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
       if(year == 0) {
         year |= (1 << mask_num);
         checkBox.setChecked(true);
+        checkBox.jumpDrawablesToCurrentState();
       }
     }
 

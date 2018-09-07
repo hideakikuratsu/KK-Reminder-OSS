@@ -7,19 +7,16 @@
 
     <com.example.hideaki.reminder.MinuteRepeatIntervalPickerPreference/>
 
-    <CheckBoxPreference
+    <com.example.hideaki.reminder.MyCheckBoxPreference
         android:key="never"
-        android:defaultValue="true"
         android:title="@string/none"/>
 
-    <CheckBoxPreference
+    <com.example.hideaki.reminder.MyCheckBoxPreference
         android:key="count"
-        android:defaultValue="false"
         android:title="@string/repeat_minute_count"/>
 
-    <CheckBoxPreference
+    <com.example.hideaki.reminder.MyCheckBoxPreference
         android:key="duration"
-        android:defaultValue="false"
         android:title="@string/repeat_minute_duration"/>
 
     <com.example.hideaki.reminder.MinuteRepeatCountPickerPreference android:key="count_picker"/>

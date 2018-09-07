@@ -9,11 +9,6 @@
         android:title="@string/next_group"
         app:showAsAction="always" />
     <item
-        android:id="@+id/toggle"
-        android:title="Item"
-        app:actionViewClass="android.widget.ToggleButton"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/search_item"
         android:icon="@drawable/ic_search_white_24dp"
         android:title="Search"

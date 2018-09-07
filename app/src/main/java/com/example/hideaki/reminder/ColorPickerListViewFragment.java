@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ public class ColorPickerListViewFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
     View view = inflater.inflate(R.layout.listview, container, false);
+    view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
     activity.listView = view.findViewById(R.id.listView);
     activity.listView.setAdapter(activity.colorPickerListAdapter);
 

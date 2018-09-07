@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ public class ExpandableListViewFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
     View view = inflater.inflate(R.layout.expandable_listview, container, false);
+    view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
     activity.expandableListView = view.findViewById(R.id.expandable_list);
     activity.expandableListView.setAdapter(activity.expandableListAdapter);
     activity.expandableListView.setTextFilterEnabled(true);

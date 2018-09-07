@@ -20,7 +20,6 @@ import java.util.List;
 import petrov.kristiyan.colorpicker.ColorPicker;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ColorPickerListAdapter extends BaseAdapter {
 
@@ -60,9 +59,11 @@ public class ColorPickerListAdapter extends BaseAdapter {
       if(!viewHolder.checkBox.isChecked()) {
 
         viewHolder.checkBox.setChecked(true);
+        viewHolder.checkBox.jumpDrawablesToCurrentState();
       }
       else {
         viewHolder.checkBox.setChecked(false);
+        viewHolder.checkBox.jumpDrawablesToCurrentState();
         MainEditFragment.list.setColor(0);
         MainEditFragment.list.setColor_order_group(-1);
         checked_position = -1;
@@ -75,6 +76,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
 
       if(isChecked && manually_checked) {
 
+        viewHolder.checkBox.jumpDrawablesToCurrentState();
         checked_position = position;
         MainEditFragment.list.setColor_order_group(checked_position);
         MainEditFragment.list.setColor_order_child(5);
@@ -82,22 +84,30 @@ public class ColorPickerListAdapter extends BaseAdapter {
 
         Resources res = activity.getResources();
         List<Integer> colorsList = new ArrayList<>();
-        TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.primaryColorsArray);
+        TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.colorsArray);
 
-        int id = typedArraysOfArray.getResourceId(checked_position, -1);
-        checkArgument(id != -1);
-        TypedArray typedArray = res.obtainTypedArray(id);
+        int colors_array_id = typedArraysOfArray.getResourceId(checked_position, -1);
+        checkArgument(colors_array_id != -1);
+        TypedArray typedArray = res.obtainTypedArray(colors_array_id);
 
+        TypedArray colorVariationArray;
         int size = typedArray.length();
         for(int i = 0; i < size; i++) {
-          int color = typedArray.getColor(i, -1);
-
+          int colors_id = typedArray.getResourceId(i, -1);
+          checkArgument(colors_id != -1);
+          colorVariationArray = res.obtainTypedArray(colors_id);
+          int color = colorVariationArray.getColor(0, -1);
           checkArgument(color != -1);
+
           colorsList.add(color);
         }
-        int default_color = typedArray.getColor(MainEditFragment.list.getColor_order_child(), -1);
+        int colors_id = typedArray.getResourceId(MainEditFragment.list.getColor_order_child(), -1);
+        checkArgument(colors_id != -1);
+        colorVariationArray = res.obtainTypedArray(colors_id);
+        int default_color = colorVariationArray.getColor(0, -1);
         checkArgument(default_color != -1);
 
+        colorVariationArray.recycle();
         typedArray.recycle();
         typedArraysOfArray.recycle();
 
@@ -186,30 +196,36 @@ public class ColorPickerListAdapter extends BaseAdapter {
     checked_position = MainEditFragment.list.getColor_order_group();
     if(position != checked_position) {
       viewHolder.checkBox.setChecked(false);
+      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     else {
       manually_checked = false;
       viewHolder.checkBox.setChecked(true);
+      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     manually_checked = true;
 
     //パレットの色を設定
     Resources res = activity.getResources();
-    TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.primaryColorsArray);
+    TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.colorsArray);
 
-    int id = typedArraysOfArray.getResourceId(position, -1);
-    checkArgument(id != -1);
-    TypedArray typedArray = res.obtainTypedArray(id);
+    int colors_array_id = typedArraysOfArray.getResourceId(position, -1);
+    checkArgument(colors_array_id != -1);
+    TypedArray typedArray = res.obtainTypedArray(colors_array_id);
 
-    int color;
+    int colors_id;
     if(position == checked_position) {
-      color = typedArray.getColor(MainEditFragment.list.getColor_order_child(), -1);
+      colors_id = typedArray.getResourceId(MainEditFragment.list.getColor_order_child(), -1);
     }
     else {
-      color = typedArray.getColor(5, -1);
+      colors_id = typedArray.getResourceId(5, -1);
     }
+    checkArgument(colors_id != -1);
+    TypedArray colorVariationArray = res.obtainTypedArray(colors_id);
+    int color = colorVariationArray.getColor(0, -1);
     checkArgument(color != -1);
 
+    colorVariationArray.recycle();
     typedArray.recycle();
     typedArraysOfArray.recycle();
 
