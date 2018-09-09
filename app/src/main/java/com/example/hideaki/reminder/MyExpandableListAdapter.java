@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -254,7 +255,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
       if(isChecked) {
 
-        viewHolder.checkBox.setChecked(false);
         viewHolder.checkBox.jumpDrawablesToCurrentState();
         activity.actionBarFragment.searchView.clearFocus();
         if(item.getTime_altered() == 0) {
@@ -287,7 +287,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         int day_of_week;
         int month;
         int max_bit;
-        
+
         if((item.getMinuteRepeat().getWhich_setted() & 1) != 0 && item.getMinuteRepeat().getCount() != 0) {
 
           //countリピート設定時
@@ -1079,14 +1079,22 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           if((item.getMinuteRepeat().getWhich_setted() & 1) != 0
               && item.getMinuteRepeat().getCount() == 0) {
 
-            item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrg_count());
-            item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrgDuration());
+            if(item.getDayRepeat().getSetted() != 0) {
+              item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrg_count());
+            }
+            else {
+              item.getMinuteRepeat().setWhich_setted(0);
+            }
           }
           else if((item.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0
               && item.getMinuteRepeat().getInterval() > item.getMinuteRepeat().getDuration()) {
 
-            item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrg_count());
-            item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrgDuration());
+            if(item.getDayRepeat().getSetted() != 0) {
+              item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrgDuration());
+            }
+            else {
+              item.getMinuteRepeat().setWhich_setted(0);
+            }
           }
         }
 
@@ -1104,12 +1112,28 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+
+          if(activity.timer != null) {
+            activity.timer.cancel();
+            activity.timer = null;
+          }
+          activity.timer = new Timer();
+          activity.timerTask = activity.new UpdateListTimerTask();
+          activity.timer.schedule(activity.timerTask, 400, 1000);
         }
         else {
           children.get(group_position).remove(child_position);
 
           activity.deleteAlarm(item);
           activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
+
+          if(activity.timer != null) {
+            activity.timer.cancel();
+            activity.timer = null;
+          }
+          activity.timer = new Timer();
+          activity.timerTask = activity.new UpdateListTimerTask();
+          activity.timer.schedule(activity.timerTask, 400, 1000);
         }
 
         Snackbar.make(convertView, context.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)

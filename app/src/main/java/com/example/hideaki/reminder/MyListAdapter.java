@@ -1,6 +1,7 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -94,12 +97,24 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
       if(isChecked) {
 
-        viewHolder.checkBox.setChecked(false);
         viewHolder.checkBox.jumpDrawablesToCurrentState();
         activity.actionBarFragment.searchView.clearFocus();
         itemList.remove(position);
         activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
-        notifyDataSetChanged();
+
+        Timer timer = new Timer();
+        final Handler handler = new Handler();
+        timer.schedule(new TimerTask() {
+          @Override
+          public void run() {
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                notifyDataSetChanged();
+              }
+            });
+          }
+        }, 400);
 
         Snackbar.make(convertView, context.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
             .addCallback(new Snackbar.Callback() {
