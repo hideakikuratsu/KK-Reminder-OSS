@@ -5,11 +5,11 @@ import java.util.Calendar;
 
 public class NonScheduledList implements Serializable {
 
-  private static final long serialVersionUID = 3408412079708605304L;
+  private static final long serialVersionUID = -703474005648549601L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String title;
   private String notes;
-  private int color;
+  private int primary_color;
   private int color_order_group = -1;
   private int color_order_child = 5;
   private int order;
@@ -32,8 +32,8 @@ public class NonScheduledList implements Serializable {
     return notes;
   }
 
-  public int getColor() {
-    return color;
+  public int getPrimary_color() {
+    return primary_color;
   }
 
   public int getColor_order_group() {
@@ -56,8 +56,8 @@ public class NonScheduledList implements Serializable {
     this.notes = notes;
   }
 
-  public void setColor(int color) {
-    this.color = color;
+  public void setPrimary_color(int primary_color) {
+    this.primary_color = primary_color;
   }
 
   public void setColor_order_group(int color_order_group) {

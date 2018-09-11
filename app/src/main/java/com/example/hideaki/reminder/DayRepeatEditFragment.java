@@ -180,6 +180,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
   @Override
   public boolean onPreferenceClick(Preference preference) {
 
+//    System.out.println("hello");
     if(!preference.getKey().equals("label")) {
 
       label.setSummary(MainEditFragment.dayRepeat.getLabel());

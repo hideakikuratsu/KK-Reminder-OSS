@@ -64,7 +64,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
       else {
         viewHolder.checkBox.setChecked(false);
         viewHolder.checkBox.jumpDrawablesToCurrentState();
-        MainEditFragment.list.setColor(0);
+        MainEditFragment.list.setPrimary_color(0);
         MainEditFragment.list.setColor_order_group(-1);
         checked_position = -1;
         notifyDataSetChanged();
@@ -116,7 +116,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
           colors_array[i] = colorsList.get(i);
         }
 
-        MainEditFragment.list.setColor(default_color);
+        MainEditFragment.list.setPrimary_color(default_color);
 
         new ColorPicker(activity)
             .setColors(colors_array)
@@ -127,7 +127,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
             .setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
               @Override
               public void setOnFastChooseColorListener(int position, int color) {
-                MainEditFragment.list.setColor(color);
+                MainEditFragment.list.setPrimary_color(color);
                 MainEditFragment.list.setColor_order_child(position);
                 viewHolder.pallet.setColorFilter(color);
               }
@@ -138,7 +138,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
             .show();
       }
       else if(position == checked_position && manually_checked) {
-        MainEditFragment.list.setColor(0);
+        MainEditFragment.list.setPrimary_color(0);
         MainEditFragment.list.setColor_order_group(-1);
         checked_position = -1;
         notifyDataSetChanged();

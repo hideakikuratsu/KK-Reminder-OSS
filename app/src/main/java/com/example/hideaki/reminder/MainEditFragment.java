@@ -277,8 +277,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                     Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
                     checkNotNull(drawable);
                     drawable = drawable.mutate();
-                    if(list.getColor() != 0) {
-                      drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
+                    if(list.getPrimary_color() != 0) {
+                      drawable.setColorFilter(list.getPrimary_color(), PorterDuff.Mode.SRC_IN);
                     }
                     else {
                       drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
@@ -499,8 +499,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
         checkNotNull(drawable);
         drawable = drawable.mutate();
-        if(list.getColor() != 0) {
-          drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
+        if(list.getPrimary_color() != 0) {
+          drawable.setColorFilter(list.getPrimary_color(), PorterDuff.Mode.SRC_IN);
         }
         else {
           drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);

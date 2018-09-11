@@ -129,8 +129,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_my_list_24dp);
       checkNotNull(drawable);
       drawable = drawable.mutate();
-      if(list.getColor() != 0) {
-        drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
+      if(list.getPrimary_color() != 0) {
+        drawable.setColorFilter(list.getPrimary_color(), PorterDuff.Mode.SRC_IN);
       }
       else {
         drawable.setColorFilter(ContextCompat.getColor(this, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     else if(menuItem.getOrder() == 1) {
       showListViewFragment();
 
-//      toolbar.setBackgroundColor(generalSettings.getNonScheduledList(which_menu_open - 1).getColor());
+//      toolbar.setBackgroundColor(generalSettings.getNonScheduledList(which_menu_open - 1).getPrimary_color());
 //      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //        Window window = getWindow();
 //        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -346,8 +346,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Drawable drawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_my_list_24dp);
                 checkNotNull(drawable);
                 drawable = drawable.mutate();
-                if(list.getColor() != 0) {
-                  drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
+                if(list.getPrimary_color() != 0) {
+                  drawable.setColorFilter(list.getPrimary_color(), PorterDuff.Mode.SRC_IN);
                 }
                 else {
                   drawable.setColorFilter(
