@@ -1,7 +1,6 @@
 package com.example.hideaki.reminder;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -17,9 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.ToggleButton;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -28,6 +25,7 @@ public class ActionBarFragment extends Fragment {
 
   private MainActivity activity;
   SearchView searchView;
+  private int order;
 
   public static ActionBarFragment newInstance() {
 
@@ -39,6 +37,7 @@ public class ActionBarFragment extends Fragment {
 
     super.onAttach(context);
     activity = (MainActivity)context;
+    order = activity.menuItem.getOrder();
   }
 
   @Override
@@ -72,12 +71,13 @@ public class ActionBarFragment extends Fragment {
     MenuItem search_item = menu.findItem(R.id.search_item);
     searchView = (SearchView)search_item.getActionView();
 
-//    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_search_white_24dp);
-//    checkNotNull(drawable);
-//    drawable = drawable.mutate();
-//    drawable.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
-//    ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
-//    searchIcon.setImageDrawable(drawable);
+    //色の設定
+    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_search_white_24dp);
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+    searchIcon.setImageDrawable(drawable);
 
     searchView.setIconifiedByDefault(true);
     searchView.setSubmitButtonEnabled(false);
@@ -111,6 +111,28 @@ public class ActionBarFragment extends Fragment {
         return false;
       }
     });
+
+    //次の親グループを展開するメニューボタンの実装
+    MenuItem nextGroupExpand = menu.findItem(R.id.next_group_expand);
+    if(order == 0) {
+      nextGroupExpand.setVisible(true);
+      drawable = ContextCompat.getDrawable(activity, R.drawable.ic_next_group_expand_white_24dp);
+      checkNotNull(drawable);
+      drawable = drawable.mutate();
+      drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+      nextGroupExpand.setIcon(drawable);
+    }
+    else {
+      nextGroupExpand.setVisible(false);
+    }
+
+    //新しくアイテムを追加するメニューボタンの実装
+    MenuItem addItem = menu.findItem(R.id.add_item);
+    drawable = ContextCompat.getDrawable(activity, R.drawable.ic_add_circle_24dp);
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    addItem.setIcon(drawable);
   }
 
   @Override

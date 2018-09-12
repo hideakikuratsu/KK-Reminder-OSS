@@ -85,6 +85,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   MenuItem oldMenuItem;
   GeneralSettings generalSettings;
   ActionBarFragment actionBarFragment;
+  private Toolbar toolbar;
+  int menu_item_color;
+  int menu_background_color;
+  int status_bar_color;
+  private int order;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -94,13 +99,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     accessor = new DBAccessor(this);
 
-    //DisplayHomeAsUpEnabledに指定する戻るボタンの色を白色に指定
-    upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
-    checkNotNull(upArrow);
-    upArrow.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-
     //ToolbarをActionBarに互換を持たせて設定
-    Toolbar toolbar = findViewById(R.id.toolbar_layout);
+    toolbar = findViewById(R.id.toolbar_layout);
     setSupportActionBar(toolbar);
     ActionBar actionBar = getSupportActionBar();
     checkNotNull(actionBar);
@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         R.string.drawer_open, R.string.drawer_close
     );
     drawerToggle.setDrawerIndicatorEnabled(true);
-//    drawerToggle.getDrawerArrowDrawable().setColor(Color.RED);
     drawerLayout.addDrawerListener(drawerToggle);
 
     navigationView = findViewById(R.id.nav_view);
@@ -159,24 +158,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       menuItem.setChecked(true);
     }
 
-    if(menuItem.getOrder() == 0) {
-      showExpandableListViewFragment();
-    }
-    else if(menuItem.getOrder() == 1) {
-      showListViewFragment();
+    createAndSetFragmentColor();
 
-//      toolbar.setBackgroundColor(generalSettings.getNonScheduledList(which_menu_open - 1).getPrimary_color());
-//      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//        Window window = getWindow();
-//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//        window.setStatusBarColor();
-//      }
-    }
-    else if(menuItem.getOrder() == 3) {
-      showManageListViewFragment();
-    }
+    //前回開いていたFragmentを表示
+    if(order == 0) showExpandableListViewFragment();
+    else if(order == 1) showListViewFragment();
+    else if(order == 3) showManageListViewFragment();
 
+    //Notificationチャネルの作成
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
       checkNotNull(notificationManager);
@@ -281,12 +270,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.menuItem = menuItem;
         switch(menuItem.getOrder()) {
           case 0:
+            createAndSetFragmentColor();
             showExpandableListViewFragment();
             break;
           case 1:
+            createAndSetFragmentColor();
             showListViewFragment();
             break;
           case 3:
+            createAndSetFragmentColor();
             showManageListViewFragment();
             break;
           case 4:
@@ -690,6 +682,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       }
 
       return data;
+    }
+  }
+
+  private void createAndSetFragmentColor() {
+
+    //開いているFragmentに応じた色を作成
+    order = menuItem.getOrder();
+    if(order == 1) {
+      NonScheduledList list = generalSettings.getNonScheduledList(which_menu_open - 1);
+      if(list.getPrimary_color() != 0) {
+        menu_item_color = list.getPrimary_text_color();
+        menu_background_color = list.getPrimary_color();
+        status_bar_color = list.getPrimary_dark_color();
+      }
+      else {
+        menu_item_color = Color.WHITE;
+        menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
+        status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+      }
+    }
+    else {
+      menu_item_color = Color.WHITE;
+      menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
+      status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+    }
+
+    //ハンバーガーアイコンの色を指定
+    drawerToggle.getDrawerArrowDrawable().setColor(menu_item_color);
+    //DisplayHomeAsUpEnabledに指定する戻るボタンの色を指定
+    upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
+    checkNotNull(upArrow);
+    upArrow.setColorFilter(menu_item_color, PorterDuff.Mode.SRC_IN);
+    //ツールバーとステータスバーの色を指定
+    toolbar.setTitleTextColor(menu_item_color);
+    toolbar.setBackgroundColor(menu_background_color);
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      Window window = getWindow();
+      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+      window.setStatusBarColor(status_bar_color);
     }
   }
 

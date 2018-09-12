@@ -4,8 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/next_group"
-        android:icon="@drawable/ic_next_group_white_24dp"
+        android:id="@+id/next_group_expand"
+        android:icon="@drawable/ic_next_group_expand_white_24dp"
         android:title="@string/next_group"
         app:showAsAction="always" />
     <item
@@ -16,7 +16,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/add_item"
-        android:icon="@drawable/ic_add_box_white_24dp"
+        android:icon="@drawable/ic_add_circle_24dp"
         android:title="Item"
         app:showAsAction="always" />
 </menu>

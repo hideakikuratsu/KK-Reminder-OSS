@@ -27,10 +27,14 @@ public class ColorPickerListAdapter extends BaseAdapter {
   private final List<String> color_name_lists;
   private static int checked_position; //チェックの入っている項目のpositionを保持する
   private MainActivity activity;
+  private TypedArray typedArraysOfArray;
+  private TypedArray typedArray;
+  private TypedArray colorVariationArray;
+  private Resources res;
 
   ColorPickerListAdapter(Context context) {
 
-    this.activity = (MainActivity)context;
+    activity = (MainActivity)context;
     color_name_lists = new ArrayList<>(Arrays.asList(activity.getResources().getStringArray(R.array.colors_array)));
   }
 
@@ -82,15 +86,14 @@ public class ColorPickerListAdapter extends BaseAdapter {
         MainEditFragment.list.setColor_order_child(5);
         notifyDataSetChanged();
 
-        Resources res = activity.getResources();
+        res = activity.getResources();
         List<Integer> colorsList = new ArrayList<>();
-        TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.colorsArray);
+        typedArraysOfArray = res.obtainTypedArray(R.array.colorsArray);
 
         int colors_array_id = typedArraysOfArray.getResourceId(checked_position, -1);
         checkArgument(colors_array_id != -1);
-        TypedArray typedArray = res.obtainTypedArray(colors_array_id);
+        typedArray = res.obtainTypedArray(colors_array_id);
 
-        TypedArray colorVariationArray;
         int size = typedArray.length();
         for(int i = 0; i < size; i++) {
           int colors_id = typedArray.getResourceId(i, -1);
@@ -104,40 +107,79 @@ public class ColorPickerListAdapter extends BaseAdapter {
         int colors_id = typedArray.getResourceId(MainEditFragment.list.getColor_order_child(), -1);
         checkArgument(colors_id != -1);
         colorVariationArray = res.obtainTypedArray(colors_id);
-        int default_color = colorVariationArray.getColor(0, -1);
-        checkArgument(default_color != -1);
 
-        colorVariationArray.recycle();
-        typedArray.recycle();
-        typedArraysOfArray.recycle();
+        int default_primary_color = colorVariationArray.getColor(0, -1);
+        @SuppressLint("ResourceType")
+        int default_primary_light_color = colorVariationArray.getColor(1, 0);
+        @SuppressLint("ResourceType")
+        int default_primary_dark_color = colorVariationArray.getColor(2, -1);
+        @SuppressLint("ResourceType")
+        int default_primary_text_color = colorVariationArray.getColor(3, 1);
+
+        checkArgument(default_primary_color != -1);
+        checkArgument(default_primary_light_color != 0);
+        checkArgument(default_primary_dark_color != -1);
+        checkArgument(default_primary_text_color != 1);
 
         int[] colors_array = new int[size];
         for(int i = 0; i < size; i++) {
           colors_array[i] = colorsList.get(i);
         }
 
-        MainEditFragment.list.setPrimary_color(default_color);
+        MainEditFragment.list.setPrimary_color(default_primary_color);
+        MainEditFragment.list.setPrimary_light_color(default_primary_light_color);
+        MainEditFragment.list.setPrimary_dark_color(default_primary_dark_color);
+        MainEditFragment.list.setPrimary_text_color(default_primary_text_color);
 
         new ColorPicker(activity)
             .setColors(colors_array)
             .setTitle(activity.getString(R.string.pick_color_description))
-            .setDefaultColorButton(default_color)
+            .setDefaultColorButton(default_primary_color)
             .setRoundColorButton(true)
             .disableDefaultButtons(true)
             .setOnFastChooseColorListener(new ColorPicker.OnFastChooseColorListener() {
               @Override
               public void setOnFastChooseColorListener(int position, int color) {
                 MainEditFragment.list.setPrimary_color(color);
+
+                int colors_id = typedArray.getResourceId(position, -1);
+                checkArgument(colors_id != -1);
+                colorVariationArray = res.obtainTypedArray(colors_id);
+                @SuppressLint("ResourceType")
+                int primary_light_color = colorVariationArray.getColor(1, 0);
+                @SuppressLint("ResourceType")
+                int primary_dark_color = colorVariationArray.getColor(2, -1);
+                @SuppressLint("ResourceType")
+                int primary_text_color = colorVariationArray.getColor(3, 1);
+
+                checkArgument(primary_light_color != 0);
+                checkArgument(primary_dark_color != -1);
+                checkArgument(primary_text_color != 1);
+
+                MainEditFragment.list.setPrimary_light_color(primary_light_color);
+                MainEditFragment.list.setPrimary_dark_color(primary_dark_color);
+                MainEditFragment.list.setPrimary_text_color(primary_text_color);
+
                 MainEditFragment.list.setColor_order_child(position);
                 viewHolder.pallet.setColorFilter(color);
+
+                colorVariationArray.recycle();
+                typedArray.recycle();
+                typedArraysOfArray.recycle();
               }
 
               @Override
-              public void onCancel() {}
+              public void onCancel() {
+
+                colorVariationArray.recycle();
+                typedArray.recycle();
+                typedArraysOfArray.recycle();
+              }
             })
             .show();
       }
       else if(position == checked_position && manually_checked) {
+        viewHolder.checkBox.jumpDrawablesToCurrentState();
         MainEditFragment.list.setPrimary_color(0);
         MainEditFragment.list.setColor_order_group(-1);
         checked_position = -1;

@@ -17,12 +17,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.Calendar;
 
@@ -210,8 +215,24 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.main_edit_menu, menu);
 
+    //完了メニューの実装
+    MenuItem done_item = menu.findItem(R.id.done);
+    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_check_circle_24dp);
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    done_item.setIcon(drawable);
+
+    //削除メニューの実装
     MenuItem delete_item = menu.findItem(R.id.delete);
-    if(is_edit) delete_item.setVisible(true);
+    if(is_edit) {
+      drawable = ContextCompat.getDrawable(activity, R.drawable.ic_delete_24dp);
+      checkNotNull(drawable);
+      drawable = drawable.mutate();
+      drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+      delete_item.setIcon(drawable);
+      delete_item.setVisible(true);
+    }
     else delete_item.setVisible(false);
   }
 
