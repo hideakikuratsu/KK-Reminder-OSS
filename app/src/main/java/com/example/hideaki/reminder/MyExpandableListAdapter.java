@@ -1,12 +1,22 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.text.format.DateFormat;
+import android.support.v7.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -31,17 +41,19 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
   private static Calendar tmp;
   private static boolean[] display_groups = new boolean[5];
-  static final List<String> groups;
+  static final List<String> groups = new ArrayList<>();
   static List<List<Item>> children;
   private Context context;
-  private static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
-  private ScheduledItemComparator scheduledItemComparator = new ScheduledItemComparator();
+  static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
+  private final ScheduledItemComparator scheduledItemComparator = new ScheduledItemComparator();
+  private final NonScheduledItemComparator nonScheduledItemComparator = new NonScheduledItemComparator();
   private boolean is_control_panel_locked;
   private MainActivity activity;
+  ActionMode actionMode = null;
+  static int checked_item_num;
+  private static boolean manually_checked;
 
   static {
-    groups = new ArrayList<>();
-
     groups.add("過去");
     groups.add("今日");
     groups.add("明日");
@@ -65,16 +77,18 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     TextView repeat;
     CheckBox checkBox;
     TableLayout control_panel;
-    Item item;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
+      View.OnLongClickListener, ActionMode.Callback {
 
     private int group_position;
     private int child_position;
     private Item item;
     private View convertView;
     private ChildViewHolder viewHolder;
+    private int which_list;
+    private List<Item> itemListToMove;
 
     private MyOnClickListener(int group_position, int child_position, Item item, View convertView,
                              ChildViewHolder viewHolder) {
@@ -89,40 +103,59 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     @Override
     public void onClick(View v) {
 
+      boolean is_database_updated = false;
       activity.actionBarFragment.searchView.clearFocus();
       switch(v.getId()) {
         case R.id.child_card:
-          if(viewHolder.control_panel.getVisibility() == View.GONE) {
-            has_panel = item.getId();
-            if(!is_control_panel_locked) {
-              viewHolder.control_panel.setVisibility(View.VISIBLE);
-              notifyDataSetChanged();
+
+          if(actionMode == null) {
+            if(viewHolder.control_panel.getVisibility() == View.GONE) {
+              if(!is_control_panel_locked) {
+                has_panel = item.getId();
+                viewHolder.control_panel.setVisibility(View.VISIBLE);
+                notifyDataSetChanged();
+              }
+            }
+            else {
+              has_panel = 0;
+              viewHolder.control_panel.setVisibility(View.GONE);
             }
           }
-          else viewHolder.control_panel.setVisibility(View.GONE);
+          else if(viewHolder.checkBox.isChecked()) {
+            viewHolder.checkBox.setChecked(false);
+          }
+          else viewHolder.checkBox.setChecked(true);
           break;
         case R.id.clock_image:
-          if(item.getTime_altered() == 0 && activity.isAlarmSetted(item)) {
-            item.setAlarm_stopped(true);
-            activity.deleteAlarm(item);
-          }
-          else if(item.getTime_altered() == 0 && !item.isAlarm_stopped()) {
-            item.setAlarm_stopped(true);
-          }
-          else if(item.getTime_altered() == 0 && item.isAlarm_stopped()) {
-            item.setAlarm_stopped(false);
-            activity.setAlarm(item);
-          }
-          else if(item.getTime_altered() != 0) {
-            item.setDate((Calendar)item.getOrg_date().clone());
-            item.setTime_altered(0);
-            activity.deleteAlarm(item);
-            activity.setAlarm(item);
-          }
 
-          activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+          if(actionMode == null) {
+            if(item.getTime_altered() == 0 && activity.isAlarmSetted(item)) {
+              item.setAlarm_stopped(true);
+              activity.deleteAlarm(item);
+            }
+            else if(item.getTime_altered() == 0 && !item.isAlarm_stopped()) {
+              item.setAlarm_stopped(true);
+            }
+            else if(item.getTime_altered() == 0 && item.isAlarm_stopped()) {
+              item.setAlarm_stopped(false);
+              activity.setAlarm(item);
+            }
+            else if(item.getTime_altered() != 0) {
+              item.setDate((Calendar)item.getOrg_date().clone());
+              item.setTime_altered(0);
+              activity.deleteAlarm(item);
+              activity.setAlarm(item);
+            }
 
-          displayDate(viewHolder, item);
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            is_database_updated = true;
+
+            displayDate(viewHolder, item);
+          }
+          else if(viewHolder.checkBox.isChecked()) {
+            viewHolder.checkBox.setChecked(false);
+          }
+          else viewHolder.checkBox.setChecked(true);
           break;
         case R.id.m5m:
           if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 5 * 60 * 1000) {
@@ -137,6 +170,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.deleteAlarm(item);
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            is_database_updated = true;
 
             displayDate(viewHolder, item);
           }
@@ -154,6 +188,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.deleteAlarm(item);
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            is_database_updated = true;
 
             displayDate(viewHolder, item);
           }
@@ -171,6 +206,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.deleteAlarm(item);
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            is_database_updated = true;
 
             displayDate(viewHolder, item);
           }
@@ -178,6 +214,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         case R.id.edit:
           activity.expandableListView.clearTextFilter();
           activity.showMainEditFragment(item);
+          has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
         case R.id.p5m:
@@ -198,6 +235,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+          is_database_updated = true;
 
           displayDate(viewHolder, item);
           break;
@@ -219,6 +257,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+          is_database_updated = true;
 
           displayDate(viewHolder, item);
           break;
@@ -240,6 +279,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+          is_database_updated = true;
 
           displayDate(viewHolder, item);
           break;
@@ -248,12 +288,21 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.showNotesFragment(item);
           break;
       }
+
+      if(is_database_updated) {
+
+        //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          Context direct_boot_context = activity.createDeviceProtectedStorageContext();
+          direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
+        }
+      }
     }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-      if(isChecked) {
+      if(isChecked && actionMode == null && manually_checked) {
 
         viewHolder.checkBox.jumpDrawablesToCurrentState();
         activity.actionBarFragment.searchView.clearFocus();
@@ -1142,10 +1191,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               public void onShown(Snackbar sb) {
 
                 super.onShown(sb);
+                is_control_panel_locked = true;
                 if(viewHolder.control_panel.getVisibility() == View.VISIBLE) {
                   viewHolder.control_panel.setVisibility(View.GONE);
                 }
-                is_control_panel_locked = true;
               }
 
               @Override
@@ -1153,6 +1202,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
                 super.onDismissed(transientBottomBar, event);
                 is_control_panel_locked = false;
+                notifyDataSetChanged();
+
+                //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                  Context direct_boot_context = activity.createDeviceProtectedStorageContext();
+                  direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
+                }
               }
             })
             .setAction(R.string.undo, new View.OnClickListener() {
@@ -1193,6 +1249,314 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             })
             .show();
       }
+      else if(isChecked && manually_checked) {
+        viewHolder.checkBox.jumpDrawablesToCurrentState();
+        item.setSelected(true);
+        notifyDataSetChanged();
+        checked_item_num++;
+        actionMode.setTitle(Integer.toString(checked_item_num));
+      }
+      else if(actionMode != null && manually_checked) {
+        viewHolder.checkBox.jumpDrawablesToCurrentState();
+        item.setSelected(false);
+        notifyDataSetChanged();
+        checked_item_num--;
+        actionMode.setTitle(Integer.toString(checked_item_num));
+        if(checked_item_num == 0) actionMode.finish();
+      }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+
+      if(actionMode != null) {
+
+        if(viewHolder.checkBox.isChecked()) {
+          viewHolder.checkBox.setChecked(false);
+        }
+        else viewHolder.checkBox.setChecked(true);
+
+        return true;
+      }
+      else {
+        actionMode = activity.startSupportActionMode(this);
+        viewHolder.checkBox.setChecked(true);
+        return true;
+      }
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+
+      actionMode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
+
+      //ActionMode時のみツールバーとステータスバーの色を設定
+      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        Window window = activity.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(activity, R.color.darker_grey));
+      }
+
+      return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+
+      MenuItem moveTaskItem = menu.findItem(R.id.move_task_between_list);
+      if(ManageListAdapter.nonScheduledLists.size() > 0) {
+        moveTaskItem.setVisible(true);
+      }
+      else moveTaskItem.setVisible(false);
+      return true;
+    }
+
+    @Override
+    public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
+
+      switch(menuItem.getItemId()) {
+        case R.id.delete:
+
+          itemListToMove = new ArrayList<>();
+          for(List<Item> itemList : children) {
+            for(Item item : itemList) {
+              if(item.isSelected()) {
+                itemListToMove.add(0, item);
+              }
+            }
+          }
+
+          String message = itemListToMove.size() + activity.getString(R.string.cab_delete_message)
+              + "(" + activity.getString(R.string.delete_dialog_message) + ")";
+          new AlertDialog.Builder(activity)
+              .setTitle(R.string.cab_delete)
+              .setMessage(message)
+              .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                  for(List<Item> itemList : children) {
+                    for(Item item : itemList) {
+                      if(item.isSelected()) {
+                        activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
+                        MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+                        activity.deleteAlarm(item);
+                      }
+                    }
+                  }
+
+                  //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
+                  if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Context direct_boot_context = activity.createDeviceProtectedStorageContext();
+                    direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
+                  }
+
+                  actionMode.finish();
+                }
+              })
+              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+              })
+              .show();
+
+          return true;
+        case R.id.move_task_between_list:
+
+          itemListToMove = new ArrayList<>();
+          for(List<Item> itemList : children) {
+            for(Item item : itemList) {
+              if(item.isSelected()) {
+                itemListToMove.add(0, item);
+              }
+            }
+          }
+
+          int size = ManageListAdapter.nonScheduledLists.size();
+          String[] items = new String[size];
+          for(int i = 0; i < size; i++) {
+            items[i] = ManageListAdapter.nonScheduledLists.get(i).getTitle();
+          }
+
+          String title = itemListToMove.size() + activity.getString(R.string.cab_selected_task_num)
+              + activity.getString(R.string.cab_move_task_message);
+          new AlertDialog.Builder(activity)
+              .setTitle(title)
+              .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  which_list = which;
+                }
+              })
+              .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                  long list_id = activity.generalSettings.getNonScheduledList(which_list).getId();
+                  MyListAdapter.itemList = new ArrayList<>();
+                  for(Item item : activity.queryAllDB(MyDatabaseHelper.TODO_TABLE)) {
+                    if(item.getWhich_list_belongs() == list_id) {
+                      MyListAdapter.itemList.add(item);
+                    }
+                  }
+                  Collections.sort(MyListAdapter.itemList, nonScheduledItemComparator);
+
+                  for(Item item : itemListToMove) {
+
+                    item.setSelected(false);
+                    item.setDate(Calendar.getInstance());
+                    item.setNotify_interval(new NotifyInterval());
+                    item.setDayRepeat(new DayRepeat());
+                    item.setMinuteRepeat(new MinuteRepeat());
+
+                    //リストのIDをitemに登録する
+                    item.setWhich_list_belongs(list_id);
+
+                    MyListAdapter.itemList.add(0, item);
+                    activity.deleteAlarm(item);
+                  }
+
+                  int size = MyListAdapter.itemList.size();
+                  for(int i = 0; i < size; i++) {
+                    Item item = MyListAdapter.itemList.get(i);
+                    item.setOrder(i);
+                    activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+                  }
+
+                  children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+
+                  //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
+                  if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Context direct_boot_context = activity.createDeviceProtectedStorageContext();
+                    direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
+                  }
+
+                  actionMode.finish();
+                }
+              })
+              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+              })
+              .show();
+
+          return true;
+        case R.id.clone:
+
+          itemListToMove = new ArrayList<>();
+          for(List<Item> itemList : children) {
+            for(Item item : itemList) {
+              if(item.isSelected()) {
+                itemListToMove.add(0, item);
+              }
+            }
+          }
+
+          message = itemListToMove.size() + activity.getString(R.string.cab_clone_message);
+          new AlertDialog.Builder(activity)
+              .setTitle(R.string.cab_clone)
+              .setMessage(message)
+              .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                  MainEditFragment.checked_item_num = checked_item_num;
+                  MainEditFragment.itemListToMove = new ArrayList<>(itemListToMove);
+                  MainEditFragment.is_cloning_task = true;
+                  itemListToMove.get(itemListToMove.size() - 1).setSelected(false);
+                  activity.showMainEditFragment(itemListToMove.get(itemListToMove.size() - 1).copy());
+
+                  actionMode.finish();
+                }
+              })
+              .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+              })
+              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+              })
+              .show();
+
+          return true;
+        case R.id.share:
+
+          itemListToMove = new ArrayList<>();
+          for(List<Item> itemList : children) {
+            for(Item item : itemList) {
+              if(item.isSelected()) {
+                itemListToMove.add(0, item);
+              }
+            }
+          }
+
+          message = itemListToMove.size() + activity.getString(R.string.cab_share_message);
+          new AlertDialog.Builder(activity)
+              .setTitle(R.string.cab_share)
+              .setMessage(message)
+              .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                  String LINE_SEPARATOR = System.getProperty("line.separator");
+                  for(Item item : itemListToMove) {
+                    String send_content = activity.getString(R.string.days_of_month) + ": "
+                        + DateFormat.format("yyyy/MM/dd HH:mm", item.getDate())
+                        + LINE_SEPARATOR
+                        + activity.getString(R.string.detail) + ": " + item.getDetail()
+                        + LINE_SEPARATOR
+                        + activity.getString(R.string.memo) + ": " + item.getNotes();
+
+                    Intent intent = new Intent()
+                        .setAction(Intent.ACTION_SEND)
+                        .setType("text/plain")
+                        .putExtra(Intent.EXTRA_TEXT, send_content);
+                    activity.startActivity(intent);
+                  }
+
+                  actionMode.finish();
+                }
+              })
+              .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+              })
+              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+              })
+              .show();
+
+          return true;
+        default:
+          actionMode.finish();
+          return true;
+      }
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode actionMode) {
+
+      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        Window window = activity.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(activity.status_bar_color);
+      }
+
+      MyExpandableListAdapter.this.actionMode = null;
+      for(List<Item> itemList : children) {
+        for(Item item : itemList) {
+          if(item.isSelected()) {
+            item.setSelected(false);
+          }
+        }
+      }
+
+      checked_item_num = 0;
+      notifyDataSetChanged();
     }
   }
 
@@ -1368,10 +1732,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       viewHolder.clock_image = convertView.findViewById(R.id.clock_image);
       viewHolder.time = convertView.findViewById(R.id.date);
       viewHolder.detail = convertView.findViewById(R.id.detail);
-      viewHolder.repeat = convertView.findViewById(R.id.day_repeat);
+      viewHolder.repeat = convertView.findViewById(R.id.repeat);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
-      viewHolder.item = (Item)getChild(i, i1);
 
       convertView.setTag(viewHolder);
     }
@@ -1403,6 +1766,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     viewHolder.clock_image.setOnClickListener(listener);
     viewHolder.checkBox.setOnCheckedChangeListener(listener);
 
+    viewHolder.child_card.setOnLongClickListener(listener);
+    viewHolder.clock_image.setOnLongClickListener(listener);
+    viewHolder.checkBox.setOnLongClickListener(listener);
+
     int control_panel_size = viewHolder.control_panel.getChildCount();
     for(int j = 0; j < control_panel_size; j++) {
       TableRow tableRow = (TableRow)viewHolder.control_panel.getChildAt(j);
@@ -1414,16 +1781,27 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     }
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
-    if(item.getId() != has_panel && viewHolder.control_panel.getVisibility() == View.VISIBLE
-        && viewHolder.item.getId() != has_panel) {
+    if(viewHolder.control_panel.getVisibility() == View.VISIBLE
+        && (item.getId() != has_panel || actionMode != null)) {
       viewHolder.control_panel.setVisibility(View.GONE);
+    }
+    else if(viewHolder.control_panel.getVisibility() == View.GONE && item.getId() == has_panel
+        && !is_control_panel_locked && actionMode == null) {
+      viewHolder.control_panel.setVisibility(View.VISIBLE);
     }
 
     //チェックが入っている場合、チェックを外す
-    if(viewHolder.checkBox.isChecked()) {
+    if(viewHolder.checkBox.isChecked() && !item.isSelected()) {
+      manually_checked = false;
       viewHolder.checkBox.setChecked(false);
       viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
+    else if(!viewHolder.checkBox.isChecked() && item.isSelected()) {
+      manually_checked = false;
+      viewHolder.checkBox.setChecked(true);
+      viewHolder.checkBox.jumpDrawablesToCurrentState();
+    }
+    manually_checked = true;
 
     return convertView;
   }

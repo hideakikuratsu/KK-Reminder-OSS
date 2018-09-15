@@ -17,24 +17,22 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.List;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
-    Preference.OnPreferenceChangeListener, DialogInterface.OnClickListener {
+    Preference.OnPreferenceChangeListener {
 
   public static final String ITEM = "ITEM";
   public static final String LIST = "LIST";
@@ -54,6 +52,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   static int order;
   static NonScheduledList list;
   private MainActivity activity;
+  static List<Item> itemListToMove;
+  static int checked_item_num;
+  private static boolean is_moving_task;
+  static boolean is_cloning_task;
+  private Item nextItem;
 
   public static MainEditFragment newInstance() {
 
@@ -62,6 +65,24 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     Item item = new Item();
     is_edit = false;
     detail_str = "";
+    notes_str = "";
+    dayRepeat = new DayRepeat();
+    minuteRepeat = new MinuteRepeat();
+    final_cal = Calendar.getInstance();
+    Bundle args = new Bundle();
+    args.putSerializable(ITEM, item);
+    fragment.setArguments(args);
+
+    return fragment;
+  }
+
+  public static MainEditFragment newInstance(String detail) {
+
+    MainEditFragment fragment = new MainEditFragment();
+
+    Item item = new Item();
+    is_edit = false;
+    detail_str = detail;
     notes_str = "";
     dayRepeat = new DayRepeat();
     minuteRepeat = new MinuteRepeat();
@@ -124,7 +145,30 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     super.onAttach(context);
     activity = (MainActivity)context;
-    order = activity.menuItem.getOrder();
+
+    checkArgument(checked_item_num >= 0);
+    is_moving_task = false;
+
+    if(checked_item_num == 0) {
+      order = activity.menuItem.getOrder();
+    }
+    else {
+      checked_item_num--;
+
+      if(is_cloning_task) {
+        order = activity.menuItem.getOrder();
+        if(checked_item_num > 0) {
+          nextItem = itemListToMove.get(checked_item_num - 1).copy();
+        }
+      }
+      else {
+        order = -1;
+        is_moving_task = true;
+        if(checked_item_num > 0) {
+          nextItem = itemListToMove.get(checked_item_num - 1);
+        }
+      }
+    }
   }
 
   @Override
@@ -163,7 +207,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     notes.setTitle(notes_str);
     notes.setOnPreferenceChangeListener(this);
 
-    if(order == 0) {
+    if(order == 0 || is_moving_task) {
       rootPreferenceScreen.removePreference(color);
     }
     else if(order == 1) {
@@ -187,6 +231,23 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     checkNotNull(view);
 
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
+    view.setFocusableInTouchMode(true);
+    view.requestFocus();
+    view.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+          if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
+            activity.showMainEditFragment(nextItem);
+          }
+          else if(is_cloning_task) {
+            is_cloning_task = false;
+          }
+        }
+        return false;
+      }
+    });
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
@@ -198,7 +259,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.edit);
 
-    if(order == 0) {
+    if(order == 0 || is_moving_task) {
       if(dayRepeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
       else day_repeat_item.setSummary(dayRepeat.getLabel());
 
@@ -225,7 +286,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     //削除メニューの実装
     MenuItem delete_item = menu.findItem(R.id.delete);
-    if(is_edit) {
+    if(is_edit && !is_moving_task && !is_cloning_task) {
       drawable = ContextCompat.getDrawable(activity, R.drawable.ic_delete_24dp);
       checkNotNull(drawable);
       drawable = drawable.mutate();
@@ -241,20 +302,46 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     switch(item.getItemId()) {
       case R.id.done:
-        if(order == 0 && is_edit && MainEditFragment.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()
+        if((order == 0 || is_moving_task) && is_edit
+            && MainEditFragment.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()
             && (MainEditFragment.dayRepeat.getSetted() != 0 || MainEditFragment.minuteRepeat.getWhich_setted() != 0)) {
+
           new AlertDialog.Builder(getActivity())
               .setMessage(R.string.repeat_conflict_dialog_message)
-              .setPositiveButton(R.string.yes, this)
-              .setNegativeButton(R.string.no, this)
-              .setNeutralButton(R.string.cancel, this)
+              .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                  if(MainEditFragment.item.getTime_altered() == 0) {
+                    MainEditFragment.item.setOrg_date((Calendar)MainEditFragment.item.getDate().clone());
+                  }
+                  long altered_time = (final_cal.getTimeInMillis()
+                      - MainEditFragment.item.getDate().getTimeInMillis()) / (1000 * 60);
+                  MainEditFragment.item.addTime_altered(altered_time * 60 * 1000);
+
+                  registerItem();
+                }
+              })
+              .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                  MainEditFragment.item.setOrg_date((Calendar)final_cal.clone());
+                  MainEditFragment.item.setTime_altered(0);
+
+                  registerItem();
+                }
+              })
+              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+              })
               .show();
         }
-        else {
-          registerItem();
-        }
+        else registerItem();
         return true;
       case R.id.delete:
+
         new AlertDialog.Builder(getActivity())
             .setTitle(R.string.delete_dialog_title)
             .setMessage(R.string.delete_dialog_message)
@@ -313,6 +400,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                   activity.updateSettingsDB();
                 }
 
+                //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                  Context direct_boot_context = getActivity().createDeviceProtectedStorageContext();
+                  direct_boot_context.moveDatabaseFrom(getActivity(), MyDatabaseHelper.TODO_TABLE);
+                }
+
                 getFragmentManager().popBackStack();
               }
             })
@@ -323,7 +416,15 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
             .show();
         return true;
       case android.R.id.home:
+
         getFragmentManager().popBackStack();
+
+        if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
+          activity.showMainEditFragment(nextItem);
+        }
+        else if(is_cloning_task) {
+          is_cloning_task = false;
+        }
         return true;
       default:
         return super.onOptionsItemSelected(item);
@@ -380,39 +481,14 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         .commit();
   }
 
-  @Override
-  public void onClick(DialogInterface dialog, int which) {
-
-    switch(which) {
-      case DialogInterface.BUTTON_POSITIVE:
-        if(item.getTime_altered() == 0) {
-          item.setOrg_date((Calendar)item.getDate().clone());
-        }
-        long altered_time = (final_cal.getTimeInMillis()
-            - item.getDate().getTimeInMillis()) / (1000 * 60);
-        item.addTime_altered(altered_time * 60 * 1000);
-
-        registerItem();
-        break;
-      case DialogInterface.BUTTON_NEGATIVE:
-        item.setOrg_date((Calendar)final_cal.clone());
-        item.setTime_altered(0);
-
-        registerItem();
-        break;
-      case DialogInterface.BUTTON_NEUTRAL:
-        break;
-    }
-  }
-  
   private void registerItem() {
 
-    if(order == 0 || order == 1) {
+    if(order == 0 || order == 1 || is_moving_task) {
 
       item.setDetail(detail_str);
       item.setNotes(notes_str);
 
-      if(order == 0) {
+      if(order == 0 || is_moving_task) {
 
         item.setDate((Calendar)final_cal.clone());
 
@@ -449,10 +525,19 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
         item.setAlarm_stopped(false);
 
-        if(is_edit) {
+        if(is_moving_task) {
+          item.setWhich_list_belongs(0);
+        }
 
-          activity.expandableListAdapter.notifyDataSetChanged();
+        if(is_edit && !is_cloning_task) {
+
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+          if(is_moving_task) {
+            MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+            MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+            activity.listAdapter.notifyDataSetChanged();
+          }
+          activity.expandableListAdapter.notifyDataSetChanged();
         }
         else {
           activity.addChildren(item, MyDatabaseHelper.TODO_TABLE);
@@ -461,14 +546,14 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         activity.deleteAlarm(item);
         activity.setAlarm(item);
       }
-      else {
+      else if(order == 1) {
 
         //リストのIDをitemに登録する
         item.setWhich_list_belongs(
             activity.generalSettings.getNonScheduledList(activity.which_menu_open - 1).getId()
         );
 
-        if(activity.isItemExists(item, MyDatabaseHelper.TODO_TABLE)) {
+        if(is_edit && !is_cloning_task) {
 
           activity.listAdapter.notifyDataSetChanged();
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
@@ -545,5 +630,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     }
 
     getFragmentManager().popBackStack();
+
+    if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
+      activity.showMainEditFragment(nextItem);
+    }
+    else if(is_cloning_task) {
+      is_cloning_task = false;
+    }
   }
 }

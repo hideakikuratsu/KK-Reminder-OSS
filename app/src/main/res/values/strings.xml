@@ -92,8 +92,21 @@
     <string name="nav_help">ヘルプ</string>
     <string name="nav_feedback">フィードバック</string>
     <string name="notification_channel_name">Reminder 通知チャンネル</string>
+    <string name="cab_selected_task_num">個のタスクが選択されています。</string>
+    <string name="cab_delete">タスクの削除</string>
+    <string name="cab_delete_message">個のタスクを削除します。\nよろしいですか？</string>
+    <string name="cab_move_task">タスクを別のリストへ移動</string>
+    <string name="cab_move_task_message">\nどのリストへ移動しますか？</string>
+    <string name="cab_clone">タスクの複製</string>
+    <string name="cab_clone_message">個のタスクを複製します。\nよろしいですか？</string>
+    <string name="cab_share">タスクの共有</string>
+    <string name="cab_share_message">個のタスクを共有します。\nよろしいですか？</string>
+    <string name="detail">詳細</string>
+    <string name="determine">決定</string>
     <string name="pick_color">色の選択</string>
     <string name="pick_color_description">色の系統を選択してください</string>
+    <string name="action_send_booted_dialog_title">新たなタスクを作成します。タスクを追加するリストを選択してください。</string>
+
     <string name="red">赤色</string>
     <string name="pink">ピンク色</string>
     <string name="purple">紫色</string>
@@ -113,6 +126,7 @@
     <string name="brown">茶色</string>
     <string name="grey">灰色</string>
     <string name="blue_grey">青灰色</string>
+
     <string-array name="colors_array">
         <item>@string/red</item>
         <item>@string/pink</item>

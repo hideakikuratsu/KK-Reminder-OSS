@@ -2,7 +2,6 @@ package com.example.hideaki.reminder;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;

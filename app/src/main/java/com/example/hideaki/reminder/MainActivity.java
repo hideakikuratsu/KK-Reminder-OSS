@@ -26,6 +26,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -85,11 +86,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   MenuItem oldMenuItem;
   GeneralSettings generalSettings;
   ActionBarFragment actionBarFragment;
-  private Toolbar toolbar;
+  Toolbar toolbar;
   int menu_item_color;
   int menu_background_color;
   int status_bar_color;
   private int order;
+  String detail;
+  private int which_list;
+  private boolean is_in_on_create;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -144,26 +148,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     manageListAdapter = new ManageListAdapter(generalSettings.getNonScheduledLists(), this);
     colorPickerListAdapter = new ColorPickerListAdapter(this);
 
-    //前回開いていたNavigationDrawer上のメニューをリストアする
-    SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
-    which_menu_open = preferences.getInt(MENU_POSITION, 0);
-    which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
-
-    menuItem = navigationView.getMenu().getItem(which_menu_open);
-    oldMenuItem = menuItem;
-    if(menuItem.hasSubMenu()) {
-      menuItem.getSubMenu().getItem(which_submenu_open).setChecked(true);
-    }
-    else {
-      menuItem.setChecked(true);
-    }
-
-    createAndSetFragmentColor();
-
-    //前回開いていたFragmentを表示
-    if(order == 0) showExpandableListViewFragment();
-    else if(order == 1) showListViewFragment();
-    else if(order == 3) showManageListViewFragment();
+    //Intentが送られている場合はonNewIntent()に渡す(送られていない場合は通常の初期化処理を行う)
+    is_in_on_create = true;
+    onNewIntent(getIntent());
 
     //Notificationチャネルの作成
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -174,6 +161,120 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
       notificationManager.createNotificationChannel(notificationChannel);
     }
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+
+    super.onNewIntent(intent);
+
+    //テキストがACTION_SENDで送られてきたときに、詳細の項目にそのテキストをセットした状態で編集画面を表示する
+    detail = null;
+    if(Intent.ACTION_SEND.equals(intent.getAction())) {
+      Bundle extras = intent.getExtras();
+      if(extras != null) {
+        detail = extras.getString(Intent.EXTRA_TEXT);
+      }
+    }
+
+    if(detail == null) {
+      //前回開いていたFragmentを表示
+      SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
+      which_menu_open = preferences.getInt(MENU_POSITION, 0);
+      which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
+      showList();
+
+      is_in_on_create = false;
+    }
+    else {
+
+      int size = generalSettings.getOrgNonScheduledLists().size();
+      String[] items = new String[size + 1];
+      items[0] = menu.findItem(R.id.scheduled_list).getTitle().toString();
+      for(int i = 0; i < size; i++) {
+        items[i + 1] = generalSettings.getNonScheduledList(i).getTitle();
+      }
+
+      new AlertDialog.Builder(this)
+          .setTitle(R.string.action_send_booted_dialog_title)
+          .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+              which_list = which;
+            }
+          })
+          .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+              which_menu_open = which_list;
+              which_submenu_open = 0;
+
+              showList();
+
+              is_in_on_create = false;
+            }
+          })
+          .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+              detail = null;
+              if(is_in_on_create) {
+                //前回開いていたFragmentを表示
+                SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
+                which_menu_open = preferences.getInt(MENU_POSITION, 0);
+                which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
+                showList();
+              }
+
+              is_in_on_create = false;
+            }
+          })
+          .setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+
+              detail = null;
+              if(is_in_on_create) {
+                //前回開いていたFragmentを表示
+                SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
+                which_menu_open = preferences.getInt(MENU_POSITION, 0);
+                which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
+                showList();
+              }
+
+              is_in_on_create = false;
+            }
+          })
+          .show();
+    }
+  }
+
+  private void showList() {
+
+    //前回開いていたNavigationDrawer上のメニューをリストアする
+    if(menuItem == null) {
+      menuItem = menu.getItem(which_menu_open);
+      oldMenuItem = menuItem;
+    }
+    else {
+      oldMenuItem = menuItem;
+      menuItem = menu.getItem(which_menu_open);
+    }
+
+    //選択状態のリストア
+    if(menuItem.hasSubMenu()) {
+      menuItem.getSubMenu().getItem(which_submenu_open).setChecked(true);
+    }
+    else menuItem.setChecked(true);
+
+    createAndSetFragmentColor();
+
+    if(order == 0) showExpandableListViewFragment();
+    else if(order == 1) showListViewFragment();
+    else if(order == 3) showManageListViewFragment();
   }
 
   @Override
@@ -268,17 +369,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //選択されたmenuItemに対応するフラグメントを表示
         oldMenuItem = this.menuItem;
         this.menuItem = menuItem;
+        createAndSetFragmentColor();
         switch(menuItem.getOrder()) {
           case 0:
-            createAndSetFragmentColor();
             showExpandableListViewFragment();
             break;
           case 1:
-            createAndSetFragmentColor();
             showListViewFragment();
             break;
           case 3:
-            createAndSetFragmentColor();
             showManageListViewFragment();
             break;
           case 4:
@@ -589,9 +688,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public List<Item> getNonScheduledItem(String table) {
 
+    long list_id = generalSettings.getNonScheduledList(which_menu_open - 1).getId();
     List<Item> itemList = new ArrayList<>();
     for(Item item : queryAllDB(table)) {
-      if(item.getWhich_list_belongs() == generalSettings.getNonScheduledList(which_menu_open - 1).getId()) {
+      if(item.getWhich_list_belongs() == list_id) {
         itemList.add(item);
       }
     }
@@ -882,6 +982,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .remove(manager.findFragmentByTag("ManageListViewFragment"))
           .remove(manager.findFragmentByTag("ActionBarFragment"))
           .add(R.id.content, MainEditFragment.newInstance(), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+  }
+
+  public void showMainEditFragment(String detail) {
+
+    int order = menuItem.getOrder();
+    FragmentManager manager = getFragmentManager();
+    if(order == 0) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ExpandableListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstance(detail), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 1) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstance(detail), "MainEditFragment")
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(order == 3) {
+      manager
+          .beginTransaction()
+          .remove(manager.findFragmentByTag("ManageListViewFragment"))
+          .remove(manager.findFragmentByTag("ActionBarFragment"))
+          .add(R.id.content, MainEditFragment.newInstance(detail), "MainEditFragment")
           .addToBackStack(null)
           .commit();
     }

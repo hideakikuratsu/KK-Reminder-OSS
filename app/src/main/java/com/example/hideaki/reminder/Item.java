@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 public class Item implements Serializable {
 
-  private static final long serialVersionUID = 1638801559411488363L;
+  private static final long serialVersionUID = -3106249767115010510L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
@@ -23,6 +23,7 @@ public class Item implements Serializable {
   private boolean org_alarm_stopped; //リピート設定による変更をスナックバーから元に戻すのに用いる
   private long which_list_belongs;
   private int order = -1;
+  private boolean selected;
 
   Item() {}
 
@@ -90,6 +91,10 @@ public class Item implements Serializable {
     return order;
   }
 
+  public boolean isSelected() {
+    return selected;
+  }
+
   public void setDetail(String detail) {
     this.detail = detail;
   }
@@ -152,5 +157,33 @@ public class Item implements Serializable {
 
   public void setOrder(int order) {
     this.order = order;
+  }
+
+  public void setSelected(boolean selected) {
+    this.selected = selected;
+  }
+
+  public Item copy() {
+
+    Item item = new Item();
+
+    item.setDetail(this.detail);
+    item.setDate((Calendar)this.date.clone());
+    item.setOrg_date((Calendar)this.org_date.clone());
+    item.setOrg_date2((Calendar)this.org_date2.clone());
+    item.setTag(this.tag); //TODO: TagクラスにCloneableを実装する
+    item.setNotify_interval(this.notify_interval); //TODO: NotifyIntervalクラスにCloneableを実装する
+    item.setDayRepeat(this.dayRepeat.clone());
+    item.setMinuteRepeat(this.minuteRepeat.clone());
+    item.setNotes(this.notes);
+    item.setTime_altered(this.time_altered);
+    item.setOrg_time_altered(this.org_time_altered);
+    item.setAlarm_stopped(this.alarm_stopped);
+    item.setOrg_alarm_stopped(this.org_alarm_stopped);
+    item.setWhich_list_belongs(this.which_list_belongs);
+    item.setOrder(this.order);
+    item.setSelected(this.selected);
+
+    return item;
   }
 }

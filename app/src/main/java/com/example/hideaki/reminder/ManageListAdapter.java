@@ -28,6 +28,7 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 
     ManageListAdapter.nonScheduledLists = nonScheduledLists;
     this.activity = (MainActivity)context;
+    has_panel = 0;
   }
 
   private static class ViewHolder {
@@ -65,11 +66,15 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
             viewHolder.control_panel.setVisibility(View.VISIBLE);
             notifyDataSetChanged();
           }
-          else viewHolder.control_panel.setVisibility(View.GONE);
+          else {
+            has_panel = 0;
+            viewHolder.control_panel.setVisibility(View.GONE);
+          }
           break;
         case R.id.edit:
           activity.listView.clearTextFilter();
           activity.showMainEditFragmentForList(list);
+          has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
         case R.id.notes:
@@ -181,8 +186,11 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
     viewHolder.detail.setText(list.getTitle());
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
-    if(list.getId() != has_panel && viewHolder.control_panel.getVisibility() == View.VISIBLE) {
+    if(viewHolder.control_panel.getVisibility() == View.VISIBLE && list.getId() != has_panel) {
       viewHolder.control_panel.setVisibility(View.GONE);
+    }
+    else if(viewHolder.control_panel.getVisibility() == View.GONE && list.getId() == has_panel) {
+      viewHolder.control_panel.setVisibility(View.VISIBLE);
     }
 
     viewHolder.list_card.setOnClickListener(listener);
