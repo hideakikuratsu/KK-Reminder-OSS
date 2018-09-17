@@ -22,7 +22,7 @@ public class GeneralSettings implements Serializable {
   }
 
   public void setNonScheduledLists(List<NonScheduledList> nonScheduledLists) {
-    this.nonScheduledLists = nonScheduledLists;
+    this.nonScheduledLists = new ArrayList<>(nonScheduledLists);
   }
 
   public void addNonScheduledList(NonScheduledList nonScheduledList) {

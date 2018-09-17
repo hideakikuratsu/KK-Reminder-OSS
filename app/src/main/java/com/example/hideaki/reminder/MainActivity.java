@@ -26,7 +26,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -36,7 +35,6 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private int which_submenu_open;
   ExpandableListView expandableListView;
   MyExpandableListAdapter expandableListAdapter;
-  ListView listView;
+  SortableListView listView;
   MyListAdapter listAdapter;
   ManageListAdapter manageListAdapter;
   ColorPickerListAdapter colorPickerListAdapter;

@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
-import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,20 +37,25 @@ import java.util.regex.Pattern;
 public class MyListAdapter extends BaseAdapter implements Filterable {
 
   static List<Item> itemList;
-  static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
+  private static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
   private boolean is_control_panel_locked;
   private final NonScheduledItemComparator nonScheduledItemComparator = new NonScheduledItemComparator();
-  private Context context;
   private MainActivity activity;
   ActionMode actionMode = null;
-  static int checked_item_num;
+  private static int checked_item_num;
   private static boolean manually_checked;
+  DragListener dragListener;
+  private int draggingPosition = -1;
+  static boolean is_sorting;
 
   MyListAdapter(List<Item> itemList, Context context) {
 
     MyListAdapter.itemList = itemList;
-    this.context = context;
     this.activity = (MainActivity)context;
+    checked_item_num = 0;
+    has_panel = 0;
+    dragListener = new DragListener();
+    is_sorting = false;
   }
 
   private static class ViewHolder {
@@ -143,7 +147,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
           }
         }, 400);
 
-        Snackbar.make(convertView, context.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
+        Snackbar.make(convertView, activity.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
             .addCallback(new Snackbar.Callback() {
               @Override
               public void onShown(Snackbar sb) {
@@ -482,6 +486,44 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     }
   }
 
+  class DragListener extends SortableListView.SimpleDragListener {
+
+    @Override
+    public int onStartDrag(int position) {
+
+      draggingPosition = position;
+      notifyDataSetChanged();
+
+      return position;
+    }
+
+    @Override
+    public int onDuringDrag(int positionFrom, int positionTo) {
+
+      if(positionFrom < 0 || positionTo < 0 || positionFrom == positionTo) {
+        return positionFrom;
+      }
+
+      Item item = itemList.get(positionFrom);
+      itemList.remove(positionFrom);
+      itemList.add(positionTo, item);
+
+      draggingPosition = positionTo;
+      notifyDataSetChanged();
+
+      return positionTo;
+    }
+
+    @Override
+    public boolean onStopDrag(int positionFrom, int positionTo) {
+
+      draggingPosition = -1;
+      notifyDataSetChanged();
+
+      return super.onStopDrag(positionFrom, positionTo);
+    }
+  }
+
   @Override
   public Filter getFilter() {
 
@@ -582,6 +624,10 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
     viewHolder.detail.setText(item.getDetail());
 
+    if(is_sorting) viewHolder.order_icon.setVisibility(View.VISIBLE);
+    else viewHolder.order_icon.setVisibility(View.GONE);
+
+    //各リスナーの設定
     viewHolder.item_card.setOnClickListener(listener);
     viewHolder.checkBox.setOnCheckedChangeListener(listener);
 
@@ -620,6 +666,9 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     manually_checked = true;
+
+    //並び替え中にドラッグしているアイテムが二重に表示されないようにする
+    convertView.setVisibility(position == draggingPosition ? View.INVISIBLE : View.VISIBLE);
 
     return convertView;
   }

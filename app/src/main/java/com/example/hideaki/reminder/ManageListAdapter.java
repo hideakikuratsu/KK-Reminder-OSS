@@ -23,12 +23,17 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
   static List<NonScheduledList> nonScheduledLists;
   private static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
   private MainActivity activity;
+  DragListener dragListener;
+  private int draggingPosition = -1;
+  static boolean is_sorting;
 
   ManageListAdapter(List<NonScheduledList> nonScheduledLists, Context context) {
 
     ManageListAdapter.nonScheduledLists = nonScheduledLists;
     this.activity = (MainActivity)context;
     has_panel = 0;
+    dragListener = new DragListener();
+    is_sorting = false;
   }
 
   private static class ViewHolder {
@@ -42,16 +47,12 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 
   private class MyOnClickListener implements View.OnClickListener {
 
-    private int position;
     private NonScheduledList list;
-    private View convertView;
     private ViewHolder viewHolder;
 
-    MyOnClickListener(int position, NonScheduledList list, View convertView, ViewHolder viewHolder) {
+    MyOnClickListener(NonScheduledList list, ViewHolder viewHolder) {
 
-      this.position = position;
       this.list = list;
-      this.convertView = convertView;
       this.viewHolder = viewHolder;
     }
 
@@ -82,6 +83,44 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 //          activity.showNotesFragment(list);
           break;
       }
+    }
+  }
+
+  class DragListener extends SortableListView.SimpleDragListener {
+
+    @Override
+    public int onStartDrag(int position) {
+
+      draggingPosition = position;
+      notifyDataSetChanged();
+
+      return position;
+    }
+
+    @Override
+    public int onDuringDrag(int positionFrom, int positionTo) {
+
+      if(positionFrom < 0 || positionTo < 0 || positionFrom == positionTo) {
+        return positionFrom;
+      }
+
+      NonScheduledList list = nonScheduledLists.get(positionFrom);
+      nonScheduledLists.remove(positionFrom);
+      nonScheduledLists.add(positionTo, list);
+
+      draggingPosition = positionTo;
+      notifyDataSetChanged();
+
+      return positionTo;
+    }
+
+    @Override
+    public boolean onStopDrag(int positionFrom, int positionTo) {
+
+      draggingPosition = -1;
+      notifyDataSetChanged();
+
+      return super.onStopDrag(positionFrom, positionTo);
     }
   }
 
@@ -181,18 +220,14 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
     }
 
     NonScheduledList list = (NonScheduledList)getItem(position);
-    MyOnClickListener listener = new MyOnClickListener(position, list, convertView, viewHolder);
+    MyOnClickListener listener = new MyOnClickListener(list, viewHolder);
 
     viewHolder.detail.setText(list.getTitle());
 
-    //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
-    if(viewHolder.control_panel.getVisibility() == View.VISIBLE && list.getId() != has_panel) {
-      viewHolder.control_panel.setVisibility(View.GONE);
-    }
-    else if(viewHolder.control_panel.getVisibility() == View.GONE && list.getId() == has_panel) {
-      viewHolder.control_panel.setVisibility(View.VISIBLE);
-    }
+    if(is_sorting) viewHolder.order_icon.setVisibility(View.VISIBLE);
+    else viewHolder.order_icon.setVisibility(View.GONE);
 
+    //各リスナーの設定
     viewHolder.list_card.setOnClickListener(listener);
 
     int control_panel_size = viewHolder.control_panel.getChildCount();
@@ -205,6 +240,14 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
       }
     }
 
+    //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
+    if(viewHolder.control_panel.getVisibility() == View.VISIBLE && list.getId() != has_panel) {
+      viewHolder.control_panel.setVisibility(View.GONE);
+    }
+    else if(viewHolder.control_panel.getVisibility() == View.GONE && list.getId() == has_panel) {
+      viewHolder.control_panel.setVisibility(View.VISIBLE);
+    }
+
     //パレットの色を設定
     if(list.getPrimary_color() != 0) {
       viewHolder.list_icon.setColorFilter(list.getPrimary_color());
@@ -212,6 +255,9 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
     else {
       viewHolder.list_icon.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray));
     }
+
+    //並び替え中にドラッグしているアイテムが二重に表示されないようにする
+    convertView.setVisibility(position == draggingPosition ? View.INVISIBLE : View.VISIBLE);
 
     return convertView;
   }

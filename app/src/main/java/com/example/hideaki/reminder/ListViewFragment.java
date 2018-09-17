@@ -53,9 +53,9 @@ public class ListViewFragment extends Fragment {
       }
     });
     activity.listAdapter = new MyListAdapter(activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE), activity);
-    MyListAdapter.has_panel = 0;
-    MyListAdapter.checked_item_num = 0;
     activity.listView = view.findViewById(R.id.listView);
+    activity.listView.setDragListener(activity.listAdapter.dragListener);
+    activity.listView.setSortable(true);
     activity.listView.setAdapter(activity.listAdapter);
     activity.listView.setTextFilterEnabled(true);
 

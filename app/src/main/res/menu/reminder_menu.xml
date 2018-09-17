@@ -9,6 +9,11 @@
         android:title="@string/next_group"
         app:showAsAction="always" />
     <item
+        android:id="@+id/sort"
+        android:icon="@drawable/ic_sort_24dp"
+        android:title="@string/sort"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/search_item"
         android:icon="@drawable/ic_search_white_24dp"
         android:title="Search"
