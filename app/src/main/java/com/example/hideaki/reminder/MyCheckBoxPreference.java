@@ -9,9 +9,16 @@ import android.widget.CompoundButton;
 
 public class MyCheckBoxPreference extends CheckBoxPreference {
 
-  public MyCheckBoxPreference(Context context, AttributeSet attrs) {
+  MyCheckBoxPreference(Context context) {
+    super(context);
+  }
 
+  public MyCheckBoxPreference(Context context, AttributeSet attrs) {
     super(context, attrs);
+  }
+
+  public MyCheckBoxPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    super(context, attrs, defStyleAttr);
   }
 
   @Override

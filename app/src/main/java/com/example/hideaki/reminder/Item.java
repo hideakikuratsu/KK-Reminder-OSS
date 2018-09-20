@@ -5,14 +5,14 @@ import java.util.Calendar;
 
 public class Item implements Serializable {
 
-  private static final long serialVersionUID = -3106249767115010510L;
+  private static final long serialVersionUID = 2562185011185031291L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
   //子ビューのコントロールパネルで時間を変えたときだけ時間を元に戻すのに用いる
   private Calendar org_date = (Calendar)date.clone();
   private Calendar org_date2 = (Calendar)date.clone(); //MinuteRepeatで元の時間を保持しておくのに用いる
-  private Tag tag = null;
+  private long which_tag_belongs;
   private NotifyInterval notify_interval = new NotifyInterval();
   private DayRepeat dayRepeat = new DayRepeat();
   private MinuteRepeat minuteRepeat = new MinuteRepeat();
@@ -47,8 +47,8 @@ public class Item implements Serializable {
     return org_date2;
   }
 
-  public Tag getTag() {
-    return tag;
+  public long getWhich_tag_belongs() {
+    return which_tag_belongs;
   }
 
   public NotifyInterval getNotify_interval() {
@@ -111,8 +111,8 @@ public class Item implements Serializable {
     this.org_date2 = org_date2;
   }
 
-  public void setTag(Tag tag) {
-    this.tag = tag;
+  public void setWhich_tag_belongs(long which_tag_belongs) {
+    this.which_tag_belongs = which_tag_belongs;
   }
 
   public void setNotify_interval(NotifyInterval notify_interval) {
@@ -171,8 +171,8 @@ public class Item implements Serializable {
     item.setDate((Calendar)this.date.clone());
     item.setOrg_date((Calendar)this.org_date.clone());
     item.setOrg_date2((Calendar)this.org_date2.clone());
-    item.setTag(this.tag); //TODO: TagクラスにCloneableを実装する
-    item.setNotify_interval(this.notify_interval); //TODO: NotifyIntervalクラスにCloneableを実装する
+    item.setWhich_tag_belongs(this.which_tag_belongs);
+    item.setNotify_interval(this.notify_interval.clone());
     item.setDayRepeat(this.dayRepeat.clone());
     item.setMinuteRepeat(this.minuteRepeat.clone());
     item.setNotes(this.notes);

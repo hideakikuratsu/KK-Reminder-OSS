@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,13 +46,25 @@ public class ListViewFragment extends Fragment {
       public boolean onKey(View v, int keyCode, KeyEvent event) {
 
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+
+          if(MyListAdapter.is_sorting) {
+            new AlertDialog.Builder(activity)
+                .setTitle(R.string.is_sorting_title)
+                .setMessage(R.string.is_sorting_message)
+                .show();
+
+            return true;
+          }
+
           if(activity.listAdapter.actionMode != null) {
             activity.listAdapter.actionMode.finish();
           }
         }
+
         return false;
       }
     });
+
     activity.listAdapter = new MyListAdapter(activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE), activity);
     activity.listView = view.findViewById(R.id.listView);
     activity.listView.setDragListener(activity.listAdapter.dragListener);

@@ -120,7 +120,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         DayRepeatEditFragment.custom.setChecked(false);
         MainEditFragment.dayRepeat.setSetted(1);
         MainEditFragment.dayRepeat.setWhich_template(1);
-        MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.everyday));
+        MainEditFragment.dayRepeat.setLabel(activity.getResources().getString(R.string.everyday));
         DayRepeatEditFragment.label.setSummary(R.string.everyday);
       }
       else if(DayRepeatCustomPickerPreference.week) {
@@ -141,7 +141,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
           DayRepeatEditFragment.custom.setChecked(false);
           MainEditFragment.dayRepeat.setSetted(1 << 1);
           MainEditFragment.dayRepeat.setWhich_template(1 << 1);
-          MainEditFragment.dayRepeat.setLabel(getActivity().getResources().getString(R.string.everyweekday));
+          MainEditFragment.dayRepeat.setLabel(activity.getResources().getString(R.string.everyweekday));
           DayRepeatEditFragment.label.setSummary(R.string.everyweekday);
         }
       }
@@ -318,7 +318,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
   public boolean onPreferenceClick(Preference preference) {
 
     switch(preference.getKey()) {
-      case "days_of_month":
+      case "days_of_month": {
         if(days_of_month.isChecked()) {
           MainEditFragment.dayRepeat.setDays_of_month_setted(true);
           on_the_month.setChecked(false);
@@ -327,7 +327,8 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         }
         else days_of_month.setChecked(true);
         return true;
-      case "on_the_month":
+      }
+      case "on_the_month": {
         if(on_the_month.isChecked()) {
           MainEditFragment.dayRepeat.setDays_of_month_setted(false);
           days_of_month.setChecked(false);
@@ -336,7 +337,9 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         }
         else on_the_month.setChecked(true);
         return true;
+      }
     }
+
     return false;
   }
 }

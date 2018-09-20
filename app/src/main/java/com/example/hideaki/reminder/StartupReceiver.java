@@ -54,9 +54,11 @@ public class StartupReceiver extends BroadcastReceiver {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
           alarmManager.setAlarmClock(
               new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
-        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        }
+        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
           alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-        } else {
+        }
+        else {
           alarmManager.set(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
         }
       }

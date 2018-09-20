@@ -56,7 +56,7 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
-          case SCROLL_STATE_IDLE:
+          case SCROLL_STATE_IDLE: {
             if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
               hour_picker.setValue(1);
             }
@@ -98,9 +98,11 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
               MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
             }
             break;
+          }
           case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL:
+          case SCROLL_STATE_TOUCH_SCROLL: {
             break;
+          }
         }
       }
     });
@@ -116,7 +118,7 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
-          case SCROLL_STATE_IDLE:
+          case SCROLL_STATE_IDLE: {
             if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
               hour_picker.setValue(1);
             }
@@ -158,9 +160,11 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
               MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
             }
             break;
+          }
           case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL:
+          case SCROLL_STATE_TOUCH_SCROLL: {
             break;
+          }
         }
       }
     });

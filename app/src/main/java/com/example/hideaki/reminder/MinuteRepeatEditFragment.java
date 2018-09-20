@@ -78,7 +78,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
           if(MainEditFragment.minuteRepeat.getInterval() > MainEditFragment.minuteRepeat.getOrgDuration()
               && duration.isChecked()) {
-            new AlertDialog.Builder(getActivity())
+            new AlertDialog.Builder(activity)
                 .setMessage(R.string.repeat_minute_illegal_dialog)
                 .show();
             return true;
@@ -104,21 +104,24 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
     count.setChecked(false);
     duration.setChecked(false);
     switch(MainEditFragment.minuteRepeat.getWhich_setted()) {
-      case 0:
+      case 0: {
         never.setChecked(true);
         rootPreferenceScreen.removePreference(count_picker);
         rootPreferenceScreen.removePreference(duration_picker);
         break;
-      case 1:
+      }
+      case 1: {
         count.setChecked(true);
         rootPreferenceScreen.addPreference(count_picker);
         rootPreferenceScreen.removePreference(duration_picker);
         break;
-      case 1 << 1:
+      }
+      case 1 << 1: {
         duration.setChecked(true);
         rootPreferenceScreen.removePreference(count_picker);
         rootPreferenceScreen.addPreference(duration_picker);
         break;
+      }
     }
 
     if(MainEditFragment.minuteRepeat.getLabel() == null) {
@@ -136,7 +139,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
 
     if(MainEditFragment.minuteRepeat.getInterval() > MainEditFragment.minuteRepeat.getOrgDuration()
         && duration.isChecked()) {
-      new AlertDialog.Builder(getActivity())
+      new AlertDialog.Builder(activity)
           .setMessage(R.string.repeat_minute_illegal_dialog)
           .show();
     }
@@ -150,11 +153,11 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
   public boolean onPreferenceClick(Preference preference) {
 
     switch(preference.getKey()) {
-      case "never":
+      case "never": {
         if(never.isChecked()) {
           label.setSummary(R.string.non_repeat);
 
-          MainEditFragment.minuteRepeat.setLabel(getActivity().getResources().getString(R.string.none));
+          MainEditFragment.minuteRepeat.setLabel(activity.getResources().getString(R.string.none));
           MainEditFragment.minuteRepeat.setWhich_setted(0);
 
           if(count.isChecked()) {
@@ -168,7 +171,8 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
         }
         else never.setChecked(true);
         return true;
-      case "count":
+      }
+      case "count": {
         if(count.isChecked()) {
           label_str = "タスク完了から";
           if(MainEditFragment.minuteRepeat.getHour() != 0) {
@@ -192,7 +196,8 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
         }
         else count.setChecked(true);
         return true;
-      case "duration":
+      }
+      case "duration": {
         if(duration.isChecked()) {
           label_str = "タスク完了から";
           if(MainEditFragment.minuteRepeat.getHour() != 0) {
@@ -223,7 +228,9 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
         }
         else duration.setChecked(true);
         return true;
+      }
     }
+
     return false;
   }
 }

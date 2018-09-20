@@ -141,14 +141,16 @@ public class DatePickerPreference extends Preference implements View.OnClickList
         }
 
         switch(scrollState) {
-          case SCROLL_STATE_IDLE:
+          case SCROLL_STATE_IDLE: {
             Calendar tmp = (Calendar)norm.clone();
             tmp.add(Calendar.DAY_OF_MONTH, day_picker.getValue());
             MainEditFragment.final_cal.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), tmp.get(Calendar.DAY_OF_MONTH));
             break;
+          }
           case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL:
+          case SCROLL_STATE_TOUCH_SCROLL: {
             break;
+          }
         }
       }
     });
@@ -164,12 +166,14 @@ public class DatePickerPreference extends Preference implements View.OnClickList
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
-          case SCROLL_STATE_IDLE:
+          case SCROLL_STATE_IDLE: {
             MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY, hour_picker.getValue());
             break;
+          }
           case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL:
+          case SCROLL_STATE_TOUCH_SCROLL: {
             break;
+          }
         }
       }
     });
@@ -185,12 +189,14 @@ public class DatePickerPreference extends Preference implements View.OnClickList
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
-          case SCROLL_STATE_IDLE:
+          case SCROLL_STATE_IDLE: {
             MainEditFragment.final_cal.set(Calendar.MINUTE, minute_picker.getValue());
             break;
+          }
           case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL:
+          case SCROLL_STATE_TOUCH_SCROLL: {
             break;
+          }
         }
       }
     });
@@ -220,7 +226,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
       case R.id.above_picker1:
       case R.id.above_picker2:
       case R.id.above_picker3:
-      case R.id.above_picker4:
+      case R.id.above_picker4: {
         quick_time = (TextView)v;
         String quick_time_str = quick_time.getText().toString();
         MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY,
@@ -228,20 +234,25 @@ public class DatePickerPreference extends Preference implements View.OnClickList
         MainEditFragment.final_cal.set(Calendar.MINUTE,
             Integer.parseInt(quick_time_str.substring(quick_time_str.indexOf(':') + 1)));
         break;
-      case R.id.below_picker1:
+      }
+      case R.id.below_picker1: {
         MainEditFragment.final_cal = (Calendar)Calendar.getInstance().clone();
         break;
-      case R.id.below_picker2:
+      }
+      case R.id.below_picker2: {
         MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY, MainEditFragment.final_cal.get(Calendar.HOUR_OF_DAY) + 3);
         break;
-      case R.id.below_picker3:
+      }
+      case R.id.below_picker3: {
         MainEditFragment.final_cal.add(Calendar.DAY_OF_MONTH, 7);
         break;
-      case R.id.below_picker4:
+      }
+      case R.id.below_picker4: {
         DatePickerDialogFragment dialog = new DatePickerDialogFragment();
         dialog.setInstance(this, saved_view);
         dialog.show(manager, "date_picker_fragment");
         break;
+      }
     }
 
     onBindView(saved_view);

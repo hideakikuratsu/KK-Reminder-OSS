@@ -2,9 +2,9 @@ package com.example.hideaki.reminder;
 
 import java.io.Serializable;
 
-public class NotifyInterval implements Serializable {
+public class NotifyInterval implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = 2239628138775849215L;
+  private static final long serialVersionUID = 7127233044277451486L;
   private int hour = 0;
   private int minute = 1;
   private int time = 5;
@@ -49,5 +49,19 @@ public class NotifyInterval implements Serializable {
 
   public void setOrg_time(int org_time) {
     this.org_time = org_time;
+  }
+
+  @Override
+  public NotifyInterval clone() {
+
+    NotifyInterval notifyInterval = null;
+
+    try {
+      notifyInterval = (NotifyInterval)super.clone();
+    } catch(CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+
+    return notifyInterval;
   }
 }

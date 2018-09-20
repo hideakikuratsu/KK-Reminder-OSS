@@ -4,6 +4,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/tag_search"
+        android:icon="@drawable/ic_pallet_24dp"
+        android:title="@string/tag_search"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/next_group_expand"
         android:icon="@drawable/ic_next_group_expand_white_24dp"
         android:title="@string/next_group"
@@ -16,12 +21,12 @@
     <item
         android:id="@+id/search_item"
         android:icon="@drawable/ic_search_white_24dp"
-        android:title="Search"
+        android:title="@string/search_task"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always" />
     <item
         android:id="@+id/add_item"
         android:icon="@drawable/ic_add_circle_24dp"
-        android:title="Item"
+        android:title="@string/add_task"
         app:showAsAction="always" />
 </menu>

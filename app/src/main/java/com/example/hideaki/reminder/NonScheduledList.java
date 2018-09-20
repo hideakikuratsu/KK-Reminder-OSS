@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 public class NonScheduledList implements Serializable {
 
-  private static final long serialVersionUID = -7263470795007235009L;
+  private static final long serialVersionUID = 8226176350573888422L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String title;
   private String notes;
@@ -16,6 +16,7 @@ public class NonScheduledList implements Serializable {
   private int color_order_group = -1;
   private int color_order_child = 5;
   private int order;
+  private long which_tag_belongs;
 
   NonScheduledList() {}
 
@@ -63,6 +64,10 @@ public class NonScheduledList implements Serializable {
     return order;
   }
 
+  public long getWhich_tag_belongs() {
+    return which_tag_belongs;
+  }
+
   public void setTitle(String title) {
     this.title = title;
   }
@@ -97,5 +102,9 @@ public class NonScheduledList implements Serializable {
 
   public void setOrder(int order) {
     this.order = order;
+  }
+
+  public void setWhich_tag_belongs(long which_tag_belongs) {
+    this.which_tag_belongs = which_tag_belongs;
   }
 }

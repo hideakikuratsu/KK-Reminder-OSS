@@ -2,7 +2,9 @@ package com.example.hideaki.reminder;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -14,11 +16,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class TagEditFragment extends PreferenceFragment {
+public class TagEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
   private MainActivity activity;
+  private PreferenceScreen rootPreferenceScreen;
+  private MyCheckBoxPreference none;
+  private Map<String, Long> keyList;
 
   public static TagEditFragment newInstance() {
 
@@ -38,6 +46,22 @@ public class TagEditFragment extends PreferenceFragment {
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.tag_edit);
     setHasOptionsMenu(true);
+
+    rootPreferenceScreen = getPreferenceScreen();
+    none = (MyCheckBoxPreference)findPreference("none");
+    none.setOnPreferenceClickListener(this);
+
+    //GeneralSettingsに登録されているTagを表示
+    keyList = new HashMap<>();
+    keyList.put("none", 0L);
+    for(Tag tag : activity.generalSettings.getTagList()) {
+      MyCheckBoxPreference checkBoxPreference = new MyCheckBoxPreference(activity);
+      checkBoxPreference.setKey(tag.getName());
+      keyList.put(tag.getName(), tag.getId());
+      checkBoxPreference.setTitle(tag.getName());
+      checkBoxPreference.setOnPreferenceClickListener(this);
+      rootPreferenceScreen.addPreference(checkBoxPreference);
+    }
   }
 
   @Override
@@ -58,6 +82,17 @@ public class TagEditFragment extends PreferenceFragment {
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.tag);
 
+    //チェック状態の初期化
+    long which_tag_belongs = MainEditFragment.item.getWhich_tag_belongs();
+    for(String key : keyList.keySet()) {
+      MyCheckBoxPreference checkBoxPreference = (MyCheckBoxPreference)findPreference(key);
+      checkBoxPreference.setChecked(false);
+      if(which_tag_belongs == keyList.get(key)) {
+        System.out.println(key + ": " + which_tag_belongs);
+        checkBoxPreference.setChecked(true);
+      }
+    }
+
     return view;
   }
 
@@ -72,13 +107,29 @@ public class TagEditFragment extends PreferenceFragment {
   public boolean onOptionsItemSelected(MenuItem item) {
 
     switch(item.getItemId()) {
-      case R.id.edit:
+      case R.id.edit: {
         return true;
-      case android.R.id.home:
+      }
+      case android.R.id.home: {
         getFragmentManager().popBackStack();
         return true;
-      default:
+      }
+      default: {
         return super.onOptionsItemSelected(item);
+      }
     }
+  }
+
+  @Override
+  public boolean onPreferenceClick(Preference preference) {
+
+    for(String key : keyList.keySet()) {
+      ((MyCheckBoxPreference)findPreference(key)).setChecked(false);
+      if(preference.getKey().equals(key)) {
+        MainEditFragment.item.setWhich_tag_belongs(keyList.get(key));
+      }
+    }
+    ((MyCheckBoxPreference)preference).setChecked(true);
+    return false;
   }
 }

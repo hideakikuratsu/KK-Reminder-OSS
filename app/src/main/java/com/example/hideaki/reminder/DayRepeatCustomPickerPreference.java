@@ -51,12 +51,14 @@ public class DayRepeatCustomPickerPreference extends Preference {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
-          case SCROLL_STATE_IDLE:
+          case SCROLL_STATE_IDLE: {
             MainEditFragment.dayRepeat.setInterval(interval.getValue());
             break;
+          }
           case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL:
+          case SCROLL_STATE_TOUCH_SCROLL: {
             break;
+          }
         }
       }
     });
@@ -102,7 +104,7 @@ public class DayRepeatCustomPickerPreference extends Preference {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
-          case SCROLL_STATE_IDLE:
+          case SCROLL_STATE_IDLE: {
             MainEditFragment.dayRepeat.setScale(scale.getValue());
             if(MainEditFragment.dayRepeat.getScale() == 1) {
 
@@ -205,9 +207,11 @@ public class DayRepeatCustomPickerPreference extends Preference {
               year = true;
             }
             break;
+          }
           case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL:
+          case SCROLL_STATE_TOUCH_SCROLL: {
             break;
+          }
         }
       }
     });

@@ -1,6 +1,5 @@
 package com.example.hideaki.reminder;
 
-import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -26,11 +25,12 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
   DragListener dragListener;
   private int draggingPosition = -1;
   static boolean is_sorting;
+  private List<NonScheduledList> filteredLists;
 
-  ManageListAdapter(List<NonScheduledList> nonScheduledLists, Context context) {
+  ManageListAdapter(List<NonScheduledList> nonScheduledLists, MainActivity activity) {
 
     ManageListAdapter.nonScheduledLists = nonScheduledLists;
-    this.activity = (MainActivity)context;
+    this.activity = activity;
     has_panel = 0;
     dragListener = new DragListener();
     is_sorting = false;
@@ -61,7 +61,7 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 
       activity.actionBarFragment.searchView.clearFocus();
       switch(v.getId()) {
-        case R.id.list_card:
+        case R.id.list_card: {
           if(viewHolder.control_panel.getVisibility() == View.GONE) {
             has_panel = list.getId();
             viewHolder.control_panel.setVisibility(View.VISIBLE);
@@ -72,16 +72,19 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
             viewHolder.control_panel.setVisibility(View.GONE);
           }
           break;
-        case R.id.edit:
+        }
+        case R.id.edit: {
           activity.listView.clearTextFilter();
           activity.showMainEditFragmentForList(list);
           has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
-        case R.id.notes:
+        }
+        case R.id.notes: {
           activity.listView.clearTextFilter();
 //          activity.showNotesFragment(list);
           break;
+        }
       }
     }
   }
@@ -141,9 +144,14 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
         }
 
         //検索処理
-        nonScheduledLists = activity.generalSettings.getNonScheduledLists();
+        if(ActionBarFragment.checked_tag == -1) {
+          nonScheduledLists = new ArrayList<>(activity.generalSettings.getNonScheduledLists());
+        }
+        else {
+          nonScheduledLists = ActionBarFragment.nonScheduledLists;
+        }
 
-        List<NonScheduledList> filteredLists = new ArrayList<>();
+        filteredLists = new ArrayList<>();
         for(NonScheduledList list : nonScheduledLists) {
           if(list.getTitle() != null) {
             String detail = list.getTitle();
@@ -182,19 +190,16 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 
   @Override
   public int getCount() {
-
     return nonScheduledLists.size();
   }
 
   @Override
   public Object getItem(int position) {
-
     return nonScheduledLists.get(position);
   }
 
   @Override
   public long getItemId(int position) {
-
     return position;
   }
 
@@ -219,13 +224,9 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
       viewHolder = (ViewHolder)convertView.getTag();
     }
 
+    //現在のビュー位置でのlistの取得とリスナーの初期化
     NonScheduledList list = (NonScheduledList)getItem(position);
     MyOnClickListener listener = new MyOnClickListener(list, viewHolder);
-
-    viewHolder.detail.setText(list.getTitle());
-
-    if(is_sorting) viewHolder.order_icon.setVisibility(View.VISIBLE);
-    else viewHolder.order_icon.setVisibility(View.GONE);
 
     //各リスナーの設定
     viewHolder.list_card.setOnClickListener(listener);
@@ -239,6 +240,9 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
         panel_item.setOnClickListener(listener);
       }
     }
+
+    //各種表示処理
+    viewHolder.detail.setText(list.getTitle());
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
     if(viewHolder.control_panel.getVisibility() == View.VISIBLE && list.getId() != has_panel) {
@@ -255,6 +259,9 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
     else {
       viewHolder.list_icon.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray));
     }
+
+    if(is_sorting) viewHolder.order_icon.setVisibility(View.VISIBLE);
+    else viewHolder.order_icon.setVisibility(View.GONE);
 
     //並び替え中にドラッグしているアイテムが二重に表示されないようにする
     convertView.setVisibility(position == draggingPosition ? View.INVISIBLE : View.VISIBLE);

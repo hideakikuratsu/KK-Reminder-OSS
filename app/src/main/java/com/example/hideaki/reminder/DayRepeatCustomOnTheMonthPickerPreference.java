@@ -47,12 +47,14 @@ public class DayRepeatCustomOnTheMonthPickerPreference extends Preference {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
-          case SCROLL_STATE_IDLE:
+          case SCROLL_STATE_IDLE: {
             MainEditFragment.dayRepeat.setOrdinal_number(ordinal_number.getValue());
             break;
+          }
           case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL:
+          case SCROLL_STATE_TOUCH_SCROLL: {
             break;
+          }
         }
       }
     });
@@ -71,12 +73,14 @@ public class DayRepeatCustomOnTheMonthPickerPreference extends Preference {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
         switch(scrollState) {
-          case SCROLL_STATE_IDLE:
+          case SCROLL_STATE_IDLE: {
             MainEditFragment.dayRepeat.setOn_the_month(Week.values()[day_of_week.getValue()]);
             break;
+          }
           case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL:
+          case SCROLL_STATE_TOUCH_SCROLL: {
             break;
+          }
         }
       }
     });

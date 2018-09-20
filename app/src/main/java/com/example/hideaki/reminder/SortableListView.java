@@ -22,7 +22,7 @@ public class SortableListView extends ListView {
   private static final int SCROLL_SPEED_SLOW = 8;
   private static final Bitmap.Config DRAG_BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
 
-  boolean sortable = false;
+  private boolean sortable = false;
   private boolean is_dragging = false;
   private DragListener dragListener = new SimpleDragListener();
   private int bitmapBackgroundColor = Color.argb(0, 0xFF, 0xFF, 0xFF);
@@ -68,6 +68,9 @@ public class SortableListView extends ListView {
   @Override
   public boolean onInterceptTouchEvent(MotionEvent ev) {
 
+    if(TagEditListAdapter.is_sorting) {
+      return eventToPosition(ev) != 0;
+    }
     return MyListAdapter.is_sorting || ManageListAdapter.is_sorting || super.onInterceptTouchEvent(ev);
   }
 

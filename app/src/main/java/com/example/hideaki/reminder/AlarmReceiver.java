@@ -86,9 +86,11 @@ public class AlarmReceiver extends BroadcastReceiver {
       if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         alarmManager.setAlarmClock(
             new AlarmManager.AlarmClockInfo(reset_schedule, null), recursive_sender);
-      } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      }
+      else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, reset_schedule, recursive_sender);
-      } else {
+      }
+      else {
         alarmManager.set(AlarmManager.RTC_WAKEUP, reset_schedule, recursive_sender);
       }
     }

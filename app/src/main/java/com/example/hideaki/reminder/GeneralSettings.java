@@ -6,26 +6,31 @@ import java.util.List;
 
 public class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = 7547092849110283632L;
+  private static final long serialVersionUID = 5141214717476464740L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
-
-  public NonScheduledList getNonScheduledList(int position) {
-    return nonScheduledLists.get(position);
-  }
+  private List<Tag> tagList = new ArrayList<>();
 
   public List<NonScheduledList> getNonScheduledLists() {
-    return new ArrayList<>(nonScheduledLists);
-  }
-
-  public List<NonScheduledList> getOrgNonScheduledLists() {
     return nonScheduledLists;
   }
 
-  public void setNonScheduledLists(List<NonScheduledList> nonScheduledLists) {
-    this.nonScheduledLists = new ArrayList<>(nonScheduledLists);
+  public List<Tag> getTagList() {
+    return tagList;
   }
 
-  public void addNonScheduledList(NonScheduledList nonScheduledList) {
-    this.nonScheduledLists.add(0, nonScheduledList);
+  public Tag getTagById(long id) {
+
+    for(Tag tag : tagList) {
+      if(tag.getId() == id) return tag;
+    }
+    return null;
+  }
+
+  public void setNonScheduledLists(List<NonScheduledList> nonScheduledLists) {
+    this.nonScheduledLists = nonScheduledLists;
+  }
+
+  public void setTagList(List<Tag> tagList) {
+    this.tagList = tagList;
   }
 }

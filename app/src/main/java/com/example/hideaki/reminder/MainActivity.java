@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   MyListAdapter listAdapter;
   ManageListAdapter manageListAdapter;
   ColorPickerListAdapter colorPickerListAdapter;
+  TagEditListAdapter tagEditListAdapter;
   DrawerLayout drawerLayout;
   NavigationView navigationView;
   ActionBarDrawerToggle drawerToggle;
@@ -123,10 +124,65 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     navigationView.setItemIconTintList(null);
     navigationView.setNavigationItemSelectedListener(this);
 
+    //前回開いていたFragmentのインデックスを取得する
+    SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
+    which_menu_open = preferences.getInt(MENU_POSITION, 0);
+    which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
+
     //共通設定と新しく追加したリストのリストア
     generalSettings = querySettingsDB();
-    if(generalSettings == null) generalSettings = new GeneralSettings();
-    for(NonScheduledList list : generalSettings.getOrgNonScheduledLists()) {
+    if(generalSettings == null) {
+      generalSettings = new GeneralSettings();
+
+      //データベースを新たに作成する場合、基本的なタグを追加しておく
+
+      //タグなし
+      Tag tag = new Tag(0);
+      tag.setName(getString(R.string.none));
+      tag.setPrimary_color(0);
+      tag.setOrder(0);
+      generalSettings.getTagList().add(tag);
+
+      //家事タグ
+      tag = new Tag(1);
+      tag.setName(getString(R.string.home));
+      tag.setPrimary_color(Color.parseColor("#4caf50"));
+      tag.setPrimary_light_color(Color.parseColor("#80e27e"));
+      tag.setPrimary_dark_color(Color.parseColor("#087f23"));
+      tag.setPrimary_text_color(Color.parseColor("#000000"));
+      tag.setColor_order_group(9);
+      tag.setColor_order_child(5);
+      tag.setOrder(1);
+      generalSettings.getTagList().add(tag);
+
+      //仕事タグ
+      tag = new Tag(2);
+      tag.setName(getString(R.string.work));
+      tag.setPrimary_color(Color.parseColor("#2196f3"));
+      tag.setPrimary_light_color(Color.parseColor("#6ec6ff"));
+      tag.setPrimary_dark_color(Color.parseColor("#0069c0"));
+      tag.setPrimary_text_color(Color.parseColor("#000000"));
+      tag.setColor_order_group(5);
+      tag.setColor_order_child(5);
+      tag.setOrder(2);
+      generalSettings.getTagList().add(tag);
+
+      //ショッピングタグ
+      tag = new Tag(3);
+      tag.setName(getString(R.string.shopping));
+      tag.setPrimary_color(Color.parseColor("#f44336"));
+      tag.setPrimary_light_color(Color.parseColor("#ff7961"));
+      tag.setPrimary_dark_color(Color.parseColor("#ba000d"));
+      tag.setPrimary_text_color(Color.parseColor("#000000"));
+      tag.setColor_order_group(0);
+      tag.setColor_order_child(5);
+      tag.setOrder(3);
+      generalSettings.getTagList().add(tag);
+
+      insertSettingsDB();
+    }
+
+    for(NonScheduledList list : generalSettings.getNonScheduledLists()) {
       Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_my_list_24dp);
       checkNotNull(drawable);
       drawable = drawable.mutate();
@@ -143,8 +199,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //Adapterの初期化
     expandableListAdapter = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
-    manageListAdapter = new ManageListAdapter(generalSettings.getNonScheduledLists(), this);
+    manageListAdapter = new ManageListAdapter(new ArrayList<>(generalSettings.getNonScheduledLists()), this);
     colorPickerListAdapter = new ColorPickerListAdapter(this);
+    tagEditListAdapter = new TagEditListAdapter(new ArrayList<>(generalSettings.getTagList()), this);
 
     //Intentが送られている場合はonNewIntent()に渡す(送られていない場合は通常の初期化処理を行う)
     is_in_on_create = true;
@@ -176,21 +233,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     if(detail == null) {
-      //前回開いていたFragmentを表示
-      SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
-      which_menu_open = preferences.getInt(MENU_POSITION, 0);
-      which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
       showList();
-
       is_in_on_create = false;
     }
     else {
 
-      int size = generalSettings.getOrgNonScheduledLists().size();
+      int size = generalSettings.getNonScheduledLists().size();
       String[] items = new String[size + 1];
       items[0] = menu.findItem(R.id.scheduled_list).getTitle().toString();
       for(int i = 0; i < size; i++) {
-        items[i + 1] = generalSettings.getNonScheduledList(i).getTitle();
+        items[i + 1] = generalSettings.getNonScheduledLists().get(i).getTitle();
       }
 
       new AlertDialog.Builder(this)
@@ -198,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
               which_list = which;
             }
           })
@@ -210,7 +261,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
               which_submenu_open = 0;
 
               showList();
-
               is_in_on_create = false;
             }
           })
@@ -219,14 +269,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(DialogInterface dialog, int which) {
 
               detail = null;
-              if(is_in_on_create) {
-                //前回開いていたFragmentを表示
-                SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
-                which_menu_open = preferences.getInt(MENU_POSITION, 0);
-                which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
-                showList();
-              }
-
+              if(is_in_on_create) showList();
               is_in_on_create = false;
             }
           })
@@ -235,14 +278,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onCancel(DialogInterface dialog) {
 
               detail = null;
-              if(is_in_on_create) {
-                //前回開いていたFragmentを表示
-                SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
-                which_menu_open = preferences.getInt(MENU_POSITION, 0);
-                which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
-                showList();
-              }
-
+              if(is_in_on_create) showList();
               is_in_on_create = false;
             }
           })
@@ -255,18 +291,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //前回開いていたNavigationDrawer上のメニューをリストアする
     if(menuItem == null) {
       menuItem = menu.getItem(which_menu_open);
+      if(menuItem.hasSubMenu()) {
+        menuItem = menuItem.getSubMenu().getItem(which_submenu_open);
+      }
       oldMenuItem = menuItem;
     }
     else {
       oldMenuItem = menuItem;
       menuItem = menu.getItem(which_menu_open);
+      if(menuItem.hasSubMenu()) {
+        menuItem = menuItem.getSubMenu().getItem(which_submenu_open);
+      }
     }
 
     //選択状態のリストア
-    if(menuItem.hasSubMenu()) {
-      menuItem.getSubMenu().getItem(which_submenu_open).setChecked(true);
-    }
-    else menuItem.setChecked(true);
+    menuItem.setChecked(true);
 
     createAndSetFragmentColor();
 
@@ -353,6 +392,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SubMenu subMenu = menu.getItem(i).getSubMenu();
             for(int j = 0; j < subMenu.size(); j++) {
               if(subMenu.getItem(j) == menuItem) {
+                which_menu_open = i;
                 which_submenu_open = j;
               }
               subMenu.getItem(j).setChecked(false);
@@ -369,21 +409,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.menuItem = menuItem;
         createAndSetFragmentColor();
         switch(menuItem.getOrder()) {
-          case 0:
+          case 0: {
             showExpandableListViewFragment();
             break;
-          case 1:
+          }
+          case 1: {
             showListViewFragment();
             break;
-          case 3:
+          }
+          case 3: {
             showManageListViewFragment();
             break;
-          case 4:
+          }
+          case 4: {
             break;
-          case 5:
+          }
+          case 5: {
             break;
-          case 6:
+          }
+          case 6: {
             break;
+          }
         }
       }
     }
@@ -411,12 +457,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(DialogInterface dialog, int which) {
 
               //GeneralSettingsとManageListAdapterへの反映
-              generalSettings.addNonScheduledList(new NonScheduledList(editText.getText().toString()));
-              int size = generalSettings.getOrgNonScheduledLists().size();
-              for(int i = 0; i < size; i++) {
-                generalSettings.getOrgNonScheduledLists().get(i).setOrder(i);
+              String name = editText.getText().toString();
+              if(name.equals("")) {
+                name = getString(R.string.default_list);
               }
-              ManageListAdapter.nonScheduledLists = generalSettings.getNonScheduledLists();
+              generalSettings.getNonScheduledLists().add(0, new NonScheduledList(name));
+              int size = generalSettings.getNonScheduledLists().size();
+              for(int i = 0; i < size; i++) {
+                generalSettings.getNonScheduledLists().get(i).setOrder(i);
+              }
+              ManageListAdapter.nonScheduledLists = new ArrayList<>(generalSettings.getNonScheduledLists());
               manageListAdapter.notifyDataSetChanged();
 
               //一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
@@ -431,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                   .setCheckable(false);
 
               //新しく追加したリストのリストア
-              for(NonScheduledList list : generalSettings.getOrgNonScheduledLists()) {
+              for(NonScheduledList list : generalSettings.getNonScheduledLists()) {
                 Drawable drawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_my_list_24dp);
                 checkNotNull(drawable);
                 drawable = drawable.mutate();
@@ -449,10 +499,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
               }
 
               //データベースへの反映
-              if(querySettingsDB() == null) {
-                insertSettingsDB();
-              }
-              else updateSettingsDB();
+              updateSettingsDB();
             }
           })
           .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -568,9 +615,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         alarmManager.setAlarmClock(
             new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
-      } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      }
+      else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-      } else {
+      }
+      else {
         alarmManager.set(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
       }
     }
@@ -626,13 +675,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(sub_time < 0) {
           past_list.add(item);
-        } else if(sub_day < 1 && spec_day == now.get(Calendar.DAY_OF_MONTH)) {
+        }
+        else if(sub_day < 1 && spec_day == now.get(Calendar.DAY_OF_MONTH)) {
           today_list.add(item);
-        } else if(sub_day < 2 && spec_day == tomorrow.get(Calendar.DAY_OF_MONTH)) {
+        }
+        else if(sub_day < 2 && spec_day == tomorrow.get(Calendar.DAY_OF_MONTH)) {
           tomorrow_list.add(item);
-        } else if(sub_day < 8) {
+        }
+        else if(sub_day < 8) {
           week_list.add(item);
-        } else {
+        }
+        else {
           future_list.add(item);
         }
       }
@@ -686,7 +739,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public List<Item> getNonScheduledItem(String table) {
 
-    long list_id = generalSettings.getNonScheduledList(which_menu_open - 1).getId();
+    long list_id = generalSettings.getNonScheduledLists().get(which_menu_open - 1).getId();
     List<Item> itemList = new ArrayList<>();
     for(Item item : queryAllDB(table)) {
       if(item.getWhich_list_belongs() == list_id) {
@@ -788,7 +841,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //開いているFragmentに応じた色を作成
     order = menuItem.getOrder();
     if(order == 1) {
-      NonScheduledList list = generalSettings.getNonScheduledList(which_menu_open - 1);
+      NonScheduledList list = generalSettings.getNonScheduledLists().get(which_menu_open - 1);
       if(list.getPrimary_color() != 0) {
         menu_item_color = list.getPrimary_text_color();
         menu_background_color = list.getPrimary_color();
@@ -823,6 +876,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
   }
 
+  public void showTagEditListViewFragment() {
+
+    FragmentManager manager = getFragmentManager();
+    manager
+        .beginTransaction()
+        .remove(manager.findFragmentByTag("MainEditFragment"))
+        .add(R.id.content, TagEditListViewFragment.newInstance(), "TagEditListViewFragment")
+        .addToBackStack(null)
+        .commit();
+  }
+
   public void showColorPickerListViewFragment() {
 
     int order = menuItem.getOrder();
@@ -838,6 +902,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .addToBackStack(null)
           .commit();
     }
+  }
+
+  public void showColorPickerListViewFragment(int tag_position) {
+
+    ColorPickerListViewFragment.tag_position = tag_position;
+    FragmentManager manager = getFragmentManager();
+    manager
+        .beginTransaction()
+        .remove(manager.findFragmentByTag("TagEditListViewFragment"))
+        .add(R.id.content, ColorPickerListViewFragment.newInstance(), "ColorPickerListViewFragment")
+        .addToBackStack(null)
+        .commit();
   }
 
   public void showManageListViewFragment() {

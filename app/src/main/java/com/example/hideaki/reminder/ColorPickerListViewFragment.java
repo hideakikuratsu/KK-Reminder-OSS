@@ -17,6 +17,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ColorPickerListViewFragment extends Fragment {
 
   private MainActivity activity;
+  static int order;
+  static int tag_position;
 
   public static ColorPickerListViewFragment newInstance() {
 
@@ -28,6 +30,16 @@ public class ColorPickerListViewFragment extends Fragment {
 
     super.onAttach(context);
     activity = (MainActivity)context;
+    order = activity.menuItem.getOrder();
+    ColorPickerListAdapter.order = order;
+    activity.colorPickerListAdapter.adapterTag = TagEditListAdapter.tagList.get(tag_position);
+    activity.colorPickerListAdapter.orgTag = activity.generalSettings.getTagList().get(tag_position);
+    if(order == 0 || order == 1) {
+      ColorPickerListAdapter.checked_position = activity.colorPickerListAdapter.adapterTag.getColor_order_group();
+    }
+    else if(order == 3) {
+      ColorPickerListAdapter.checked_position = MainEditFragment.list.getColor_order_group();
+    }
   }
 
   @Override
@@ -64,11 +76,13 @@ public class ColorPickerListViewFragment extends Fragment {
 
     switch(item.getItemId()) {
 
-      case android.R.id.home:
+      case android.R.id.home: {
         getFragmentManager().popBackStack();
         return true;
-      default:
+      }
+      default: {
         return super.onOptionsItemSelected(item);
+      }
     }
   }
 }

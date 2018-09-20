@@ -43,7 +43,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private static boolean[] display_groups = new boolean[5];
   static final List<String> groups = new ArrayList<>();
   static List<List<Item>> children;
-  private Context context;
   static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
   private final ScheduledItemComparator scheduledItemComparator = new ScheduledItemComparator();
   private final NonScheduledItemComparator nonScheduledItemComparator = new NonScheduledItemComparator();
@@ -52,6 +51,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   ActionMode actionMode = null;
   static int checked_item_num;
   private static boolean manually_checked;
+  List<List<Item>> filteredList;
 
   static {
     groups.add("過去");
@@ -61,11 +61,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     groups.add("一週間以上");
   }
 
-  MyExpandableListAdapter(List<List<Item>> children, Context context) {
+  MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
     
     MyExpandableListAdapter.children = children;
-    this.context = context;
-    this.activity = (MainActivity)context;
+    this.activity = activity;
   }
 
   private static class ChildViewHolder {
@@ -76,6 +75,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     TextView detail;
     TextView repeat;
     CheckBox checkBox;
+    ImageView tagPallet;
     TableLayout control_panel;
   }
 
@@ -106,7 +106,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       boolean is_database_updated = false;
       activity.actionBarFragment.searchView.clearFocus();
       switch(v.getId()) {
-        case R.id.child_card:
+        case R.id.child_card: {
 
           if(actionMode == null) {
             if(viewHolder.control_panel.getVisibility() == View.GONE) {
@@ -126,7 +126,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
           else viewHolder.checkBox.setChecked(true);
           break;
-        case R.id.clock_image:
+        }
+        case R.id.clock_image: {
 
           if(actionMode == null) {
             if(item.getTime_altered() == 0 && activity.isAlarmSetted(item)) {
@@ -157,7 +158,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
           else viewHolder.checkBox.setChecked(true);
           break;
-        case R.id.m5m:
+        }
+        case R.id.m5m: {
           if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 5 * 60 * 1000) {
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
@@ -175,7 +177,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             displayDate(viewHolder, item);
           }
           break;
-        case R.id.m1h:
+        }
+        case R.id.m1h: {
           if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 60 * 60 * 1000) {
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
@@ -193,7 +196,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             displayDate(viewHolder, item);
           }
           break;
-        case R.id.m1d:
+        }
+        case R.id.m1d: {
           if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 24 * 60 * 60 * 1000) {
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
@@ -211,13 +215,15 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             displayDate(viewHolder, item);
           }
           break;
-        case R.id.edit:
+        }
+        case R.id.edit: {
           activity.expandableListView.clearTextFilter();
           activity.showMainEditFragment(item);
           has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
-        case R.id.p5m:
+        }
+        case R.id.p5m: {
           if(item.getTime_altered() == 0) {
             item.setOrg_date((Calendar)item.getDate().clone());
           }
@@ -239,7 +245,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           displayDate(viewHolder, item);
           break;
-        case R.id.p1h:
+        }
+        case R.id.p1h: {
           if(item.getTime_altered() == 0) {
             item.setOrg_date((Calendar)item.getDate().clone());
           }
@@ -261,7 +268,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           displayDate(viewHolder, item);
           break;
-        case R.id.p1d:
+        }
+        case R.id.p1d: {
           if(item.getTime_altered() == 0) {
             item.setOrg_date((Calendar)item.getDate().clone());
           }
@@ -283,10 +291,12 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           displayDate(viewHolder, item);
           break;
-        case R.id.notes:
+        }
+        case R.id.notes: {
           activity.expandableListView.clearTextFilter();
           activity.showNotesFragment(item);
           break;
+        }
       }
 
       if(is_database_updated) {
@@ -974,7 +984,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     tmp3.add(Calendar.MONTH, -1);
                     if(tmp2.get(Calendar.MONTH) == month) {
                       tmp.add(Calendar.DAY_OF_MONTH, 7);
-                    } else if(tmp3.get(Calendar.MONTH) == month) {
+                    }
+                    else if(tmp3.get(Calendar.MONTH) == month) {
                       tmp.add(Calendar.DAY_OF_MONTH, -7);
                     }
 
@@ -1185,7 +1196,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.timer.schedule(activity.timerTask, 400, 1000);
         }
 
-        Snackbar.make(convertView, context.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
+        Snackbar.make(convertView, activity.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
             .addCallback(new Snackbar.Callback() {
               @Override
               public void onShown(Snackbar sb) {
@@ -1316,7 +1327,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
 
       switch(menuItem.getItemId()) {
-        case R.id.delete:
+        case R.id.delete: {
 
           itemListToMove = new ArrayList<>();
           for(List<Item> itemList : children) {
@@ -1357,12 +1368,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .show();
 
           return true;
-        case R.id.move_task_between_list:
+        }
+        case R.id.move_task_between_list: {
 
           itemListToMove = new ArrayList<>();
           for(List<Item> itemList : children) {
@@ -1393,7 +1406,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                  long list_id = activity.generalSettings.getNonScheduledList(which_list).getId();
+                  long list_id = activity.generalSettings.getNonScheduledLists().get(which_list).getId();
                   MyListAdapter.itemList = new ArrayList<>();
                   for(Item item : activity.queryAllDB(MyDatabaseHelper.TODO_TABLE)) {
                     if(item.getWhich_list_belongs() == list_id) {
@@ -1437,12 +1450,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .show();
 
           return true;
-        case R.id.clone:
+        }
+        case R.id.clone: {
 
           itemListToMove = new ArrayList<>();
           for(List<Item> itemList : children) {
@@ -1453,7 +1468,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             }
           }
 
-          message = itemListToMove.size() + activity.getString(R.string.cab_clone_message);
+          String message = itemListToMove.size() + activity.getString(R.string.cab_clone_message);
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_clone)
               .setMessage(message)
@@ -1472,16 +1487,19 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               })
               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .show();
 
           return true;
-        case R.id.share:
+        }
+        case R.id.share: {
 
           itemListToMove = new ArrayList<>();
           for(List<Item> itemList : children) {
@@ -1492,7 +1510,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             }
           }
 
-          message = itemListToMove.size() + activity.getString(R.string.cab_share_message);
+          String message = itemListToMove.size() + activity.getString(R.string.cab_share_message);
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_share)
               .setMessage(message)
@@ -1521,18 +1539,22 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               })
               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .show();
 
           return true;
-        default:
+        }
+        default: {
           actionMode.finish();
           return true;
+        }
       }
     }
 
@@ -1577,9 +1599,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
 
         //検索処理
-        children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+        if(ActionBarFragment.checked_tag == -1) {
+          children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+        }
+        else {
+          children = ActionBarFragment.filteredLists;
+        }
 
-        List<List<Item>> filteredList = new ArrayList<>();
+        filteredList = new ArrayList<>();
         for(List<Item> itemList : children) {
           List<Item> filteredItem = new ArrayList<>();
 
@@ -1587,16 +1614,12 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             if(item.getDetail() != null) {
               String detail = item.getDetail();
 
-              if(!is_upper) {
-                detail = detail.toLowerCase();
-              }
+              if(!is_upper) detail = detail.toLowerCase();
 
               Pattern pattern = Pattern.compile(constraint.toString());
               Matcher matcher = pattern.matcher(detail);
 
-              if(matcher.find()) {
-                filteredItem.add(item);
-              }
+              if(matcher.find()) filteredItem.add(item);
             }
           }
 
@@ -1734,6 +1757,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.repeat = convertView.findViewById(R.id.repeat);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
+      viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
 
       convertView.setTag(viewHolder);
@@ -1756,11 +1780,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       }
     }
 
-    //設定された時間、詳細、リピート通知のインターバルを表示
-    displayDate(viewHolder, item);
-    viewHolder.detail.setText(item.getDetail());
-    displayRepeat(viewHolder, item);
-
     //各リスナーの設定
     viewHolder.child_card.setOnClickListener(listener);
     viewHolder.clock_image.setOnClickListener(listener);
@@ -1778,6 +1797,20 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         TextView panel_item = (TextView)tableRow.getChildAt(k);
         panel_item.setOnClickListener(listener);
       }
+    }
+
+    //各種表示処理
+    displayDate(viewHolder, item);
+    viewHolder.detail.setText(item.getDetail());
+    displayRepeat(viewHolder, item);
+    if(item.getWhich_tag_belongs() == 0) {
+      viewHolder.tagPallet.setVisibility(View.GONE);
+    }
+    else {
+      viewHolder.tagPallet.setVisibility(View.VISIBLE);
+      viewHolder.tagPallet.setColorFilter(
+          activity.generalSettings.getTagById(item.getWhich_tag_belongs()).getPrimary_color()
+      );
     }
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
@@ -1931,20 +1964,20 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     String repeat_str = "";
     if(item.getDayRepeat().getLabel() != null
-        && !item.getDayRepeat().getLabel().equals(context.getString(R.string.none))) {
+        && !item.getDayRepeat().getLabel().equals(activity.getString(R.string.none))) {
       repeat_str += item.getDayRepeat().getLabel();
-      if(!item.getDayRepeat().getLabel().equals(context.getString(R.string.everyday))) {
+      if(!item.getDayRepeat().getLabel().equals(activity.getString(R.string.everyday))) {
         repeat_str += "に";
       }
     }
     if(item.getMinuteRepeat().getLabel() != null
-        && !item.getMinuteRepeat().getLabel().equals(context.getString(R.string.none))) {
+        && !item.getMinuteRepeat().getLabel().equals(activity.getString(R.string.none))) {
       repeat_str += item.getMinuteRepeat().getLabel();
     }
     if(item.getDayRepeat().getLabel() != null
-        && !item.getDayRepeat().getLabel().equals(context.getString(R.string.none))
+        && !item.getDayRepeat().getLabel().equals(activity.getString(R.string.none))
         && (item.getMinuteRepeat().getLabel() == null
-        || item.getMinuteRepeat().getLabel().equals(context.getString(R.string.none)))) {
+        || item.getMinuteRepeat().getLabel().equals(activity.getString(R.string.none)))) {
       repeat_str += "繰り返す";
     }
     if(repeat_str.equals("")) {

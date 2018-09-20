@@ -47,11 +47,12 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
   DragListener dragListener;
   private int draggingPosition = -1;
   static boolean is_sorting;
+  List<Item> filteredItem;
 
-  MyListAdapter(List<Item> itemList, Context context) {
+  MyListAdapter(List<Item> itemList, MainActivity activity) {
 
     MyListAdapter.itemList = itemList;
-    this.activity = (MainActivity)context;
+    this.activity = activity;
     checked_item_num = 0;
     has_panel = 0;
     dragListener = new DragListener();
@@ -64,6 +65,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     ImageView order_icon;
     TextView detail;
     CheckBox checkBox;
+    ImageView tagPallet;
     TableLayout control_panel;
   }
 
@@ -90,7 +92,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
       activity.actionBarFragment.searchView.clearFocus();
       switch(v.getId()) {
-        case R.id.item_card:
+        case R.id.item_card: {
 
           if(actionMode == null) {
             if(viewHolder.control_panel.getVisibility() == View.GONE) {
@@ -110,16 +112,19 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
           }
           else viewHolder.checkBox.setChecked(true);
           break;
-        case R.id.edit:
+        }
+        case R.id.edit: {
           activity.listView.clearTextFilter();
           activity.showMainEditFragment(item);
           has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
-        case R.id.notes:
+        }
+        case R.id.notes: {
           activity.listView.clearTextFilter();
           activity.showNotesFragment(item);
           break;
+        }
       }
     }
 
@@ -247,7 +252,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
 
       switch(menuItem.getItemId()) {
-        case R.id.delete:
+        case R.id.delete: {
 
           itemListToMove = new ArrayList<>();
           for(Item item : itemList) {
@@ -283,12 +288,14 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
               })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .show();
 
           return true;
-        case R.id.move_task_between_list:
+        }
+        case R.id.move_task_between_list: {
 
           itemListToMove = new ArrayList<>();
           for(Item item : itemList) {
@@ -331,7 +338,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                     activity.showMainEditFragment(itemListToMove.get(itemListToMove.size() - 1));
                   }
                   else {
-                    long list_id = activity.generalSettings.getNonScheduledList(which_list - 1).getId();
+                    long list_id = activity.generalSettings.getNonScheduledLists().get(which_list - 1).getId();
                     itemList = new ArrayList<>();
                     for(Item item : activity.queryAllDB(MyDatabaseHelper.TODO_TABLE)) {
                       if(item.getWhich_list_belongs() == list_id) {
@@ -372,12 +379,14 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
               })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .show();
 
           return true;
-        case R.id.clone:
+        }
+        case R.id.clone: {
 
           itemListToMove = new ArrayList<>();
           for(Item item : itemList) {
@@ -386,7 +395,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
             }
           }
 
-          message = itemListToMove.size() + activity.getString(R.string.cab_clone_message);
+          String message = itemListToMove.size() + activity.getString(R.string.cab_clone_message);
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_clone)
               .setMessage(message)
@@ -405,16 +414,19 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
               })
               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .show();
 
           return true;
-        case R.id.share:
+        }
+        case R.id.share: {
 
           itemListToMove = new ArrayList<>();
           for(Item item : itemList) {
@@ -423,7 +435,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
             }
           }
 
-          message = itemListToMove.size() + activity.getString(R.string.cab_share_message);
+          String message = itemListToMove.size() + activity.getString(R.string.cab_share_message);
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_share)
               .setMessage(message)
@@ -449,18 +461,22 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
               })
               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .show();
 
           return true;
-        default:
+        }
+        default: {
           actionMode.finish();
           return true;
+        }
       }
     }
 
@@ -541,9 +557,14 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         }
 
         //検索処理
-        itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+        if(ActionBarFragment.checked_tag == -1) {
+          itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+        }
+        else {
+          itemList = ActionBarFragment.filteredList;
+        }
 
-        List<Item> filteredItem = new ArrayList<>();
+        filteredItem = new ArrayList<>();
         for(Item item : itemList) {
           if(item.getDetail() != null) {
             String detail = item.getDetail();
@@ -611,6 +632,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       viewHolder.order_icon = convertView.findViewById(R.id.order_icon);
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
+      viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
 
       convertView.setTag(viewHolder);
@@ -619,13 +641,9 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       viewHolder = (ViewHolder)convertView.getTag();
     }
 
+    //現在のビュー位置でのitemの取得とリスナーの初期化
     Item item = (Item)getItem(position);
     MyOnClickListener listener = new MyOnClickListener(position, item, convertView, viewHolder);
-
-    viewHolder.detail.setText(item.getDetail());
-
-    if(is_sorting) viewHolder.order_icon.setVisibility(View.VISIBLE);
-    else viewHolder.order_icon.setVisibility(View.GONE);
 
     //各リスナーの設定
     viewHolder.item_card.setOnClickListener(listener);
@@ -642,6 +660,18 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         TextView panel_item = (TextView)tableRow.getChildAt(j);
         panel_item.setOnClickListener(listener);
       }
+    }
+
+    //各種表示処理
+    viewHolder.detail.setText(item.getDetail());
+    if(item.getWhich_tag_belongs() == 0) {
+      viewHolder.tagPallet.setVisibility(View.GONE);
+    }
+    else {
+      viewHolder.tagPallet.setVisibility(View.VISIBLE);
+      viewHolder.tagPallet.setColorFilter(
+          activity.generalSettings.getTagById(item.getWhich_tag_belongs()).getPrimary_color()
+      );
     }
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
@@ -666,6 +696,9 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     manually_checked = true;
+
+    if(is_sorting) viewHolder.order_icon.setVisibility(View.VISIBLE);
+    else viewHolder.order_icon.setVisibility(View.GONE);
 
     //並び替え中にドラッグしているアイテムが二重に表示されないようにする
     convertView.setVisibility(position == draggingPosition ? View.INVISIBLE : View.VISIBLE);

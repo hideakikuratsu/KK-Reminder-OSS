@@ -84,9 +84,10 @@ public class NotesFragment extends Fragment {
     getFragmentManager().popBackStack();
 
     switch(item.getItemId()) {
-      case R.id.done:
+      case R.id.done: {
 //        this.item.setNotes();
         return true;
+      }
     }
     return false;
   }

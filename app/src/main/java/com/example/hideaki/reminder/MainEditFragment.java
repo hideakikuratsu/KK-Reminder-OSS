@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public static final String LIST = "LIST";
 
   private EditTextPreference detail;
+  private PreferenceScreen tag;
   private EditTextPreference notes;
   private PreferenceScreen day_repeat_item;
   private PreferenceScreen minute_repeat_item;
@@ -194,7 +196,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     detail.setOnPreferenceChangeListener(this);
     PreferenceScreen color = (PreferenceScreen)findPreference("color");
     color.setOnPreferenceClickListener(this);
-    PreferenceScreen tag = (PreferenceScreen)findPreference("tag");
+    tag = (PreferenceScreen)findPreference("tag");
     tag.setOnPreferenceClickListener(this);
     PreferenceScreen interval = (PreferenceScreen)findPreference("interval");
     interval.setOnPreferenceClickListener(this);
@@ -219,6 +221,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     else if(order == 3) {
       rootPreferenceScreen.removeAll();
       rootPreferenceScreen.addPreference(detail);
+      rootPreferenceScreen.addPreference(tag);
       rootPreferenceScreen.addPreference(color);
       rootPreferenceScreen.addPreference(notes_category);
     }
@@ -259,6 +262,35 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.edit);
 
+    //Tagのラベルの初期化
+    if(order == 0 || order == 1 || is_moving_task) {
+      if(item.getWhich_tag_belongs() == 0) {
+        tag.setSummary(activity.getString(R.string.non_tag));
+      }
+      else {
+        for(Tag tag : activity.generalSettings.getTagList()) {
+          if(item.getWhich_tag_belongs() == tag.getId()) {
+            this.tag.setSummary(tag.getName());
+            break;
+          }
+        }
+      }
+    }
+    else if(order == 3) {
+      if(list.getWhich_tag_belongs() == 0) {
+        tag.setSummary(activity.getString(R.string.non_tag));
+      }
+      else {
+        for(Tag tag : activity.generalSettings.getTagList()) {
+          if(list.getWhich_tag_belongs() == tag.getId()) {
+            this.tag.setSummary(tag.getName());
+            break;
+          }
+        }
+      }
+    }
+
+    //dayRepeatのラベルの初期化
     if(order == 0 || is_moving_task) {
       if(dayRepeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
       else day_repeat_item.setSummary(dayRepeat.getLabel());
@@ -301,12 +333,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public boolean onOptionsItemSelected(MenuItem item) {
 
     switch(item.getItemId()) {
-      case R.id.done:
+      case R.id.done: {
         if((order == 0 || is_moving_task) && is_edit
             && MainEditFragment.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()
             && (MainEditFragment.dayRepeat.getSetted() != 0 || MainEditFragment.minuteRepeat.getWhich_setted() != 0)) {
 
-          new AlertDialog.Builder(getActivity())
+          new AlertDialog.Builder(activity)
               .setMessage(R.string.repeat_conflict_dialog_message)
               .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
@@ -334,15 +366,17 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
               })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
               .show();
         }
         else registerItem();
         return true;
-      case R.id.delete:
+      }
+      case R.id.delete: {
 
-        new AlertDialog.Builder(getActivity())
+        new AlertDialog.Builder(activity)
             .setTitle(R.string.delete_dialog_title)
             .setMessage(R.string.delete_dialog_message)
             .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -361,12 +395,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                 }
                 else if(order == 3) {
                   //GeneralSettingsとManageListAdapterへの反映
-                  activity.generalSettings.getOrgNonScheduledLists().remove(list.getOrder());
-                  int size = activity.generalSettings.getOrgNonScheduledLists().size();
+                  activity.generalSettings.getNonScheduledLists().remove(list.getOrder());
+                  int size = activity.generalSettings.getNonScheduledLists().size();
                   for(int i = 0; i < size; i++) {
-                    activity.generalSettings.getOrgNonScheduledLists().get(i).setOrder(i);
+                    activity.generalSettings.getNonScheduledLists().get(i).setOrder(i);
                   }
-                  ManageListAdapter.nonScheduledLists = activity.generalSettings.getNonScheduledLists();
+                  ManageListAdapter.nonScheduledLists = new ArrayList<>(activity.generalSettings.getNonScheduledLists());
                   activity.manageListAdapter.notifyDataSetChanged();
 
                   //一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
@@ -374,14 +408,14 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                   //デフォルトアイテムのリストア
                   activity.menu.removeGroup(R.id.reminder_list);
                   activity.menu.add(R.id.reminder_list, R.id.scheduled_list, 0, R.string.nav_scheduled_item)
-                      .setIcon(R.drawable.ic_time)
-                      .setCheckable(true);
+                               .setIcon(R.drawable.ic_time)
+                               .setCheckable(true);
                   activity.menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
-                      .setIcon(R.drawable.ic_add_24dp)
-                      .setCheckable(false);
+                               .setIcon(R.drawable.ic_add_24dp)
+                               .setCheckable(false);
 
                   //新しく追加したリストのリストア
-                  for(NonScheduledList list : activity.generalSettings.getOrgNonScheduledLists()) {
+                  for(NonScheduledList list : activity.generalSettings.getNonScheduledLists()) {
                     Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
                     checkNotNull(drawable);
                     drawable = drawable.mutate();
@@ -392,8 +426,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                       drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
                     }
                     activity.menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
-                        .setIcon(drawable)
-                        .setCheckable(true);
+                                 .setIcon(drawable)
+                                 .setCheckable(true);
                   }
 
                   //データベースへの反映
@@ -402,8 +436,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
                 //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                  Context direct_boot_context = getActivity().createDeviceProtectedStorageContext();
-                  direct_boot_context.moveDatabaseFrom(getActivity(), MyDatabaseHelper.TODO_TABLE);
+                  Context direct_boot_context = activity.createDeviceProtectedStorageContext();
+                  direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
                 }
 
                 getFragmentManager().popBackStack();
@@ -411,11 +445,13 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
             })
             .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
               @Override
-              public void onClick(DialogInterface dialog, int which) {}
+              public void onClick(DialogInterface dialog, int which) {
+              }
             })
             .show();
         return true;
-      case android.R.id.home:
+      }
+      case android.R.id.home: {
 
         getFragmentManager().popBackStack();
 
@@ -426,8 +462,10 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
           is_cloning_task = false;
         }
         return true;
-      default:
+      }
+      default: {
         return super.onOptionsItemSelected(item);
+      }
     }
   }
 
@@ -435,22 +473,28 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public boolean onPreferenceClick(Preference preference) {
 
     switch(preference.getKey()) {
-      case "color":
+      case "color": {
         activity.showColorPickerListViewFragment();
         return true;
-      case "tag":
-        transitionFragment(TagEditFragment.newInstance());
+      }
+      case "tag": {
+        activity.showTagEditListViewFragment();
         return true;
-      case "interval":
+      }
+      case "interval": {
         transitionFragment(IntervalEditFragment.newInstance());
         return true;
-      case "repeat_day_unit":
+      }
+      case "repeat_day_unit": {
         transitionFragment(DayRepeatEditFragment.newInstance());
         return true;
-      case "repeat_minute_unit":
+      }
+      case "repeat_minute_unit": {
         transitionFragment(MinuteRepeatEditFragment.newInstance());
         return true;
+      }
     }
+
     return false;
   }
 
@@ -458,15 +502,18 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public boolean onPreferenceChange(Preference preference, Object newValue) {
 
     switch(preference.getKey()) {
-      case "detail":
+      case "detail": {
         detail_str = (String)newValue;
         detail.setTitle((String)newValue);
         return true;
-      case "notes":
+      }
+      case "notes": {
         notes_str = (String)newValue;
         notes.setTitle((String)newValue);
         return true;
+      }
     }
+
     return false;
   }
 
@@ -550,7 +597,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
         //リストのIDをitemに登録する
         item.setWhich_list_belongs(
-            activity.generalSettings.getNonScheduledList(activity.which_menu_open - 1).getId()
+            activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).getId()
         );
 
         if(is_edit && !is_cloning_task) {
@@ -580,12 +627,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
       if(!is_edit) {
         //GeneralSettingsとManageListAdapterへの反映
-        activity.generalSettings.addNonScheduledList(list);
-        int size = activity.generalSettings.getOrgNonScheduledLists().size();
+        activity.generalSettings.getNonScheduledLists().add(0, list);
+        int size = activity.generalSettings.getNonScheduledLists().size();
         for(int i = 0; i < size; i++) {
-          activity.generalSettings.getOrgNonScheduledLists().get(i).setOrder(i);
+          activity.generalSettings.getNonScheduledLists().get(i).setOrder(i);
         }
-        ManageListAdapter.nonScheduledLists = activity.generalSettings.getNonScheduledLists();
+        ManageListAdapter.nonScheduledLists = new ArrayList<>(activity.generalSettings.getNonScheduledLists());
       }
       activity.manageListAdapter.notifyDataSetChanged();
 
@@ -601,7 +648,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
           .setCheckable(false);
 
       //新しく追加したリストのリストア
-      for(NonScheduledList list : activity.generalSettings.getOrgNonScheduledLists()) {
+      for(NonScheduledList list : activity.generalSettings.getNonScheduledLists()) {
         Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
         checkNotNull(drawable);
         drawable = drawable.mutate();
@@ -617,16 +664,13 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       }
 
       //データベースへの反映
-      if(activity.querySettingsDB() == null) {
-        activity.insertSettingsDB();
-      }
-      else activity.updateSettingsDB();
+      activity.updateSettingsDB();
     }
 
     //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      Context direct_boot_context = getActivity().createDeviceProtectedStorageContext();
-      direct_boot_context.moveDatabaseFrom(getActivity(), MyDatabaseHelper.TODO_TABLE);
+      Context direct_boot_context = activity.createDeviceProtectedStorageContext();
+      direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
     }
 
     getFragmentManager().popBackStack();
