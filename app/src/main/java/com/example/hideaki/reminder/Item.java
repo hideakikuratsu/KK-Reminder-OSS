@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 public class Item implements Serializable {
 
-  private static final long serialVersionUID = 2562185011185031291L;
+  private static final long serialVersionUID = -2549045384222191618L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
@@ -24,6 +24,7 @@ public class Item implements Serializable {
   private long which_list_belongs;
   private int order = -1;
   private boolean selected;
+  private Calendar doneDate = Calendar.getInstance();
 
   Item() {}
 
@@ -95,6 +96,10 @@ public class Item implements Serializable {
     return selected;
   }
 
+  public Calendar getDoneDate() {
+    return doneDate;
+  }
+
   public void setDetail(String detail) {
     this.detail = detail;
   }
@@ -163,6 +168,10 @@ public class Item implements Serializable {
     this.selected = selected;
   }
 
+  public void setDoneDate(Calendar doneDate) {
+    this.doneDate = doneDate;
+  }
+
   public Item copy() {
 
     Item item = new Item();
@@ -183,6 +192,7 @@ public class Item implements Serializable {
     item.setWhich_list_belongs(this.which_list_belongs);
     item.setOrder(this.order);
     item.setSelected(this.selected);
+    item.setDoneDate(this.doneDate);
 
     return item;
   }

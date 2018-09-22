@@ -75,7 +75,7 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
         }
         case R.id.edit: {
           activity.listView.clearTextFilter();
-          activity.showMainEditFragmentForList(list);
+          activity.showMainEditFragmentForList(list, ManageListViewFragment.TAG);
           has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
@@ -144,11 +144,11 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
         }
 
         //検索処理
-        if(ActionBarFragment.checked_tag == -1) {
+        if(activity.actionBarFragment.checked_tag == -1) {
           nonScheduledLists = new ArrayList<>(activity.generalSettings.getNonScheduledLists());
         }
         else {
-          nonScheduledLists = ActionBarFragment.nonScheduledLists;
+          nonScheduledLists = activity.actionBarFragment.nonScheduledLists;
         }
 
         filteredLists = new ArrayList<>();

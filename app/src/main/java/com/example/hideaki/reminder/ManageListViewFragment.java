@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 public class ManageListViewFragment extends Fragment {
 
+  static final String TAG = "ManageListViewFragment";
   private MainActivity activity;
 
   public static ManageListViewFragment newInstance() {

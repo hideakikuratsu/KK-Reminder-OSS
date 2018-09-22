@@ -34,11 +34,11 @@
     <string name="home">家事</string>
     <string name="work">仕事</string>
     <string name="shopping">買い物</string>
-    <string name="todo">TO-DO</string>
-    <string name="done_en">DONE</string>
-    <string name="done_ja">完了</string>
+    <string name="todo_menu">未完了</string>
+    <string name="done_menu">完了済み</string>
+    <string name="done">完了</string>
     <string name="delete_dialog_title">タスクを削除しますか？</string>
-    <string name="delete_dialog_message">削除すると完了リストに保存されず、もとに戻すことができません</string>
+    <string name="delete_dialog_message">削除すると完了済みリストに保存されず、もとに戻すことができません</string>
     <string name="delete">削除</string>
     <string name="list_delete_dialog_title">リストを削除しますか？</string>
     <string name="list_delete_dialog_message">削除すると、このリスト内のタスクも全て削除されます</string>
@@ -103,6 +103,7 @@
     <string name="add_task">新しいタスクを追加</string>
     <string name="nav_other">その他</string>
     <string name="manage_lists">リストを管理する</string>
+    <string name="manage_lists_title">リストの管理</string>
     <string name="nav_settings">設定</string>
     <string name="nav_help">ヘルプ</string>
     <string name="nav_feedback">フィードバック</string>
@@ -112,6 +113,8 @@
     <string name="cab_delete_message">個のタスクを削除します。\nよろしいですか？</string>
     <string name="cab_move_task">タスクを別のリストへ移動</string>
     <string name="cab_move_task_message">\nどのリストへ移動しますか？</string>
+    <string name="cab_recycle_task_title">タスクのリサイクル</string>
+    <string name="cab_recycle_task_message">個のタスクをリサイクルします。\nよろしいですか？</string>
     <string name="cab_clone">タスクの複製</string>
     <string name="cab_clone_message">個のタスクを複製します。\nよろしいですか？</string>
     <string name="cab_share">タスクの共有</string>
@@ -122,6 +125,11 @@
     <string name="pick_color_description">色の系統を選択してください</string>
     <string name="action_send_booted_dialog_title">新たなタスクを作成します。タスクを追加するリストを選択してください。</string>
     <string name="sort">タスクの並び替え</string>
+    <string name="done_task_click_title">このタスクに行う処理を次から選んでください</string>
+    <string name="recycle_task">タスクをリサイクルする</string>
+    <string name="recycle_and_edit_task">タスクをリサイクルして編集する</string>
+    <string name="delete_task">タスクを削除する</string>
+    <string name="at">に</string>
 
     <string name="red">赤色</string>
     <string name="pink">ピンク色</string>

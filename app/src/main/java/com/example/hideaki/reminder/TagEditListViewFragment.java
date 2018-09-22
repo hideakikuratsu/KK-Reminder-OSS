@@ -31,6 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TagEditListViewFragment extends Fragment implements View.OnClickListener {
 
+  static final String TAG = "TagEditListViewFragment";
   private MainActivity activity;
   private ActionBar actionBar;
   private MenuItem editItem;
@@ -47,7 +48,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
 
     super.onAttach(context);
     activity = (MainActivity)context;
-    int order = activity.menuItem.getOrder();
+    int order = activity.order;
     TagEditListAdapter.order = order;
     if(order == 0 || order == 1) {
       TagEditListAdapter.checked_item_id = MainEditFragment.item.getWhich_tag_belongs();

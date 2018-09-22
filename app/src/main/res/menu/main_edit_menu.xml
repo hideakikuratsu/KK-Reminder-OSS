@@ -11,6 +11,6 @@
     <item
         android:id="@+id/done"
         android:icon="@drawable/ic_check_circle_24dp"
-        android:title="@string/done_ja"
+        android:title="@string/done"
         app:showAsAction="always" />
 </menu>

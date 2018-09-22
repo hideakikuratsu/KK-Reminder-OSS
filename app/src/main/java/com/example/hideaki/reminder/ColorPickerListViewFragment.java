@@ -16,6 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ColorPickerListViewFragment extends Fragment {
 
+  static final String TAG = "ColorPickerListViewFragment";
   private MainActivity activity;
   static int order;
   static int tag_position;
@@ -30,7 +31,7 @@ public class ColorPickerListViewFragment extends Fragment {
 
     super.onAttach(context);
     activity = (MainActivity)context;
-    order = activity.menuItem.getOrder();
+    order = activity.order;
     ColorPickerListAdapter.order = order;
     activity.colorPickerListAdapter.adapterTag = TagEditListAdapter.tagList.get(tag_position);
     activity.colorPickerListAdapter.orgTag = activity.generalSettings.getTagList().get(tag_position);

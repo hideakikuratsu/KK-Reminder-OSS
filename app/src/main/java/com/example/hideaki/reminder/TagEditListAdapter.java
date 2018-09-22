@@ -132,7 +132,7 @@ public class TagEditListAdapter extends BaseAdapter {
           }
           case R.id.pallet: {
 
-            activity.showColorPickerListViewFragment(position);
+            activity.showColorPickerListViewFragment(position, TagEditListViewFragment.TAG);
             break;
           }
           case R.id.delete: {

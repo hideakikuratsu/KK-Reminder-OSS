@@ -37,6 +37,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   public static final String ITEM = "ITEM";
   public static final String LIST = "LIST";
+  static final String TAG = "MainEditFragment";
 
   private EditTextPreference detail;
   private PreferenceScreen tag;
@@ -152,13 +153,13 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     is_moving_task = false;
 
     if(checked_item_num == 0) {
-      order = activity.menuItem.getOrder();
+      order = activity.order;
     }
     else {
       checked_item_num--;
 
       if(is_cloning_task) {
-        order = activity.menuItem.getOrder();
+        order = activity.order;
         if(checked_item_num > 0) {
           nextItem = itemListToMove.get(checked_item_num - 1).copy();
         }
@@ -242,7 +243,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
           if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
-            activity.showMainEditFragment(nextItem);
+            activity.showMainEditFragment(nextItem, TAG);
           }
           else if(is_cloning_task) {
             is_cloning_task = false;
@@ -403,6 +404,13 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                   ManageListAdapter.nonScheduledLists = new ArrayList<>(activity.generalSettings.getNonScheduledLists());
                   activity.manageListAdapter.notifyDataSetChanged();
 
+                  long id = list.getId();
+                  for(Item itemInList : activity.queryAllDB(MyDatabaseHelper.TODO_TABLE)) {
+                    if(itemInList.getWhich_list_belongs() == id) {
+                      activity.deleteDB(itemInList, MyDatabaseHelper.TODO_TABLE);
+                    }
+                  }
+
                   //一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
 
                   //デフォルトアイテムのリストア
@@ -449,6 +457,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
               }
             })
             .show();
+
         return true;
       }
       case android.R.id.home: {
@@ -456,7 +465,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         getFragmentManager().popBackStack();
 
         if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
-          activity.showMainEditFragment(nextItem);
+          activity.showMainEditFragment(nextItem, TAG);
         }
         else if(is_cloning_task) {
           is_cloning_task = false;
@@ -474,11 +483,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     switch(preference.getKey()) {
       case "color": {
-        activity.showColorPickerListViewFragment();
+        activity.showColorPickerListViewFragment(TAG);
         return true;
       }
       case "tag": {
-        activity.showTagEditListViewFragment();
+        activity.showTagEditListViewFragment(TAG);
         return true;
       }
       case "interval": {
@@ -676,7 +685,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     getFragmentManager().popBackStack();
 
     if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
-      activity.showMainEditFragment(nextItem);
+      activity.showMainEditFragment(nextItem, TAG);
     }
     else if(is_cloning_task) {
       is_cloning_task = false;

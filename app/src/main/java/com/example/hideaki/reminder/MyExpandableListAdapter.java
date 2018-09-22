@@ -51,7 +51,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   ActionMode actionMode = null;
   static int checked_item_num;
   private static boolean manually_checked;
-  List<List<Item>> filteredList;
+  private List<List<Item>> filteredList;
 
   static {
     groups.add("過去");
@@ -218,7 +218,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
         case R.id.edit: {
           activity.expandableListView.clearTextFilter();
-          activity.showMainEditFragment(item);
+          activity.showMainEditFragment(item, ExpandableListViewFragment.TAG);
           has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
@@ -1183,9 +1183,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
         else {
           children.get(group_position).remove(child_position);
+          item.setDoneDate(Calendar.getInstance());
 
           activity.deleteAlarm(item);
           activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
+          activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
 
           if(activity.timer != null) {
             activity.timer.cancel();
@@ -1255,6 +1257,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     activity.setAlarm(item);
                   }
                   activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                  activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
                 }
               }
             })
@@ -1480,7 +1483,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   MainEditFragment.itemListToMove = new ArrayList<>(itemListToMove);
                   MainEditFragment.is_cloning_task = true;
                   itemListToMove.get(itemListToMove.size() - 1).setSelected(false);
-                  activity.showMainEditFragment(itemListToMove.get(itemListToMove.size() - 1).copy());
+                  activity.showMainEditFragment(
+                      itemListToMove.get(itemListToMove.size() - 1).copy(), ExpandableListViewFragment.TAG
+                  );
 
                   actionMode.finish();
                 }
@@ -1599,11 +1604,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
 
         //検索処理
-        if(ActionBarFragment.checked_tag == -1) {
+        if(activity.actionBarFragment.checked_tag == -1) {
           children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
         }
         else {
-          children = ActionBarFragment.filteredLists;
+          children = activity.actionBarFragment.filteredLists;
         }
 
         filteredList = new ArrayList<>();

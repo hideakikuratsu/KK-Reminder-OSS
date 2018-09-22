@@ -6,20 +6,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ListViewFragment extends Fragment {
+public class DoneListViewFragment extends Fragment {
 
-  static final String TAG = "ListViewFragment";
+  static final String TAG = "DoneListViewFragment";
   private MainActivity activity;
 
-  public static ListViewFragment newInstance() {
+  public static DoneListViewFragment newInstance() {
 
-    return new ListViewFragment();
+    return new DoneListViewFragment();
   }
 
   @Override
@@ -48,17 +47,8 @@ public class ListViewFragment extends Fragment {
 
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 
-          if(MyListAdapter.is_sorting) {
-            new AlertDialog.Builder(activity)
-                .setTitle(R.string.is_sorting_title)
-                .setMessage(R.string.is_sorting_message)
-                .show();
-
-            return true;
-          }
-
-          if(activity.listAdapter.actionMode != null) {
-            activity.listAdapter.actionMode.finish();
+          if(activity.doneListAdapter.actionMode != null) {
+            activity.doneListAdapter.actionMode.finish();
           }
         }
 
@@ -66,14 +56,11 @@ public class ListViewFragment extends Fragment {
       }
     });
 
-    MyListAdapter.checked_item_num = 0;
-    MyListAdapter.has_panel = 0;
-    MyListAdapter.is_sorting = false;
-    MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+    DoneListAdapter.itemList = activity.getDoneItem();
+    DoneListAdapter.checked_item_num = 0;
+    DoneListAdapter.order = activity.order;
     activity.listView = view.findViewById(R.id.listView);
-    activity.listView.setDragListener(activity.listAdapter.dragListener);
-    activity.listView.setSortable(true);
-    activity.listView.setAdapter(activity.listAdapter);
+    activity.listView.setAdapter(activity.doneListAdapter);
     activity.listView.setTextFilterEnabled(true);
 
     return view;

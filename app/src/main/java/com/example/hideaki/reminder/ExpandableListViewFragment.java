@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 public class ExpandableListViewFragment extends Fragment {
 
+  static final String TAG = "ExpandableListViewFragment";
   private MainActivity activity;
 
   public static ExpandableListViewFragment newInstance() {
@@ -27,7 +28,7 @@ public class ExpandableListViewFragment extends Fragment {
     activity = (MainActivity)context;
     activity.drawerLayout.closeDrawer(GravityCompat.START);
     if(activity.detail != null) {
-      activity.showMainEditFragment(activity.detail);
+      activity.showMainEditFragment(activity.detail, TAG);
       activity.detail = null;
     }
   }
@@ -52,8 +53,10 @@ public class ExpandableListViewFragment extends Fragment {
         return false;
       }
     });
+
     MyExpandableListAdapter.has_panel = 0;
     MyExpandableListAdapter.checked_item_num = 0;
+    MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
     activity.expandableListView = view.findViewById(R.id.expandable_list);
     activity.expandableListView.setAdapter(activity.expandableListAdapter);
     activity.expandableListView.setTextFilterEnabled(true);

@@ -6,9 +6,10 @@ import java.util.List;
 
 public class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = 5141214717476464740L;
+  private static final long serialVersionUID = 6248392336386336636L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
   private List<Tag> tagList = new ArrayList<>();
+  private boolean expandable_todo = true;
 
   public List<NonScheduledList> getNonScheduledLists() {
     return nonScheduledLists;
@@ -26,11 +27,19 @@ public class GeneralSettings implements Serializable {
     return null;
   }
 
+  public boolean isExpandable_todo() {
+    return expandable_todo;
+  }
+
   public void setNonScheduledLists(List<NonScheduledList> nonScheduledLists) {
     this.nonScheduledLists = nonScheduledLists;
   }
 
   public void setTagList(List<Tag> tagList) {
     this.tagList = tagList;
+  }
+
+  public void setExpandable_todo(boolean expandable_todo) {
+    this.expandable_todo = expandable_todo;
   }
 }
