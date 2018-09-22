@@ -119,7 +119,10 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
 
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
     actionBar.setHomeAsUpIndicator(activity.upArrow);
-    actionBar.setDisplayHomeAsUpEnabled(true);
+    if(TagEditListAdapter.is_editing) {
+      actionBar.setDisplayHomeAsUpEnabled(false);
+    }
+    else actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.tag);
 
     return view;
@@ -146,6 +149,8 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     drawable = drawable.mutate();
     drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
     sortItem.setIcon(drawable);
+    if(TagEditListAdapter.is_editing) sortItem.setVisible(false);
+    else sortItem.setVisible(true);
   }
 
   @Override

@@ -5,16 +5,23 @@ import java.util.Calendar;
 
 public class NonScheduledList implements Serializable {
 
-  private static final long serialVersionUID = 9172991234359085705L;
+  private static final long serialVersionUID = 3904758942612157503L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String title;
   private String notes;
+  private boolean color_primary = true;
   private int primary_color;
   private int primary_light_color;
   private int primary_dark_color;
   private int primary_text_color;
-  private int color_order_group = -1;
-  private int color_order_child = 5;
+  private int primary_color_group = -1;
+  private int primary_color_child = 5;
+  private int secondary_color;
+  private int secondary_light_color;
+  private int secondary_dark_color;
+  private int secondary_text_color;
+  private int secondary_color_group = -1;
+  private int secondary_color_child = 5;
   private int order;
   private long which_tag_belongs;
   private boolean todo = true;
@@ -37,28 +44,32 @@ public class NonScheduledList implements Serializable {
     return notes;
   }
 
-  public int getPrimary_color() {
-    return primary_color;
+  public boolean isColor_primary() {
+    return color_primary;
   }
 
-  public int getPrimary_light_color() {
-    return primary_light_color;
+  public int getColor() {
+    return color_primary ? primary_color : secondary_color;
   }
 
-  public int getPrimary_dark_color() {
-    return primary_dark_color;
+  public int getLightColor() {
+    return color_primary ? primary_light_color : secondary_light_color;
   }
 
-  public int getPrimary_text_color() {
-    return primary_text_color;
+  public int getDarkColor() {
+    return color_primary ? primary_dark_color : secondary_dark_color;
   }
 
-  public int getColor_order_group() {
-    return color_order_group;
+  public int getTextColor() {
+    return color_primary ? primary_text_color : secondary_text_color;
   }
 
-  public int getColor_order_child() {
-    return color_order_child;
+  public int getColorGroup() {
+    return color_primary ? primary_color_group : secondary_color_group;
+  }
+
+  public int getColorChild() {
+    return color_primary ? primary_color_child : secondary_color_child;
   }
 
   public int getOrder() {
@@ -81,28 +92,44 @@ public class NonScheduledList implements Serializable {
     this.notes = notes;
   }
 
-  public void setPrimary_color(int primary_color) {
-    this.primary_color = primary_color;
+  public void setColor_primary(boolean color_primary) {
+    this.color_primary = color_primary;
   }
 
-  public void setPrimary_light_color(int primary_light_color) {
-    this.primary_light_color = primary_light_color;
+  public void setColor(int color) {
+
+    if(color_primary) this.primary_color = color;
+    else this.secondary_color = color;
   }
 
-  public void setPrimary_dark_color(int primary_dark_color) {
-    this.primary_dark_color = primary_dark_color;
+  public void setLightColor(int light_color) {
+
+    if(color_primary) this.primary_light_color = light_color;
+    else this.secondary_light_color = light_color;
   }
 
-  public void setPrimary_text_color(int primary_text_color) {
-    this.primary_text_color = primary_text_color;
+  public void setDarkColor(int dark_color) {
+
+    if(color_primary) this.primary_dark_color = dark_color;
+    else this.secondary_dark_color = dark_color;
   }
 
-  public void setColor_order_group(int color_order_group) {
-    this.color_order_group = color_order_group;
+  public void setTextColor(int text_color) {
+
+    if(color_primary) this.primary_text_color = text_color;
+    else this.secondary_text_color = text_color;
   }
 
-  public void setColor_order_child(int color_order_child) {
-    this.color_order_child = color_order_child;
+  public void setColorGroup(int color_group) {
+
+    if(color_primary) this.primary_color_group = color_group;
+    else this.secondary_color_group = color_group;
+  }
+
+  public void setColorChild(int color_child) {
+
+    if(color_primary) this.primary_color_child = color_child;
+    else this.secondary_color_child = color_child;
   }
 
   public void setOrder(int order) {

@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   int menu_item_color;
   int menu_background_color;
   int status_bar_color;
+  int accent_color;
   int order;
   String detail;
   private int which_list;
@@ -190,8 +191,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_my_list_24dp);
       checkNotNull(drawable);
       drawable = drawable.mutate();
-      if(list.getPrimary_color() != 0) {
-        drawable.setColorFilter(list.getPrimary_color(), PorterDuff.Mode.SRC_IN);
+      if(list.getColor() != 0) {
+        drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
       }
       else {
         drawable.setColorFilter(ContextCompat.getColor(this, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
@@ -507,8 +508,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Drawable drawable = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_my_list_24dp);
                 checkNotNull(drawable);
                 drawable = drawable.mutate();
-                if(list.getPrimary_color() != 0) {
-                  drawable.setColorFilter(list.getPrimary_color(), PorterDuff.Mode.SRC_IN);
+                if(list.getColor() != 0) {
+                  drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
                 }
                 else {
                   drawable.setColorFilter(
@@ -876,21 +877,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     order = menuItem.getOrder();
     if(order == 1) {
       NonScheduledList list = generalSettings.getNonScheduledLists().get(which_menu_open - 1);
-      if(list.getPrimary_color() != 0) {
-        menu_item_color = list.getPrimary_text_color();
-        menu_background_color = list.getPrimary_color();
-        status_bar_color = list.getPrimary_dark_color();
+      if(list.getColor() != 0) {
+        menu_item_color = list.getTextColor();
+        menu_background_color = list.getColor();
+        status_bar_color = list.getDarkColor();
+        list.setColor_primary(false);
+        accent_color = list.getColor();
+        list.setColor_primary(true);
       }
       else {
         menu_item_color = Color.WHITE;
         menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
         status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+        accent_color = ContextCompat.getColor(this, R.color.colorAccent);
       }
     }
     else {
       menu_item_color = Color.WHITE;
       menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
       status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+      accent_color = ContextCompat.getColor(this, R.color.colorAccent);
     }
 
     //ハンバーガーアイコンの色を指定

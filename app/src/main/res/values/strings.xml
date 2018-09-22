@@ -121,6 +121,8 @@
     <string name="cab_share_message">個のタスクを共有します。\nよろしいですか？</string>
     <string name="detail">詳細</string>
     <string name="determine">決定</string>
+    <string name="pick_primary_color">主体(基調)となる色を選択</string>
+    <string name="pick_secondary_color">ワンポイント(アクセント)となる色を選択</string>
     <string name="pick_color">色の選択</string>
     <string name="pick_color_description">色の系統を選択してください</string>
     <string name="action_send_booted_dialog_title">新たなタスクを作成します。タスクを追加するリストを選択してください。</string>

@@ -253,8 +253,8 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
     }
 
     //パレットの色を設定
-    if(list.getPrimary_color() != 0) {
-      viewHolder.list_icon.setColorFilter(list.getPrimary_color());
+    if(list.getColor() != 0) {
+      viewHolder.list_icon.setColorFilter(list.getColor());
     }
     else {
       viewHolder.list_icon.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray));

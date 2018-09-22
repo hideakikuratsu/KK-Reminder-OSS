@@ -52,6 +52,10 @@ public class ActionBarFragment extends Fragment {
   List<NonScheduledList> nonScheduledLists;
   private String filteredText;
   private MenuItem toggleItem;
+  private TextView todo;
+  private TextView done;
+  private GradientDrawable todoDrawable;
+  private GradientDrawable doneDrawable;
 
   public static ActionBarFragment newInstance() {
 
@@ -381,8 +385,8 @@ public class ActionBarFragment extends Fragment {
                 Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
                 checkNotNull(drawable);
                 drawable = drawable.mutate();
-                if(list.getPrimary_color() != 0) {
-                  drawable.setColorFilter(list.getPrimary_color(), PorterDuff.Mode.SRC_IN);
+                if(list.getColor() != 0) {
+                  drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
                 }
                 else {
                   drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
@@ -409,37 +413,25 @@ public class ActionBarFragment extends Fragment {
   private void initToggleItem() {
 
     ConstraintLayout toggleLayout = (ConstraintLayout)toggleItem.getActionView();
-    TextView todo = toggleLayout.findViewById(R.id.todo);
-    TextView done = toggleLayout.findViewById(R.id.done);
+    todo = toggleLayout.findViewById(R.id.todo);
+    done = toggleLayout.findViewById(R.id.done);
 
-    final GradientDrawable todoDrawable = (GradientDrawable)todo.getBackground();
-    final GradientDrawable doneDrawable = (GradientDrawable)done.getBackground();
+    todoDrawable = (GradientDrawable)todo.getBackground();
+    doneDrawable = (GradientDrawable)done.getBackground();
     if(order == 0) {
       if(activity.generalSettings.isExpandable_todo()) {
-        todoDrawable.setColor(activity.status_bar_color);
-        doneDrawable.setColor(activity.menu_background_color);
+        setTodoPushedColor();
       }
-      else {
-        todoDrawable.setColor(activity.menu_background_color);
-        doneDrawable.setColor(activity.status_bar_color);
-      }
+      else setDonePushedColor();
     }
     else if(order == 1) {
       if(activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).isTodo()) {
-        todoDrawable.setColor(activity.status_bar_color);
-        doneDrawable.setColor(activity.menu_background_color);
+        setTodoPushedColor();
       }
-      else {
-        todoDrawable.setColor(activity.menu_background_color);
-        doneDrawable.setColor(activity.status_bar_color);
-      }
+      else setDonePushedColor();
     }
-    todoDrawable.setStroke(3, activity.menu_item_color);
-    doneDrawable.setStroke(3, activity.menu_item_color);
     todoDrawable.setCornerRadius(8.0f);
     doneDrawable.setCornerRadius(8.0f);
-    todo.setTextColor(activity.menu_item_color);
-    done.setTextColor(activity.menu_item_color);
 
     todo.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -453,8 +445,7 @@ public class ActionBarFragment extends Fragment {
             activity.updateSettingsDB();
             activity.showExpandableListViewFragment(DoneListViewFragment.TAG);
 
-            todoDrawable.setColor(activity.status_bar_color);
-            doneDrawable.setColor(activity.menu_background_color);
+            setTodoPushedColor();
           }
         }
         else if(order == 1) {
@@ -465,8 +456,7 @@ public class ActionBarFragment extends Fragment {
             activity.updateSettingsDB();
             activity.showListViewFragment(DoneListViewFragment.TAG);
 
-            todoDrawable.setColor(activity.status_bar_color);
-            doneDrawable.setColor(activity.menu_background_color);
+            setTodoPushedColor();
           }
         }
       }
@@ -484,8 +474,7 @@ public class ActionBarFragment extends Fragment {
             activity.updateSettingsDB();
             activity.showDoneListViewFragment(ExpandableListViewFragment.TAG);
 
-            todoDrawable.setColor(activity.menu_background_color);
-            doneDrawable.setColor(activity.status_bar_color);
+            setDonePushedColor();
           }
         }
         else if(order == 1) {
@@ -496,12 +485,31 @@ public class ActionBarFragment extends Fragment {
             activity.updateSettingsDB();
             activity.showDoneListViewFragment(ListViewFragment.TAG);
 
-            todoDrawable.setColor(activity.menu_background_color);
-            doneDrawable.setColor(activity.status_bar_color);
+            setDonePushedColor();
           }
         }
       }
     });
+  }
+
+  private void setTodoPushedColor() {
+
+    todoDrawable.setColor(activity.status_bar_color);
+    doneDrawable.setColor(activity.menu_background_color);
+    todoDrawable.setStroke(3, activity.accent_color);
+    doneDrawable.setStroke(3, activity.menu_item_color);
+    todo.setTextColor(activity.accent_color);
+    done.setTextColor(activity.menu_item_color);
+  }
+
+  private void setDonePushedColor() {
+
+    todoDrawable.setColor(activity.menu_background_color);
+    doneDrawable.setColor(activity.status_bar_color);
+    todoDrawable.setStroke(3, activity.menu_item_color);
+    doneDrawable.setStroke(3, activity.accent_color);
+    todo.setTextColor(activity.menu_item_color);
+    done.setTextColor(activity.accent_color);
   }
 
   private void initTagSearchItem() {

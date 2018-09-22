@@ -195,8 +195,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     detail = (EditTextPreference)findPreference("detail");
     detail.setTitle(detail_str);
     detail.setOnPreferenceChangeListener(this);
-    PreferenceScreen color = (PreferenceScreen)findPreference("color");
-    color.setOnPreferenceClickListener(this);
+    PreferenceCategory colorCategory = (PreferenceCategory)findPreference("color");
+    PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
+    primaryColor.setOnPreferenceClickListener(this);
+    PreferenceScreen secondaryColor = (PreferenceScreen)findPreference("secondary_color");
+    secondaryColor.setOnPreferenceClickListener(this);
     tag = (PreferenceScreen)findPreference("tag");
     tag.setOnPreferenceClickListener(this);
     PreferenceScreen interval = (PreferenceScreen)findPreference("interval");
@@ -211,7 +214,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     notes.setOnPreferenceChangeListener(this);
 
     if(order == 0 || is_moving_task) {
-      rootPreferenceScreen.removePreference(color);
+      rootPreferenceScreen.removePreference(colorCategory);
     }
     else if(order == 1) {
       rootPreferenceScreen.removeAll();
@@ -223,7 +226,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       rootPreferenceScreen.removeAll();
       rootPreferenceScreen.addPreference(detail);
       rootPreferenceScreen.addPreference(tag);
-      rootPreferenceScreen.addPreference(color);
+      rootPreferenceScreen.addPreference(colorCategory);
       rootPreferenceScreen.addPreference(notes_category);
     }
   }
@@ -427,8 +430,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                     Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
                     checkNotNull(drawable);
                     drawable = drawable.mutate();
-                    if(list.getPrimary_color() != 0) {
-                      drawable.setColorFilter(list.getPrimary_color(), PorterDuff.Mode.SRC_IN);
+                    if(list.getColor() != 0) {
+                      drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
                     }
                     else {
                       drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
@@ -482,7 +485,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   public boolean onPreferenceClick(Preference preference) {
 
     switch(preference.getKey()) {
-      case "color": {
+      case "primary_color": {
+        activity.showColorPickerListViewFragment(TAG);
+        return true;
+      }
+      case "secondary_color": {
+        list.setColor_primary(false);
         activity.showColorPickerListViewFragment(TAG);
         return true;
       }
@@ -661,8 +669,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
         checkNotNull(drawable);
         drawable = drawable.mutate();
-        if(list.getPrimary_color() != 0) {
-          drawable.setColorFilter(list.getPrimary_color(), PorterDuff.Mode.SRC_IN);
+        if(list.getColor() != 0) {
+          drawable.setColorFilter(list.getColor(), PorterDuff.Mode.SRC_IN);
         }
         else {
           drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);

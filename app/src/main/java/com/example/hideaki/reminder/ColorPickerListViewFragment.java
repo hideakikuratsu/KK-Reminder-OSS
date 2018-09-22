@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +40,7 @@ public class ColorPickerListViewFragment extends Fragment {
       ColorPickerListAdapter.checked_position = activity.colorPickerListAdapter.adapterTag.getColor_order_group();
     }
     else if(order == 3) {
-      ColorPickerListAdapter.checked_position = MainEditFragment.list.getColor_order_group();
+      ColorPickerListAdapter.checked_position = MainEditFragment.list.getColorGroup();
     }
   }
 
@@ -56,6 +57,20 @@ public class ColorPickerListViewFragment extends Fragment {
 
     View view = inflater.inflate(R.layout.listview, container, false);
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
+    view.setFocusableInTouchMode(true);
+    view.requestFocus();
+    view.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+          MainEditFragment.list.setColor_primary(true);
+        }
+
+        return false;
+      }
+    });
+
     activity.listView = view.findViewById(R.id.listView);
     activity.listView.setAdapter(activity.colorPickerListAdapter);
 
@@ -78,6 +93,7 @@ public class ColorPickerListViewFragment extends Fragment {
     switch(item.getItemId()) {
 
       case android.R.id.home: {
+        if(order == 3) MainEditFragment.list.setColor_primary(true);
         getFragmentManager().popBackStack();
         return true;
       }
