@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 public class DoneListViewFragment extends Fragment {
 
-  static final String TAG = "DoneListViewFragment";
+  static final String TAG = DoneListViewFragment.class.getSimpleName();
   private MainActivity activity;
 
   public static DoneListViewFragment newInstance() {

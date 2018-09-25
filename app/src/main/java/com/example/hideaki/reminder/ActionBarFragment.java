@@ -36,7 +36,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ActionBarFragment extends Fragment {
 
-  static final String TAG = "ActionBarFragment";
+  static final String TAG = ActionBarFragment.class.getSimpleName();
   private MainActivity activity;
   SearchView searchView;
   private int order;
@@ -417,7 +417,10 @@ public class ActionBarFragment extends Fragment {
     done = toggleLayout.findViewById(R.id.done);
 
     todoDrawable = (GradientDrawable)todo.getBackground();
+    todoDrawable = (GradientDrawable)todoDrawable.mutate();
     doneDrawable = (GradientDrawable)done.getBackground();
+    doneDrawable = (GradientDrawable)doneDrawable.mutate();
+
     if(order == 0) {
       if(activity.generalSettings.isExpandable_todo()) {
         setTodoPushedColor();

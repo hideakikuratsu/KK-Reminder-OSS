@@ -31,7 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TagEditListViewFragment extends Fragment implements View.OnClickListener {
 
-  static final String TAG = "TagEditListViewFragment";
+  static final String TAG = TagEditListViewFragment.class.getSimpleName();
   private MainActivity activity;
   private ActionBar actionBar;
   private MenuItem editItem;

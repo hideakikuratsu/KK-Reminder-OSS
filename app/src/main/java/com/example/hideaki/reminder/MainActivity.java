@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       //タグなし
       Tag tag = new Tag(0);
       tag.setName(getString(R.string.none));
-      tag.setPrimary_color(0);
       tag.setOrder(0);
       generalSettings.getTagList().add(tag);
 

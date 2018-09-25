@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 public class ExpandableListViewFragment extends Fragment {
 
-  static final String TAG = "ExpandableListViewFragment";
+  static final String TAG = ExpandableListViewFragment.class.getSimpleName();
   private MainActivity activity;
 
   public static ExpandableListViewFragment newInstance() {

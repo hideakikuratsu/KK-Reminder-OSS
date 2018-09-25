@@ -37,7 +37,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   public static final String ITEM = "ITEM";
   public static final String LIST = "LIST";
-  static final String TAG = "MainEditFragment";
+  static final String TAG = MainEditFragment.class.getSimpleName();
 
   private EditTextPreference detail;
   private PreferenceScreen tag;
@@ -191,23 +191,30 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       checkNotNull(item);
     }
 
+    //各プリファレンスの初期化
     PreferenceScreen rootPreferenceScreen = getPreferenceScreen();
+
     detail = (EditTextPreference)findPreference("detail");
     detail.setTitle(detail_str);
     detail.setOnPreferenceChangeListener(this);
+
     PreferenceCategory colorCategory = (PreferenceCategory)findPreference("color");
     PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
     primaryColor.setOnPreferenceClickListener(this);
     PreferenceScreen secondaryColor = (PreferenceScreen)findPreference("secondary_color");
     secondaryColor.setOnPreferenceClickListener(this);
+
     tag = (PreferenceScreen)findPreference("tag");
     tag.setOnPreferenceClickListener(this);
+
     PreferenceScreen interval = (PreferenceScreen)findPreference("interval");
     interval.setOnPreferenceClickListener(this);
+
     day_repeat_item = (PreferenceScreen)findPreference("repeat_day_unit");
     day_repeat_item.setOnPreferenceClickListener(this);
     minute_repeat_item = (PreferenceScreen)findPreference("repeat_minute_unit");
     minute_repeat_item.setOnPreferenceClickListener(this);
+
     PreferenceCategory notes_category = (PreferenceCategory)findPreference("notes_category");
     notes = (EditTextPreference)findPreference("notes");
     notes.setTitle(notes_str);
@@ -272,12 +279,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         tag.setSummary(activity.getString(R.string.non_tag));
       }
       else {
-        for(Tag tag : activity.generalSettings.getTagList()) {
-          if(item.getWhich_tag_belongs() == tag.getId()) {
-            this.tag.setSummary(tag.getName());
-            break;
-          }
-        }
+        tag.setSummary(activity.generalSettings.getTagById(item.getWhich_tag_belongs()).getName());
       }
     }
     else if(order == 3) {
@@ -285,12 +287,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         tag.setSummary(activity.getString(R.string.non_tag));
       }
       else {
-        for(Tag tag : activity.generalSettings.getTagList()) {
-          if(list.getWhich_tag_belongs() == tag.getId()) {
-            this.tag.setSummary(tag.getName());
-            break;
-          }
-        }
+        tag.setSummary(activity.generalSettings.getTagById(list.getWhich_tag_belongs()).getName());
       }
     }
 

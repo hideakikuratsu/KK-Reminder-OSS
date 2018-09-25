@@ -41,6 +41,7 @@ public class TagEditListAdapter extends BaseAdapter {
     this.activity = activity;
     dragListener = new DragListener();
     is_sorting = false;
+    is_editing = false;
   }
 
   private static class ViewHolder {
@@ -104,7 +105,7 @@ public class TagEditListAdapter extends BaseAdapter {
 
                     String name = editText.getText().toString();
                     if(!name.equals("")) {
-                      tagList.get(position).setName(name);
+                      tag.setName(name);
                       activity.generalSettings.getTagList().get(position).setName(name);
                       activity.updateSettingsDB();
                     }
@@ -128,6 +129,7 @@ public class TagEditListAdapter extends BaseAdapter {
                 }
               }
             });
+
             break;
           }
           case R.id.pallet: {
@@ -231,6 +233,7 @@ public class TagEditListAdapter extends BaseAdapter {
 
       Tag tag = tagList.get(positionFrom);
       tagList.remove(positionFrom);
+      if(positionTo == 0) positionTo = 1;
       tagList.add(positionTo, tag);
 
       draggingPosition = positionTo;

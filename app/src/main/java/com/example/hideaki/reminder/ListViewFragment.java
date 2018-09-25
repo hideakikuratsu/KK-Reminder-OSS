@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 public class ListViewFragment extends Fragment {
 
-  static final String TAG = "ListViewFragment";
+  static final String TAG = ListViewFragment.class.getSimpleName();
   private MainActivity activity;
 
   public static ListViewFragment newInstance() {

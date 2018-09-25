@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ColorPickerListViewFragment extends Fragment {
 
-  static final String TAG = "ColorPickerListViewFragment";
+  static final String TAG = ColorPickerListViewFragment.class.getSimpleName();
   private MainActivity activity;
   static int order;
   static int tag_position;
