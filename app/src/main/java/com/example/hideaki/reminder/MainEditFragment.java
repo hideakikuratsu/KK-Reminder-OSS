@@ -42,12 +42,14 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   private EditTextPreference detail;
   private PreferenceScreen tag;
   private EditTextPreference notes;
+  private PreferenceScreen interval_item;
   private PreferenceScreen day_repeat_item;
   private PreferenceScreen minute_repeat_item;
   static Item item;
   static String detail_str;
   static String notes_str;
   static Calendar final_cal;
+  static NotifyInterval notifyInterval;
   static DayRepeat dayRepeat;
   static MinuteRepeat minuteRepeat;
   static boolean is_edit;
@@ -69,6 +71,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     is_edit = false;
     detail_str = "";
     notes_str = "";
+    notifyInterval = new NotifyInterval();
     dayRepeat = new DayRepeat();
     minuteRepeat = new MinuteRepeat();
     final_cal = Calendar.getInstance();
@@ -87,6 +90,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     is_edit = false;
     detail_str = detail;
     notes_str = "";
+    notifyInterval = new NotifyInterval();
     dayRepeat = new DayRepeat();
     minuteRepeat = new MinuteRepeat();
     final_cal = Calendar.getInstance();
@@ -104,6 +108,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     is_edit = true;
     detail_str = item.getDetail();
     notes_str = item.getNotes();
+    notifyInterval = item.getNotify_interval().clone();
     dayRepeat = item.getDayRepeat().clone();
     minuteRepeat = item.getMinuteRepeat().clone();
     final_cal = (Calendar)item.getDate().clone();
@@ -191,6 +196,10 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       checkNotNull(item);
     }
 
+    if(!is_edit) {
+      notifyInterval = activity.generalSettings.getNotifyInterval().clone();
+    }
+
     //各プリファレンスの初期化
     PreferenceScreen rootPreferenceScreen = getPreferenceScreen();
 
@@ -207,8 +216,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     tag = (PreferenceScreen)findPreference("tag");
     tag.setOnPreferenceClickListener(this);
 
-    PreferenceScreen interval = (PreferenceScreen)findPreference("interval");
-    interval.setOnPreferenceClickListener(this);
+    interval_item = (PreferenceScreen)findPreference("interval");
+    interval_item.setOnPreferenceClickListener(this);
 
     day_repeat_item = (PreferenceScreen)findPreference("repeat_day_unit");
     day_repeat_item.setOnPreferenceClickListener(this);
@@ -291,8 +300,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       }
     }
 
-    //dayRepeatのラベルの初期化
+    //Repeatのラベルの初期化
     if(order == 0 || is_moving_task) {
+      if(notifyInterval.getLabel() == null) interval_item.setSummary(R.string.none);
+      else interval_item.setSummary(notifyInterval.getLabel());
+
       if(dayRepeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
       else day_repeat_item.setSummary(dayRepeat.getLabel());
 
@@ -496,7 +508,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         return true;
       }
       case "interval": {
-        transitionFragment(IntervalEditFragment.newInstance());
+        transitionFragment(NotifyIntervalEditFragment.newInstance());
         return true;
       }
       case "repeat_day_unit": {
@@ -552,6 +564,10 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       if(order == 0 || is_moving_task) {
 
         item.setDate((Calendar)final_cal.clone());
+
+        //notifyIntervalの登録
+        notifyInterval.setTime(notifyInterval.getOrg_time());
+        item.setNotify_interval(notifyInterval.clone());
 
         //dayRepeatの登録
         if(dayRepeat.getSetted() != 0) {

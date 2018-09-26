@@ -13,10 +13,9 @@ import android.widget.ImageView;
 public class MinuteRepeatCountPickerPreference extends Preference implements TextWatcher {
 
   private EditText count;
-  private String tmp = "";
+  private String oldString = "";
 
   public MinuteRepeatCountPickerPreference(Context context, AttributeSet attrs) {
-
     super(context, attrs);
   }
 
@@ -92,8 +91,8 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
   @Override
   public void afterTextChanged(Editable s) {
 
-    if(!s.toString().equals("") && !tmp.equals(s.toString()) && MinuteRepeatEditFragment.count.isChecked()) {
-      tmp = s.toString();
+    if(!s.toString().equals("") && !oldString.equals(s.toString()) && MinuteRepeatEditFragment.count.isChecked()) {
+      oldString = s.toString();
       if(Integer.parseInt(s.toString()) != 0) {
         MainEditFragment.minuteRepeat.setOrg_count(Integer.parseInt(s.toString()));
 

@@ -183,6 +183,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       tag.setOrder(3);
       generalSettings.getTagList().add(tag);
 
+      //NotifyIntervalのデフォルト設定
+      NotifyInterval notifyInterval = new NotifyInterval();
+      notifyInterval.setHour(0);
+      notifyInterval.setMinute(5);
+      notifyInterval.setOrg_time(6);
+      notifyInterval.setWhich_setted(1);
+
+      if(notifyInterval.getOrg_time() != 0) {
+        String summary = getString(R.string.unless_complete_task);
+        if(notifyInterval.getHour() != 0) {
+          summary += notifyInterval.getHour() + getString(R.string.hour);
+        }
+        if(notifyInterval.getMinute() != 0) {
+          summary += notifyInterval.getMinute() + getString(R.string.minute);
+        }
+        summary += getString(R.string.per);
+        if(notifyInterval.getOrg_time() == -1) {
+          summary += getString(R.string.infinite_times_notify);
+        }
+        else {
+          summary += getString(R.string.max) + notifyInterval.getOrg_time()
+              + getString(R.string.times_notify);
+        }
+
+        notifyInterval.setLabel(summary);
+      }
+      else {
+        notifyInterval.setLabel(getString(R.string.none));
+      }
+      generalSettings.setNotifyInterval(notifyInterval);
+
       insertSettingsDB();
     }
 

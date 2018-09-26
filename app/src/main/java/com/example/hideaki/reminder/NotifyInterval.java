@@ -4,19 +4,16 @@ import java.io.Serializable;
 
 public class NotifyInterval implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = 7127233044277451486L;
-  private int hour = 0;
-  private int minute = 1;
-  private int time = 5;
-  private int org_time = time;
+  private static final long serialVersionUID = 8844386229395430923L;
+  private String label = null;
+  private int hour;
+  private int minute;
+  private int time;
+  private int org_time;
+  private int which_setted;
 
-  NotifyInterval() {}
-
-  public NotifyInterval(int hour, int minute, int time) {
-    this.hour = hour;
-    this.minute = minute;
-    this.time = time;
-    this.org_time = this.time;
+  public String getLabel() {
+    return label;
   }
 
   public int getHour() {
@@ -35,6 +32,14 @@ public class NotifyInterval implements Serializable, Cloneable {
     return org_time;
   }
 
+  public int getWhich_setted() {
+    return which_setted;
+  }
+
+  public void setLabel(String label) {
+    this.label = label;
+  }
+
   public void setHour(int hour) {
     this.hour = hour;
   }
@@ -49,6 +54,14 @@ public class NotifyInterval implements Serializable, Cloneable {
 
   public void setOrg_time(int org_time) {
     this.org_time = org_time;
+  }
+
+  public void addOrgTime(int org_time) {
+    this.org_time += org_time;
+  }
+
+  public void setWhich_setted(int which_setted) {
+    this.which_setted = which_setted;
   }
 
   @Override

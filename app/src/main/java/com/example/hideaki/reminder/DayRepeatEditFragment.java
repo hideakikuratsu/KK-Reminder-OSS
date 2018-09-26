@@ -157,7 +157,9 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
       }
     }
 
-    if(MainEditFragment.dayRepeat.getLabel() == null) {
+    //ラベルの初期化
+    String label_str = MainEditFragment.dayRepeat.getLabel();
+    if(label_str == null || label_str.equals(activity.getString(R.string.none))) {
       label.setSummary(R.string.non_repeat);
     }
     else {
@@ -189,8 +191,6 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
 
     if(!preference.getKey().equals("label")) {
 
-      label.setSummary(MainEditFragment.dayRepeat.getLabel());
-
       never.setChecked(false);
       everyday.setChecked(false);
       everyweekday.setChecked(false);
@@ -207,6 +207,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           MainEditFragment.dayRepeat.setLabel(activity.getResources().getString(R.string.none));
           MainEditFragment.dayRepeat.setSetted(0);
           MainEditFragment.dayRepeat.setWhich_template(0);
+
           return true;
         }
         case "everyday": {
@@ -218,6 +219,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           MainEditFragment.dayRepeat.setWhich_template(1);
           MainEditFragment.dayRepeat.setInterval(1);
           MainEditFragment.dayRepeat.setDay(true);
+
           return true;
         }
         case "everyweekday": {
@@ -229,6 +231,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           MainEditFragment.dayRepeat.setWhich_template(1 << 1);
           MainEditFragment.dayRepeat.setInterval(1);
           MainEditFragment.dayRepeat.setWeek(Integer.parseInt("11111", 2));
+
           return true;
         }
         case "everyweek": {
@@ -242,6 +245,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
           mask_num = mask_num < 2 ? mask_num + 5 : mask_num - 2;
           MainEditFragment.dayRepeat.setWeek(1 << mask_num);
+
           return true;
         }
         case "everymonth": {
@@ -257,6 +261,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           if(!MainEditFragment.dayRepeat.isDays_of_month_setted()) {
             MainEditFragment.dayRepeat.setDays_of_month_setted(true);
           }
+
           return true;
         }
         case "everyyear": {
@@ -270,15 +275,18 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
           MainEditFragment.dayRepeat.setYear(1 << mask_num);
           MainEditFragment.dayRepeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
+
           return true;
         }
         case "custom": {
           custom.setChecked(true);
           transitionFragment(DayRepeatCustomPickerFragment.newInstance());
+
           return true;
         }
       }
     }
+
     return false;
   }
 }

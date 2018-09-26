@@ -1,5 +1,6 @@
 package com.example.hideaki.reminder;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -52,7 +53,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
     checkNotNull(powerManager);
-    PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
+    @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
         PowerManager.FULL_WAKE_LOCK |
             PowerManager.ACQUIRE_CAUSES_WAKEUP |
             PowerManager.ON_AFTER_RELEASE, "Notification");
@@ -68,7 +69,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     //再帰通知処理
-    if(time > 0 || time < 0) {
+    if(time != 0) {
       item.getNotify_interval().setTime(--time);
       Intent recursive_alarm = new Intent(context, AlarmReceiver.class);
       ob_array = MainActivity.serialize(item);

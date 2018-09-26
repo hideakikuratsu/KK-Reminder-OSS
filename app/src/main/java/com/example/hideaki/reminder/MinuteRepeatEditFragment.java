@@ -83,9 +83,8 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
                 .show();
             return true;
           }
-          else return false;
         }
-        else return false;
+        return false;
       }
     });
 
@@ -124,6 +123,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
       }
     }
 
+    //ラベルの初期化
     if(MainEditFragment.minuteRepeat.getLabel() == null) {
       label.setSummary(R.string.non_repeat);
     }

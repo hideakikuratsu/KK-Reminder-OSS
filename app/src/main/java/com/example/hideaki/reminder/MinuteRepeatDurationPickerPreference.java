@@ -19,17 +19,11 @@ public class MinuteRepeatDurationPickerPreference extends Preference {
 
   static {
 
-    for(int i = 0; i < 24; i++) {
-      hour_list.add(i + "時間");
-    }
-
-    for(int i = 0; i < 60; i++) {
-      minute_list.add(i + "分");
-    }
+    for(int i = 0; i < 24; i++) hour_list.add(i + "時間");
+    for(int i = 0; i < 60; i++) minute_list.add(i + "分");
   }
 
   public MinuteRepeatDurationPickerPreference(Context context, AttributeSet attrs) {
-
     super(context, attrs);
   }
 
@@ -52,7 +46,7 @@ public class MinuteRepeatDurationPickerPreference extends Preference {
       hour_picker.setMaxValue(23);
       hour_picker.setMinValue(0);
       hour_picker.setValue(MainEditFragment.minuteRepeat.getOrg_duration_hour());
-      hour_picker.setDisplayedValues(hour_list.toArray(new String[hour_list.size()]));
+      hour_picker.setDisplayedValues(hour_list.toArray(new String[0]));
       hour_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
         @Override
         public void onScrollStateChange(NumberPicker view, int scrollState) {
@@ -97,7 +91,7 @@ public class MinuteRepeatDurationPickerPreference extends Preference {
       minute_picker.setMaxValue(59);
       minute_picker.setMinValue(0);
       minute_picker.setValue(MainEditFragment.minuteRepeat.getOrg_duration_minute());
-      minute_picker.setDisplayedValues(minute_list.toArray(new String[minute_list.size()]));
+      minute_picker.setDisplayedValues(minute_list.toArray(new String[0]));
       minute_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
         @Override
         public void onScrollStateChange(NumberPicker view, int scrollState) {

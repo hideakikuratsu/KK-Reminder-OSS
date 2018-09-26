@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceScreen
+        android:key="label"/>
+
+    <com.example.hideaki.reminder.MyCheckBoxPreference
+        android:key="none"
+        android:title="@string/none"/>
+
+    <com.example.hideaki.reminder.MyCheckBoxPreference
+        android:key="default"
+        android:title="@string/notify_default"/>
+
+    <com.example.hideaki.reminder.MyCheckBoxPreference
+        android:key="every_minute"
+        android:title="@string/notify_every_minute"/>
+
+    <com.example.hideaki.reminder.MyCheckBoxPreference
+        android:key="every_five_minutes"
+        android:title="@string/notify_every_five_minutes"/>
+
+    <com.example.hideaki.reminder.MyCheckBoxPreference
+        android:key="every_fifteen_minutes"
+        android:title="@string/notify_every_fifteen_minutes"/>
+
+    <com.example.hideaki.reminder.MyCheckBoxPreference
+        android:key="every_thirty_minutes"
+        android:title="@string/notify_every_thirty_minutes"/>
+
+    <com.example.hideaki.reminder.MyCheckBoxPreference
+        android:key="every_hour"
+        android:title="@string/notify_every_hour"/>
+
+    <com.example.hideaki.reminder.MyCheckBoxPreference
+        android:key="every_day"
+        android:title="@string/notify_every_day"/>
+
+    <com.example.hideaki.reminder.MyCheckBoxPreference
+        android:key="custom"
+        android:title="@string/custom"/>
+
+    <com.example.hideaki.reminder.NotifyIntervalDurationPickerPreference
+        android:key="duration"/>
+
+    <com.example.hideaki.reminder.NotifyIntervalTimePickerPreference
+        android:key="time"/>
+
+    <PreferenceScreen
+        android:key="custom_description"
+        android:summary="@string/description_for_notify_custom"/>
+
+</PreferenceScreen>
