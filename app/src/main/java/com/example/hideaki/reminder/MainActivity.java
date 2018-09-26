@@ -214,6 +214,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       }
       generalSettings.setNotifyInterval(notifyInterval);
 
+      //AlarmSoundのデフォルト設定
+      generalSettings.setSoundUri(UtilClass.DEFAULT_URI_SOUND.toString());
+
       insertSettingsDB();
     }
 

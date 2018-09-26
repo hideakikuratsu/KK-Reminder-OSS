@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
@@ -17,8 +16,6 @@ import android.support.v4.app.NotificationCompat;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AlarmReceiver extends BroadcastReceiver {
-
-  private Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -39,8 +36,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_MAX)
         .setLights(Color.GREEN, 2000, 1000)
-        .setVibrate(new long[]{0, 500})
-        .setSound(uri);
+        .setVibrate(new long[]{0, 500});
+
+    String uriString = item.getSoundUri();
+    if(uriString != null) {
+      builder.setSound(Uri.parse(uriString));
+    }
 
     int time = item.getNotify_interval().getTime();
     long id;

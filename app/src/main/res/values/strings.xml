@@ -29,6 +29,9 @@
     <string name="repeat_minute_duration">繰り返す長さ</string>
     <string name="repeat_minute_illegal_dialog">繰り返しの間隔が繰り返す長さを超えています\n繰り返す長さよりも短い間隔を設定し直してください</string>
     <string name="autocomplete">自動で完了済みにする</string>
+    <string name="alarm_option">通知音の設定</string>
+    <string name="pick_alarm">通知音の選択</string>
+    <string name="sound_or_not">通知音を鳴らすか</string>
     <string name="times">回</string>
     <string name="none">なし</string>
     <string name="home">家事</string>

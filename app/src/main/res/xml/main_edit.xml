@@ -41,6 +41,12 @@
             android:summary="@string/none"/>
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/alarm_option">
+        <PreferenceScreen
+            android:key="pick_alarm"
+            android:title="@string/pick_alarm"/>
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:key="notes_category"
         android:title="@string/notes">

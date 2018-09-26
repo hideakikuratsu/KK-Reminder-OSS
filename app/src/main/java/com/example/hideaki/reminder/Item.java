@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 public class Item implements Serializable {
 
-  private static final long serialVersionUID = -2549045384222191618L;
+  private static final long serialVersionUID = -6712455959256103737L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
@@ -16,6 +16,7 @@ public class Item implements Serializable {
   private NotifyInterval notify_interval = new NotifyInterval();
   private DayRepeat dayRepeat = new DayRepeat();
   private MinuteRepeat minuteRepeat = new MinuteRepeat();
+  private String soundUri;
   private String notes;
   private long time_altered; //子ビューのコントロールパネルで時間を変えたとき、変えた総時間を保持する
   private long org_time_altered; //リピート設定による変更をスナックバーから元に戻すのに用いる
@@ -62,6 +63,10 @@ public class Item implements Serializable {
 
   public MinuteRepeat getMinuteRepeat() {
     return minuteRepeat;
+  }
+
+  public String getSoundUri() {
+    return soundUri;
   }
 
   public String getNotes() {
@@ -130,6 +135,10 @@ public class Item implements Serializable {
 
   public void setMinuteRepeat(MinuteRepeat minuteRepeat) {
     this.minuteRepeat = minuteRepeat;
+  }
+
+  public void setSoundUri(String soundUri) {
+    this.soundUri = soundUri;
   }
 
   public void setNotes(String notes) {

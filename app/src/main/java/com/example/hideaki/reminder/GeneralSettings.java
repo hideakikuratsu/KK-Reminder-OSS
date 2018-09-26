@@ -6,11 +6,12 @@ import java.util.List;
 
 public class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = -4196449793336096617L;
+  private static final long serialVersionUID = 7787440574803207906L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
   private List<Tag> tagList = new ArrayList<>();
   private boolean expandable_todo = true;
   private NotifyInterval notifyInterval;
+  private String soundUri;
 
   public List<NonScheduledList> getNonScheduledLists() {
     return nonScheduledLists;
@@ -36,6 +37,10 @@ public class GeneralSettings implements Serializable {
     return notifyInterval;
   }
 
+  public String getSoundUri() {
+    return soundUri;
+  }
+
   public void setNonScheduledLists(List<NonScheduledList> nonScheduledLists) {
     this.nonScheduledLists = nonScheduledLists;
   }
@@ -50,5 +55,9 @@ public class GeneralSettings implements Serializable {
 
   public void setNotifyInterval(NotifyInterval notifyInterval) {
     this.notifyInterval = notifyInterval;
+  }
+
+  public void setSoundUri(String soundUri) {
+    this.soundUri = soundUri;
   }
 }

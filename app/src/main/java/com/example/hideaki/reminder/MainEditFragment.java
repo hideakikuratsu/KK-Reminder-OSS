@@ -3,8 +3,12 @@ package com.example.hideaki.reminder;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -29,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,14 +42,16 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   public static final String ITEM = "ITEM";
   public static final String LIST = "LIST";
-  static final String TAG = MainEditFragment.class.getSimpleName();
+  public static final String TAG = MainEditFragment.class.getSimpleName();
+  public static final int REQUEST_CODE_RINGTONE_PICKER = 0;
 
   private EditTextPreference detail;
   private PreferenceScreen tag;
   private EditTextPreference notes;
-  private PreferenceScreen interval_item;
-  private PreferenceScreen day_repeat_item;
-  private PreferenceScreen minute_repeat_item;
+  private PreferenceScreen intervalItem;
+  private PreferenceScreen dayRepeatItem;
+  private PreferenceScreen minuteRepeatItem;
+  private PreferenceScreen pickAlarm;
   static Item item;
   static String detail_str;
   static String notes_str;
@@ -196,8 +203,10 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       checkNotNull(item);
     }
 
+    //GeneralSettingsに影響を受ける部分の設定の初期化
     if(!is_edit) {
       notifyInterval = activity.generalSettings.getNotifyInterval().clone();
+      item.setSoundUri(activity.generalSettings.getSoundUri());
     }
 
     //各プリファレンスの初期化
@@ -216,13 +225,16 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     tag = (PreferenceScreen)findPreference("tag");
     tag.setOnPreferenceClickListener(this);
 
-    interval_item = (PreferenceScreen)findPreference("interval");
-    interval_item.setOnPreferenceClickListener(this);
+    intervalItem = (PreferenceScreen)findPreference("interval");
+    intervalItem.setOnPreferenceClickListener(this);
 
-    day_repeat_item = (PreferenceScreen)findPreference("repeat_day_unit");
-    day_repeat_item.setOnPreferenceClickListener(this);
-    minute_repeat_item = (PreferenceScreen)findPreference("repeat_minute_unit");
-    minute_repeat_item.setOnPreferenceClickListener(this);
+    dayRepeatItem = (PreferenceScreen)findPreference("repeat_day_unit");
+    dayRepeatItem.setOnPreferenceClickListener(this);
+    minuteRepeatItem = (PreferenceScreen)findPreference("repeat_minute_unit");
+    minuteRepeatItem.setOnPreferenceClickListener(this);
+
+    pickAlarm = (PreferenceScreen)findPreference("pick_alarm");
+    pickAlarm.setOnPreferenceClickListener(this);
 
     PreferenceCategory notes_category = (PreferenceCategory)findPreference("notes_category");
     notes = (EditTextPreference)findPreference("notes");
@@ -300,16 +312,23 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       }
     }
 
-    //Repeatのラベルの初期化
+    //Repeat、NotifyInterval、AlarmSoundのラベルの初期化
     if(order == 0 || is_moving_task) {
-      if(notifyInterval.getLabel() == null) interval_item.setSummary(R.string.none);
-      else interval_item.setSummary(notifyInterval.getLabel());
+      if(notifyInterval.getLabel() == null) intervalItem.setSummary(R.string.none);
+      else intervalItem.setSummary(notifyInterval.getLabel());
 
-      if(dayRepeat.getLabel() == null) day_repeat_item.setSummary(R.string.none);
-      else day_repeat_item.setSummary(dayRepeat.getLabel());
+      if(dayRepeat.getLabel() == null) dayRepeatItem.setSummary(R.string.none);
+      else dayRepeatItem.setSummary(dayRepeat.getLabel());
 
-      if(minuteRepeat.getLabel() == null) minute_repeat_item.setSummary(R.string.none);
-      else minute_repeat_item.setSummary(minuteRepeat.getLabel());
+      if(minuteRepeat.getLabel() == null) minuteRepeatItem.setSummary(R.string.none);
+      else minuteRepeatItem.setSummary(minuteRepeat.getLabel());
+
+      String uriString = item.getSoundUri();
+      if(uriString == null) pickAlarm.setSummary(R.string.none);
+      else {
+        Ringtone ringtone = RingtoneManager.getRingtone(activity, Uri.parse(uriString));
+        pickAlarm.setSummary(ringtone.getTitle(activity));
+      }
     }
 
     return view;
@@ -491,32 +510,73 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   }
 
   @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    if(requestCode == REQUEST_CODE_RINGTONE_PICKER) {
+      if(resultCode == RESULT_OK) {
+
+        Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+        if(uri == null) {
+          item.setSoundUri(null);
+          pickAlarm.setSummary(activity.getString(R.string.none));
+        }
+        else {
+          item.setSoundUri(uri.toString());
+          Ringtone ringtone = RingtoneManager.getRingtone(activity, uri);
+          pickAlarm.setSummary(ringtone.getTitle(activity));
+        }
+      }
+    }
+  }
+
+  @Override
   public boolean onPreferenceClick(Preference preference) {
 
     switch(preference.getKey()) {
+
       case "primary_color": {
         activity.showColorPickerListViewFragment(TAG);
         return true;
       }
       case "secondary_color": {
+
         list.setColor_primary(false);
         activity.showColorPickerListViewFragment(TAG);
         return true;
       }
       case "tag": {
+
         activity.showTagEditListViewFragment(TAG);
         return true;
       }
       case "interval": {
+
         transitionFragment(NotifyIntervalEditFragment.newInstance());
         return true;
       }
       case "repeat_day_unit": {
+
         transitionFragment(DayRepeatEditFragment.newInstance());
         return true;
       }
       case "repeat_minute_unit": {
+
         transitionFragment(MinuteRepeatEditFragment.newInstance());
+        return true;
+      }
+      case "pick_alarm": {
+
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, activity.getString(R.string.pick_alarm));
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(activity.generalSettings.getSoundUri()));
+        String uriString = item.getSoundUri();
+        if(uriString != null) {
+          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(uriString));
+        }
+        startActivityForResult(intent, REQUEST_CODE_RINGTONE_PICKER);
         return true;
       }
     }
