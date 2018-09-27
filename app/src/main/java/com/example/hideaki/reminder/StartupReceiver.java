@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import static com.example.hideaki.reminder.UtilClass.ITEM;
+import static com.example.hideaki.reminder.UtilClass.deserialize;
+import static com.example.hideaki.reminder.UtilClass.serialize;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StartupReceiver extends BroadcastReceiver {
@@ -39,12 +42,12 @@ public class StartupReceiver extends BroadcastReceiver {
 
     for(byte[] stream : accessor.executeQueryAll(MyDatabaseHelper.TODO_TABLE)) {
 
-      Item item = (Item)MainActivity.deserialize(stream);
+      Item item = (Item)deserialize(stream);
 
       if(item.getDate().getTimeInMillis() > System.currentTimeMillis() && item.getWhich_list_belongs() == 0) {
         Intent set_alarm = new Intent(context, AlarmReceiver.class);
-        byte[] ob_array = MainActivity.serialize(item);
-        set_alarm.putExtra(MainEditFragment.ITEM, ob_array);
+        byte[] ob_array = serialize(item);
+        set_alarm.putExtra(ITEM, ob_array);
         PendingIntent sender = PendingIntent.getBroadcast(
             context, (int)item.getId(), set_alarm, PendingIntent.FLAG_UPDATE_CURRENT);
 

@@ -8,9 +8,9 @@ import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
 import android.text.format.DateFormat;
-import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +37,9 @@ import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.hideaki.reminder.UtilClass.nonScheduledItemComparator;
+import static com.example.hideaki.reminder.UtilClass.scheduledItemComparator;
+
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 
   private static Calendar tmp;
@@ -44,8 +47,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   static final List<String> groups = new ArrayList<>();
   static List<List<Item>> children;
   static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
-  private final ScheduledItemComparator scheduledItemComparator = new ScheduledItemComparator();
-  private final NonScheduledItemComparator nonScheduledItemComparator = new NonScheduledItemComparator();
   private boolean is_control_panel_locked;
   private MainActivity activity;
   ActionMode actionMode = null;
@@ -61,9 +62,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     groups.add("一週間以上");
   }
 
-  MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
-    
-    MyExpandableListAdapter.children = children;
+  MyExpandableListAdapter(MainActivity activity) {
     this.activity = activity;
   }
 

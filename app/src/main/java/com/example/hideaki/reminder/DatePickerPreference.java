@@ -105,7 +105,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     day_picker.setMaxValue(day_list.size()-1);
     day_picker.setMinValue(0);
     day_picker.setValue((int)day);
-    day_picker.setDisplayedValues(day_list.toArray(new String[day_list.size()]));
+    day_picker.setDisplayedValues(day_list.toArray(new String[0]));
     day_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
@@ -121,7 +121,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
           setDayList(1);
           now_year -= 1;
           day_picker.setMaxValue(day_list.size()-1);
-          day_picker.setDisplayedValues(day_list.toArray(new String[day_list.size()]));
+          day_picker.setDisplayedValues(day_list.toArray(new String[0]));
           day_picker.setValue(first_list_size + offset);
         }
         else if((offset = day_picker.getValue()) > day_list.size() - 10) {
@@ -136,7 +136,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
           first_list_size = day_list.size();
           setDayList(1);
           day_picker.setMaxValue(day_list.size()-1);
-          day_picker.setDisplayedValues(day_list.toArray(new String[day_list.size()]));
+          day_picker.setDisplayedValues(day_list.toArray(new String[0]));
           day_picker.setValue(offset - (whole_list_size - first_list_size));
         }
 
@@ -161,7 +161,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     hour_picker.setMaxValue(23);
     hour_picker.setMinValue(0);
     hour_picker.setValue(now.get(Calendar.HOUR_OF_DAY));
-    hour_picker.setDisplayedValues(hour_list.toArray(new String[hour_list.size()]));
+    hour_picker.setDisplayedValues(hour_list.toArray(new String[0]));
     hour_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
@@ -184,7 +184,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     minute_picker.setMaxValue(59);
     minute_picker.setMinValue(0);
     minute_picker.setValue(now.get(Calendar.MINUTE));
-    minute_picker.setDisplayedValues(minute_list.toArray(new String[minute_list.size()]));
+    minute_picker.setDisplayedValues(minute_list.toArray(new String[0]));
     minute_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {

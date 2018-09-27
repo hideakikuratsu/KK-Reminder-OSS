@@ -13,19 +13,35 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
+import static com.example.hideaki.reminder.UtilClass.BOOT_FROM_NOTIFICATION;
+import static com.example.hideaki.reminder.UtilClass.ITEM;
+import static com.example.hideaki.reminder.UtilClass.NOTIFICATION_ID;
+import static com.example.hideaki.reminder.UtilClass.deserialize;
+import static com.example.hideaki.reminder.UtilClass.serialize;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
+  DBAccessor accessor = null;
+
   @Override
   public void onReceive(Context context, Intent intent) {
 
-    byte[] ob_array = intent.getByteArrayExtra(MainEditFragment.ITEM);
-    Item item = (Item)MainActivity.deserialize(ob_array);
+    accessor = new DBAccessor(context);
+    byte[] ob_array = intent.getByteArrayExtra(ITEM);
+    Item item = (Item)deserialize(ob_array);
+
+    int time = item.getNotify_interval().getTime();
+    int id;
+    if(time > 0) id = (int)item.getId() * (time + 2);
+    else if(time < 0) id = (int)(-(item.getId() * (time - 2)));
+    else id = (int)item.getId();
 
     Intent open_activity = new Intent(context, MainActivity.class);
+    open_activity.setAction(BOOT_FROM_NOTIFICATION);
     PendingIntent sender = PendingIntent.getActivity(
-        context, 0, open_activity, PendingIntent.FLAG_UPDATE_CURRENT);
+        context, 0, open_activity, PendingIntent.FLAG_UPDATE_CURRENT
+    );
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "reminder_01")
         .setContentTitle("Reminder")
@@ -38,20 +54,28 @@ public class AlarmReceiver extends BroadcastReceiver {
         .setLights(Color.GREEN, 2000, 1000)
         .setVibrate(new long[]{0, 500});
 
+    //通知音の設定
     String uriString = item.getSoundUri();
     if(uriString != null) {
       builder.setSound(Uri.parse(uriString));
     }
 
-    int time = item.getNotify_interval().getTime();
-    long id;
-    if(time > 0) id = item.getId() * (time + 2);
-    else if(time < 0) id = -(item.getId() * (time - 2));
-    else id = item.getId();
+    //手動スヌーズ用のIntentの設定
+    Intent snoozeIntent = new Intent(context, ManuallySnoozeActivity.class);
+    ob_array = serialize(item);
+    snoozeIntent.putExtra(ITEM, ob_array);
+    snoozeIntent.putExtra(NOTIFICATION_ID, id);
+    PendingIntent snoozeSender = PendingIntent.getActivity(
+        context, id, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
+    );
+    builder.addAction(R.drawable.ic_snooze_24dp, context.getString(R.string.snooze), snoozeSender);
+
+    //通知を発行
     NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     checkNotNull(manager);
-    manager.notify((int)id, builder.build());
+    manager.notify(id, builder.build());
 
+    //ロックされている場合、画面を点ける
     PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
     checkNotNull(powerManager);
     @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
@@ -73,8 +97,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     if(time != 0) {
       item.getNotify_interval().setTime(--time);
       Intent recursive_alarm = new Intent(context, AlarmReceiver.class);
-      ob_array = MainActivity.serialize(item);
-      recursive_alarm.putExtra(MainEditFragment.ITEM, ob_array);
+      ob_array = serialize(item);
+      recursive_alarm.putExtra(ITEM, ob_array);
       PendingIntent recursive_sender = PendingIntent.getBroadcast(
           context, (int)item.getId(), recursive_alarm, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -95,6 +119,12 @@ public class AlarmReceiver extends BroadcastReceiver {
       else {
         alarmManager.set(AlarmManager.RTC_WAKEUP, reset_schedule, recursive_sender);
       }
+
+      updateDB(item, MyDatabaseHelper.TODO_TABLE);
     }
+  }
+
+  public void updateDB(Item item, String table) {
+    accessor.executeUpdate(item.getId(), serialize(item), table);
   }
 }

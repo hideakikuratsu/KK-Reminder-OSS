@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteStatement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBAccessor {
+class DBAccessor {
   private SQLiteDatabase sdb;
   private MyDatabaseHelper helper;
   private String state_str;
@@ -20,7 +20,7 @@ public class DBAccessor {
     this.helper = new MyDatabaseHelper(context);
   }
 
-  public void executeInsert(long id, byte[] stream, String table) {
+  void executeInsert(long id, byte[] stream, String table) {
 
     sdb = helper.getWritableDatabase();
     state_str = "INSERT INTO " + table + "(item_id, serial) VALUES(?, ?)";
@@ -44,7 +44,7 @@ public class DBAccessor {
     }
   }
 
-  public void executeUpdate(long id, byte[] stream, String table) {
+  void executeUpdate(long id, byte[] stream, String table) {
 
     sdb = helper.getWritableDatabase();
     state_str = "UPDATE " + table + " SET serial = ? WHERE item_id = ?";
@@ -68,7 +68,7 @@ public class DBAccessor {
     }
   }
 
-  public void executeDelete(long id, String table) {
+  void executeDelete(long id, String table) {
 
     sdb = helper.getWritableDatabase();
     state_str = "DELETE FROM " + table + " WHERE item_id = ?";
@@ -91,7 +91,7 @@ public class DBAccessor {
     }
   }
 
-  public List<byte[]> executeQueryAll(String table) {
+  List<byte[]> executeQueryAll(String table) {
 
     sdb = helper.getReadableDatabase();
     Cursor cursor = null;
@@ -107,7 +107,7 @@ public class DBAccessor {
     }
   }
 
-  public byte[] executeQueryById(long id, String table) {
+  byte[] executeQueryById(long id, String table) {
 
     sdb = helper.getReadableDatabase();
     Cursor cursor = null;

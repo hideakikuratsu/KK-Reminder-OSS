@@ -32,13 +32,34 @@
     <string name="alarm_option">通知音の設定</string>
     <string name="pick_alarm">通知音の選択</string>
     <string name="sound_or_not">通知音を鳴らすか</string>
+    <string name="default_snooze">デフォルト</string>
+    <string name="snooze">スヌーズする</string>
+    <string name="manually_snooze_description">時間と分を両方0に合わせると、24時間として設定されます。</string>
+
+    <string name="fifteen_minutes">15分</string>
+    <string name="thirty_minutes">30分</string>
+    <string name="one_hour">1時間</string>
+    <string name="three_hours">3時間</string>
+    <string name="ten_hours">10時間</string>
+    <string name="one_day">1日</string>
+
+    <string-array name="snooze_list">
+        <item>@string/fifteen_minutes</item>
+        <item>@string/thirty_minutes</item>
+        <item>@string/one_hour</item>
+        <item>@string/three_hours</item>
+        <item>@string/ten_hours</item>
+        <item>@string/one_day</item>
+        <item>@string/custom</item>
+    </string-array>
+
     <string name="times">回</string>
     <string name="none">なし</string>
     <string name="home">家事</string>
     <string name="work">仕事</string>
     <string name="shopping">買い物</string>
     <string name="todo_menu">未完了</string>
-    <string name="done_menu">完了済み</string>
+    <string name="done_menu">完了済</string>
     <string name="done">完了</string>
     <string name="delete_dialog_title">タスクを削除しますか？</string>
     <string name="delete_dialog_message">削除すると完了済みリストに保存されず、もとに戻すことができません</string>

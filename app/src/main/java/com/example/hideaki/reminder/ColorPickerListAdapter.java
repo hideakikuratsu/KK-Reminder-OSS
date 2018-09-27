@@ -37,7 +37,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
   ColorPickerListAdapter(MainActivity activity) {
 
     this.activity = activity;
-    color_name_lists = new ArrayList<>(Arrays.asList(this.activity.getResources().getStringArray(R.array.colors_array)));
+    color_name_lists = new ArrayList<>(Arrays.asList(activity.getResources().getStringArray(R.array.colors_array)));
   }
 
   private static class ViewHolder {

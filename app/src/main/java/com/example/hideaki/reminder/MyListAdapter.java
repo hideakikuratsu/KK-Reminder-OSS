@@ -35,12 +35,13 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.hideaki.reminder.UtilClass.nonScheduledItemComparator;
+
 public class MyListAdapter extends BaseAdapter implements Filterable {
 
   static List<Item> itemList;
   static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
   private boolean is_control_panel_locked;
-  private final NonScheduledItemComparator nonScheduledItemComparator = new NonScheduledItemComparator();
   private MainActivity activity;
   ActionMode actionMode = null;
   static int checked_item_num;

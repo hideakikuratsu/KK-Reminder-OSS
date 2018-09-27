@@ -4,24 +4,26 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeneralSettings implements Serializable {
+class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = 7787440574803207906L;
+  private static final long serialVersionUID = 4618925430276629981L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
   private List<Tag> tagList = new ArrayList<>();
   private boolean expandable_todo = true;
   private NotifyInterval notifyInterval;
   private String soundUri;
+  private int snooze_default_hour;
+  private int snooze_default_minute;
 
-  public List<NonScheduledList> getNonScheduledLists() {
+  List<NonScheduledList> getNonScheduledLists() {
     return nonScheduledLists;
   }
 
-  public List<Tag> getTagList() {
+  List<Tag> getTagList() {
     return tagList;
   }
 
-  public Tag getTagById(long id) {
+  Tag getTagById(long id) {
 
     for(Tag tag : tagList) {
       if(tag.getId() == id) return tag;
@@ -29,35 +31,51 @@ public class GeneralSettings implements Serializable {
     return null;
   }
 
-  public boolean isExpandable_todo() {
+  boolean isExpandable_todo() {
     return expandable_todo;
   }
 
-  public NotifyInterval getNotifyInterval() {
+  NotifyInterval getNotifyInterval() {
     return notifyInterval;
   }
 
-  public String getSoundUri() {
+  String getSoundUri() {
     return soundUri;
   }
 
-  public void setNonScheduledLists(List<NonScheduledList> nonScheduledLists) {
+  public int getSnooze_default_hour() {
+    return snooze_default_hour;
+  }
+
+  public int getSnooze_default_minute() {
+    return snooze_default_minute;
+  }
+
+  void setNonScheduledLists(List<NonScheduledList> nonScheduledLists) {
     this.nonScheduledLists = nonScheduledLists;
   }
 
-  public void setTagList(List<Tag> tagList) {
+  void setTagList(List<Tag> tagList) {
     this.tagList = tagList;
   }
 
-  public void setExpandable_todo(boolean expandable_todo) {
+  void setExpandable_todo(boolean expandable_todo) {
     this.expandable_todo = expandable_todo;
   }
 
-  public void setNotifyInterval(NotifyInterval notifyInterval) {
+  void setNotifyInterval(NotifyInterval notifyInterval) {
     this.notifyInterval = notifyInterval;
   }
 
-  public void setSoundUri(String soundUri) {
+  void setSoundUri(String soundUri) {
     this.soundUri = soundUri;
+  }
+
+  public void setSnooze_default_hour(int snooze_default_hour) {
+    this.snooze_default_hour = snooze_default_hour;
+  }
+
+  public void setSnooze_default_minute(int snooze_default_minute) {
+    this.snooze_default_minute = snooze_default_minute;
   }
 }

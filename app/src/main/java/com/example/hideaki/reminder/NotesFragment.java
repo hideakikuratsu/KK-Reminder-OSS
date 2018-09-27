@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import static com.example.hideaki.reminder.UtilClass.ITEM;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class NotesFragment extends Fragment {
@@ -26,7 +27,7 @@ public class NotesFragment extends Fragment {
     NotesFragment fragment = new NotesFragment();
 
     Bundle args = new Bundle();
-    args.putSerializable(MainEditFragment.ITEM, item);
+    args.putSerializable(ITEM, item);
     fragment.setArguments(args);
 
     return fragment;
@@ -46,7 +47,7 @@ public class NotesFragment extends Fragment {
     this.setHasOptionsMenu(true);
 
     Bundle args = getArguments();
-    item = (Item)args.getSerializable(MainEditFragment.ITEM);
+    item = (Item)args.getSerializable(ITEM);
   }
 
   @Override

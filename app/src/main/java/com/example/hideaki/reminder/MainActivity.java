@@ -37,11 +37,6 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -49,13 +44,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.example.hideaki.reminder.UtilClass.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-  private static final String SAVED_DATA = "SAVED_DATA";
-  private static final String MENU_POSITION = "MENU_POSITION";
-  private static final String SUBMENU_POSITION = "SUBMENU_POSITION";
 
   Timer timer;
   TimerTask timerTask;
@@ -66,9 +58,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private AlarmManager alarmManager;
   private int group_changed; //groupの変化があったかどうかのフラグをビットで表す
   private int group_changed_num; //groupの変化があったchildの個数を保持する
-  private final ScheduledItemComparator scheduledItemComparator = new ScheduledItemComparator();
-  private final NonScheduledItemComparator nonScheduledItemComparator = new NonScheduledItemComparator();
-  private final DoneItemComparator doneItemComparator = new DoneItemComparator();
   public int which_menu_open;
   private int which_submenu_open;
   ExpandableListView expandableListView;
@@ -139,8 +128,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     if(generalSettings == null) {
       generalSettings = new GeneralSettings();
 
-      //データベースを新たに作成する場合、基本的なタグを追加しておく
+      //データベースを新たに作成する場合、基本的な一般設定を追加しておく
 
+      //タグのデフォルト設定
       //タグなし
       Tag tag = new Tag(0);
       tag.setName(getString(R.string.none));
@@ -215,7 +205,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       generalSettings.setNotifyInterval(notifyInterval);
 
       //AlarmSoundのデフォルト設定
-      generalSettings.setSoundUri(UtilClass.DEFAULT_URI_SOUND.toString());
+      generalSettings.setSoundUri(DEFAULT_URI_SOUND.toString());
+
+      //手動スヌーズ時間のデフォルト設定
+      generalSettings.setSnooze_default_hour(0);
+      generalSettings.setSnooze_default_minute(15);
 
       insertSettingsDB();
     }
@@ -236,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     //Adapterの初期化
-    expandableListAdapter = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
+    expandableListAdapter = new MyExpandableListAdapter(this);
     listAdapter = new MyListAdapter(this);
     manageListAdapter = new ManageListAdapter(new ArrayList<>(generalSettings.getNonScheduledLists()), this);
     colorPickerListAdapter = new ColorPickerListAdapter(this);
@@ -273,6 +267,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     if(detail == null) {
+      if(BOOT_FROM_NOTIFICATION.equals(intent.getAction())) {
+        which_menu_open = 0;
+        which_submenu_open = 0;
+      }
+
       showList();
       is_in_on_create = false;
     }
@@ -376,6 +375,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     timer = new Timer();
     timerTask = new UpdateListTimerTask();
     timer.schedule(timerTask, 0, 1000);
+
+    //すべての通知を既読する
+    NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+    checkNotNull(manager);
+    manager.cancelAll();
   }
 
   @Override
@@ -393,6 +397,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     editor.putInt(MENU_POSITION, which_menu_open);
     editor.putInt(SUBMENU_POSITION, which_submenu_open);
     editor.apply();
+
+    //すべての通知を既読する
+    NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+    checkNotNull(manager);
+    manager.cancelAll();
   }
 
   @Override
@@ -642,7 +651,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             group_changed_num = 0;
             for(int i = 0; i <= group_changed; i++) {
               if((group_changed & (1 << i)) != 0) {
-                MyExpandableListAdapter.children.get(group_count).remove(i);
+                if(MyExpandableListAdapter.children.get(group_count).size() > i) {
+                  MyExpandableListAdapter.children.get(group_count).remove(i);
+                }
                 group_changed_num++;
               }
             }
@@ -663,7 +674,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       item.getNotify_interval().setTime(item.getNotify_interval().getOrg_time());
       intent = new Intent(this, AlarmReceiver.class);
       byte[] ob_array = serialize(item);
-      intent.putExtra(MainEditFragment.ITEM, ob_array);
+      intent.putExtra(ITEM, ob_array);
       sender = PendingIntent.getBroadcast(
           this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -720,8 +731,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     for(Item item : queryAllDB(table)) {
 
       if(item.getWhich_list_belongs() == 0) {
-        deleteAlarm(item);
-        if(!item.isAlarm_stopped()) setAlarm(item);
+        if(item.getNotify_interval().getTime() == item.getNotify_interval().getOrg_time()) {
+          deleteAlarm(item);
+        }
+        if(!isAlarmSetted(item) && !item.isAlarm_stopped()) {
+          setAlarm(item);
+        }
 
         int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
         long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
@@ -865,43 +880,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   public GeneralSettings querySettingsDB() {
 
     return (GeneralSettings)deserialize(accessor.executeQueryById(1, MyDatabaseHelper.SETTINGS_TABLE));
-  }
-
-  //シリアライズメソッド
-  public static byte[] serialize(Object data) {
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try {
-      ObjectOutputStream oos = new ObjectOutputStream(baos);
-      oos.writeObject(data);
-      oos.flush();
-      oos.close();
-    } catch(IOException e) {
-      e.printStackTrace();
-    }
-
-    return baos.toByteArray();
-  }
-
-  //デシリアライズメソッド
-  public static Object deserialize(byte[] stream) {
-
-    if(stream == null) return null;
-    else {
-      ByteArrayInputStream bais = new ByteArrayInputStream(stream);
-      Object data = null;
-      try {
-        ObjectInputStream ois = new ObjectInputStream(bais);
-        data = ois.readObject();
-        ois.close();
-      } catch(IOException e) {
-        e.printStackTrace();
-      } catch(ClassNotFoundException e) {
-        e.printStackTrace();
-      }
-
-      return data;
-    }
   }
 
   private void createAndSetFragmentColor() {

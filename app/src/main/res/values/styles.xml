@@ -1,11 +1,20 @@
 <resources>
 
-    <style name="drawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="color">@android:color/white</item>
+    <style name="TransparentTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="ManuallySnoozeBackgroundTheme" parent="TransparentTheme">
+        <item name="android:windowBackground">@drawable/manually_snooze_activity_background</item>
+        <item name="colorPrimary">@color/red13PrimaryColor</item>
+        <item name="colorPrimaryDark">@color/red13PrimaryDarkColor</item>
+        <item name="colorAccent">@color/red13PrimaryLightColor</item>
+        <item name="android:textColorPrimary">@color/red13PrimaryTextColor</item>
     </style>
 
     <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!--<item name="drawerArrowStyle">@style/drawerArrowStyle</item>-->
         <item name="actionModeBackground">@color/icon_gray</item>
         <item name="windowActionModeOverlay">true</item>
     </style>

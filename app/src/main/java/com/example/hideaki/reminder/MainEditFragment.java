@@ -34,14 +34,14 @@ import java.util.Calendar;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.hideaki.reminder.UtilClass.ITEM;
+import static com.example.hideaki.reminder.UtilClass.LIST;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
     Preference.OnPreferenceChangeListener {
 
-  public static final String ITEM = "ITEM";
-  public static final String LIST = "LIST";
   public static final String TAG = MainEditFragment.class.getSimpleName();
   public static final int REQUEST_CODE_RINGTONE_PICKER = 0;
 

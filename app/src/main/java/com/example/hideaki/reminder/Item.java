@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 public class Item implements Serializable {
 
-  private static final long serialVersionUID = -6712455959256103737L;
+  private static final long serialVersionUID = 7512800091169383255L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
@@ -29,159 +29,159 @@ public class Item implements Serializable {
 
   Item() {}
 
-  public long getId() {
+  long getId() {
     return id;
   }
 
-  public String getDetail() {
+  String getDetail() {
     return detail;
   }
 
-  public Calendar getDate() {
+  Calendar getDate() {
     return date;
   }
 
-  public Calendar getOrg_date() {
+  Calendar getOrg_date() {
     return org_date;
   }
 
-  public Calendar getOrg_date2() {
+  Calendar getOrg_date2() {
     return org_date2;
   }
 
-  public long getWhich_tag_belongs() {
+  long getWhich_tag_belongs() {
     return which_tag_belongs;
   }
 
-  public NotifyInterval getNotify_interval() {
+  NotifyInterval getNotify_interval() {
     return notify_interval;
   }
 
-  public DayRepeat getDayRepeat() {
+  DayRepeat getDayRepeat() {
     return dayRepeat;
   }
 
-  public MinuteRepeat getMinuteRepeat() {
+  MinuteRepeat getMinuteRepeat() {
     return minuteRepeat;
   }
 
-  public String getSoundUri() {
+  String getSoundUri() {
     return soundUri;
   }
 
-  public String getNotes() {
+  String getNotes() {
     return notes;
   }
 
-  public long getTime_altered() {
+  long getTime_altered() {
     return time_altered;
   }
 
-  public long getOrg_time_altered() {
+  long getOrg_time_altered() {
     return org_time_altered;
   }
 
-  public boolean isAlarm_stopped() {
+  boolean isAlarm_stopped() {
     return alarm_stopped;
   }
 
-  public boolean isOrg_alarm_stopped() {
+  boolean isOrg_alarm_stopped() {
     return org_alarm_stopped;
   }
 
-  public long getWhich_list_belongs() {
+  long getWhich_list_belongs() {
     return which_list_belongs;
   }
 
-  public int getOrder() {
+  int getOrder() {
     return order;
   }
 
-  public boolean isSelected() {
+  boolean isSelected() {
     return selected;
   }
 
-  public Calendar getDoneDate() {
+  Calendar getDoneDate() {
     return doneDate;
   }
 
-  public void setDetail(String detail) {
+  void setDetail(String detail) {
     this.detail = detail;
   }
 
-  public void setDate(Calendar date) {
+  void setDate(Calendar date) {
     this.date = date;
   }
 
-  public void setOrg_date(Calendar org_date) {
+  void setOrg_date(Calendar org_date) {
     this.org_date = org_date;
   }
 
-  public void setOrg_date2(Calendar org_date2) {
+  void setOrg_date2(Calendar org_date2) {
     this.org_date2 = org_date2;
   }
 
-  public void setWhich_tag_belongs(long which_tag_belongs) {
+  void setWhich_tag_belongs(long which_tag_belongs) {
     this.which_tag_belongs = which_tag_belongs;
   }
 
-  public void setNotify_interval(NotifyInterval notify_interval) {
+  void setNotify_interval(NotifyInterval notify_interval) {
     this.notify_interval = notify_interval;
   }
 
-  public void setDayRepeat(DayRepeat dayRepeat) {
+  void setDayRepeat(DayRepeat dayRepeat) {
     this.dayRepeat = dayRepeat;
   }
 
-  public void setMinuteRepeat(MinuteRepeat minuteRepeat) {
+  void setMinuteRepeat(MinuteRepeat minuteRepeat) {
     this.minuteRepeat = minuteRepeat;
   }
 
-  public void setSoundUri(String soundUri) {
+  void setSoundUri(String soundUri) {
     this.soundUri = soundUri;
   }
 
-  public void setNotes(String notes) {
+  void setNotes(String notes) {
     this.notes = notes;
   }
 
-  public void addTime_altered(long time_altered) {
+  void addTime_altered(long time_altered) {
     this.time_altered += time_altered;
   }
 
-  public void setTime_altered(long time_altered) {
+  void setTime_altered(long time_altered) {
     this.time_altered = time_altered;
   }
 
-  public void setOrg_time_altered(long org_time_altered) {
+  void setOrg_time_altered(long org_time_altered) {
     this.org_time_altered = org_time_altered;
   }
 
-  public void setAlarm_stopped(boolean alarm_stopped) {
+  void setAlarm_stopped(boolean alarm_stopped) {
     this.alarm_stopped = alarm_stopped;
   }
 
-  public void setOrg_alarm_stopped(boolean org_alarm_stopped) {
+  void setOrg_alarm_stopped(boolean org_alarm_stopped) {
     this.org_alarm_stopped = org_alarm_stopped;
   }
 
-  public void setWhich_list_belongs(long which_list_belongs) {
+  void setWhich_list_belongs(long which_list_belongs) {
     this.which_list_belongs = which_list_belongs;
   }
 
-  public void setOrder(int order) {
+  void setOrder(int order) {
     this.order = order;
   }
 
-  public void setSelected(boolean selected) {
+  void setSelected(boolean selected) {
     this.selected = selected;
   }
 
-  public void setDoneDate(Calendar doneDate) {
+  void setDoneDate(Calendar doneDate) {
     this.doneDate = doneDate;
   }
 
-  public Item copy() {
+  Item copy() {
 
     Item item = new Item();
 
@@ -193,6 +193,7 @@ public class Item implements Serializable {
     item.setNotify_interval(this.notify_interval.clone());
     item.setDayRepeat(this.dayRepeat.clone());
     item.setMinuteRepeat(this.minuteRepeat.clone());
+    item.setSoundUri(this.soundUri);
     item.setNotes(this.notes);
     item.setTime_altered(this.time_altered);
     item.setOrg_time_altered(this.org_time_altered);
