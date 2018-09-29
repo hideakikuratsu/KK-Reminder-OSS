@@ -147,7 +147,7 @@ public class TagEditListAdapter extends BaseAdapter {
                   public void onClick(DialogInterface dialog, int which) {
 
                     if(tag.getId() == checked_item_id) {
-                      if(order == 0 || order == 1) {
+                      if(order == 0 || order == 1 || order == 4) {
                         MainEditFragment.item.setWhich_tag_belongs(0);
                       }
                       else if(order == 3) {
@@ -190,7 +190,7 @@ public class TagEditListAdapter extends BaseAdapter {
 
       if(isChecked && manually_checked) {
         viewHolder.checkBox.jumpDrawablesToCurrentState();
-        if(order == 0 || order == 1) {
+        if(order == 0 || order == 1 || order == 4) {
           MainEditFragment.item.setWhich_tag_belongs(tag.getId());
         }
         else if(order == 3) {
@@ -201,7 +201,7 @@ public class TagEditListAdapter extends BaseAdapter {
       }
       else if(!isChecked && manually_checked) {
         viewHolder.checkBox.jumpDrawablesToCurrentState();
-        if(order == 0 || order == 1) {
+        if(order == 0 || order == 1 || order == 4) {
           MainEditFragment.item.setWhich_tag_belongs(0);
         }
         else if(order == 3) {

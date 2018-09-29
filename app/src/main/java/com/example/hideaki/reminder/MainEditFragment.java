@@ -36,18 +36,18 @@ import java.util.List;
 import static android.app.Activity.RESULT_OK;
 import static com.example.hideaki.reminder.UtilClass.ITEM;
 import static com.example.hideaki.reminder.UtilClass.LIST;
+import static com.example.hideaki.reminder.UtilClass.REQUEST_CODE_RINGTONE_PICKER;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
     Preference.OnPreferenceChangeListener {
 
-  public static final String TAG = MainEditFragment.class.getSimpleName();
-  public static final int REQUEST_CODE_RINGTONE_PICKER = 0;
+  static final String TAG = MainEditFragment.class.getSimpleName();
 
   private EditTextPreference detail;
+  private Preference datePicker;
   private PreferenceScreen tag;
-  private PreferenceScreen notes;
   private PreferenceScreen intervalItem;
   private PreferenceScreen dayRepeatItem;
   private PreferenceScreen minuteRepeatItem;
@@ -199,9 +199,17 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     }
 
     //GeneralSettingsに影響を受ける部分の設定の初期化
-    if(!is_edit) {
-      notifyInterval = activity.generalSettings.getNotifyInterval().clone();
-      item.setSoundUri(activity.generalSettings.getSoundUri());
+    if(!is_edit && order == 0) {
+      Item defaultItem = activity.generalSettings.getItem();
+      item.setWhich_tag_belongs(defaultItem.getWhich_tag_belongs());
+      notifyInterval = defaultItem.getNotify_interval().clone();
+      dayRepeat = defaultItem.getDayRepeat().clone();
+      minuteRepeat = defaultItem.getMinuteRepeat().clone();
+      item.setSoundUri(defaultItem.getSoundUri());
+    }
+    else if(!is_edit && order == 1) {
+      Item defaultItem = activity.generalSettings.getItem();
+      item.setWhich_tag_belongs(defaultItem.getWhich_tag_belongs());
     }
 
     //各プリファレンスの初期化
@@ -210,6 +218,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     detail = (EditTextPreference)findPreference("detail");
     detail.setTitle(detail_str);
     detail.setOnPreferenceChangeListener(this);
+
+    datePicker = findPreference("date_picker");
 
     PreferenceCategory colorCategory = (PreferenceCategory)findPreference("color");
     PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
@@ -232,7 +242,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     pickAlarm.setOnPreferenceClickListener(this);
 
     PreferenceCategory notes_category = (PreferenceCategory)findPreference("notes_category");
-    notes = (PreferenceScreen)findPreference("notes");
+    PreferenceScreen notes = (PreferenceScreen)findPreference("notes");
     notes.setOnPreferenceClickListener(this);
 
     if(order == 0 || is_moving_task) {
@@ -249,6 +259,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       rootPreferenceScreen.addPreference(detail);
       rootPreferenceScreen.addPreference(tag);
       rootPreferenceScreen.addPreference(colorCategory);
+    }
+    else if(order == 4) {
+      rootPreferenceScreen.removePreference(detail);
+      rootPreferenceScreen.removePreference(datePicker);
+      rootPreferenceScreen.removePreference(colorCategory);
+      rootPreferenceScreen.removePreference(notes_category);
     }
   }
 
@@ -288,7 +304,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     actionBar.setTitle(R.string.edit);
 
     //Tagのラベルの初期化
-    if(order == 0 || order == 1 || is_moving_task) {
+    if(order == 0 || order == 1 || order == 4 || is_moving_task) {
       if(item.getWhich_tag_belongs() == 0) {
         tag.setSummary(activity.getString(R.string.non_tag));
       }
@@ -306,7 +322,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     }
 
     //Repeat、NotifyInterval、AlarmSoundのラベルの初期化
-    if(order == 0 || is_moving_task) {
+    if(order == 0 || order == 4 || is_moving_task) {
       if(notifyInterval.getLabel() == null) intervalItem.setSummary(R.string.none);
       else intervalItem.setSummary(notifyInterval.getLabel());
 
@@ -343,7 +359,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     //削除メニューの実装
     MenuItem delete_item = menu.findItem(R.id.delete);
-    if(is_edit && !is_moving_task && !is_cloning_task) {
+    if(is_edit && !is_moving_task && !is_cloning_task && order != 4) {
       drawable = ContextCompat.getDrawable(activity, R.drawable.ic_delete_24dp);
       checkNotNull(drawable);
       drawable = drawable.mutate();
@@ -564,7 +580,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL);
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(activity.generalSettings.getSoundUri()));
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(activity.generalSettings.getItem().getSoundUri()));
         String uriString = item.getSoundUri();
         if(uriString != null) {
           intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(uriString));
@@ -609,11 +625,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   private void registerItem() {
 
-    if(order == 0 || order == 1 || is_moving_task) {
+    if(order == 0 || order == 1 || order == 4 || is_moving_task) {
 
       item.setDetail(detail_str);
 
-      if(order == 0 || is_moving_task) {
+      if(order == 0 || order == 4 || is_moving_task) {
 
         item.setDate((Calendar)final_cal.clone());
 
@@ -658,22 +674,28 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
           item.setWhich_list_belongs(0);
         }
 
-        if(is_edit && !is_cloning_task) {
+        if(order != 4) {
+          if(is_edit && !is_cloning_task) {
 
-          activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-          if(is_moving_task) {
-            MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
-            MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
-            activity.listAdapter.notifyDataSetChanged();
+            activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+            if(is_moving_task) {
+              MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+              MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+              activity.listAdapter.notifyDataSetChanged();
+            }
+            activity.expandableListAdapter.notifyDataSetChanged();
           }
-          activity.expandableListAdapter.notifyDataSetChanged();
+          else {
+            activity.addChildren(item, MyDatabaseHelper.TODO_TABLE);
+          }
+
+          activity.deleteAlarm(item);
+          activity.setAlarm(item);
         }
         else {
-          activity.addChildren(item, MyDatabaseHelper.TODO_TABLE);
+          activity.generalSettings.setItem(item.copy());
+          activity.updateSettingsDB();
         }
-
-        activity.deleteAlarm(item);
-        activity.setAlarm(item);
       }
       else if(order == 1) {
 

@@ -50,7 +50,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     activity = (MainActivity)context;
     int order = activity.order;
     TagEditListAdapter.order = order;
-    if(order == 0 || order == 1) {
+    if(order == 0 || order == 1 || order == 4) {
       TagEditListAdapter.checked_item_id = MainEditFragment.item.getWhich_tag_belongs();
     }
     else if(order == 3) {

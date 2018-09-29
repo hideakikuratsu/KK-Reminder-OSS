@@ -119,7 +119,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
         checkArgument(default_dark_color != -1);
         checkArgument(default_text_color != 1);
 
-        if(order == 0 || order == 1) {
+        if(order == 0 || order == 1 || order == 4) {
           adapterTag.setPrimary_color(default_color);
           adapterTag.setPrimary_light_color(default_light_color);
           adapterTag.setPrimary_dark_color(default_dark_color);
@@ -166,7 +166,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
                 checkArgument(dark_color != -1);
                 checkArgument(text_color != 1);
 
-                if(order == 0 || order == 1) {
+                if(order == 0 || order == 1 || order == 4) {
                   adapterTag.setPrimary_color(color);
                   adapterTag.setPrimary_light_color(light_color);
                   adapterTag.setPrimary_dark_color(dark_color);
@@ -207,7 +207,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
       }
       else if(position == checked_position && manually_checked) {
         viewHolder.checkBox.jumpDrawablesToCurrentState();
-        if(order == 0 || order == 1) {
+        if(order == 0 || order == 1 || order == 4) {
           adapterTag.setPrimary_color(0);
           adapterTag.setColor_order_group(-1);
 
@@ -295,7 +295,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
 
     int colors_id = -1;
     if(position == checked_position) {
-      if(order == 0 || order == 1) {
+      if(order == 0 || order == 1 || order == 4) {
         colors_id = typedArray.getResourceId(adapterTag.getColor_order_child(), -1);
       }
       else if(order == 3) {

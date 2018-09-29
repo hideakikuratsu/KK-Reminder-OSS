@@ -5,7 +5,8 @@
         android:key="detail"
         android:persistent="false" />
 
-    <com.example.hideaki.reminder.DatePickerPreference android:persistent="false" />
+    <com.example.hideaki.reminder.DatePickerPreference
+        android:key="date_picker"/>
 
     <PreferenceCategory
         android:key="color"

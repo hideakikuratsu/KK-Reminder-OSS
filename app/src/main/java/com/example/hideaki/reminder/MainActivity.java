@@ -46,14 +46,14 @@ import java.util.TimerTask;
 
 import static com.example.hideaki.reminder.UtilClass.BOOT_FROM_NOTIFICATION;
 import static com.example.hideaki.reminder.UtilClass.DEFAULT_URI_SOUND;
+import static com.example.hideaki.reminder.UtilClass.DONE_ITEM_COMPARATOR;
 import static com.example.hideaki.reminder.UtilClass.ITEM;
 import static com.example.hideaki.reminder.UtilClass.MENU_POSITION;
+import static com.example.hideaki.reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 import static com.example.hideaki.reminder.UtilClass.SAVED_DATA;
+import static com.example.hideaki.reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
 import static com.example.hideaki.reminder.UtilClass.SUBMENU_POSITION;
 import static com.example.hideaki.reminder.UtilClass.deserialize;
-import static com.example.hideaki.reminder.UtilClass.DONE_ITEM_COMPARATOR;
-import static com.example.hideaki.reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
-import static com.example.hideaki.reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
 import static com.example.hideaki.reminder.UtilClass.serialize;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -134,92 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //共通設定と新しく追加したリストのリストア
     generalSettings = querySettingsDB();
     if(generalSettings == null) {
-      generalSettings = new GeneralSettings();
-
-      //データベースを新たに作成する場合、基本的な一般設定を追加しておく
-
-      //タグのデフォルト設定
-      //タグなし
-      Tag tag = new Tag(0);
-      tag.setName(getString(R.string.none));
-      tag.setOrder(0);
-      generalSettings.getTagList().add(tag);
-
-      //家事タグ
-      tag = new Tag(1);
-      tag.setName(getString(R.string.home));
-      tag.setPrimary_color(Color.parseColor("#4caf50"));
-      tag.setPrimary_light_color(Color.parseColor("#80e27e"));
-      tag.setPrimary_dark_color(Color.parseColor("#087f23"));
-      tag.setPrimary_text_color(Color.parseColor("#000000"));
-      tag.setColor_order_group(9);
-      tag.setColor_order_child(5);
-      tag.setOrder(1);
-      generalSettings.getTagList().add(tag);
-
-      //仕事タグ
-      tag = new Tag(2);
-      tag.setName(getString(R.string.work));
-      tag.setPrimary_color(Color.parseColor("#2196f3"));
-      tag.setPrimary_light_color(Color.parseColor("#6ec6ff"));
-      tag.setPrimary_dark_color(Color.parseColor("#0069c0"));
-      tag.setPrimary_text_color(Color.parseColor("#000000"));
-      tag.setColor_order_group(5);
-      tag.setColor_order_child(5);
-      tag.setOrder(2);
-      generalSettings.getTagList().add(tag);
-
-      //ショッピングタグ
-      tag = new Tag(3);
-      tag.setName(getString(R.string.shopping));
-      tag.setPrimary_color(Color.parseColor("#f44336"));
-      tag.setPrimary_light_color(Color.parseColor("#ff7961"));
-      tag.setPrimary_dark_color(Color.parseColor("#ba000d"));
-      tag.setPrimary_text_color(Color.parseColor("#000000"));
-      tag.setColor_order_group(0);
-      tag.setColor_order_child(5);
-      tag.setOrder(3);
-      generalSettings.getTagList().add(tag);
-
-      //NotifyIntervalのデフォルト設定
-      NotifyInterval notifyInterval = new NotifyInterval();
-      notifyInterval.setHour(0);
-      notifyInterval.setMinute(5);
-      notifyInterval.setOrg_time(6);
-      notifyInterval.setWhich_setted(1);
-
-      if(notifyInterval.getOrg_time() != 0) {
-        String summary = getString(R.string.unless_complete_task);
-        if(notifyInterval.getHour() != 0) {
-          summary += notifyInterval.getHour() + getString(R.string.hour);
-        }
-        if(notifyInterval.getMinute() != 0) {
-          summary += notifyInterval.getMinute() + getString(R.string.minute);
-        }
-        summary += getString(R.string.per);
-        if(notifyInterval.getOrg_time() == -1) {
-          summary += getString(R.string.infinite_times_notify);
-        }
-        else {
-          summary += getString(R.string.max) + notifyInterval.getOrg_time()
-              + getString(R.string.times_notify);
-        }
-
-        notifyInterval.setLabel(summary);
-      }
-      else {
-        notifyInterval.setLabel(getString(R.string.none));
-      }
-      generalSettings.setNotifyInterval(notifyInterval);
-
-      //AlarmSoundのデフォルト設定
-      generalSettings.setSoundUri(DEFAULT_URI_SOUND.toString());
-
-      //手動スヌーズ時間のデフォルト設定
-      generalSettings.setSnooze_default_hour(0);
-      generalSettings.setSnooze_default_minute(15);
-
-      insertSettingsDB();
+      initGeneralSettings();
     }
 
     for(NonScheduledList list : generalSettings.getNonScheduledLists()) {
@@ -238,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     //Adapterの初期化
-    expandableListAdapter = new MyExpandableListAdapter(this);
+    expandableListAdapter = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
     listAdapter = new MyListAdapter(this);
     manageListAdapter = new ManageListAdapter(new ArrayList<>(generalSettings.getNonScheduledLists()), this);
     colorPickerListAdapter = new ColorPickerListAdapter(this);
@@ -369,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       else showDoneListViewFragment(BASE_FRAGMENT_TAG);
     }
     else if(order == 3) showManageListViewFragment(BASE_FRAGMENT_TAG);
+    else if(order == 4) showGeneralSettingsFragment(BASE_FRAGMENT_TAG);
   }
 
   @Override
@@ -495,6 +411,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             break;
           }
           case 4: {
+            showGeneralSettingsFragment(BASE_FRAGMENT_TAG);
             break;
           }
           case 5: {
@@ -681,54 +598,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
   }
 
-  public void setAlarm(Item item) {
-
-    if(item.getDate().getTimeInMillis() > System.currentTimeMillis() && item.getWhich_list_belongs() == 0) {
-      item.getNotify_interval().setTime(item.getNotify_interval().getOrg_time());
-      intent = new Intent(this, AlarmReceiver.class);
-      byte[] ob_array = serialize(item);
-      intent.putExtra(ITEM, ob_array);
-      sender = PendingIntent.getBroadcast(
-          this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-      alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        alarmManager.setAlarmClock(
-            new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
-      }
-      else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-      }
-      else {
-        alarmManager.set(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-      }
-    }
-  }
-
-  public void deleteAlarm(Item item) {
-
-    if(isAlarmSetted(item)) {
-      intent = new Intent(this, AlarmReceiver.class);
-      sender = PendingIntent.getBroadcast(
-          this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-      alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-      checkNotNull(alarmManager);
-
-      alarmManager.cancel(sender);
-      sender.cancel();
-    }
-  }
-
-  public boolean isAlarmSetted(Item item) {
-
-    intent = new Intent(this, AlarmReceiver.class);
-    sender = PendingIntent.getBroadcast(
-        this, (int)item.getId(), intent, PendingIntent.FLAG_NO_CREATE);
-
-    return sender != null;
-  }
-
   public List<List<Item>> getChildren(String table) {
 
     List<Item> past_list = new ArrayList<>();
@@ -847,6 +716,100 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     return itemList;
   }
 
+  private void initGeneralSettings() {
+
+    generalSettings = new GeneralSettings();
+
+    //データベースを新たに作成する場合、基本的な一般設定を追加しておく
+
+    //タグのデフォルト設定
+    //タグなし
+    Tag tag = new Tag(0);
+    tag.setName(getString(R.string.none));
+    tag.setOrder(0);
+    generalSettings.getTagList().add(tag);
+
+    //家事タグ
+    tag = new Tag(1);
+    tag.setName(getString(R.string.home));
+    tag.setPrimary_color(Color.parseColor("#4caf50"));
+    tag.setPrimary_light_color(Color.parseColor("#80e27e"));
+    tag.setPrimary_dark_color(Color.parseColor("#087f23"));
+    tag.setPrimary_text_color(Color.parseColor("#000000"));
+    tag.setColor_order_group(9);
+    tag.setColor_order_child(5);
+    tag.setOrder(1);
+    generalSettings.getTagList().add(tag);
+
+    //仕事タグ
+    tag = new Tag(2);
+    tag.setName(getString(R.string.work));
+    tag.setPrimary_color(Color.parseColor("#2196f3"));
+    tag.setPrimary_light_color(Color.parseColor("#6ec6ff"));
+    tag.setPrimary_dark_color(Color.parseColor("#0069c0"));
+    tag.setPrimary_text_color(Color.parseColor("#000000"));
+    tag.setColor_order_group(5);
+    tag.setColor_order_child(5);
+    tag.setOrder(2);
+    generalSettings.getTagList().add(tag);
+
+    //ショッピングタグ
+    tag = new Tag(3);
+    tag.setName(getString(R.string.shopping));
+    tag.setPrimary_color(Color.parseColor("#f44336"));
+    tag.setPrimary_light_color(Color.parseColor("#ff7961"));
+    tag.setPrimary_dark_color(Color.parseColor("#ba000d"));
+    tag.setPrimary_text_color(Color.parseColor("#000000"));
+    tag.setColor_order_group(0);
+    tag.setColor_order_child(5);
+    tag.setOrder(3);
+    generalSettings.getTagList().add(tag);
+
+
+    //Itemのデフォルト設定
+    Item item = generalSettings.getItem();
+
+    //NotifyInterval
+    NotifyInterval notifyInterval = new NotifyInterval();
+    notifyInterval.setHour(0);
+    notifyInterval.setMinute(5);
+    notifyInterval.setOrg_time(6);
+    notifyInterval.setWhich_setted(1);
+
+    if(notifyInterval.getOrg_time() != 0) {
+      String summary = getString(R.string.unless_complete_task);
+      if(notifyInterval.getHour() != 0) {
+        summary += notifyInterval.getHour() + getString(R.string.hour);
+      }
+      if(notifyInterval.getMinute() != 0) {
+        summary += notifyInterval.getMinute() + getString(R.string.minute);
+      }
+      summary += getString(R.string.per);
+      if(notifyInterval.getOrg_time() == -1) {
+        summary += getString(R.string.infinite_times_notify);
+      }
+      else {
+        summary += getString(R.string.max) + notifyInterval.getOrg_time()
+            + getString(R.string.times_notify);
+      }
+
+      notifyInterval.setLabel(summary);
+    }
+    else {
+      notifyInterval.setLabel(getString(R.string.none));
+    }
+    item.setNotify_interval(notifyInterval);
+
+    //AlarmSound
+    item.setSoundUri(DEFAULT_URI_SOUND.toString());
+
+    //手動スヌーズ時間のデフォルト設定
+    generalSettings.setSnooze_default_hour(0);
+    generalSettings.setSnooze_default_minute(15);
+
+    insertSettingsDB();
+  }
+
   //受け取ったオブジェクトをシリアライズしてデータベースへ挿入
   public void insertDB(Item item, String table) {
 
@@ -893,6 +856,54 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   public GeneralSettings querySettingsDB() {
 
     return (GeneralSettings)deserialize(accessor.executeQueryById(1, MyDatabaseHelper.SETTINGS_TABLE));
+  }
+
+  public void setAlarm(Item item) {
+
+    if(item.getDate().getTimeInMillis() > System.currentTimeMillis() && item.getWhich_list_belongs() == 0) {
+      item.getNotify_interval().setTime(item.getNotify_interval().getOrg_time());
+      intent = new Intent(this, AlarmReceiver.class);
+      byte[] ob_array = serialize(item);
+      intent.putExtra(ITEM, ob_array);
+      sender = PendingIntent.getBroadcast(
+          this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+      alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        alarmManager.setAlarmClock(
+            new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
+      }
+      else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
+      }
+      else {
+        alarmManager.set(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
+      }
+    }
+  }
+
+  public void deleteAlarm(Item item) {
+
+    if(isAlarmSetted(item)) {
+      intent = new Intent(this, AlarmReceiver.class);
+      sender = PendingIntent.getBroadcast(
+          this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+      alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      checkNotNull(alarmManager);
+
+      alarmManager.cancel(sender);
+      sender.cancel();
+    }
+  }
+
+  public boolean isAlarmSetted(Item item) {
+
+    intent = new Intent(this, AlarmReceiver.class);
+    sender = PendingIntent.getBroadcast(
+        this, (int)item.getId(), intent, PendingIntent.FLAG_NO_CREATE);
+
+    return sender != null;
   }
 
   private void createAndSetFragmentColor() {
@@ -953,11 +964,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
           .commit();
     }
-    else {
+    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
+        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
       manager
           .beginTransaction()
           .remove(fragmentToRemove)
           .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
+          .add(R.id.content, DoneListViewFragment.newInstance(), DoneListViewFragment.TAG)
+          .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
+          .commit();
+    }
+    else {
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
           .add(R.id.content, DoneListViewFragment.newInstance(), DoneListViewFragment.TAG)
           .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
           .commit();
@@ -1022,11 +1042,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
           .commit();
     }
-    else {
+    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
+        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
       manager
           .beginTransaction()
           .remove(fragmentToRemove)
           .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
+          .add(R.id.content, ManageListViewFragment.newInstance(), ManageListViewFragment.TAG)
+          .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
+          .commit();
+    }
+    else {
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
           .add(R.id.content, ManageListViewFragment.newInstance(), ManageListViewFragment.TAG)
           .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
           .commit();
@@ -1048,11 +1077,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
           .commit();
     }
-    else {
+    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
+        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
       manager
           .beginTransaction()
           .remove(fragmentToRemove)
           .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
+          .add(R.id.content, ListViewFragment.newInstance(), ListViewFragment.TAG)
+          .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
+          .commit();
+    }
+    else {
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
           .add(R.id.content, ListViewFragment.newInstance(), ListViewFragment.TAG)
           .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
           .commit();
@@ -1074,11 +1112,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
           .commit();
     }
-    else {
+    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
+        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
       manager
           .beginTransaction()
           .remove(fragmentToRemove)
           .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
+          .add(R.id.content, ExpandableListViewFragment.newInstance(), ExpandableListViewFragment.TAG)
+          .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
+          .commit();
+    }
+    else {
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
           .add(R.id.content, ExpandableListViewFragment.newInstance(), ExpandableListViewFragment.TAG)
           .add(R.id.content, actionBarFragment, ActionBarFragment.TAG)
           .commit();
@@ -1124,13 +1171,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Fragment fragmentToRemove = manager.findFragmentByTag(TAG);
     checkNotNull(fragmentToRemove);
 
-    manager
-        .beginTransaction()
-        .remove(fragmentToRemove)
-        .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
-        .add(R.id.content, MainEditFragment.newInstance(item), MainEditFragment.TAG)
-        .addToBackStack(null)
-        .commit();
+    if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
+        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
+          .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
+          .add(R.id.content, MainEditFragment.newInstance(item), MainEditFragment.TAG)
+          .addToBackStack(null)
+          .commit();
+    }
+    else {
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
+          .add(R.id.content, MainEditFragment.newInstance(item), MainEditFragment.TAG)
+          .addToBackStack(null)
+          .commit();
+    }
   }
 
   public void showMainEditFragmentForList(String TAG) {
@@ -1207,6 +1265,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .addToBackStack(null)
           .commit();
     }
+  }
+
+  public void showGeneralSettingsFragment(String TAG) {
+
+    FragmentManager manager = getFragmentManager();
+    Fragment fragmentToRemove = manager.findFragmentByTag(TAG);
+
+    if(fragmentToRemove == null) {
+      manager
+          .beginTransaction()
+          .add(R.id.content, GeneralSettingsFragment.newInstance(), GeneralSettingsFragment.TAG)
+          .commit();
+    }
+    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
+        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
+          .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
+          .add(R.id.content, GeneralSettingsFragment.newInstance(), GeneralSettingsFragment.TAG)
+          .commit();
+    }
+    else {
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
+          .add(R.id.content, GeneralSettingsFragment.newInstance(), GeneralSettingsFragment.TAG)
+          .commit();
+    }
+
+    BASE_FRAGMENT_TAG = GeneralSettingsFragment.TAG;
   }
 
 //  private void showFragment()

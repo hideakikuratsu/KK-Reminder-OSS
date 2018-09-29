@@ -63,7 +63,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     groups.add("一週間以上");
   }
 
-  MyExpandableListAdapter(MainActivity activity) {
+  MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
+    MyExpandableListAdapter.children = children;
     this.activity = activity;
   }
 

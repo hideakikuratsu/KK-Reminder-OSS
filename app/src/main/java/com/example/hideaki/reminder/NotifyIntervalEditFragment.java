@@ -227,7 +227,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
         defaultNotify.setChecked(true);
 
         if(which_setted != 1) {
-          NotifyInterval notifyInterval = activity.generalSettings.getNotifyInterval();
+          NotifyInterval notifyInterval = activity.generalSettings.getItem().getNotify_interval();
           String label_str = notifyInterval.getLabel();
           if(label_str == null || label_str.equals(activity.getString(R.string.none))) {
             label.setSummary(R.string.non_notify);

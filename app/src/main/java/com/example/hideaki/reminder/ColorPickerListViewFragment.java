@@ -36,7 +36,7 @@ public class ColorPickerListViewFragment extends Fragment {
     ColorPickerListAdapter.order = order;
     activity.colorPickerListAdapter.adapterTag = TagEditListAdapter.tagList.get(tag_position);
     activity.colorPickerListAdapter.orgTag = activity.generalSettings.getTagList().get(tag_position);
-    if(order == 0 || order == 1) {
+    if(order == 0 || order == 1 || order == 4) {
       ColorPickerListAdapter.checked_position = activity.colorPickerListAdapter.adapterTag.getColor_order_group();
     }
     else if(order == 3) {

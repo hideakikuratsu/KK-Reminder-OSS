@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/default_settings">
+
+        <PreferenceScreen
+            android:title="@string/default_new_task"
+            android:key="new_task"/>
+
+        <PreferenceScreen
+            android:title="@string/default_quick_picker"
+            android:key="quick_picker"
+            android:summary="@string/about_quick_picker"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/theme">
+
+        <PreferenceScreen
+            android:title="@string/pick_primary_color"
+            android:key="primary_color"/>
+
+        <PreferenceScreen
+            android:title="@string/pick_secondary_color"
+            android:key="secondary_color"/>
+
+        <PreferenceScreen
+            android:summary="@string/after_theme_set_message"/>
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/backup">
+
+        <PreferenceScreen
+            android:title="@string/backup_and_restore"
+            android:key="backup"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/about">
+
+        <PreferenceScreen
+            android:title="@string/version"
+            android:summary="1.0"
+            android:key="version"/>
+
+        <PreferenceScreen
+            android:title="@string/about_this_app"
+            android:key="this_app"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

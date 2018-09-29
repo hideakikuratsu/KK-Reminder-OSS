@@ -6,12 +6,11 @@ import java.util.List;
 
 class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = 4618925430276629981L;
+  private static final long serialVersionUID = -8708799214943328823L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
   private List<Tag> tagList = new ArrayList<>();
   private boolean expandable_todo = true;
-  private NotifyInterval notifyInterval;
-  private String soundUri;
+  private Item item = new Item();
   private int snooze_default_hour;
   private int snooze_default_minute;
 
@@ -35,19 +34,15 @@ class GeneralSettings implements Serializable {
     return expandable_todo;
   }
 
-  NotifyInterval getNotifyInterval() {
-    return notifyInterval;
+  Item getItem() {
+    return item;
   }
 
-  String getSoundUri() {
-    return soundUri;
-  }
-
-  public int getSnooze_default_hour() {
+  int getSnooze_default_hour() {
     return snooze_default_hour;
   }
 
-  public int getSnooze_default_minute() {
+  int getSnooze_default_minute() {
     return snooze_default_minute;
   }
 
@@ -63,19 +58,15 @@ class GeneralSettings implements Serializable {
     this.expandable_todo = expandable_todo;
   }
 
-  void setNotifyInterval(NotifyInterval notifyInterval) {
-    this.notifyInterval = notifyInterval;
+  void setItem(Item item) {
+    this.item = item;
   }
 
-  void setSoundUri(String soundUri) {
-    this.soundUri = soundUri;
-  }
-
-  public void setSnooze_default_hour(int snooze_default_hour) {
+  void setSnooze_default_hour(int snooze_default_hour) {
     this.snooze_default_hour = snooze_default_hour;
   }
 
-  public void setSnooze_default_minute(int snooze_default_minute) {
+  void setSnooze_default_minute(int snooze_default_minute) {
     this.snooze_default_minute = snooze_default_minute;
   }
 }
