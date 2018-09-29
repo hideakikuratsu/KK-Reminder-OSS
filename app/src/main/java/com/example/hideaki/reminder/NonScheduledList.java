@@ -5,10 +5,9 @@ import java.util.Calendar;
 
 public class NonScheduledList implements Serializable {
 
-  private static final long serialVersionUID = 3904758942612157503L;
+  private static final long serialVersionUID = 4154734183539710182L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String title;
-  private String notes;
   private boolean color_primary = true;
   private int primary_color;
   private int primary_light_color;
@@ -38,10 +37,6 @@ public class NonScheduledList implements Serializable {
 
   public String getTitle() {
     return title;
-  }
-
-  public String getNotes() {
-    return notes;
   }
 
   public boolean isColor_primary() {
@@ -86,10 +81,6 @@ public class NonScheduledList implements Serializable {
 
   public void setTitle(String title) {
     this.title = title;
-  }
-
-  public void setNotes(String notes) {
-    this.notes = notes;
   }
 
   public void setColor_primary(boolean color_primary) {

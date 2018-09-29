@@ -47,14 +47,13 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
   private EditTextPreference detail;
   private PreferenceScreen tag;
-  private EditTextPreference notes;
+  private PreferenceScreen notes;
   private PreferenceScreen intervalItem;
   private PreferenceScreen dayRepeatItem;
   private PreferenceScreen minuteRepeatItem;
   private PreferenceScreen pickAlarm;
   static Item item;
   static String detail_str;
-  static String notes_str;
   static Calendar final_cal;
   static NotifyInterval notifyInterval;
   static DayRepeat dayRepeat;
@@ -69,6 +68,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   private static boolean is_moving_task;
   static boolean is_cloning_task;
   private Item nextItem;
+  static boolean is_popping; //Notesフラグメントで戻るボタンを押したときに一気にもとの画面に戻るために使う
 
   public static MainEditFragment newInstance() {
 
@@ -77,7 +77,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     Item item = new Item();
     is_edit = false;
     detail_str = "";
-    notes_str = "";
     notifyInterval = new NotifyInterval();
     dayRepeat = new DayRepeat();
     minuteRepeat = new MinuteRepeat();
@@ -96,7 +95,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     Item item = new Item();
     is_edit = false;
     detail_str = detail;
-    notes_str = "";
     notifyInterval = new NotifyInterval();
     dayRepeat = new DayRepeat();
     minuteRepeat = new MinuteRepeat();
@@ -114,7 +112,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     is_edit = true;
     detail_str = item.getDetail();
-    notes_str = item.getNotes();
     notifyInterval = item.getNotify_interval().clone();
     dayRepeat = item.getDayRepeat().clone();
     minuteRepeat = item.getMinuteRepeat().clone();
@@ -133,7 +130,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     NonScheduledList list = new NonScheduledList();
     is_edit = false;
     detail_str = "";
-    notes_str = "";
     Bundle args = new Bundle();
     args.putSerializable(LIST, list);
     fragment.setArguments(args);
@@ -147,7 +143,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     is_edit = true;
     detail_str = list.getTitle();
-    notes_str = list.getNotes();
     Bundle args = new Bundle();
     args.putSerializable(LIST, list);
     fragment.setArguments(args);
@@ -237,9 +232,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     pickAlarm.setOnPreferenceClickListener(this);
 
     PreferenceCategory notes_category = (PreferenceCategory)findPreference("notes_category");
-    notes = (EditTextPreference)findPreference("notes");
-    notes.setTitle(notes_str);
-    notes.setOnPreferenceChangeListener(this);
+    notes = (PreferenceScreen)findPreference("notes");
+    notes.setOnPreferenceClickListener(this);
 
     if(order == 0 || is_moving_task) {
       rootPreferenceScreen.removePreference(colorCategory);
@@ -255,7 +249,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       rootPreferenceScreen.addPreference(detail);
       rootPreferenceScreen.addPreference(tag);
       rootPreferenceScreen.addPreference(colorCategory);
-      rootPreferenceScreen.addPreference(notes_category);
     }
   }
 
@@ -579,6 +572,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         startActivityForResult(intent, REQUEST_CODE_RINGTONE_PICKER);
         return true;
       }
+      case "notes": {
+
+        activity.showNotesFragment(item, TAG);
+        return true;
+      }
     }
 
     return false;
@@ -591,11 +589,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       case "detail": {
         detail_str = (String)newValue;
         detail.setTitle((String)newValue);
-        return true;
-      }
-      case "notes": {
-        notes_str = (String)newValue;
-        notes.setTitle((String)newValue);
         return true;
       }
     }
@@ -619,7 +612,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     if(order == 0 || order == 1 || is_moving_task) {
 
       item.setDetail(detail_str);
-      item.setNotes(notes_str);
 
       if(order == 0 || is_moving_task) {
 
@@ -713,7 +705,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     else if(order == 3) {
 
       list.setTitle(detail_str);
-      list.setNotes(notes_str);
 
       if(!is_edit) {
         //GeneralSettingsとManageListAdapterへの反映

@@ -192,8 +192,9 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         else DayRepeatEditFragment.label_str_custom = MainEditFragment.dayRepeat.getInterval() - 1 + "週間おきの";
 
         stringBuilder = new StringBuilder(tmp);
+        int week = MainEditFragment.dayRepeat.getWeek();
         for(int i = 0; i < 7; i++) {
-          if((MainEditFragment.dayRepeat.getWeek() & (1 << i)) != 0) {
+          if((week & (1 << i)) != 0) {
             stringBuilder.append(DAY_OF_WEEK_LIST[i]).append(", ");
           }
         }
@@ -207,17 +208,18 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
           else DayRepeatEditFragment.label_str_custom = MainEditFragment.dayRepeat.getInterval() - 1 + "ヶ月おきの";
 
           stringBuilder = new StringBuilder(tmp);
-          for(int i = 0; i < MainEditFragment.final_cal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-            if((MainEditFragment.dayRepeat.getDays_of_month() & (1 << i)) != 0) {
+          int size = MainEditFragment.final_cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+          int days_of_month = MainEditFragment.dayRepeat.getDays_of_month();
+          for(int i = 0; i < size; i++) {
+            if((days_of_month & (1 << i)) != 0) {
               stringBuilder.append(i + 1).append(", ");
             }
           }
-          if((MainEditFragment.dayRepeat.getDays_of_month() & (1 << 30)) != 0) {
+          if((days_of_month & (1 << 30)) != 0) {
             stringBuilder.append("最終, ");
           }
           tmp = stringBuilder.substring(0, stringBuilder.length() - 2);
           DayRepeatEditFragment.label_str_custom += tmp + "日";
-
         }
         else if(!MainEditFragment.dayRepeat.isDays_of_month_setted()) {
           if(MainEditFragment.dayRepeat.getInterval() == 1) DayRepeatEditFragment.label_str_custom = "毎月";
@@ -247,8 +249,9 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         else DayRepeatEditFragment.label_str_custom = MainEditFragment.dayRepeat.getInterval() - 1 + "年おきの";
 
         stringBuilder = new StringBuilder(tmp);
+        int year = MainEditFragment.dayRepeat.getYear();
         for(int i = 0; i < 12; i++) {
-          if((MainEditFragment.dayRepeat.getYear() & (1 << i)) != 0) {
+          if((year & (1 << i)) != 0) {
             stringBuilder.append(i + 1).append(", ");
           }
         }

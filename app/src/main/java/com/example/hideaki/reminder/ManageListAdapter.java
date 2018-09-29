@@ -8,8 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -38,11 +37,12 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 
   private static class ViewHolder {
 
+    LinearLayout linearLayout;
     CardView list_card;
     ImageView order_icon;
     ImageView list_icon;
     TextView detail;
-    TableLayout control_panel;
+    TextView edit;
   }
 
   private class MyOnClickListener implements View.OnClickListener {
@@ -62,14 +62,14 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
       activity.actionBarFragment.searchView.clearFocus();
       switch(v.getId()) {
         case R.id.list_card: {
-          if(viewHolder.control_panel.getVisibility() == View.GONE) {
+          if(viewHolder.edit.getVisibility() == View.GONE) {
             has_panel = list.getId();
-            viewHolder.control_panel.setVisibility(View.VISIBLE);
+            viewHolder.edit.setVisibility(View.VISIBLE);
             notifyDataSetChanged();
           }
           else {
             has_panel = 0;
-            viewHolder.control_panel.setVisibility(View.GONE);
+            viewHolder.edit.setVisibility(View.GONE);
           }
           break;
         }
@@ -77,7 +77,7 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
           activity.listView.clearTextFilter();
           activity.showMainEditFragmentForList(list, ManageListViewFragment.TAG);
           has_panel = 0;
-          viewHolder.control_panel.setVisibility(View.GONE);
+          viewHolder.edit.setVisibility(View.GONE);
           break;
         }
         case R.id.notes: {
@@ -212,11 +212,12 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
       convertView = View.inflate(parent.getContext(), R.layout.non_scheduled_list_layout, null);
 
       viewHolder = new ViewHolder();
+      viewHolder.linearLayout = convertView.findViewById(R.id.linearLayout);
       viewHolder.list_card = convertView.findViewById(R.id.list_card);
       viewHolder.order_icon = convertView.findViewById(R.id.order_icon);
       viewHolder.list_icon = convertView.findViewById(R.id.list_icon);
       viewHolder.detail = convertView.findViewById(R.id.detail);
-      viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
+      viewHolder.edit = convertView.findViewById(R.id.edit);
 
       convertView.setTag(viewHolder);
     }
@@ -229,27 +230,19 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
     MyOnClickListener listener = new MyOnClickListener(list, viewHolder);
 
     //各リスナーの設定
+    viewHolder.linearLayout.setOnClickListener(null);
     viewHolder.list_card.setOnClickListener(listener);
-
-    int control_panel_size = viewHolder.control_panel.getChildCount();
-    for(int i = 0; i < control_panel_size; i++) {
-      TableRow tableRow = (TableRow)viewHolder.control_panel.getChildAt(i);
-      int table_row_size = tableRow.getChildCount();
-      for(int j = 0; j < table_row_size; j++) {
-        TextView panel_item = (TextView)tableRow.getChildAt(j);
-        panel_item.setOnClickListener(listener);
-      }
-    }
+    viewHolder.edit.setOnClickListener(listener);
 
     //各種表示処理
     viewHolder.detail.setText(list.getTitle());
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
-    if(viewHolder.control_panel.getVisibility() == View.VISIBLE && list.getId() != has_panel) {
-      viewHolder.control_panel.setVisibility(View.GONE);
+    if(viewHolder.edit.getVisibility() == View.VISIBLE && list.getId() != has_panel) {
+      viewHolder.edit.setVisibility(View.GONE);
     }
-    else if(viewHolder.control_panel.getVisibility() == View.GONE && list.getId() == has_panel) {
-      viewHolder.control_panel.setVisibility(View.VISIBLE);
+    else if(viewHolder.edit.getVisibility() == View.GONE && list.getId() == has_panel) {
+      viewHolder.edit.setVisibility(View.VISIBLE);
     }
 
     //パレットの色を設定

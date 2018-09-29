@@ -21,6 +21,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.hideaki.reminder.UtilClass.getPxFromDp;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TagEditListAdapter extends BaseAdapter {
@@ -80,6 +81,7 @@ public class TagEditListAdapter extends BaseAdapter {
       }
       else if(position != 0) {
         switch(v.getId()) {
+
           case R.id.tag_item: {
 
             //ダイアログに表示するEditTextの設定
@@ -91,9 +93,7 @@ public class TagEditListAdapter extends BaseAdapter {
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ));
             linearLayout.addView(editText);
-            int paddingDp = 20; //dpを指定
-            float scale = activity.getResources().getDisplayMetrics().density; //画面のdensityを指定
-            int paddingPx = (int) (paddingDp * scale + 0.5f); //dpをpxに変換
+            int paddingPx = getPxFromDp(activity, 20);
             linearLayout.setPadding(paddingPx, 0, paddingPx, 0);
 
             final AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -299,6 +299,7 @@ public class TagEditListAdapter extends BaseAdapter {
     viewHolder.delete.setOnClickListener(listener);
     viewHolder.checkBox.setOnCheckedChangeListener(listener);
 
+    //チェック状態の初期化
     if(tag.getId() != checked_item_id) {
       manually_checked = false;
       viewHolder.checkBox.setChecked(false);

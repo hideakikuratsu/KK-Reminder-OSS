@@ -71,7 +71,8 @@ public class SortableListView extends ListView {
     if(TagEditListAdapter.is_sorting) {
       return eventToPosition(ev) != 0;
     }
-    return MyListAdapter.is_sorting || ManageListAdapter.is_sorting || super.onInterceptTouchEvent(ev);
+    return MyListAdapter.is_sorting || ManageListAdapter.is_sorting || NotesTodoListAdapter.is_sorting
+        || super.onInterceptTouchEvent(ev);
   }
 
   @Override
@@ -273,7 +274,16 @@ public class SortableListView extends ListView {
 
   /** ImageView用LayoutParamsの座標情報を更新 */
   protected void updateLayoutParams(int rawY) {
-    layoutParams.y = rawY - 145;
+
+    if(MyListAdapter.is_sorting || ManageListAdapter.is_sorting) {
+      layoutParams.y = rawY - 112;
+    }
+    else if(TagEditListAdapter.is_sorting) {
+      layoutParams.y = rawY - 100;
+    }
+    else if(NotesTodoListAdapter.is_sorting) {
+      layoutParams.y = rawY - 85;
+    }
   }
 
   /** ドラッグイベントリスナーインターフェース */

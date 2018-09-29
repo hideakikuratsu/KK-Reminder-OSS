@@ -44,7 +44,17 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.example.hideaki.reminder.UtilClass.*;
+import static com.example.hideaki.reminder.UtilClass.BOOT_FROM_NOTIFICATION;
+import static com.example.hideaki.reminder.UtilClass.DEFAULT_URI_SOUND;
+import static com.example.hideaki.reminder.UtilClass.ITEM;
+import static com.example.hideaki.reminder.UtilClass.MENU_POSITION;
+import static com.example.hideaki.reminder.UtilClass.SAVED_DATA;
+import static com.example.hideaki.reminder.UtilClass.SUBMENU_POSITION;
+import static com.example.hideaki.reminder.UtilClass.deserialize;
+import static com.example.hideaki.reminder.UtilClass.DONE_ITEM_COMPARATOR;
+import static com.example.hideaki.reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
+import static com.example.hideaki.reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
+import static com.example.hideaki.reminder.UtilClass.serialize;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -56,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private Intent intent;
   private PendingIntent sender;
   private AlarmManager alarmManager;
-  private int group_changed; //groupの変化があったかどうかのフラグをビットで表す
-  private int group_changed_num; //groupの変化があったchildの個数を保持する
   public int which_menu_open;
   private int which_submenu_open;
   ExpandableListView expandableListView;
@@ -599,13 +607,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void run() {
 
-          group_changed_num = 0;
-          for(int group_count = 0; group_count < MyExpandableListAdapter.groups.size(); group_count++) {
+          boolean is_updated = false;
+          int groups_size = MyExpandableListAdapter.groups.size();
+          for(int group_count = 0; group_count < groups_size; group_count++) {
 
-            group_changed = 0;
+            int group_changed = 0;
             List<Item> itemList = MyExpandableListAdapter.children.get(group_count);
 
-            for(int child_count = 0; child_count < itemList.size() - group_changed_num; child_count++) {
+            int children_size = itemList.size();
+            for(int child_count = 0; child_count < children_size; child_count++) {
 
               Item item = itemList.get(child_count);
               Calendar now = Calendar.getInstance();
@@ -648,21 +658,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
               }
             }
 
-            group_changed_num = 0;
-            for(int i = 0; i <= group_changed; i++) {
+            int binary_length = Integer.toBinaryString(group_changed).length();
+            for(int i = 0; i < binary_length; i++) {
               if((group_changed & (1 << i)) != 0) {
-                if(MyExpandableListAdapter.children.get(group_count).size() > i) {
-                  MyExpandableListAdapter.children.get(group_count).remove(i);
-                }
-                group_changed_num++;
+//                if(MyExpandableListAdapter.children.get(group_count).size() > i) {
+//                  MyExpandableListAdapter.children.get(group_count).remove(i);
+//                }
+                MyExpandableListAdapter.children.get(group_count).remove(i);
+                is_updated = true;
               }
             }
           }
 
-          for(List<Item> itemList : MyExpandableListAdapter.children) {
-            Collections.sort(itemList, scheduledItemComparator);
+          if(is_updated) {
+            for(List<Item> itemList : MyExpandableListAdapter.children) {
+              Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+            }
+            expandableListAdapter.notifyDataSetChanged();
           }
-          expandableListAdapter.notifyDataSetChanged();
         }
       });
     }
@@ -768,7 +781,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     children.add(future_list);
 
     for(List<Item> itemList : children) {
-      Collections.sort(itemList, scheduledItemComparator);
+      Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
     }
     return children;
   }
@@ -800,7 +813,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     for(List<Item> itemList : MyExpandableListAdapter.children) {
-      Collections.sort(itemList, scheduledItemComparator);
+      Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
     }
     expandableListAdapter.notifyDataSetChanged();
     insertDB(item, table);
@@ -815,7 +828,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         itemList.add(item);
       }
     }
-    Collections.sort(itemList, nonScheduledItemComparator);
+    Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
 
     return itemList;
   }
@@ -829,7 +842,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         itemList.add(item);
       }
     }
-    Collections.sort(itemList, doneItemComparator);
+    Collections.sort(itemList, DONE_ITEM_COMPARATOR);
 
     return itemList;
   }
@@ -1150,13 +1163,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         .commit();
   }
 
-  public void showNotesFragment(Item item) {
+  public void showNotesFragment(Item item, String TAG) {
 
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content, NotesFragment.newInstance(item))
-        .addToBackStack(null)
-        .commit();
+    FragmentManager manager = getFragmentManager();
+    Fragment fragmentToRemove = manager.findFragmentByTag(TAG);
+    checkNotNull(fragmentToRemove);
+
+    Fragment nextFragment;
+    String nextFragmentTAG;
+    if(item.isChecklist_mode()) {
+      nextFragment = NotesChecklistModeFragment.newInstance(item);
+      nextFragmentTAG = NotesChecklistModeFragment.TAG;
+    }
+    else {
+      nextFragment = NotesEditModeFragment.newInstance(item);
+      nextFragmentTAG = NotesEditModeFragment.TAG;
+    }
+
+    if(TAG.equals(MainEditFragment.TAG)) {
+      MainEditFragment.is_popping = false;
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
+          .add(R.id.content, nextFragment, nextFragmentTAG)
+          .addToBackStack(null)
+          .commit();
+    }
+    else if(TAG.equals(NotesEditModeFragment.TAG) || TAG.equals(NotesChecklistModeFragment.TAG)) {
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
+          .add(R.id.content, nextFragment, nextFragmentTAG)
+          .addToBackStack(null)
+          .commit();
+    }
+    else {
+      MainEditFragment.is_popping = false;
+      manager
+          .beginTransaction()
+          .remove(fragmentToRemove)
+          .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
+          .add(R.id.content, nextFragment, nextFragmentTAG)
+          .addToBackStack(null)
+          .commit();
+    }
   }
 
 //  private void showFragment()

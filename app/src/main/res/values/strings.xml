@@ -53,6 +53,15 @@
         <item>@string/custom</item>
     </string-array>
 
+    <string name="sort_notes">メモを並び替える</string>
+    <string name="edit_mode">メモを編集する</string>
+    <string name="checklist_mode">メモをチェックリストとして表示する</string>
+    <string name="done_edit">編集を終える</string>
+    <string name="delete_checked_items">チェックした項目を削除</string>
+    <string name="unselect_all_items">すべてのチェックを外す</string>
+    <string name="clear_notes">メモをクリアする</string>
+    <string name="clear_notes_message">メモの内容をすべてクリアしますか？クリアするともとに戻すことができません。</string>
+    <string name="delete_checked_items_message">チェックした項目を削除しますか？削除するともとに戻すことができません。</string>
     <string name="times">回</string>
     <string name="none">なし</string>
     <string name="home">家事</string>

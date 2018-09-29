@@ -37,8 +37,9 @@ import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.example.hideaki.reminder.UtilClass.nonScheduledItemComparator;
-import static com.example.hideaki.reminder.UtilClass.scheduledItemComparator;
+import static com.example.hideaki.reminder.UtilClass.LINE_SEPARATOR;
+import static com.example.hideaki.reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
+import static com.example.hideaki.reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 
@@ -293,7 +294,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
         case R.id.notes: {
           activity.expandableListView.clearTextFilter();
-          activity.showNotesFragment(item);
+          activity.showNotesFragment(item, ExpandableListViewFragment.TAG);
           break;
         }
       }
@@ -428,13 +429,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 item.getDate().get(Calendar.DAY_OF_WEEK) + 5 : item.getDate().get(Calendar.DAY_OF_WEEK) - 2;
 
             //intervalの処理
-            max_bit = 0;
-            for(int i = 0; i < 7; i++) {
-              if((item.getDayRepeat().getWeek() & (1 << i)) != 0) {
-                max_bit = i;
-              }
-            }
-            day_of_week_last = max_bit;
+            day_of_week_last = Integer.toBinaryString(item.getDayRepeat().getWeek()).length() - 1;
             if(day_of_week >= day_of_week_last) {
               tmp.add(Calendar.DAY_OF_MONTH, (item.getDayRepeat().getInterval() - 1) * 7);
             }
@@ -467,13 +462,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 now.get(Calendar.DAY_OF_WEEK) + 5 : now.get(Calendar.DAY_OF_WEEK) - 2;
 
             //intervalの処理
-            max_bit = 0;
-            for(int i = 0; i < 7; i++) {
-              if((item.getDayRepeat().getWeek() & (1 << i)) != 0) {
-                max_bit = i;
-              }
-            }
-            day_of_week_last = max_bit;
+            day_of_week_last = Integer.toBinaryString(item.getDayRepeat().getWeek()).length() - 1;
             if(day_of_week > day_of_week_last) {
               tmp.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
               if(tmp.after(now)) {
@@ -532,13 +521,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               day_of_month = item.getDate().get(Calendar.DAY_OF_MONTH);
 
               //intervalの処理
-              max_bit = 0;
-              for(int i = 0; i < 31; i++) {
-                if((item.getDayRepeat().getDays_of_month() & (1 << i)) != 0) {
-                  max_bit = i;
-                }
-              }
-              day_of_month_last = max_bit + 1;
+              day_of_month_last = Integer.toBinaryString(item.getDayRepeat().getDays_of_month()).length();
               if(day_of_month_last > tmp.getActualMaximum(Calendar.DAY_OF_MONTH)) {
                 day_of_month_last = tmp.getActualMaximum(Calendar.DAY_OF_MONTH);
               }
@@ -580,13 +563,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               day_of_month = now.get(Calendar.DAY_OF_MONTH);
 
               //intervalの処理
-              max_bit = 0;
-              for(int i = 0; i < 31; i++) {
-                if((item.getDayRepeat().getDays_of_month() & (1 << i)) != 0) {
-                  max_bit = i;
-                }
-              }
-              day_of_month_last = max_bit + 1;
+              day_of_month_last = Integer.toBinaryString(item.getDayRepeat().getDays_of_month()).length();
               if(day_of_month_last > tmp.getActualMaximum(Calendar.DAY_OF_MONTH)) {
                 day_of_month_last = tmp.getActualMaximum(Calendar.DAY_OF_MONTH);
               }
@@ -1038,13 +1015,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             month = item.getDate().get(Calendar.MONTH);
 
             //intervalの処理
-            max_bit = 0;
-            for(int i = 0; i < 12; i++) {
-              if((item.getDayRepeat().getYear() & (1 << i)) != 0) {
-                max_bit = i;
-              }
-            }
-            month_last = max_bit;
+            month_last = Integer.toBinaryString(item.getDayRepeat().getYear()).length() - 1;
             if(month >= month_last) {
               tmp.set(Calendar.MONTH, 0);
               tmp.add(Calendar.YEAR, item.getDayRepeat().getInterval());
@@ -1089,13 +1060,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             month = now.get(Calendar.MONTH);
 
             //intervalの処理
-            max_bit = 0;
-            for(int i = 0; i < 12; i++) {
-              if((item.getDayRepeat().getYear() & (1 << i)) != 0) {
-                max_bit = i;
-              }
-            }
-            month_last = max_bit;
+            month_last = Integer.toBinaryString(item.getDayRepeat().getYear()).length() - 1;
             if(month > month_last) {
               tmp.set(Calendar.MONTH, 0);
               tmp.add(Calendar.YEAR, item.getDayRepeat().getInterval());
@@ -1248,7 +1213,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   item.getDate().setTimeInMillis(item.getOrg_date().getTimeInMillis() + item.getTime_altered());
                   children.get(group_position).add(item);
                   for(List<Item> itemList : children) {
-                    Collections.sort(itemList, scheduledItemComparator);
+                    Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
                   }
                   notifyDataSetChanged();
 
@@ -1415,7 +1380,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                       MyListAdapter.itemList.add(item);
                     }
                   }
-                  Collections.sort(MyListAdapter.itemList, nonScheduledItemComparator);
+                  Collections.sort(MyListAdapter.itemList, NON_SCHEDULED_ITEM_COMPARATOR);
 
                   for(Item item : itemListToMove) {
 
@@ -1522,14 +1487,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                  String LINE_SEPARATOR = System.getProperty("line.separator");
                   for(Item item : itemListToMove) {
                     String send_content = activity.getString(R.string.days_of_month) + ": "
                         + DateFormat.format("yyyy/MM/dd HH:mm", item.getDate())
                         + LINE_SEPARATOR
                         + activity.getString(R.string.detail) + ": " + item.getDetail()
                         + LINE_SEPARATOR
-                        + activity.getString(R.string.memo) + ": " + item.getNotes();
+                        + activity.getString(R.string.memo) + ": " + item.getNotesString();
 
                     Intent intent = new Intent()
                         .setAction(Intent.ACTION_SEND)

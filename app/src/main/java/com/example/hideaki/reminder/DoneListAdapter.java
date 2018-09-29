@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.hideaki.reminder.UtilClass.LINE_SEPARATOR;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DoneListAdapter extends BaseAdapter implements Filterable {
@@ -347,7 +348,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                  String LINE_SEPARATOR = System.getProperty("line.separator");
                   for(Item item : itemListToMove) {
                     String send_content = "";
                     if(order == 0) {
@@ -356,12 +356,12 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                           + LINE_SEPARATOR
                           + activity.getString(R.string.detail) + ": " + item.getDetail()
                           + LINE_SEPARATOR
-                          + activity.getString(R.string.memo) + ": " + item.getNotes();
+                          + activity.getString(R.string.memo) + ": " + item.getNotesString();
                     }
                     else if(order == 1) {
                       send_content = activity.getString(R.string.detail) + ": " + item.getDetail()
                           + LINE_SEPARATOR
-                          + activity.getString(R.string.memo) + ": " + item.getNotes();
+                          + activity.getString(R.string.memo) + ": " + item.getNotesString();
                     }
 
                     Intent intent = new Intent()

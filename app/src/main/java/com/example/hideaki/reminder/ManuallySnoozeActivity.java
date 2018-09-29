@@ -197,7 +197,7 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     children.add(future_list);
 
     for(List<Item> itemList : children) {
-      Collections.sort(itemList, scheduledItemComparator);
+      Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
     }
     return children;
   }

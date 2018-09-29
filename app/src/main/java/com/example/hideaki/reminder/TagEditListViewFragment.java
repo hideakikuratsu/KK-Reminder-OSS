@@ -190,7 +190,6 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
             activity.listView.addFooterView(footer);
           }
 
-          activity.generalSettings.setTagList(new ArrayList<>(TagEditListAdapter.tagList));
           int size = TagEditListAdapter.tagList.size();
           boolean is_updated = false;
           for(int i = 0; i < size; i++) {
@@ -201,7 +200,10 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
             }
           }
 
-          if(is_updated) activity.updateSettingsDB();
+          if(is_updated) {
+            activity.generalSettings.setTagList(new ArrayList<>(TagEditListAdapter.tagList));
+            activity.updateSettingsDB();
+          }
         }
 
         activity.tagEditListAdapter.notifyDataSetChanged();

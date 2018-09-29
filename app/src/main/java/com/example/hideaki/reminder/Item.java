@@ -1,11 +1,13 @@
 package com.example.hideaki.reminder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class Item implements Serializable {
 
-  private static final long serialVersionUID = 7512800091169383255L;
+  private static final long serialVersionUID = 8352865336541083980L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
@@ -17,7 +19,8 @@ public class Item implements Serializable {
   private DayRepeat dayRepeat = new DayRepeat();
   private MinuteRepeat minuteRepeat = new MinuteRepeat();
   private String soundUri;
-  private String notes;
+  private List<Notes> notesList = new ArrayList<>();
+  private boolean checklist_mode;
   private long time_altered; //子ビューのコントロールパネルで時間を変えたとき、変えた総時間を保持する
   private long org_time_altered; //リピート設定による変更をスナックバーから元に戻すのに用いる
   private boolean alarm_stopped;
@@ -69,8 +72,22 @@ public class Item implements Serializable {
     return soundUri;
   }
 
-  String getNotes() {
-    return notes;
+  List<Notes> getNotesList() {
+    return notesList;
+  }
+
+  String getNotesString() {
+
+    StringBuilder stringBuilder = new StringBuilder();
+    for(Notes notes : notesList) {
+      stringBuilder.append(notes.getString());
+    }
+
+    return stringBuilder.toString();
+  }
+
+  boolean isChecklist_mode() {
+    return checklist_mode;
   }
 
   long getTime_altered() {
@@ -141,8 +158,12 @@ public class Item implements Serializable {
     this.soundUri = soundUri;
   }
 
-  void setNotes(String notes) {
-    this.notes = notes;
+  void setNotesList(List<Notes> notesList) {
+    this.notesList = notesList;
+  }
+
+  void setChecklist_mode(boolean checklist_mode) {
+    this.checklist_mode = checklist_mode;
   }
 
   void addTime_altered(long time_altered) {
@@ -194,7 +215,7 @@ public class Item implements Serializable {
     item.setDayRepeat(this.dayRepeat.clone());
     item.setMinuteRepeat(this.minuteRepeat.clone());
     item.setSoundUri(this.soundUri);
-    item.setNotes(this.notes);
+    item.setNotesList(new ArrayList<>(this.notesList));
     item.setTime_altered(this.time_altered);
     item.setOrg_time_altered(this.org_time_altered);
     item.setAlarm_stopped(this.alarm_stopped);
@@ -203,6 +224,7 @@ public class Item implements Serializable {
     item.setOrder(this.order);
     item.setSelected(this.selected);
     item.setDoneDate(this.doneDate);
+    item.setChecklist_mode(this.checklist_mode);
 
     return item;
   }

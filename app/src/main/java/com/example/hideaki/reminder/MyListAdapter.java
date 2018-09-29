@@ -22,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -35,7 +36,8 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.example.hideaki.reminder.UtilClass.nonScheduledItemComparator;
+import static com.example.hideaki.reminder.UtilClass.LINE_SEPARATOR;
+import static com.example.hideaki.reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 
 public class MyListAdapter extends BaseAdapter implements Filterable {
 
@@ -59,6 +61,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
   private static class ViewHolder {
 
+    LinearLayout linearLayout;
     CardView item_card;
     ImageView order_icon;
     TextView detail;
@@ -120,7 +123,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         }
         case R.id.notes: {
           activity.listView.clearTextFilter();
-          activity.showNotesFragment(item);
+          activity.showNotesFragment(item, ListViewFragment.TAG);
           break;
         }
       }
@@ -182,7 +185,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
               @Override
               public void onClick(View v) {
                 itemList.add(item);
-                Collections.sort(itemList, nonScheduledItemComparator);
+                Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
                 notifyDataSetChanged();
 
                 activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
@@ -344,7 +347,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                         itemList.add(item);
                       }
                     }
-                    Collections.sort(itemList, nonScheduledItemComparator);
+                    Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
 
                     for(Item item : itemListToMove) {
 
@@ -444,11 +447,10 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                  String LINE_SEPARATOR = System.getProperty("line.separator");
                   for(Item item : itemListToMove) {
                     String send_content = activity.getString(R.string.detail) + ": " + item.getDetail()
                         + LINE_SEPARATOR
-                        + activity.getString(R.string.memo) + ": " + item.getNotes();
+                        + activity.getString(R.string.memo) + ": " + item.getNotesString();
 
                     Intent intent = new Intent()
                         .setAction(Intent.ACTION_SEND)
@@ -626,6 +628,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       convertView = View.inflate(parent.getContext(), R.layout.non_sheduled_item_layout, null);
 
       viewHolder = new ViewHolder();
+      viewHolder.linearLayout = convertView.findViewById(R.id.linearLayout);
       viewHolder.item_card = convertView.findViewById(R.id.item_card);
       viewHolder.order_icon = convertView.findViewById(R.id.order_icon);
       viewHolder.detail = convertView.findViewById(R.id.detail);
@@ -644,6 +647,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     MyOnClickListener listener = new MyOnClickListener(position, item, convertView, viewHolder);
 
     //各リスナーの設定
+    viewHolder.linearLayout.setOnClickListener(null);
     viewHolder.item_card.setOnClickListener(listener);
     viewHolder.checkBox.setOnCheckedChangeListener(listener);
 

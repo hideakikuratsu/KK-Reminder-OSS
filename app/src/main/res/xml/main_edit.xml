@@ -50,10 +50,9 @@
     <PreferenceCategory
         android:key="notes_category"
         android:title="@string/notes">
-        <EditTextPreference
+        <PreferenceScreen
             android:key="notes"
-            android:height="60dp"
-            android:persistent="false" />
+            android:title="@string/memo"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

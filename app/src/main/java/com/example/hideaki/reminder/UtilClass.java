@@ -1,5 +1,6 @@
 package com.example.hideaki.reminder;
 
+import android.content.Context;
 import android.media.RingtoneManager;
 import android.net.Uri;
 
@@ -15,9 +16,10 @@ class UtilClass {
   private UtilClass() {}
 
   private static final AtomicInteger uniqueId = new AtomicInteger(1);
-  static final ScheduledItemComparator scheduledItemComparator = new ScheduledItemComparator();
-  static final NonScheduledItemComparator nonScheduledItemComparator = new NonScheduledItemComparator();
-  static final DoneItemComparator doneItemComparator = new DoneItemComparator();
+  static final ScheduledItemComparator SCHEDULED_ITEM_COMPARATOR = new ScheduledItemComparator();
+  static final NonScheduledItemComparator NON_SCHEDULED_ITEM_COMPARATOR = new NonScheduledItemComparator();
+  static final DoneItemComparator DONE_ITEM_COMPARATOR = new DoneItemComparator();
+  static final NotesComparator NOTES_COMPARATOR = new NotesComparator();
   static final Uri DEFAULT_URI_SOUND = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
   static final String NOTIFICATION_ID = "NOTIFICATION_ID";
   static final String BOOT_FROM_NOTIFICATION = "BOOT_FROM_NOTIFICATION";
@@ -26,8 +28,15 @@ class UtilClass {
   static final String SAVED_DATA = "SAVED_DATA";
   static final String MENU_POSITION = "MENU_POSITION";
   static final String SUBMENU_POSITION = "SUBMENU_POSITION";
+  static final String LINE_SEPARATOR = System.getProperty("line.separator");
   static long MINUTE = 60 * 1000;
   static long HOUR = 60 * 60 * 1000;
+
+  static int getPxFromDp(Context context, int dp) {
+
+    float scale = context.getResources().getDisplayMetrics().density; //画面のdensityを指定
+    return (int)(dp * scale + 0.5f);
+  }
 
   //int型のユニークIDを取得するメソッド
   static int generateUniqueId() {
