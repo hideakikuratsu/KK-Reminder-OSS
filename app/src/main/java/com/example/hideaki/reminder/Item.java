@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Item implements Serializable {
+public class Item implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = 8352865336541083980L;
+  private static final long serialVersionUID = 7815316756235209582L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String detail;
   private Calendar date = Calendar.getInstance();
@@ -225,6 +225,20 @@ public class Item implements Serializable {
     item.setSelected(this.selected);
     item.setDoneDate(this.doneDate);
     item.setChecklist_mode(this.checklist_mode);
+
+    return item;
+  }
+
+  @Override
+  public Item clone() {
+
+    Item item = null;
+
+    try {
+      item = (Item)super.clone();
+    } catch(CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
 
     return item;
   }

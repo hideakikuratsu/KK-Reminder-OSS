@@ -80,11 +80,6 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
           viewHolder.edit.setVisibility(View.GONE);
           break;
         }
-        case R.id.notes: {
-          activity.listView.clearTextFilter();
-//          activity.showNotesFragment(list);
-          break;
-        }
       }
     }
   }

@@ -6,13 +6,18 @@ import java.util.List;
 
 class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = -8708799214943328823L;
+  private static final long serialVersionUID = -6557576382052886298L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
   private List<Tag> tagList = new ArrayList<>();
   private boolean expandable_todo = true;
   private Item item = new Item();
   private int snooze_default_hour;
   private int snooze_default_minute;
+  private String defaultQuickPicker1;
+  private String defaultQuickPicker2;
+  private String defaultQuickPicker3;
+  private String defaultQuickPicker4;
+  private MyTheme theme = new MyTheme();
 
   List<NonScheduledList> getNonScheduledLists() {
     return nonScheduledLists;
@@ -46,8 +51,41 @@ class GeneralSettings implements Serializable {
     return snooze_default_minute;
   }
 
+  String getDefaultQuickPicker1() {
+    return defaultQuickPicker1;
+  }
+
+  String getDefaultQuickPicker2() {
+    return defaultQuickPicker2;
+  }
+
+  String getDefaultQuickPicker3() {
+    return defaultQuickPicker3;
+  }
+
+  String getDefaultQuickPicker4() {
+    return defaultQuickPicker4;
+  }
+
+  MyTheme getTheme() {
+    return theme;
+  }
+
   void setNonScheduledLists(List<NonScheduledList> nonScheduledLists) {
     this.nonScheduledLists = nonScheduledLists;
+  }
+
+  void setNonScheduledList(NonScheduledList list) {
+
+    long id = list.getId();
+    int size = nonScheduledLists.size();
+    for(int i = 0; i < size; i++) {
+      NonScheduledList thisList = nonScheduledLists.get(i);
+      if(thisList.getId() == id) {
+        nonScheduledLists.set(i, list);
+        break;
+      }
+    }
   }
 
   void setTagList(List<Tag> tagList) {
@@ -68,5 +106,25 @@ class GeneralSettings implements Serializable {
 
   void setSnooze_default_minute(int snooze_default_minute) {
     this.snooze_default_minute = snooze_default_minute;
+  }
+
+  void setDefaultQuickPicker1(String defaultQuickPicker1) {
+    this.defaultQuickPicker1 = defaultQuickPicker1;
+  }
+
+  void setDefaultQuickPicker2(String defaultQuickPicker2) {
+    this.defaultQuickPicker2 = defaultQuickPicker2;
+  }
+
+  void setDefaultQuickPicker3(String defaultQuickPicker3) {
+    this.defaultQuickPicker3 = defaultQuickPicker3;
+  }
+
+  void setDefaultQuickPicker4(String defaultQuickPicker4) {
+    this.defaultQuickPicker4 = defaultQuickPicker4;
+  }
+
+  void setTheme(MyTheme theme) {
+    this.theme = theme;
   }
 }

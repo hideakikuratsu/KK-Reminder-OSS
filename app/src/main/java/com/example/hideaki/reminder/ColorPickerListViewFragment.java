@@ -2,6 +2,8 @@ package com.example.hideaki.reminder;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -34,14 +36,30 @@ public class ColorPickerListViewFragment extends Fragment {
     activity = (MainActivity)context;
     order = activity.order;
     ColorPickerListAdapter.order = order;
-    activity.colorPickerListAdapter.adapterTag = TagEditListAdapter.tagList.get(tag_position);
-    activity.colorPickerListAdapter.orgTag = activity.generalSettings.getTagList().get(tag_position);
-    if(order == 0 || order == 1 || order == 4) {
-      ColorPickerListAdapter.checked_position = activity.colorPickerListAdapter.adapterTag.getColor_order_group();
+    if(!ColorPickerListAdapter.is_general_settings) {
+      activity.colorPickerListAdapter.adapterTag = TagEditListAdapter.tagList.get(tag_position);
+      activity.colorPickerListAdapter.orgTag = activity.generalSettings.getTagList().get(tag_position);
+      if(order == 0 || order == 1 || order == 4) {
+        ColorPickerListAdapter.checked_position = activity.colorPickerListAdapter.adapterTag.getColor_order_group();
+      }
+      else if(order == 3) {
+        ColorPickerListAdapter.checked_position = MainEditFragment.list.getColorGroup();
+      }
     }
-    else if(order == 3) {
-      ColorPickerListAdapter.checked_position = MainEditFragment.list.getColorGroup();
+    else {
+      ColorPickerListAdapter.checked_position = activity.generalSettings.getTheme().getColorGroup();
     }
+
+    activity.colorPickerListAdapter.colorStateList = new ColorStateList(
+        new int[][] {
+            new int[]{-android.R.attr.state_checked}, // unchecked
+            new int[]{android.R.attr.state_checked} // checked
+        },
+        new int[] {
+            ContextCompat.getColor(activity, R.color.icon_gray),
+            activity.accent_color
+        }
+    );
   }
 
   @Override
@@ -64,7 +82,17 @@ public class ColorPickerListViewFragment extends Fragment {
       public boolean onKey(View v, int keyCode, KeyEvent event) {
 
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-          MainEditFragment.list.setColor_primary(true);
+          if(order == 3) MainEditFragment.list.setColor_primary(true);
+          if(ColorPickerListAdapter.is_general_settings) {
+            ColorPickerListAdapter.is_general_settings = false;
+            if(activity.generalSettings.getTheme().isColor_primary()) {
+              activity.finish();
+              startActivity(new Intent(activity, MainActivity.class));
+            }
+            else {
+              activity.generalSettings.getTheme().setColor_primary(true);
+            }
+          }
         }
 
         return false;
@@ -94,6 +122,16 @@ public class ColorPickerListViewFragment extends Fragment {
 
       case android.R.id.home: {
         if(order == 3) MainEditFragment.list.setColor_primary(true);
+        if(ColorPickerListAdapter.is_general_settings) {
+          ColorPickerListAdapter.is_general_settings = false;
+          if(activity.generalSettings.getTheme().isColor_primary()) {
+            activity.finish();
+            startActivity(new Intent(activity, MainActivity.class));
+          }
+          else {
+            activity.generalSettings.getTheme().setColor_primary(true);
+          }
+        }
         getFragmentManager().popBackStack();
         return true;
       }

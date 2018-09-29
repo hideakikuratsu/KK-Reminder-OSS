@@ -14,6 +14,7 @@ import java.util.Calendar;
 
 public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference implements View.OnClickListener {
 
+  private MainActivity activity;
   private int max_days_of_month;
   private CheckableTextView day;
   private int mask_num;
@@ -22,6 +23,7 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
   public DayRepeatCustomDaysOfMonthPickerPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
+    activity = (MainActivity)context;
   }
 
   @Override
@@ -68,7 +70,7 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
       for(int j = 0; j < table_row_size; j++) {
         day = (CheckableTextView)tableRow.getChildAt(j);
         if((days_of_month & (1 << (i * 7 + j))) != 0) {
-          day.setBackgroundColor(Color.RED);
+          day.setBackgroundColor(activity.accent_color);
           day.setChecked(true);
         }
         day.setOnClickListener(this);
@@ -86,7 +88,7 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
     if(day.isChecked()) {
       days_of_month |= (1 << (mask_num - 1));
       if(mask_num == max_days_of_month && mask_num != 31) days_of_month |= (1 << 30);
-      day.setBackgroundColor(Color.RED);
+      day.setBackgroundColor(activity.accent_color);
     }
     else {
       days_of_month &= ~(1 << (mask_num - 1));

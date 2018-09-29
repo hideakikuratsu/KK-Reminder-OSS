@@ -3,9 +3,11 @@ package com.example.hideaki.reminder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
@@ -42,8 +44,10 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
   private static boolean manually_checked;
   private List<Item> filteredItem;
   static int order;
+  ColorStateList colorStateList;
 
   DoneListAdapter(MainActivity activity) {
+
     this.activity = activity;
   }
 
@@ -518,6 +522,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
       }
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
+      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
 
       convertView.setTag(viewHolder);

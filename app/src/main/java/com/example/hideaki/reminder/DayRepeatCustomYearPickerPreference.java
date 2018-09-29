@@ -1,7 +1,10 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.preference.Preference;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +20,22 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
   private CheckBox checkBox;
   private int mask_num;
   static int year;
+  private final ColorStateList colorStateList;
 
   public DayRepeatCustomYearPickerPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
+    MainActivity activity = (MainActivity)context;
+    colorStateList = new ColorStateList(
+        new int[][] {
+            new int[]{-android.R.attr.state_checked}, // unchecked
+            new int[]{android.R.attr.state_checked} // checked
+        },
+        new int[] {
+            ContextCompat.getColor(activity, R.color.icon_gray),
+            activity.accent_color
+        }
+    );
   }
 
   @Override
@@ -49,6 +64,7 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
       int table_row_size = tableRow.getChildCount();
       for(int j = 0; j < table_row_size; j++) {
         checkBox = (CheckBox)tableRow.getChildAt(j);
+        CompoundButtonCompat.setButtonTintList(checkBox, colorStateList);
         if((year & (1 << (i * 6 + j))) != 0) checkBox.setChecked(true);
         checkBox.setOnCheckedChangeListener(this);
       }

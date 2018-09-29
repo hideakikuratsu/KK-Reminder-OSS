@@ -3,10 +3,12 @@ package com.example.hideaki.reminder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
@@ -52,6 +54,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
   private int draggingPosition = -1;
   static boolean is_sorting;
   private List<Item> filteredItem;
+  ColorStateList colorStateList;
 
   MyListAdapter(MainActivity activity) {
 
@@ -633,6 +636,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       viewHolder.order_icon = convertView.findViewById(R.id.order_icon);
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
+      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
 

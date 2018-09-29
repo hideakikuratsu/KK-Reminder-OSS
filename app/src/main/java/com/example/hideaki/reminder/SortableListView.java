@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -16,12 +18,15 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class SortableListView extends ListView {
 
   private static final int SCROLL_SPEED_FAST = 25;
   private static final int SCROLL_SPEED_SLOW = 8;
   private static final Bitmap.Config DRAG_BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
 
+  private MainActivity activity;
   private boolean sortable = false;
   private boolean is_dragging = false;
   private DragListener dragListener = new SimpleDragListener();
@@ -33,15 +38,21 @@ public class SortableListView extends ListView {
   private int positionFrom = -1;
 
   public SortableListView(Context context) {
+
     super(context);
+    activity = (MainActivity)context;
   }
 
   public SortableListView(Context context, AttributeSet attrs) {
+
     super(context, attrs);
+    activity = (MainActivity)context;
   }
 
   public SortableListView(Context context, AttributeSet attrs, int defStyleAttr) {
+
     super(context, attrs, defStyleAttr);
+    activity = (MainActivity)context;
   }
 
   /** ドラッグイベントリスナの設定 */
@@ -148,7 +159,12 @@ public class SortableListView extends ListView {
     // ImageViewを生成しWindowManagerにaddViewする
     dragImageView = new ImageView(getContext());
     dragImageView.setBackgroundColor(bitmapBackgroundColor);
-    dragImageView.setBackgroundResource(R.drawable.my_frame);
+    GradientDrawable drawable = (GradientDrawable)ContextCompat.getDrawable(activity, R.drawable.my_frame);
+    checkNotNull(drawable);
+    drawable = (GradientDrawable)drawable.mutate();
+    drawable.setStroke(3, activity.accent_color);
+    drawable.setCornerRadius(8.0f);
+    dragImageView.setBackground(drawable);
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       dragImageView.setElevation(10f);
     }

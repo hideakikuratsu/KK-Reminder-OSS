@@ -2,9 +2,11 @@ package com.example.hideaki.reminder;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +37,7 @@ public class TagEditListAdapter extends BaseAdapter {
   private static boolean manually_checked;
   static long checked_item_id; //チェックの入っているItemのid値を保持する
   static boolean is_editing;
+  ColorStateList colorStateList;
 
   TagEditListAdapter(List<Tag> tagList, MainActivity activity) {
 
@@ -134,7 +137,8 @@ public class TagEditListAdapter extends BaseAdapter {
           }
           case R.id.pallet: {
 
-            activity.showColorPickerListViewFragment(position, TagEditListViewFragment.TAG);
+            ColorPickerListViewFragment.tag_position = position;
+            activity.showColorPickerListViewFragment(TagEditListViewFragment.TAG);
             break;
           }
           case R.id.delete: {
@@ -280,6 +284,7 @@ public class TagEditListAdapter extends BaseAdapter {
       viewHolder.orderIcon = convertView.findViewById(R.id.order_icon);
       viewHolder.delete = convertView.findViewById(R.id.delete);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
+      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagName = convertView.findViewById(R.id.tag_name);
       viewHolder.pallet = convertView.findViewById(R.id.pallet);
 

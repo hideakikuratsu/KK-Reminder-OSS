@@ -1,6 +1,7 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.preference.Preference;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,13 +18,14 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
   private String oldString = "";
 
   public NotifyIntervalTimePickerPreference(Context context, AttributeSet attrs) {
+
     super(context, attrs);
+    activity = (MainActivity)context;
   }
 
   @Override
   protected View onCreateView(ViewGroup parent) {
 
-    activity = (MainActivity)getContext();
     super.onCreateView(parent);
     return View.inflate(getContext(), R.layout.notify_interval_time_picker, null);
   }
@@ -39,6 +41,12 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
       time.addTextChangedListener(this);
 
       ImageView plus = view.findViewById(R.id.plus);
+      plus.setColorFilter(activity.accent_color);
+      GradientDrawable drawable = (GradientDrawable)plus.getBackground();
+      drawable = (GradientDrawable)drawable.mutate();
+      drawable.setStroke(3, activity.accent_color);
+      drawable.setCornerRadius(8.0f);
+
       plus.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -75,6 +83,12 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
       });
 
       ImageView minus = view.findViewById(R.id.minus);
+      minus.setColorFilter(activity.accent_color);
+      drawable = (GradientDrawable)minus.getBackground();
+      drawable = (GradientDrawable)drawable.mutate();
+      drawable.setStroke(3, activity.accent_color);
+      drawable.setCornerRadius(8.0f);
+
       minus.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {

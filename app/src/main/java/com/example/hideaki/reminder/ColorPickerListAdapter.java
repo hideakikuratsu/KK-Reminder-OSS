@@ -1,8 +1,10 @@
 package com.example.hideaki.reminder;
 
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,8 @@ public class ColorPickerListAdapter extends BaseAdapter {
   static int order;
   Tag adapterTag;
   Tag orgTag;
+  static boolean is_general_settings;
+  ColorStateList colorStateList;
 
   ColorPickerListAdapter(MainActivity activity) {
 
@@ -119,29 +123,41 @@ public class ColorPickerListAdapter extends BaseAdapter {
         checkArgument(default_dark_color != -1);
         checkArgument(default_text_color != 1);
 
-        if(order == 0 || order == 1 || order == 4) {
-          adapterTag.setPrimary_color(default_color);
-          adapterTag.setPrimary_light_color(default_light_color);
-          adapterTag.setPrimary_dark_color(default_dark_color);
-          adapterTag.setPrimary_text_color(default_text_color);
-          adapterTag.setColor_order_group(position);
-          adapterTag.setColor_order_child(5);
+        if(!is_general_settings) {
+          if(order == 0 || order == 1 || order == 4) {
+            adapterTag.setPrimary_color(default_color);
+            adapterTag.setPrimary_light_color(default_light_color);
+            adapterTag.setPrimary_dark_color(default_dark_color);
+            adapterTag.setPrimary_text_color(default_text_color);
+            adapterTag.setColor_order_group(position);
+            adapterTag.setColor_order_child(5);
 
-          orgTag.setPrimary_color(default_color);
-          orgTag.setPrimary_light_color(default_light_color);
-          orgTag.setPrimary_dark_color(default_dark_color);
-          orgTag.setPrimary_text_color(default_text_color);
-          orgTag.setColor_order_group(position);
-          orgTag.setColor_order_child(5);
-          activity.updateSettingsDB();
+            orgTag.setPrimary_color(default_color);
+            orgTag.setPrimary_light_color(default_light_color);
+            orgTag.setPrimary_dark_color(default_dark_color);
+            orgTag.setPrimary_text_color(default_text_color);
+            orgTag.setColor_order_group(position);
+            orgTag.setColor_order_child(5);
+            activity.updateSettingsDB();
+          }
+          else if(order == 3) {
+            MainEditFragment.list.setColor(default_color);
+            MainEditFragment.list.setLightColor(default_light_color);
+            MainEditFragment.list.setDarkColor(default_dark_color);
+            MainEditFragment.list.setTextColor(default_text_color);
+            MainEditFragment.list.setColorGroup(position);
+            MainEditFragment.list.setColorChild(5);
+          }
         }
-        else if(order == 3) {
-          MainEditFragment.list.setColor(default_color);
-          MainEditFragment.list.setLightColor(default_light_color);
-          MainEditFragment.list.setDarkColor(default_dark_color);
-          MainEditFragment.list.setTextColor(default_text_color);
-          MainEditFragment.list.setColorGroup(position);
-          MainEditFragment.list.setColorChild(5);
+        else {
+          MyTheme theme = activity.generalSettings.getTheme();
+          theme.setColor(default_color);
+          theme.setLightColor(default_light_color);
+          theme.setDarkColor(default_dark_color);
+          theme.setTextColor(default_text_color);
+          theme.setColorGroup(position);
+          theme.setColorChild(5);
+          activity.updateSettingsDB();
         }
         notifyDataSetChanged();
 
@@ -166,26 +182,37 @@ public class ColorPickerListAdapter extends BaseAdapter {
                 checkArgument(dark_color != -1);
                 checkArgument(text_color != 1);
 
-                if(order == 0 || order == 1 || order == 4) {
-                  adapterTag.setPrimary_color(color);
-                  adapterTag.setPrimary_light_color(light_color);
-                  adapterTag.setPrimary_dark_color(dark_color);
-                  adapterTag.setPrimary_text_color(text_color);
-                  adapterTag.setColor_order_child(position);
+                if(!is_general_settings) {
+                  if(order == 0 || order == 1 || order == 4) {
+                    adapterTag.setPrimary_color(color);
+                    adapterTag.setPrimary_light_color(light_color);
+                    adapterTag.setPrimary_dark_color(dark_color);
+                    adapterTag.setPrimary_text_color(text_color);
+                    adapterTag.setColor_order_child(position);
 
-                  orgTag.setPrimary_color(color);
-                  orgTag.setPrimary_light_color(light_color);
-                  orgTag.setPrimary_dark_color(dark_color);
-                  orgTag.setPrimary_text_color(text_color);
-                  orgTag.setColor_order_child(position);
-                  activity.updateSettingsDB();
+                    orgTag.setPrimary_color(color);
+                    orgTag.setPrimary_light_color(light_color);
+                    orgTag.setPrimary_dark_color(dark_color);
+                    orgTag.setPrimary_text_color(text_color);
+                    orgTag.setColor_order_child(position);
+                    activity.updateSettingsDB();
+                  }
+                  else if(order == 3) {
+                    MainEditFragment.list.setColor(color);
+                    MainEditFragment.list.setLightColor(light_color);
+                    MainEditFragment.list.setDarkColor(dark_color);
+                    MainEditFragment.list.setTextColor(text_color);
+                    MainEditFragment.list.setColorChild(position);
+                  }
                 }
-                else if(order == 3) {
-                  MainEditFragment.list.setColor(color);
-                  MainEditFragment.list.setLightColor(light_color);
-                  MainEditFragment.list.setDarkColor(dark_color);
-                  MainEditFragment.list.setTextColor(text_color);
-                  MainEditFragment.list.setColorChild(position);
+                else {
+                  MyTheme theme = activity.generalSettings.getTheme();
+                  theme.setColor(color);
+                  theme.setLightColor(light_color);
+                  theme.setDarkColor(dark_color);
+                  theme.setTextColor(text_color);
+                  theme.setColorChild(position);
+                  activity.updateSettingsDB();
                 }
 
                 viewHolder.pallet.setColorFilter(color);
@@ -207,17 +234,25 @@ public class ColorPickerListAdapter extends BaseAdapter {
       }
       else if(position == checked_position && manually_checked) {
         viewHolder.checkBox.jumpDrawablesToCurrentState();
-        if(order == 0 || order == 1 || order == 4) {
-          adapterTag.setPrimary_color(0);
-          adapterTag.setColor_order_group(-1);
+        if(!is_general_settings) {
+          if(order == 0 || order == 1 || order == 4) {
+            adapterTag.setPrimary_color(0);
+            adapterTag.setColor_order_group(-1);
 
-          orgTag.setPrimary_color(0);
-          orgTag.setColor_order_group(-1);
-          activity.updateSettingsDB();
+            orgTag.setPrimary_color(0);
+            orgTag.setColor_order_group(-1);
+            activity.updateSettingsDB();
+          }
+          else if(order == 3) {
+            MainEditFragment.list.setColor(0);
+            MainEditFragment.list.setColorGroup(-1);
+          }
         }
-        else if(order == 3) {
-          MainEditFragment.list.setColor(0);
-          MainEditFragment.list.setColorGroup(-1);
+        else {
+          MyTheme theme = activity.generalSettings.getTheme();
+          theme.setColor(0);
+          theme.setColorGroup(-1);
+          activity.updateSettingsDB();
         }
 
         checked_position = -1;
@@ -253,6 +288,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
       viewHolder = new ViewHolder();
       viewHolder.color_list_card = convertView.findViewById(R.id.color_list_card);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
+      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.color_name = convertView.findViewById(R.id.color_name);
       viewHolder.pallet = convertView.findViewById(R.id.pallet);
 
@@ -275,6 +311,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
 
     //チェック状態の初期化
     if(position != checked_position) {
+      manually_checked = false;
       viewHolder.checkBox.setChecked(false);
       viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
@@ -295,11 +332,16 @@ public class ColorPickerListAdapter extends BaseAdapter {
 
     int colors_id = -1;
     if(position == checked_position) {
-      if(order == 0 || order == 1 || order == 4) {
-        colors_id = typedArray.getResourceId(adapterTag.getColor_order_child(), -1);
+      if(!is_general_settings) {
+        if(order == 0 || order == 1 || order == 4) {
+          colors_id = typedArray.getResourceId(adapterTag.getColor_order_child(), -1);
+        }
+        else if(order == 3) {
+          colors_id = typedArray.getResourceId(MainEditFragment.list.getColorChild(), -1);
+        }
       }
-      else if(order == 3) {
-        colors_id = typedArray.getResourceId(MainEditFragment.list.getColorChild(), -1);
+      else {
+        colors_id = typedArray.getResourceId(activity.generalSettings.getTheme().getColorChild(), -1);
       }
     }
     else {

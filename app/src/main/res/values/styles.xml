@@ -28,1779 +28,1779 @@
     <style name="BaseTheme.Red0" parent="BaseTheme">
         <item name="colorPrimary">@color/red0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red0PrimaryDarkColor</item>
-        <item name="colorAccent">@color/red0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red0PrimaryTextColor</item>
+        <item name="colorAccent">@color/red0PrimaryDarkColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red1" parent="BaseTheme">
         <item name="colorPrimary">@color/red1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red1PrimaryDarkColor</item>
         <item name="colorAccent">@color/red1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red2" parent="BaseTheme">
         <item name="colorPrimary">@color/red2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red2PrimaryDarkColor</item>
         <item name="colorAccent">@color/red2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red3" parent="BaseTheme">
         <item name="colorPrimary">@color/red3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red3PrimaryDarkColor</item>
         <item name="colorAccent">@color/red3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red4" parent="BaseTheme">
         <item name="colorPrimary">@color/red4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red4PrimaryDarkColor</item>
         <item name="colorAccent">@color/red4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red5" parent="BaseTheme">
         <item name="colorPrimary">@color/red5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red5PrimaryDarkColor</item>
         <item name="colorAccent">@color/red5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red6" parent="BaseTheme">
         <item name="colorPrimary">@color/red6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red6PrimaryDarkColor</item>
         <item name="colorAccent">@color/red6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red7" parent="BaseTheme">
         <item name="colorPrimary">@color/red7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red7PrimaryDarkColor</item>
         <item name="colorAccent">@color/red7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red8" parent="BaseTheme">
         <item name="colorPrimary">@color/red8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red8PrimaryDarkColor</item>
         <item name="colorAccent">@color/red8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red9" parent="BaseTheme">
         <item name="colorPrimary">@color/red9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red9PrimaryDarkColor</item>
         <item name="colorAccent">@color/red9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red10" parent="BaseTheme">
         <item name="colorPrimary">@color/red10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red10PrimaryDarkColor</item>
         <item name="colorAccent">@color/red10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red11" parent="BaseTheme">
         <item name="colorPrimary">@color/red11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red11PrimaryDarkColor</item>
         <item name="colorAccent">@color/red11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red12" parent="BaseTheme">
         <item name="colorPrimary">@color/red12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red12PrimaryDarkColor</item>
         <item name="colorAccent">@color/red12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Red13" parent="BaseTheme">
         <item name="colorPrimary">@color/red13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red13PrimaryDarkColor</item>
         <item name="colorAccent">@color/red13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/red13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/red13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink0" parent="BaseTheme">
         <item name="colorPrimary">@color/pink0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink0PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink1" parent="BaseTheme">
         <item name="colorPrimary">@color/pink1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink1PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink2" parent="BaseTheme">
         <item name="colorPrimary">@color/pink2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink2PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink3" parent="BaseTheme">
         <item name="colorPrimary">@color/pink3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink3PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink4" parent="BaseTheme">
         <item name="colorPrimary">@color/pink4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink4PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink5" parent="BaseTheme">
         <item name="colorPrimary">@color/pink5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink5PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink6" parent="BaseTheme">
         <item name="colorPrimary">@color/pink6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink6PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink7" parent="BaseTheme">
         <item name="colorPrimary">@color/pink7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink7PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink8" parent="BaseTheme">
         <item name="colorPrimary">@color/pink8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink8PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink9" parent="BaseTheme">
         <item name="colorPrimary">@color/pink9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink9PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink10" parent="BaseTheme">
         <item name="colorPrimary">@color/pink10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink10PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink11" parent="BaseTheme">
         <item name="colorPrimary">@color/pink11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink11PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink12" parent="BaseTheme">
         <item name="colorPrimary">@color/pink12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink12PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Pink13" parent="BaseTheme">
         <item name="colorPrimary">@color/pink13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/pink13PrimaryDarkColor</item>
         <item name="colorAccent">@color/pink13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/pink13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/pink13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple0" parent="BaseTheme">
         <item name="colorPrimary">@color/purple0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple0PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple1" parent="BaseTheme">
         <item name="colorPrimary">@color/purple1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple1PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple2" parent="BaseTheme">
         <item name="colorPrimary">@color/purple2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple2PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple3" parent="BaseTheme">
         <item name="colorPrimary">@color/purple3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple3PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple4" parent="BaseTheme">
         <item name="colorPrimary">@color/purple4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple4PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple5" parent="BaseTheme">
         <item name="colorPrimary">@color/purple5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple5PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple6" parent="BaseTheme">
         <item name="colorPrimary">@color/purple6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple6PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple7" parent="BaseTheme">
         <item name="colorPrimary">@color/purple7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple7PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple8" parent="BaseTheme">
         <item name="colorPrimary">@color/purple8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple8PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple9" parent="BaseTheme">
         <item name="colorPrimary">@color/purple9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple9PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple10" parent="BaseTheme">
         <item name="colorPrimary">@color/purple10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple10PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple11" parent="BaseTheme">
         <item name="colorPrimary">@color/purple11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple11PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple12" parent="BaseTheme">
         <item name="colorPrimary">@color/purple12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple12PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Purple13" parent="BaseTheme">
         <item name="colorPrimary">@color/purple13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/purple13PrimaryDarkColor</item>
         <item name="colorAccent">@color/purple13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/purple13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/purple13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple0" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple0PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple1" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple1PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple2" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple2PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple3" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple3PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple4" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple4PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple5" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple5PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple6" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple6PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple7" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple7PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple8" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple8PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple9" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple9PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple10" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple10PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple11" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple11PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple12" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple12PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepPurple13" parent="BaseTheme">
         <item name="colorPrimary">@color/deepPurple13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepPurple13PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepPurple13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepPurple13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepPurple13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo0" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo0PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo1" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo1PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo2" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo2PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo3" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo3PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo4" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo4PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo5" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo5PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo6" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo6PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo7" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo7PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo8" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo8PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo9" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo9PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo10" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo10PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo11" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo11PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo12" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo12PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Indigo13" parent="BaseTheme">
         <item name="colorPrimary">@color/indigo13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/indigo13PrimaryDarkColor</item>
         <item name="colorAccent">@color/indigo13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/indigo13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/indigo13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue0" parent="BaseTheme">
         <item name="colorPrimary">@color/blue0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue0PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue1" parent="BaseTheme">
         <item name="colorPrimary">@color/blue1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue1PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue2" parent="BaseTheme">
         <item name="colorPrimary">@color/blue2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue2PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue3" parent="BaseTheme">
         <item name="colorPrimary">@color/blue3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue3PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue4" parent="BaseTheme">
         <item name="colorPrimary">@color/blue4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue4PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue5" parent="BaseTheme">
         <item name="colorPrimary">@color/blue5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue5PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue6" parent="BaseTheme">
         <item name="colorPrimary">@color/blue6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue6PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue7" parent="BaseTheme">
         <item name="colorPrimary">@color/blue7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue7PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue8" parent="BaseTheme">
         <item name="colorPrimary">@color/blue8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue8PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue9" parent="BaseTheme">
         <item name="colorPrimary">@color/blue9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue9PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue10" parent="BaseTheme">
         <item name="colorPrimary">@color/blue10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue10PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue11" parent="BaseTheme">
         <item name="colorPrimary">@color/blue11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue11PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue12" parent="BaseTheme">
         <item name="colorPrimary">@color/blue12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue12PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Blue13" parent="BaseTheme">
         <item name="colorPrimary">@color/blue13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blue13PrimaryDarkColor</item>
         <item name="colorAccent">@color/blue13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blue13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blue13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue0" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue0PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue1" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue1PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue2" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue2PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue3" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue3PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue4" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue4PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue5" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue5PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue6" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue6PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue7" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue7PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue8" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue8PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue9" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue9PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue10" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue10PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue11" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue11PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue12" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue12PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightBlue13" parent="BaseTheme">
         <item name="colorPrimary">@color/lightBlue13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightBlue13PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightBlue13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightBlue13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightBlue13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan0" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan0PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan1" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan1PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan2" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan2PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan3" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan3PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan4" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan4PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan5" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan5PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan6" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan6PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan7" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan7PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan8" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan8PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan9" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan9PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan10" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan10PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan11" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan11PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan12" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan12PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Cyan13" parent="BaseTheme">
         <item name="colorPrimary">@color/cyan13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/cyan13PrimaryDarkColor</item>
         <item name="colorAccent">@color/cyan13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/cyan13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/cyan13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal0" parent="BaseTheme">
         <item name="colorPrimary">@color/teal0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal0PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal1" parent="BaseTheme">
         <item name="colorPrimary">@color/teal1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal1PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal2" parent="BaseTheme">
         <item name="colorPrimary">@color/teal2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal2PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal3" parent="BaseTheme">
         <item name="colorPrimary">@color/teal3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal3PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal4" parent="BaseTheme">
         <item name="colorPrimary">@color/teal4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal4PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal5" parent="BaseTheme">
         <item name="colorPrimary">@color/teal5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal5PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal6" parent="BaseTheme">
         <item name="colorPrimary">@color/teal6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal6PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal7" parent="BaseTheme">
         <item name="colorPrimary">@color/teal7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal7PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal8" parent="BaseTheme">
         <item name="colorPrimary">@color/teal8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal8PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal9" parent="BaseTheme">
         <item name="colorPrimary">@color/teal9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal9PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal10" parent="BaseTheme">
         <item name="colorPrimary">@color/teal10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal10PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal11" parent="BaseTheme">
         <item name="colorPrimary">@color/teal11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal11PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal12" parent="BaseTheme">
         <item name="colorPrimary">@color/teal12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal12PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Teal13" parent="BaseTheme">
         <item name="colorPrimary">@color/teal13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/teal13PrimaryDarkColor</item>
         <item name="colorAccent">@color/teal13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/teal13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/teal13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green0" parent="BaseTheme">
         <item name="colorPrimary">@color/green0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green0PrimaryDarkColor</item>
         <item name="colorAccent">@color/green0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green1" parent="BaseTheme">
         <item name="colorPrimary">@color/green1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green1PrimaryDarkColor</item>
         <item name="colorAccent">@color/green1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green2" parent="BaseTheme">
         <item name="colorPrimary">@color/green2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green2PrimaryDarkColor</item>
         <item name="colorAccent">@color/green2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green3" parent="BaseTheme">
         <item name="colorPrimary">@color/green3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green3PrimaryDarkColor</item>
         <item name="colorAccent">@color/green3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green4" parent="BaseTheme">
         <item name="colorPrimary">@color/green4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green4PrimaryDarkColor</item>
         <item name="colorAccent">@color/green4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green5" parent="BaseTheme">
         <item name="colorPrimary">@color/green5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green5PrimaryDarkColor</item>
         <item name="colorAccent">@color/green5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green6" parent="BaseTheme">
         <item name="colorPrimary">@color/green6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green6PrimaryDarkColor</item>
         <item name="colorAccent">@color/green6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green7" parent="BaseTheme">
         <item name="colorPrimary">@color/green7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green7PrimaryDarkColor</item>
         <item name="colorAccent">@color/green7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green8" parent="BaseTheme">
         <item name="colorPrimary">@color/green8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green8PrimaryDarkColor</item>
         <item name="colorAccent">@color/green8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green9" parent="BaseTheme">
         <item name="colorPrimary">@color/green9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green9PrimaryDarkColor</item>
         <item name="colorAccent">@color/green9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green10" parent="BaseTheme">
         <item name="colorPrimary">@color/green10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green10PrimaryDarkColor</item>
         <item name="colorAccent">@color/green10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green11" parent="BaseTheme">
         <item name="colorPrimary">@color/green11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green11PrimaryDarkColor</item>
         <item name="colorAccent">@color/green11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green12" parent="BaseTheme">
         <item name="colorPrimary">@color/green12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green12PrimaryDarkColor</item>
         <item name="colorAccent">@color/green12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Green13" parent="BaseTheme">
         <item name="colorPrimary">@color/green13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/green13PrimaryDarkColor</item>
         <item name="colorAccent">@color/green13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/green13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/green13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen0" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen0PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen1" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen1PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen2" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen2PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen3" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen3PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen4" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen4PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen5" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen5PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen6" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen6PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen7" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen7PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen8" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen8PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen9" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen9PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen10" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen10PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen11" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen11PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen12" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen12PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.LightGreen13" parent="BaseTheme">
         <item name="colorPrimary">@color/lightGreen13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lightGreen13PrimaryDarkColor</item>
         <item name="colorAccent">@color/lightGreen13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lightGreen13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lightGreen13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime0" parent="BaseTheme">
         <item name="colorPrimary">@color/lime0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime0PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime1" parent="BaseTheme">
         <item name="colorPrimary">@color/lime1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime1PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime2" parent="BaseTheme">
         <item name="colorPrimary">@color/lime2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime2PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime3" parent="BaseTheme">
         <item name="colorPrimary">@color/lime3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime3PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime4" parent="BaseTheme">
         <item name="colorPrimary">@color/lime4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime4PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime5" parent="BaseTheme">
         <item name="colorPrimary">@color/lime5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime5PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime6" parent="BaseTheme">
         <item name="colorPrimary">@color/lime6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime6PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime7" parent="BaseTheme">
         <item name="colorPrimary">@color/lime7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime7PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime8" parent="BaseTheme">
         <item name="colorPrimary">@color/lime8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime8PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime9" parent="BaseTheme">
         <item name="colorPrimary">@color/lime9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime9PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime10" parent="BaseTheme">
         <item name="colorPrimary">@color/lime10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime10PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime11" parent="BaseTheme">
         <item name="colorPrimary">@color/lime11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime11PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime12" parent="BaseTheme">
         <item name="colorPrimary">@color/lime12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime12PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Lime13" parent="BaseTheme">
         <item name="colorPrimary">@color/lime13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/lime13PrimaryDarkColor</item>
         <item name="colorAccent">@color/lime13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/lime13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/lime13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow0" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow0PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow1" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow1PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow2" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow2PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow3" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow3PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow4" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow4PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow5" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow5PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow6" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow6PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow7" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow7PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow8" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow8PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow9" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow9PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow10" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow10PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow11" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow11PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow12" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow12PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Yellow13" parent="BaseTheme">
         <item name="colorPrimary">@color/yellow13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/yellow13PrimaryDarkColor</item>
         <item name="colorAccent">@color/yellow13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/yellow13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/yellow13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber0" parent="BaseTheme">
         <item name="colorPrimary">@color/amber0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber0PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber1" parent="BaseTheme">
         <item name="colorPrimary">@color/amber1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber1PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber2" parent="BaseTheme">
         <item name="colorPrimary">@color/amber2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber2PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber3" parent="BaseTheme">
         <item name="colorPrimary">@color/amber3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber3PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber4" parent="BaseTheme">
         <item name="colorPrimary">@color/amber4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber4PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber5" parent="BaseTheme">
         <item name="colorPrimary">@color/amber5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber5PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber6" parent="BaseTheme">
         <item name="colorPrimary">@color/amber6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber6PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber7" parent="BaseTheme">
         <item name="colorPrimary">@color/amber7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber7PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber8" parent="BaseTheme">
         <item name="colorPrimary">@color/amber8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber8PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber9" parent="BaseTheme">
         <item name="colorPrimary">@color/amber9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber9PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber10" parent="BaseTheme">
         <item name="colorPrimary">@color/amber10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber10PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber11" parent="BaseTheme">
         <item name="colorPrimary">@color/amber11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber11PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber12" parent="BaseTheme">
         <item name="colorPrimary">@color/amber12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber12PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Amber13" parent="BaseTheme">
         <item name="colorPrimary">@color/amber13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/amber13PrimaryDarkColor</item>
         <item name="colorAccent">@color/amber13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/amber13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/amber13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange0" parent="BaseTheme">
         <item name="colorPrimary">@color/orange0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange0PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange1" parent="BaseTheme">
         <item name="colorPrimary">@color/orange1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange1PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange2" parent="BaseTheme">
         <item name="colorPrimary">@color/orange2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange2PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange3" parent="BaseTheme">
         <item name="colorPrimary">@color/orange3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange3PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange4" parent="BaseTheme">
         <item name="colorPrimary">@color/orange4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange4PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange5" parent="BaseTheme">
         <item name="colorPrimary">@color/orange5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange5PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange6" parent="BaseTheme">
         <item name="colorPrimary">@color/orange6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange6PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange7" parent="BaseTheme">
         <item name="colorPrimary">@color/orange7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange7PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange8" parent="BaseTheme">
         <item name="colorPrimary">@color/orange8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange8PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange9" parent="BaseTheme">
         <item name="colorPrimary">@color/orange9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange9PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange10" parent="BaseTheme">
         <item name="colorPrimary">@color/orange10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange10PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange11" parent="BaseTheme">
         <item name="colorPrimary">@color/orange11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange11PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange12" parent="BaseTheme">
         <item name="colorPrimary">@color/orange12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange12PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Orange13" parent="BaseTheme">
         <item name="colorPrimary">@color/orange13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/orange13PrimaryDarkColor</item>
         <item name="colorAccent">@color/orange13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/orange13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/orange13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange0" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange0PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange1" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange1PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange2" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange2PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange3" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange3PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange4" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange4PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange5" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange5PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange6" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange6PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange7" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange7PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange8" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange8PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange9" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange9PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange10" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange10PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange10PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange10PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange10PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange10PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange11" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange11PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange11PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange11PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange11PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange11PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange12" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange12PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange12PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange12PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange12PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange12PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.DeepOrange13" parent="BaseTheme">
         <item name="colorPrimary">@color/deepOrange13PrimaryColor</item>
         <item name="colorPrimaryDark">@color/deepOrange13PrimaryDarkColor</item>
         <item name="colorAccent">@color/deepOrange13PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/deepOrange13PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/deepOrange13PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown0" parent="BaseTheme">
         <item name="colorPrimary">@color/brown0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown0PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown1" parent="BaseTheme">
         <item name="colorPrimary">@color/brown1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown1PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown2" parent="BaseTheme">
         <item name="colorPrimary">@color/brown2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown2PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown3" parent="BaseTheme">
         <item name="colorPrimary">@color/brown3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown3PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown4" parent="BaseTheme">
         <item name="colorPrimary">@color/brown4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown4PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown5" parent="BaseTheme">
         <item name="colorPrimary">@color/brown5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown5PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown6" parent="BaseTheme">
         <item name="colorPrimary">@color/brown6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown6PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown7" parent="BaseTheme">
         <item name="colorPrimary">@color/brown7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown7PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown8" parent="BaseTheme">
         <item name="colorPrimary">@color/brown8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown8PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Brown9" parent="BaseTheme">
         <item name="colorPrimary">@color/brown9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/brown9PrimaryDarkColor</item>
         <item name="colorAccent">@color/brown9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/brown9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/brown9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey0" parent="BaseTheme">
         <item name="colorPrimary">@color/grey0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey0PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey1" parent="BaseTheme">
         <item name="colorPrimary">@color/grey1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey1PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey2" parent="BaseTheme">
         <item name="colorPrimary">@color/grey2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey2PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey3" parent="BaseTheme">
         <item name="colorPrimary">@color/grey3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey3PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey4" parent="BaseTheme">
         <item name="colorPrimary">@color/grey4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey4PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey5" parent="BaseTheme">
         <item name="colorPrimary">@color/grey5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey5PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey6" parent="BaseTheme">
         <item name="colorPrimary">@color/grey6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey6PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey7" parent="BaseTheme">
         <item name="colorPrimary">@color/grey7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey7PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey8" parent="BaseTheme">
         <item name="colorPrimary">@color/grey8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey8PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.Grey9" parent="BaseTheme">
         <item name="colorPrimary">@color/grey9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/grey9PrimaryDarkColor</item>
         <item name="colorAccent">@color/grey9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/grey9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/grey9PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey0" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey0PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey0PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey0PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey0PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey0PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey1" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey1PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey1PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey1PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey1PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey1PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey2" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey2PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey2PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey2PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey2PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey2PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey3" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey3PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey3PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey3PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey3PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey3PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey4" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey4PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey4PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey4PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey4PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey4PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey5" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey5PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey5PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey5PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey5PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey5PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey6" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey6PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey6PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey6PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey6PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey7" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey7PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey7PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey7PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey7PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey7PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey8" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey8PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey8PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey8PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey8PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey8PrimaryTextColor</item> -->
     </style>
 
     <style name="BaseTheme.BlueGrey9" parent="BaseTheme">
         <item name="colorPrimary">@color/blueGrey9PrimaryColor</item>
         <item name="colorPrimaryDark">@color/blueGrey9PrimaryDarkColor</item>
         <item name="colorAccent">@color/blueGrey9PrimaryLightColor</item>
-        <item name="android:textColorPrimary">@color/blueGrey9PrimaryTextColor</item>
+        <!-- <item name="android:textColorPrimary">@color/blueGrey9PrimaryTextColor</item> -->
     </style>
 
 

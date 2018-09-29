@@ -11,6 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -55,6 +57,7 @@ import static com.example.hideaki.reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
 import static com.example.hideaki.reminder.UtilClass.SUBMENU_POSITION;
 import static com.example.hideaki.reminder.UtilClass.deserialize;
 import static com.example.hideaki.reminder.UtilClass.serialize;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -90,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   int menu_background_color;
   int status_bar_color;
   int accent_color;
+  int secondary_text_color;
   int order;
   String detail;
   private int which_list;
@@ -100,9 +104,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   protected void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
 
     accessor = new DBAccessor(this);
+
+    //共通設定と新しく追加したリストのリストア
+    generalSettings = querySettingsDB();
+    if(generalSettings == null) {
+      initGeneralSettings();
+    }
+
+    //テーマの設定
+    MyTheme theme = generalSettings.getTheme();
+    if(theme.getColor() != 0) {
+      Resources res = getResources();
+      TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.colorStylesArray);
+
+      int styles_array_id = typedArraysOfArray.getResourceId(theme.getColorGroup(), -1);
+      checkArgument(styles_array_id != -1);
+      TypedArray typedArray = res.obtainTypedArray(styles_array_id);
+
+      int style_id = typedArray.getResourceId(theme.getColorChild(), -1);
+      checkArgument(style_id != -1);
+
+      typedArray.recycle();
+      typedArraysOfArray.recycle();
+
+      setTheme(style_id);
+    }
+    setContentView(R.layout.activity_main);
 
     //ToolbarをActionBarに互換を持たせて設定
     toolbar = findViewById(R.id.toolbar_layout);
@@ -130,12 +159,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
     which_menu_open = preferences.getInt(MENU_POSITION, 0);
     which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
-
-    //共通設定と新しく追加したリストのリストア
-    generalSettings = querySettingsDB();
-    if(generalSettings == null) {
-      initGeneralSettings();
-    }
 
     for(NonScheduledList list : generalSettings.getNonScheduledLists()) {
       Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_my_list_24dp);
@@ -807,6 +830,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     generalSettings.setSnooze_default_hour(0);
     generalSettings.setSnooze_default_minute(15);
 
+    //クイックピッカーのデフォルト設定
+    generalSettings.setDefaultQuickPicker1(getString(R.string.above_picker1_default));
+    generalSettings.setDefaultQuickPicker2(getString(R.string.above_picker2_default));
+    generalSettings.setDefaultQuickPicker3(getString(R.string.above_picker3_default));
+    generalSettings.setDefaultQuickPicker4(getString(R.string.above_picker4_default));
+
     insertSettingsDB();
   }
 
@@ -918,20 +947,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         status_bar_color = list.getDarkColor();
         list.setColor_primary(false);
         accent_color = list.getColor();
+        secondary_text_color = list.getTextColor();
         list.setColor_primary(true);
       }
       else {
+        MyTheme theme = generalSettings.getTheme();
+        if(theme.getColor() == 0) {
+          menu_item_color = Color.WHITE;
+          menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
+          status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+          accent_color = ContextCompat.getColor(this, R.color.colorAccent);
+          secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
+        }
+        else {
+          menu_item_color = theme.getTextColor();
+          menu_background_color = theme.getColor();
+          status_bar_color = theme.getDarkColor();
+          theme.setColor_primary(false);
+          accent_color = theme.getColor();
+          secondary_text_color = theme.getTextColor();
+          theme.setColor_primary(true);
+        }
+      }
+    }
+    else {
+      MyTheme theme = generalSettings.getTheme();
+      if(theme.getColor() == 0) {
         menu_item_color = Color.WHITE;
         menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
         status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
         accent_color = ContextCompat.getColor(this, R.color.colorAccent);
+        secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
       }
-    }
-    else {
-      menu_item_color = Color.WHITE;
-      menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
-      status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
-      accent_color = ContextCompat.getColor(this, R.color.colorAccent);
+      else {
+        menu_item_color = theme.getTextColor();
+        menu_background_color = theme.getColor();
+        status_bar_color = theme.getDarkColor();
+        theme.setColor_primary(false);
+        accent_color = theme.getColor();
+        secondary_text_color = theme.getTextColor();
+        theme.setColor_primary(true);
+      }
     }
 
     //ハンバーガーアイコンの色を指定
@@ -1002,21 +1058,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public void showColorPickerListViewFragment(String TAG) {
 
-    FragmentManager manager = getFragmentManager();
-    Fragment fragmentToRemove = manager.findFragmentByTag(TAG);
-    checkNotNull(fragmentToRemove);
-
-    manager
-        .beginTransaction()
-        .remove(fragmentToRemove)
-        .add(R.id.content, ColorPickerListViewFragment.newInstance(), ColorPickerListViewFragment.TAG)
-        .addToBackStack(null)
-        .commit();
-  }
-
-  public void showColorPickerListViewFragment(int tag_position, String TAG) {
-
-    ColorPickerListViewFragment.tag_position = tag_position;
     FragmentManager manager = getFragmentManager();
     Fragment fragmentToRemove = manager.findFragmentByTag(TAG);
     checkNotNull(fragmentToRemove);
@@ -1177,7 +1218,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .beginTransaction()
           .remove(fragmentToRemove)
           .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
-          .add(R.id.content, MainEditFragment.newInstance(item), MainEditFragment.TAG)
+          .add(R.id.content, MainEditFragment.newInstance(item.clone()), MainEditFragment.TAG)
           .addToBackStack(null)
           .commit();
     }
@@ -1185,7 +1226,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       manager
           .beginTransaction()
           .remove(fragmentToRemove)
-          .add(R.id.content, MainEditFragment.newInstance(item), MainEditFragment.TAG)
+          .add(R.id.content, MainEditFragment.newInstance(item.clone()), MainEditFragment.TAG)
           .addToBackStack(null)
           .commit();
     }
@@ -1216,7 +1257,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         .beginTransaction()
         .remove(fragmentToRemove)
         .remove(manager.findFragmentByTag(ActionBarFragment.TAG))
-        .add(R.id.content, MainEditFragment.newInstanceForList(list), MainEditFragment.TAG)
+        .add(R.id.content, MainEditFragment.newInstanceForList(list.clone()), MainEditFragment.TAG)
         .addToBackStack(null)
         .commit();
   }

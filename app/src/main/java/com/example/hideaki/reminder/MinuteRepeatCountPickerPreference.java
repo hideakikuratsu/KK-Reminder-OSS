@@ -1,6 +1,7 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.preference.Preference;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,11 +13,14 @@ import android.widget.ImageView;
 
 public class MinuteRepeatCountPickerPreference extends Preference implements TextWatcher {
 
+  private MainActivity activity;
   private EditText count;
   private String oldString = "";
 
   public MinuteRepeatCountPickerPreference(Context context, AttributeSet attrs) {
+
     super(context, attrs);
+    activity = (MainActivity)context;
   }
 
   @Override
@@ -37,6 +41,12 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
       count.addTextChangedListener(this);
 
       ImageView plus = view.findViewById(R.id.plus);
+      plus.setColorFilter(activity.accent_color);
+      GradientDrawable drawable = (GradientDrawable)plus.getBackground();
+      drawable = (GradientDrawable)drawable.mutate();
+      drawable.setStroke(3, activity.accent_color);
+      drawable.setCornerRadius(8.0f);
+
       plus.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -58,6 +68,12 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
       });
 
       ImageView minus = view.findViewById(R.id.minus);
+      minus.setColorFilter(activity.accent_color);
+      drawable = (GradientDrawable)minus.getBackground();
+      drawable = (GradientDrawable)drawable.mutate();
+      drawable.setStroke(3, activity.accent_color);
+      drawable.setCornerRadius(8.0f);
+
       minus.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {

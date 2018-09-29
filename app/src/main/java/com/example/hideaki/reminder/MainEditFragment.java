@@ -735,8 +735,11 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         for(int i = 0; i < size; i++) {
           activity.generalSettings.getNonScheduledLists().get(i).setOrder(i);
         }
-        ManageListAdapter.nonScheduledLists = new ArrayList<>(activity.generalSettings.getNonScheduledLists());
       }
+      else {
+        activity.generalSettings.setNonScheduledList(list);
+      }
+      ManageListAdapter.nonScheduledLists = new ArrayList<>(activity.generalSettings.getNonScheduledLists());
       activity.manageListAdapter.notifyDataSetChanged();
 
       //一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える

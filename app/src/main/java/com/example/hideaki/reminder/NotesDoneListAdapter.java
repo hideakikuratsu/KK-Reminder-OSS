@@ -1,6 +1,8 @@
 package com.example.hideaki.reminder;
 
+import android.content.res.ColorStateList;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -19,6 +21,7 @@ public class NotesDoneListAdapter extends BaseAdapter {
   static List<Notes> notesList;
   private MainActivity activity;
   private NotesChecklistModeFragment fragment;
+  ColorStateList colorStateList;
 
   NotesDoneListAdapter(MainActivity activity, NotesChecklistModeFragment fragment) {
 
@@ -123,6 +126,7 @@ public class NotesDoneListAdapter extends BaseAdapter {
       viewHolder = new ViewHolder();
       viewHolder.notesItem = convertView.findViewById(R.id.notes_item);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
+      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.string = convertView.findViewById(R.id.string);
 
       convertView.setTag(viewHolder);

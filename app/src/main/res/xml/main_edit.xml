@@ -8,7 +8,7 @@
     <com.example.hideaki.reminder.DatePickerPreference
         android:key="date_picker"/>
 
-    <PreferenceCategory
+    <com.example.hideaki.reminder.MyPreferenceCategory
         android:key="color"
         android:title="@string/pick_color">
 
@@ -20,19 +20,21 @@
             android:key="secondary_color"
             android:title="@string/pick_secondary_color"/>
 
-    </PreferenceCategory>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
 
     <PreferenceScreen
         android:key="tag"
         android:title="@string/tag" />
 
-    <PreferenceCategory android:title="@string/notify_option">
+    <com.example.hideaki.reminder.MyPreferenceCategory
+        android:title="@string/notify_option">
         <PreferenceScreen
             android:key="interval"
             android:title="@string/interval" />
-    </PreferenceCategory>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
 
-    <PreferenceCategory android:title="@string/repeat_option">
+    <com.example.hideaki.reminder.MyPreferenceCategory
+        android:title="@string/repeat_option">
         <PreferenceScreen
             android:key="repeat_day_unit"
             android:title="@string/repeat_day_unit" />
@@ -40,20 +42,21 @@
             android:key="repeat_minute_unit"
             android:title="@string/repeat_minute_unit"
             android:summary="@string/none"/>
-    </PreferenceCategory>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
 
-    <PreferenceCategory android:title="@string/alarm_option">
+    <com.example.hideaki.reminder.MyPreferenceCategory
+        android:title="@string/alarm_option">
         <PreferenceScreen
             android:key="pick_alarm"
             android:title="@string/pick_alarm"/>
-    </PreferenceCategory>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
 
-    <PreferenceCategory
+    <com.example.hideaki.reminder.MyPreferenceCategory
         android:key="notes_category"
         android:title="@string/notes">
         <PreferenceScreen
             android:key="notes"
             android:title="@string/memo"/>
-    </PreferenceCategory>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
 
 </PreferenceScreen>

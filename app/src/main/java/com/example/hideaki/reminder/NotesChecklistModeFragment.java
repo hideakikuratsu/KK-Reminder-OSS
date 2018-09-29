@@ -3,6 +3,7 @@ package com.example.hideaki.reminder;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,6 +72,28 @@ public class NotesChecklistModeFragment extends Fragment {
 
     notesTodoListAdapter = new NotesTodoListAdapter(activity, this);
     notesDoneListAdapter = new NotesDoneListAdapter(activity, this);
+
+    notesTodoListAdapter.colorStateList = new ColorStateList(
+        new int[][] {
+            new int[]{-android.R.attr.state_checked}, // unchecked
+            new int[]{android.R.attr.state_checked} // checked
+        },
+        new int[] {
+            ContextCompat.getColor(activity, R.color.icon_gray),
+            activity.accent_color
+        }
+    );
+
+    notesDoneListAdapter.colorStateList = new ColorStateList(
+        new int[][] {
+            new int[]{-android.R.attr.state_checked}, // unchecked
+            new int[]{android.R.attr.state_checked} // checked
+        },
+        new int[] {
+            ContextCompat.getColor(activity, R.color.icon_gray),
+            activity.accent_color
+        }
+    );
   }
 
   @Override
@@ -118,6 +142,9 @@ public class NotesChecklistModeFragment extends Fragment {
     NotesTodoListAdapter.is_sorting = false;
     sortableListView = view.findViewById(R.id.notes_todo);
     todoHeader = View.inflate(activity, R.layout.notes_todo_list_header, null);
+    todoHeader.setBackgroundColor(activity.accent_color);
+    TextView todoHeaderTitle = todoHeader.findViewById(R.id.todo);
+    todoHeaderTitle.setTextColor(activity.secondary_text_color);
     if(NotesTodoListAdapter.notesList.size() != 0 && sortableListView.getHeaderViewsCount() == 0
         && !NotesTodoListAdapter.is_sorting) {
       sortableListView.addHeaderView(todoHeader);
@@ -129,6 +156,9 @@ public class NotesChecklistModeFragment extends Fragment {
     //NotesDoneListの初期化
     listView = view.findViewById(R.id.notes_done);
     doneHeader = View.inflate(activity, R.layout.notes_done_list_header, null);
+    doneHeader.setBackgroundColor(activity.accent_color);
+    TextView doneHeaderTitle = doneHeader.findViewById(R.id.done);
+    doneHeaderTitle.setTextColor(activity.secondary_text_color);
     if(NotesDoneListAdapter.notesList.size() != 0 && listView.getHeaderViewsCount() == 0) {
       listView.addHeaderView(doneHeader);
     }

@@ -2,6 +2,7 @@ package com.example.hideaki.reminder;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -31,6 +32,17 @@ public class DoneListViewFragment extends Fragment {
       activity.showMainEditFragment(activity.detail, TAG);
       activity.detail = null;
     }
+
+    activity.doneListAdapter.colorStateList = new ColorStateList(
+        new int[][] {
+            new int[]{-android.R.attr.state_checked}, // unchecked
+            new int[]{android.R.attr.state_checked} // checked
+        },
+        new int[] {
+            ContextCompat.getColor(activity, R.color.icon_gray),
+            activity.accent_color
+        }
+    );
   }
 
   @Nullable

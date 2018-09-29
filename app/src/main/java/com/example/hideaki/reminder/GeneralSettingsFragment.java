@@ -99,12 +99,21 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         return true;
       }
       case "quick_picker": {
+
+        transitionFragment(DefaultQuickPickerFragment.newInstance());
         return true;
       }
       case "primary_color": {
+
+        ColorPickerListAdapter.is_general_settings = true;
+        activity.showColorPickerListViewFragment(TAG);
         return true;
       }
       case "secondary_color": {
+
+        ColorPickerListAdapter.is_general_settings = true;
+        activity.generalSettings.getTheme().setColor_primary(false);
+        activity.showColorPickerListViewFragment(TAG);
         return true;
       }
       case "backup": {

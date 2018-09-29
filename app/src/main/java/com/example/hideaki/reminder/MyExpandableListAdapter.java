@@ -3,10 +3,13 @@ package com.example.hideaki.reminder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
@@ -34,6 +37,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,6 +58,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   static int checked_item_num;
   private static boolean manually_checked;
   private List<List<Item>> filteredList;
+  ColorStateList colorStateList;
 
   static {
     groups.add("過去");
@@ -64,6 +69,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   }
 
   MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
+
     MyExpandableListAdapter.children = children;
     this.activity = activity;
   }
@@ -346,7 +352,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         Calendar now;
         int day_of_week;
         int month;
-        int max_bit;
 
         if((item.getMinuteRepeat().getWhich_setted() & 1) != 0 && item.getMinuteRepeat().getCount() != 0) {
 
@@ -1138,13 +1143,19 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-          if(activity.timer != null) {
-            activity.timer.cancel();
-            activity.timer = null;
-          }
-          activity.timer = new Timer();
-          activity.timerTask = activity.new UpdateListTimerTask();
-          activity.timer.schedule(activity.timerTask, 400, 1000);
+          Timer timer = new Timer();
+          final Handler handler = new Handler();
+          timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  notifyDataSetChanged();
+                }
+              });
+            }
+          }, 400);
         }
         else {
           children.get(group_position).remove(child_position);
@@ -1154,13 +1165,19 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
           activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
 
-          if(activity.timer != null) {
-            activity.timer.cancel();
-            activity.timer = null;
-          }
-          activity.timer = new Timer();
-          activity.timerTask = activity.new UpdateListTimerTask();
-          activity.timer.schedule(activity.timerTask, 400, 1000);
+          Timer timer = new Timer();
+          final Handler handler = new Handler();
+          timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  notifyDataSetChanged();
+                }
+              });
+            }
+          }, 400);
         }
 
         Snackbar.make(convertView, activity.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
@@ -1726,6 +1743,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.repeat = convertView.findViewById(R.id.repeat);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
+      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
 

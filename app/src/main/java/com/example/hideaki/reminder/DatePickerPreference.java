@@ -18,6 +18,7 @@ import java.util.List;
 public class DatePickerPreference extends Preference implements View.OnClickListener {
 
   private final String[] DAY_OF_WEEK_LIST = {"日", "月", "火", "水", "木", "金", "土"};
+  private MainActivity activity;
   private List<String> day_list = new ArrayList<>();
   private static List<String> hour_list = new ArrayList<>();
   private static List<String> minute_list = new ArrayList<>();
@@ -32,7 +33,6 @@ public class DatePickerPreference extends Preference implements View.OnClickList
   private NumberPicker day_picker;
   private NumberPicker hour_picker;
   private NumberPicker minute_picker;
-  private TextView quick_time;
   private View saved_view;
   private FragmentManager manager;
 
@@ -54,6 +54,13 @@ public class DatePickerPreference extends Preference implements View.OnClickList
   }
 
   @Override
+  protected void onAttachedToActivity() {
+
+    super.onAttachedToActivity();
+    activity = (MainActivity)getContext();
+  }
+
+  @Override
   protected View onCreateView(ViewGroup parent) {
 
     super.onCreateView(parent);
@@ -67,25 +74,36 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     saved_view = view;
 
     //quick_time_pickerの初期化
-    TableRow tableRow;
     TableLayout above_quick_time_picker = view.findViewById(R.id.above_quick_time_picker);
     int above_quick_time_picker_size = above_quick_time_picker.getChildCount();
     for(int i = 0; i < above_quick_time_picker_size; i++) {
-      tableRow = (TableRow)above_quick_time_picker.getChildAt(i);
-      int table_row_size = tableRow.getChildCount();
-      for(int j = 0; j < table_row_size; j++) {
-        quick_time = (TextView)tableRow.getChildAt(j);
-        quick_time.setOnClickListener(this);
-      }
+      TableRow tableRow = (TableRow)above_quick_time_picker.getChildAt(i);
+      tableRow.setBackgroundColor(activity.accent_color);
     }
+
+    TextView abovePicker1 = view.findViewById(R.id.above_picker1);
+    TextView abovePicker2 = view.findViewById(R.id.above_picker2);
+    TextView abovePicker3 = view.findViewById(R.id.above_picker3);
+    TextView abovePicker4 = view.findViewById(R.id.above_picker4);
+
+    abovePicker1.setOnClickListener(this);
+    abovePicker2.setOnClickListener(this);
+    abovePicker3.setOnClickListener(this);
+    abovePicker4.setOnClickListener(this);
+
+    abovePicker1.setText(activity.generalSettings.getDefaultQuickPicker1());
+    abovePicker2.setText(activity.generalSettings.getDefaultQuickPicker2());
+    abovePicker3.setText(activity.generalSettings.getDefaultQuickPicker3());
+    abovePicker4.setText(activity.generalSettings.getDefaultQuickPicker4());
 
     TableLayout below_quick_time_picker = view.findViewById(R.id.below_quick_time_picker);
     int below_quick_time_picker_size = below_quick_time_picker.getChildCount();
     for(int i = 0; i < below_quick_time_picker_size; i++) {
-      tableRow = (TableRow)below_quick_time_picker.getChildAt(i);
+      TableRow tableRow = (TableRow)below_quick_time_picker.getChildAt(i);
+      tableRow.setBackgroundColor(activity.accent_color);
       int table_row_size = tableRow.getChildCount();
       for(int j = 0; j < table_row_size; j++) {
-        quick_time = (TextView)tableRow.getChildAt(j);
+        TextView quick_time = (TextView)tableRow.getChildAt(j);
         quick_time.setOnClickListener(this);
       }
     }
@@ -227,7 +245,7 @@ public class DatePickerPreference extends Preference implements View.OnClickList
       case R.id.above_picker2:
       case R.id.above_picker3:
       case R.id.above_picker4: {
-        quick_time = (TextView)v;
+        TextView quick_time = (TextView)v;
         String quick_time_str = quick_time.getText().toString();
         MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY,
             Integer.parseInt(quick_time_str.substring(0, quick_time_str.indexOf(':'))));

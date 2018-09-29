@@ -5,11 +5,11 @@
 
     <com.example.hideaki.reminder.DayRepeatCustomWeekPickerPreference android:key="week"/>
 
-    <CheckBoxPreference
+    <com.example.hideaki.reminder.MyCheckBoxPreference
         android:key="days_of_month"
         android:title="@string/days_of_month"/>
 
-    <CheckBoxPreference
+    <com.example.hideaki.reminder.MyCheckBoxPreference
         android:key="on_the_month"
         android:title="@string/on_the_month"/>
 

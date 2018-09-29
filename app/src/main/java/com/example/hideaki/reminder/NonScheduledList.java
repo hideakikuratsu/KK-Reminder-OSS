@@ -3,9 +3,9 @@ package com.example.hideaki.reminder;
 import java.io.Serializable;
 import java.util.Calendar;
 
-public class NonScheduledList implements Serializable {
+public class NonScheduledList implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = 4154734183539710182L;
+  private static final long serialVersionUID = -1162527321844039879L;
   private final long id = Calendar.getInstance().getTimeInMillis();
   private String title;
   private boolean color_primary = true;
@@ -133,5 +133,19 @@ public class NonScheduledList implements Serializable {
 
   public void setTodo(boolean todo) {
     this.todo = todo;
+  }
+
+  @Override
+  public NonScheduledList clone() {
+
+    NonScheduledList nonScheduledList = null;
+
+    try {
+      nonScheduledList = (NonScheduledList)super.clone();
+    } catch(CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+
+    return nonScheduledList;
   }
 }
