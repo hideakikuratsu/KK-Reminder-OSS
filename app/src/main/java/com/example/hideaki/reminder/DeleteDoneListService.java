@@ -10,18 +10,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DeleteDoneListService extends IntentService {
 
-  MainActivity activity;
+  DBAccessor accessor = null;
 
   public DeleteDoneListService() {
 
     super(DeleteDoneListService.class.getSimpleName());
-    activity = (MainActivity)getApplicationContext();
+    accessor = new DBAccessor(this);
   }
 
   public DeleteDoneListService(String name) {
 
     super(name);
-    activity = (MainActivity)getApplicationContext();
+    accessor = new DBAccessor(this);
   }
 
   @Override
@@ -29,6 +29,11 @@ public class DeleteDoneListService extends IntentService {
 
     checkNotNull(intent);
     Item item = (Item)deserialize(intent.getByteArrayExtra(ITEM));
-    activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
+    deleteDB(item, MyDatabaseHelper.DONE_TABLE);
+  }
+
+  public void deleteDB(Item item, String table) {
+
+    accessor.executeDelete(item.getId(), table);
   }
 }
