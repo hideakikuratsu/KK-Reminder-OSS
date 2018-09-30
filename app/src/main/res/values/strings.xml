@@ -65,10 +65,12 @@
     <string name="settings">設定</string>
     <string name="default_settings">デフォルト設定</string>
     <string name="default_new_task">新しく追加するタスク</string>
+    <string name="default_new_task_summary">新しく追加するタスクの初期状態を決めておくことができます。</string>
+    <string name="default_manually_snooze">手動スヌーズの延長時間</string>
     <string name="default_quick_picker">クイックピッカー</string>
     <string name="about_quick_picker">クイックピッカーとは、あらかじめ好きな時間を登録しておくことで、期限付きリマインダーにタスクを追加する際にその時間にすばやくセットすることのできる機能です。</string>
     <string name="theme">テーマ</string>
-    <string name="after_theme_set_message">テーマ設定後は自動的にアプリを再起動します</string>
+    <string name="after_theme_set_message">主題テーマ設定後は自動的にアプリを再起動します</string>
     <string name="backup">バックアップ</string>
     <string name="backup_and_restore">バックアップと復元</string>
     <string name="manually_backup">手動バックアップ</string>

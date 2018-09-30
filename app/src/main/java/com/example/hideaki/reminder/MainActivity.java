@@ -946,8 +946,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menu_background_color = list.getColor();
         status_bar_color = list.getDarkColor();
         list.setColor_primary(false);
-        accent_color = list.getColor();
-        secondary_text_color = list.getTextColor();
+        if(list.getColor() != 0) {
+          accent_color = list.getColor();
+          secondary_text_color = list.getTextColor();
+        }
+        else {
+          accent_color = ContextCompat.getColor(this, R.color.colorAccent);
+          secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
+        }
         list.setColor_primary(true);
       }
       else {
@@ -964,8 +970,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           menu_background_color = theme.getColor();
           status_bar_color = theme.getDarkColor();
           theme.setColor_primary(false);
-          accent_color = theme.getColor();
-          secondary_text_color = theme.getTextColor();
+          if(theme.getColor() == 0) {
+            accent_color = ContextCompat.getColor(this, R.color.colorAccent);
+            secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
+          }
+          else {
+            accent_color = theme.getColor();
+            secondary_text_color = theme.getTextColor();
+          }
           theme.setColor_primary(true);
         }
       }
@@ -984,8 +996,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menu_background_color = theme.getColor();
         status_bar_color = theme.getDarkColor();
         theme.setColor_primary(false);
-        accent_color = theme.getColor();
-        secondary_text_color = theme.getTextColor();
+        if(theme.getColor() == 0) {
+          accent_color = ContextCompat.getColor(this, R.color.colorAccent);
+          secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
+        }
+        else {
+          accent_color = theme.getColor();
+          secondary_text_color = theme.getTextColor();
+        }
         theme.setColor_primary(true);
       }
     }

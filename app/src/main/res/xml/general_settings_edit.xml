@@ -6,13 +6,17 @@
 
         <PreferenceScreen
             android:title="@string/default_new_task"
-            android:key="new_task"/>
+            android:key="new_task"
+            android:summary="@string/default_new_task_summary"/>
+
+        <PreferenceScreen
+            android:title="@string/default_manually_snooze"
+            android:key="manually_snooze"/>
 
         <PreferenceScreen
             android:title="@string/default_quick_picker"
             android:key="quick_picker"
             android:summary="@string/about_quick_picker"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory

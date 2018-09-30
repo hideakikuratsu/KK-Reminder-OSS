@@ -23,13 +23,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
   static final String TAG = GeneralSettingsFragment.class.getSimpleName();
 
   private MainActivity activity;
-  private PreferenceScreen rootPreferenceScreen;
-  private PreferenceScreen defaultNewTask;
-  private PreferenceScreen defaultQuickPicker;
-  private PreferenceScreen primaryColor;
-  private PreferenceScreen secondaryColor;
-  private PreferenceScreen backup;
-  private PreferenceScreen about;
 
   public static GeneralSettingsFragment newInstance() {
 
@@ -50,15 +43,16 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.general_settings_edit);
 
-    rootPreferenceScreen = getPreferenceScreen();
-    defaultNewTask = (PreferenceScreen)findPreference("new_task");
-    defaultQuickPicker = (PreferenceScreen)findPreference("quick_picker");
-    primaryColor = (PreferenceScreen)findPreference("primary_color");
-    secondaryColor = (PreferenceScreen)findPreference("secondary_color");
-    backup = (PreferenceScreen)findPreference("backup");
-    about = (PreferenceScreen)findPreference("this_app");
+    PreferenceScreen defaultNewTask = (PreferenceScreen)findPreference("new_task");
+    PreferenceScreen manuallySnooze = (PreferenceScreen)findPreference("manually_snooze");
+    PreferenceScreen defaultQuickPicker = (PreferenceScreen)findPreference("quick_picker");
+    PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
+    PreferenceScreen secondaryColor = (PreferenceScreen)findPreference("secondary_color");
+    PreferenceScreen backup = (PreferenceScreen)findPreference("backup");
+    PreferenceScreen about = (PreferenceScreen)findPreference("this_app");
 
     defaultNewTask.setOnPreferenceClickListener(this);
+    manuallySnooze.setOnPreferenceClickListener(this);
     defaultQuickPicker.setOnPreferenceClickListener(this);
     primaryColor.setOnPreferenceClickListener(this);
     secondaryColor.setOnPreferenceClickListener(this);
@@ -96,6 +90,11 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
       case "new_task": {
 
         activity.showMainEditFragment(activity.generalSettings.getItem(), TAG);
+        return true;
+      }
+      case "manually_snooze": {
+
+        transitionFragment(DefaultManuallySnoozeFragment.newInstance());
         return true;
       }
       case "quick_picker": {
