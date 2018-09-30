@@ -135,7 +135,7 @@ public class TagEditListAdapter extends BaseAdapter {
 
             break;
           }
-          case R.id.pallet: {
+          case R.id.tag_pallet: {
 
             ColorPickerListViewFragment.tag_position = position;
             activity.showColorPickerListViewFragment(TagEditListViewFragment.TAG);
@@ -286,7 +286,7 @@ public class TagEditListAdapter extends BaseAdapter {
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
       CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagName = convertView.findViewById(R.id.tag_name);
-      viewHolder.pallet = convertView.findViewById(R.id.pallet);
+      viewHolder.pallet = convertView.findViewById(R.id.tag_pallet);
 
       convertView.setTag(viewHolder);
     }

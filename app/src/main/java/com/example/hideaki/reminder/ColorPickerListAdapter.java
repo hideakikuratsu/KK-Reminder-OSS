@@ -37,6 +37,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
   Tag orgTag;
   static boolean is_general_settings;
   ColorStateList colorStateList;
+  static boolean from_list_tag_edit;
 
   ColorPickerListAdapter(MainActivity activity) {
 
@@ -124,7 +125,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
         checkArgument(default_text_color != 1);
 
         if(!is_general_settings) {
-          if(order == 0 || order == 1 || order == 4) {
+          if(order == 0 || order == 1 || order == 4 || from_list_tag_edit) {
             adapterTag.setPrimary_color(default_color);
             adapterTag.setPrimary_light_color(default_light_color);
             adapterTag.setPrimary_dark_color(default_dark_color);
@@ -183,7 +184,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
                 checkArgument(text_color != 1);
 
                 if(!is_general_settings) {
-                  if(order == 0 || order == 1 || order == 4) {
+                  if(order == 0 || order == 1 || order == 4 || from_list_tag_edit) {
                     adapterTag.setPrimary_color(color);
                     adapterTag.setPrimary_light_color(light_color);
                     adapterTag.setPrimary_dark_color(dark_color);
@@ -235,7 +236,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
       else if(position == checked_position && manually_checked) {
         viewHolder.checkBox.jumpDrawablesToCurrentState();
         if(!is_general_settings) {
-          if(order == 0 || order == 1 || order == 4) {
+          if(order == 0 || order == 1 || order == 4 || from_list_tag_edit) {
             adapterTag.setPrimary_color(0);
             adapterTag.setColor_order_group(-1);
 
@@ -290,7 +291,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
       CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.color_name = convertView.findViewById(R.id.color_name);
-      viewHolder.pallet = convertView.findViewById(R.id.pallet);
+      viewHolder.pallet = convertView.findViewById(R.id.tag_pallet);
 
       convertView.setTag(viewHolder);
     }
@@ -333,7 +334,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
     int colors_id = -1;
     if(position == checked_position) {
       if(!is_general_settings) {
-        if(order == 0 || order == 1 || order == 4) {
+        if(order == 0 || order == 1 || order == 4 || from_list_tag_edit) {
           colors_id = typedArray.getResourceId(adapterTag.getColor_order_child(), -1);
         }
         else if(order == 3) {

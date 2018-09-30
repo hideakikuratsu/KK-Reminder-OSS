@@ -43,6 +43,7 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
     ImageView list_icon;
     TextView detail;
     TextView edit;
+    ImageView tagPallet;
   }
 
   private class MyOnClickListener implements View.OnClickListener {
@@ -213,6 +214,7 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
       viewHolder.list_icon = convertView.findViewById(R.id.list_icon);
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.edit = convertView.findViewById(R.id.edit);
+      viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
 
       convertView.setTag(viewHolder);
     }
@@ -231,6 +233,19 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 
     //各種表示処理
     viewHolder.detail.setText(list.getTitle());
+    if(list.getWhich_tag_belongs() == 0) {
+      viewHolder.tagPallet.setVisibility(View.GONE);
+    }
+    else {
+      viewHolder.tagPallet.setVisibility(View.VISIBLE);
+      int color = activity.generalSettings.getTagById(list.getWhich_tag_belongs()).getPrimary_color();
+      if(color != 0) {
+        viewHolder.tagPallet.setColorFilter(color);
+      }
+      else {
+        viewHolder.tagPallet.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray));
+      }
+    }
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
     if(viewHolder.edit.getVisibility() == View.VISIBLE && list.getId() != has_panel) {

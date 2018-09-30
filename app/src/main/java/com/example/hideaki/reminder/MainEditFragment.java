@@ -554,6 +554,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       }
       case "tag": {
 
+        if(order == 3) ColorPickerListAdapter.from_list_tag_edit = true;
         activity.showTagEditListViewFragment(TAG);
         return true;
       }

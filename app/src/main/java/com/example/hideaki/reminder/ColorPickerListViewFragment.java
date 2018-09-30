@@ -39,7 +39,7 @@ public class ColorPickerListViewFragment extends Fragment {
     if(!ColorPickerListAdapter.is_general_settings) {
       activity.colorPickerListAdapter.adapterTag = TagEditListAdapter.tagList.get(tag_position);
       activity.colorPickerListAdapter.orgTag = activity.generalSettings.getTagList().get(tag_position);
-      if(order == 0 || order == 1 || order == 4) {
+      if(order == 0 || order == 1 || order == 4 || ColorPickerListAdapter.from_list_tag_edit) {
         ColorPickerListAdapter.checked_position = activity.colorPickerListAdapter.adapterTag.getColor_order_group();
       }
       else if(order == 3) {

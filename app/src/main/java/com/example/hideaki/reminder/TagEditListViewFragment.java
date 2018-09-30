@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
+import static com.example.hideaki.reminder.UtilClass.getPxFromDp;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TagEditListViewFragment extends Fragment implements View.OnClickListener {
@@ -89,6 +90,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
       public boolean onKey(View v, int keyCode, KeyEvent event) {
 
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+          ColorPickerListAdapter.from_list_tag_edit = false;
           if(TagEditListAdapter.is_editing) {
             new AlertDialog.Builder(activity)
                 .setTitle(R.string.is_editing_title)
@@ -222,6 +224,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
       }
       case android.R.id.home: {
 
+        ColorPickerListAdapter.from_list_tag_edit = false;
         getFragmentManager().popBackStack();
         return true;
       }
@@ -243,9 +246,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
         LinearLayout.LayoutParams.WRAP_CONTENT
     ));
     linearLayout.addView(editText);
-    int paddingDp = 20; //dpを指定
-    float scale = getResources().getDisplayMetrics().density; //画面のdensityを指定
-    int paddingPx = (int) (paddingDp * scale + 0.5f); //dpをpxに変換
+    int paddingPx = getPxFromDp(activity, 20);
     linearLayout.setPadding(paddingPx, 0, paddingPx, 0);
 
     final AlertDialog dialog = new AlertDialog.Builder(activity)

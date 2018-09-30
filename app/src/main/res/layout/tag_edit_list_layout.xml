@@ -48,12 +48,12 @@
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/pallet"
+        app:layout_constraintEnd_toStartOf="@+id/tag_pallet"
         app:layout_constraintStart_toEndOf="@+id/checkBox"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/pallet"
+        android:id="@+id/tag_pallet"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginBottom="8dp"

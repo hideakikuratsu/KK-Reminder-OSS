@@ -393,7 +393,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       //選択されたメニューアイテム以外のチェックを外す
       if(!menuItem.isChecked()) {
 
-        for(int i = 0; i < menu.size(); i++) {
+        int size = menu.size();
+        for(int i = 0; i < size; i++) {
 
           if(menu.getItem(i) == menuItem) {
             which_menu_open = i;
@@ -401,7 +402,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
           if(menu.getItem(i).hasSubMenu()) {
             SubMenu subMenu = menu.getItem(i).getSubMenu();
-            for(int j = 0; j < subMenu.size(); j++) {
+            int sub_size = subMenu.size();
+            for(int j = 0; j < sub_size; j++) {
               if(subMenu.getItem(j) == menuItem) {
                 which_menu_open = i;
                 which_submenu_open = j;

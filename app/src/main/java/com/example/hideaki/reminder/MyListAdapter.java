@@ -675,9 +675,13 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     }
     else {
       viewHolder.tagPallet.setVisibility(View.VISIBLE);
-      viewHolder.tagPallet.setColorFilter(
-          activity.generalSettings.getTagById(item.getWhich_tag_belongs()).getPrimary_color()
-      );
+      int color = activity.generalSettings.getTagById(item.getWhich_tag_belongs()).getPrimary_color();
+      if(color != 0) {
+        viewHolder.tagPallet.setColorFilter(color);
+      }
+      else {
+        viewHolder.tagPallet.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray));
+      }
     }
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる

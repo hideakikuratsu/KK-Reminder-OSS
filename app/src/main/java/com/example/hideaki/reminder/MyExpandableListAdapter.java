@@ -1643,7 +1643,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //表示するgroupsのサイズを返す。
     int count = 0;
     Arrays.fill(display_groups, false);
-    for(int i = 0; i < groups.size(); i++) {
+    int size = groups.size();
+    for(int i = 0; i < size; i++) {
       if(children.get(i).size() != 0) {
         display_groups[i] = true;
         count++;
@@ -1661,7 +1662,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //iはgetChildrenCount()の呼ばれた回数を表す。すなわちiは呼び出しを3回とすると1回目の呼び出しにおいて、
     //表示するgroupsの0番目を表す。2回目では1番目、3回目では2番目である。
     int count = 0;
-    for(int j = 0; j < groups.size(); j++) {
+    int size = groups.size();
+    for(int j = 0; j < size; j++) {
       if(display_groups[j]) {
         //単に return children.get(j).size() とすると、表示するgroupsの1番目だけを返し続けてしまうので、
         //if(count == i) と条件を付けることで、getChildrenCount()の呼び出された回数に応じて表示する
@@ -1679,7 +1681,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     //getGroupCount()によって返されるgroupsのサイズ分だけ呼ばれる。引数のiに関してもgetChildrenCount()と同じ。
     int count = 0;
-    for(int j = 0; j < groups.size(); j++) {
+    int size = groups.size();
+    for(int j = 0; j < size; j++) {
       if(display_groups[j]) {
         if(count == i) return groups.get(j);
         count++;
@@ -1695,7 +1698,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //getChildrenCount()によって返されるchildrenのサイズ分×getGroupCount()によって返されるgroupsのサイズ分
     //だけ呼ばれる。あとは他のメソッドと同じ。
     int count = 0;
-    for(int j = 0; j < groups.size(); j++) {
+    int size = groups.size();
+    for(int j = 0; j < size; j++) {
       if(display_groups[j]) {
         if(count == i) return children.get(j).get(i1);
         count++;
@@ -1763,7 +1767,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     Item item = (Item)getChild(i, i1);
     int count = 0;
     MyOnClickListener listener = null;
-    for(int j = 0; j < groups.size(); j++) {
+    int size = groups.size();
+    for(int j = 0; j < size; j++) {
       if(display_groups[j]) {
         if(count == i) {
           listener = new MyOnClickListener(j, i1, item, convertView, viewHolder);
@@ -1801,9 +1806,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     }
     else {
       viewHolder.tagPallet.setVisibility(View.VISIBLE);
-      viewHolder.tagPallet.setColorFilter(
-          activity.generalSettings.getTagById(item.getWhich_tag_belongs()).getPrimary_color()
-      );
+      int color = activity.generalSettings.getTagById(item.getWhich_tag_belongs()).getPrimary_color();
+      if(color != 0) {
+        viewHolder.tagPallet.setColorFilter(color);
+      }
+      else {
+        viewHolder.tagPallet.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray));
+      }
     }
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
