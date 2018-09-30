@@ -65,8 +65,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-  Timer timer;
-  TimerTask timerTask;
+  private Timer timer;
   private Handler handler = new Handler();
   private DBAccessor accessor = null;
   private Intent intent;
@@ -325,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       timer = null;
     }
     timer = new Timer();
-    timerTask = new UpdateListTimerTask();
+    TimerTask timerTask = new UpdateListTimerTask();
     timer.schedule(timerTask, 0, 1000);
 
     //すべての通知を既読する

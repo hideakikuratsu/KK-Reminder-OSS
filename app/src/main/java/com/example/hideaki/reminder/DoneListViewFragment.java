@@ -2,6 +2,7 @@ package com.example.hideaki.reminder;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,12 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.example.hideaki.reminder.UtilClass.ITEM;
+import static com.example.hideaki.reminder.UtilClass.serialize;
 
 public class DoneListViewFragment extends Fragment {
 
@@ -68,7 +75,26 @@ public class DoneListViewFragment extends Fragment {
       }
     });
 
-    DoneListAdapter.itemList = activity.getDoneItem();
+    List<Item> itemList = activity.getDoneItem();
+    int size = itemList.size();
+    if(size > 100) {
+
+      List<Item> nonDeleteItemList = new ArrayList<>();
+      for(int i = 0; i < size / 2; i++) {
+        nonDeleteItemList.add(itemList.get(i));
+      }
+
+      DoneListAdapter.itemList = nonDeleteItemList;
+
+      for(int i = size / 2; i < size; i++) {
+        Intent intent = new Intent(activity, DeleteDoneListService.class);
+        intent.putExtra(ITEM, serialize(itemList.get(i)));
+        activity.startService(intent);
+      }
+    }
+    else {
+      DoneListAdapter.itemList = itemList;
+    }
     DoneListAdapter.checked_item_num = 0;
     DoneListAdapter.order = activity.order;
     activity.listView = view.findViewById(R.id.listView);

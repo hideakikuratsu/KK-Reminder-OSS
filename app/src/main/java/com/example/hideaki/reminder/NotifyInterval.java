@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class NotifyInterval implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = 8844386229395430923L;
+  private static final long serialVersionUID = -4030712214761391450L;
   private String label = null;
   private int hour;
   private int minute;
@@ -12,55 +12,55 @@ public class NotifyInterval implements Serializable, Cloneable {
   private int org_time;
   private int which_setted;
 
-  public String getLabel() {
+  String getLabel() {
     return label;
   }
 
-  public int getHour() {
+  int getHour() {
     return hour;
   }
 
-  public int getMinute() {
+  int getMinute() {
     return minute;
   }
 
-  public int getTime() {
+  int getTime() {
     return time;
   }
 
-  public int getOrg_time() {
+  int getOrg_time() {
     return org_time;
   }
 
-  public int getWhich_setted() {
+  int getWhich_setted() {
     return which_setted;
   }
 
-  public void setLabel(String label) {
+  void setLabel(String label) {
     this.label = label;
   }
 
-  public void setHour(int hour) {
+  void setHour(int hour) {
     this.hour = hour;
   }
 
-  public void setMinute(int minute) {
+  void setMinute(int minute) {
     this.minute = minute;
   }
 
-  public void setTime(int time) {
+  void setTime(int time) {
     this.time = time;
   }
 
-  public void setOrg_time(int org_time) {
+  void setOrg_time(int org_time) {
     this.org_time = org_time;
   }
 
-  public void addOrgTime(int org_time) {
+  void addOrgTime(int org_time) {
     this.org_time += org_time;
   }
 
-  public void setWhich_setted(int which_setted) {
+  void setWhich_setted(int which_setted) {
     this.which_setted = which_setted;
   }
 

@@ -51,7 +51,7 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
     hour_picker.setMaxValue(23);
     hour_picker.setMinValue(0);
     hour_picker.setValue(MainEditFragment.minuteRepeat.getHour());
-    hour_picker.setDisplayedValues(hour_list.toArray(new String[hour_list.size()]));
+    hour_picker.setDisplayedValues(hour_list.toArray(new String[0]));
     hour_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {
@@ -113,7 +113,7 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
     minute_picker.setMaxValue(59);
     minute_picker.setMinValue(0);
     minute_picker.setValue(MainEditFragment.minuteRepeat.getMinute());
-    minute_picker.setDisplayedValues(minute_list.toArray(new String[minute_list.size()]));
+    minute_picker.setDisplayedValues(minute_list.toArray(new String[0]));
     minute_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
       @Override
       public void onScrollStateChange(NumberPicker view, int scrollState) {

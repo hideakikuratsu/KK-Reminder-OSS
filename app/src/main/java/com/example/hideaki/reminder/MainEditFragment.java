@@ -46,7 +46,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   static final String TAG = MainEditFragment.class.getSimpleName();
 
   private EditTextPreference detail;
-  private Preference datePicker;
   private PreferenceScreen tag;
   private PreferenceScreen intervalItem;
   private PreferenceScreen dayRepeatItem;
@@ -219,7 +218,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     detail.setTitle(detail_str);
     detail.setOnPreferenceChangeListener(this);
 
-    datePicker = findPreference("date_picker");
+    Preference datePicker = findPreference("date_picker");
 
     PreferenceCategory colorCategory = (PreferenceCategory)findPreference("color");
     PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");

@@ -1,7 +1,6 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.preference.Preference;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;

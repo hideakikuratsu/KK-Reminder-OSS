@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Notes implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = 7284140551902180989L;
+  private static final long serialVersionUID = 8676811177232193986L;
   private String string;
   private int order;
   private boolean checked;
@@ -18,27 +18,27 @@ public class Notes implements Serializable, Cloneable {
     this.order = order;
   }
 
-  public String getString() {
+  String getString() {
     return string;
   }
 
-  public int getOrder() {
+  int getOrder() {
     return order;
   }
 
-  public boolean isChecked() {
+  boolean isChecked() {
     return checked;
   }
 
-  public void setString(String string) {
+  void setString(String string) {
     this.string = string;
   }
 
-  public void setOrder(int order) {
+  void setOrder(int order) {
     this.order = order;
   }
 
-  public void setChecked(boolean checked) {
+  void setChecked(boolean checked) {
     this.checked = checked;
   }
 
