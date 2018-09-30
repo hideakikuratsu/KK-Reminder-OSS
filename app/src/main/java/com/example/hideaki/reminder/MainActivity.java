@@ -36,8 +36,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+
+import com.diegocarloslima.fgelv.lib.FloatingGroupExpandableListView;
+import com.diegocarloslima.fgelv.lib.WrapperExpandableListAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,8 +73,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private AlarmManager alarmManager;
   int which_menu_open;
   int which_submenu_open;
-  ExpandableListView expandableListView;
+  FloatingGroupExpandableListView expandableListView;
   MyExpandableListAdapter expandableListAdapter;
+  WrapperExpandableListAdapter wrapperExpandableListAdapter;
   SortableListView listView;
   MyListAdapter listAdapter;
   ManageListAdapter manageListAdapter;
@@ -177,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //Adapterの初期化
     expandableListAdapter = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
+    wrapperExpandableListAdapter = new WrapperExpandableListAdapter(expandableListAdapter);
     listAdapter = new MyListAdapter(this);
     manageListAdapter = new ManageListAdapter(new ArrayList<>(generalSettings.getNonScheduledLists()), this);
     colorPickerListAdapter = new ColorPickerListAdapter(this);
