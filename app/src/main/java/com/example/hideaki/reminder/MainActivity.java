@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private Intent intent;
   private PendingIntent sender;
   private AlarmManager alarmManager;
-  public int which_menu_open;
-  private int which_submenu_open;
+  int which_menu_open;
+  int which_submenu_open;
   ExpandableListView expandableListView;
   MyExpandableListAdapter expandableListAdapter;
   SortableListView listView;

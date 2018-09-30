@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.example.hideaki.reminder.MyPreferenceCategory
+        android:title="@string/manually_backup"
+        android:key="backup_and_restore">
+
+        <PreferenceScreen
+            android:title="@string/backup_to_google_drive"
+            android:key="backup"/>
+
+        <PreferenceScreen
+            android:title="@string/restore_from_google_drive"
+            android:key="restore"/>
+
+        <PreferenceScreen
+            android:title="@string/logout"
+            android:key="logout"/>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
+
+</PreferenceScreen>

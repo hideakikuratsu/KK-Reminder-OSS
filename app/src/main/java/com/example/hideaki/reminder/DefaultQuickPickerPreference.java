@@ -225,7 +225,7 @@ public class DefaultQuickPickerPreference extends Preference implements View.OnC
     }
 
     TextView quick_time = (TextView)v;
-    quick_time.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.holo_green_light));
+    quick_time.setBackgroundColor(activity.accent_color);
     String quick_time_str = quick_time.getText().toString();
     hour_picker.setValue(Integer.parseInt(quick_time_str.substring(0, quick_time_str.indexOf(':'))));
     minute_picker.setValue(Integer.parseInt(quick_time_str.substring(quick_time_str.indexOf(':') + 1)));

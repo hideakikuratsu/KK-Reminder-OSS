@@ -30,6 +30,7 @@ class UtilClass {
   static final String MENU_POSITION = "MENU_POSITION";
   static final String SUBMENU_POSITION = "SUBMENU_POSITION";
   static final String LINE_SEPARATOR = System.getProperty("line.separator");
+  static final int RC_SIGN_IN = 1;
   static long MINUTE = 60 * 1000;
   static long HOUR = 60 * 60 * 1000;
 

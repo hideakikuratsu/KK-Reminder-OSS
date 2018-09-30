@@ -117,6 +117,8 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         return true;
       }
       case "backup": {
+
+        transitionFragment(BackupAndRestoreFragment.newInstance());
         return true;
       }
       case "this_app": {
