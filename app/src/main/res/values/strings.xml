@@ -1,6 +1,11 @@
 <resources>
 
     <string name="app_name">Reminder</string>
+    <string name="past">過去</string>
+    <string name="today">今日</string>
+    <string name="tomorrow">明日</string>
+    <string name="this_week">今週</string>
+    <string name="future">来週以降</string>
     <string name="minus5m">-5分</string>
     <string name="plus5m">+5分</string>
     <string name="minus1h">-1時間</string>

@@ -29,6 +29,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -615,6 +616,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           }
 
           if(is_updated) {
+            Calendar now = Calendar.getInstance();
+            Calendar tomorrow_cal = (Calendar)now.clone();
+            tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
+            CharSequence today = DateFormat.format("- yyyy年M月d日(E)", now);
+            CharSequence tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
+            MyExpandableListAdapter.groups.set(1, getString(R.string.today) + today);
+            MyExpandableListAdapter.groups.set(2, getString(R.string.tomorrow) + tomorrow);
+
             for(List<Item> itemList : MyExpandableListAdapter.children) {
               Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
             }

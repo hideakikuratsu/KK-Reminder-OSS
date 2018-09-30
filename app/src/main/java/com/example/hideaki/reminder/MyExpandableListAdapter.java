@@ -49,7 +49,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
   private static Calendar tmp;
   private static boolean[] display_groups = new boolean[5];
-  static final List<String> groups = new ArrayList<>();
+  static List<String> groups = new ArrayList<>();
   static List<List<Item>> children;
   static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
   private boolean is_control_panel_locked;
@@ -60,17 +60,23 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private List<List<Item>> filteredList;
   ColorStateList colorStateList;
 
-  static {
-    groups.add("過去");
-    groups.add("今日");
-    groups.add("明日");
-    groups.add("一週間");
-    groups.add("一週間以上");
-  }
-
   MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
 
     MyExpandableListAdapter.children = children;
+
+    //groupsの初期化
+    groups.clear();
+    Calendar now = Calendar.getInstance();
+    Calendar tomorrow_cal = (Calendar)now.clone();
+    tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
+    CharSequence today = DateFormat.format(" - yyyy年M月d日(E)", now);
+    CharSequence tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
+    groups.add(activity.getString(R.string.past));
+    groups.add(activity.getString(R.string.today) + today);
+    groups.add(activity.getString(R.string.tomorrow) + tomorrow);
+    groups.add(activity.getString(R.string.this_week));
+    groups.add(activity.getString(R.string.future));
+
     this.activity = activity;
   }
 
