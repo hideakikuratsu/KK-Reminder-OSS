@@ -28,8 +28,7 @@ public class AlarmReceiver extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
 
     accessor = new DBAccessor(context);
-    byte[] ob_array = intent.getByteArrayExtra(ITEM);
-    Item item = (Item)deserialize(ob_array);
+    Item item = (Item)deserialize(intent.getByteArrayExtra(ITEM));
 
     int time = item.getNotify_interval().getTime();
     int id;
@@ -61,14 +60,36 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     //手動スヌーズ用のIntentの設定
-    Intent snoozeIntent = new Intent(context, ManuallySnoozeActivity.class);
-    ob_array = serialize(item);
-    snoozeIntent.putExtra(ITEM, ob_array);
-    snoozeIntent.putExtra(NOTIFICATION_ID, id);
-    PendingIntent snoozeSender = PendingIntent.getActivity(
-        context, id, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
+
+    //デフォルトスヌーズ
+    GeneralSettings generalSettings = querySettingsDB();
+    int hour = generalSettings.getSnooze_default_hour();
+    int minute = generalSettings.getSnooze_default_minute();
+    String summary = "";
+    if(hour != 0) {
+      summary += hour + context.getString(R.string.hour);
+    }
+    if(minute != 0) {
+      summary += minute + context.getString(R.string.minute);
+    }
+    summary += context.getString(R.string.snooze);
+
+    Intent defaultSnoozeIntent = new Intent(context, DefaultManuallySnoozeReceiver.class);
+    defaultSnoozeIntent.putExtra(ITEM, serialize(item));
+    defaultSnoozeIntent.putExtra(NOTIFICATION_ID, id);
+    PendingIntent defaultSnoozeSender = PendingIntent.getBroadcast(
+        context, (int)item.getId(), defaultSnoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
     );
-    builder.addAction(R.drawable.ic_snooze_24dp, context.getString(R.string.snooze), snoozeSender);
+    builder.addAction(R.drawable.ic_update_24dp, summary, defaultSnoozeSender);
+
+    //細かいスヌーズ
+    Intent advancedSnoozeIntent = new Intent(context, ManuallySnoozeActivity.class);
+    advancedSnoozeIntent.putExtra(ITEM, serialize(item));
+    advancedSnoozeIntent.putExtra(NOTIFICATION_ID, id);
+    PendingIntent snoozeSender = PendingIntent.getActivity(
+        context, (int)item.getId(), advancedSnoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
+    );
+    builder.addAction(R.drawable.ic_snooze_24dp, context.getString(R.string.more_advanced_snooze), snoozeSender);
 
     //通知を発行
     NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -97,8 +118,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     if(time != 0) {
       item.getNotify_interval().setTime(--time);
       Intent recursive_alarm = new Intent(context, AlarmReceiver.class);
-      ob_array = serialize(item);
-      recursive_alarm.putExtra(ITEM, ob_array);
+      recursive_alarm.putExtra(ITEM, serialize(item));
       PendingIntent recursive_sender = PendingIntent.getBroadcast(
           context, (int)item.getId(), recursive_alarm, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -126,5 +146,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
   public void updateDB(Item item, String table) {
     accessor.executeUpdate(item.getId(), serialize(item), table);
+  }
+
+  public GeneralSettings querySettingsDB() {
+
+    return (GeneralSettings)deserialize(accessor.executeQueryById(1, MyDatabaseHelper.SETTINGS_TABLE));
   }
 }

@@ -6,13 +6,14 @@ import java.util.List;
 
 class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = -6557576382052886298L;
+  private static final long serialVersionUID = 6339809123019754072L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
   private List<Tag> tagList = new ArrayList<>();
   private boolean expandable_todo = true;
   private Item item = new Item();
   private int snooze_default_hour;
   private int snooze_default_minute;
+  private boolean change_in_notification;
   private String defaultQuickPicker1;
   private String defaultQuickPicker2;
   private String defaultQuickPicker3;
@@ -49,6 +50,10 @@ class GeneralSettings implements Serializable {
 
   int getSnooze_default_minute() {
     return snooze_default_minute;
+  }
+
+  public boolean isChange_in_notification() {
+    return change_in_notification;
   }
 
   String getDefaultQuickPicker1() {
@@ -106,6 +111,10 @@ class GeneralSettings implements Serializable {
 
   void setSnooze_default_minute(int snooze_default_minute) {
     this.snooze_default_minute = snooze_default_minute;
+  }
+
+  public void setChange_in_notification(boolean change_in_notification) {
+    this.change_in_notification = change_in_notification;
   }
 
   void setDefaultQuickPicker1(String defaultQuickPicker1) {

@@ -54,17 +54,14 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
 
     //AlarmReceiverからItemとNotificationIDを受け取る
     Intent intent = getIntent();
-    byte[] ob_array = intent.getByteArrayExtra(ITEM);
-    item = (Item)deserialize(ob_array);
-    int notification_id = intent.getIntExtra(NOTIFICATION_ID, -1);
+    item = (Item)deserialize(intent.getByteArrayExtra(ITEM));
+    generalSettings = querySettingsDB();
 
     //通知を既読する
+    int notification_id = intent.getIntExtra(NOTIFICATION_ID, -1);
     NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
     checkNotNull(manager);
     manager.cancel(notification_id);
-
-    //GeneralSettingsの取得
-    generalSettings = querySettingsDB();
 
     //ListViewの設定
     ManuallySnoozeListAdapter manuallySnoozeListAdapter = new ManuallySnoozeListAdapter(this);
@@ -224,6 +221,11 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     return (GeneralSettings)deserialize(accessor.executeQueryById(1, MyDatabaseHelper.SETTINGS_TABLE));
   }
 
+  public void updateSettingsDB() {
+
+    accessor.executeUpdate(1, serialize(generalSettings), MyDatabaseHelper.SETTINGS_TABLE);
+  }
+
   @Override
   public void onClick(View v) {
 
@@ -262,7 +264,8 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
         setAlarm(item);
         updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-        MyExpandableListAdapter.children = getChildren(MyDatabaseHelper.TODO_TABLE);
+        generalSettings.setChange_in_notification(true);
+        updateSettingsDB();
 
         this.finish();
         break;

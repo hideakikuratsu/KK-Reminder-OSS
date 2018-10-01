@@ -332,6 +332,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
     checkNotNull(manager);
     manager.cancelAll();
+
+    //通知でタスクの更新を行った場合は起動時にExpandableListViewの更新を行う
+    generalSettings = querySettingsDB();
+    if(generalSettings.isChange_in_notification()) {
+      MyExpandableListAdapter.children = getChildren(MyDatabaseHelper.TODO_TABLE);
+      expandableListAdapter.notifyDataSetChanged();
+
+      generalSettings.setChange_in_notification(false);
+      updateSettingsDB();
+    }
   }
 
   @Override
@@ -621,7 +631,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Calendar now = Calendar.getInstance();
             Calendar tomorrow_cal = (Calendar)now.clone();
             tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
-            CharSequence today = DateFormat.format("- yyyy年M月d日(E)", now);
+            CharSequence today = DateFormat.format(" - yyyy年M月d日(E)", now);
             CharSequence tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
             MyExpandableListAdapter.groups.set(1, getString(R.string.today) + today);
             MyExpandableListAdapter.groups.set(2, getString(R.string.tomorrow) + tomorrow);

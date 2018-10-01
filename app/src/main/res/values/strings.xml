@@ -39,6 +39,7 @@
     <string name="sound_or_not">通知音を鳴らすか</string>
     <string name="default_snooze">デフォルト</string>
     <string name="snooze">スヌーズする</string>
+    <string name="more_advanced_snooze">細かいスヌーズ</string>
     <string name="manually_snooze_description">時間と分を両方0に合わせると、24時間として設定されます。</string>
 
     <string name="fifteen_minutes">15分</string>

@@ -57,6 +57,10 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".DefaultManuallySnoozeReceiver"
+            android:process=":remote"/>
+
         <service android:name=".DeleteDoneListService"/>
 
     </application>
