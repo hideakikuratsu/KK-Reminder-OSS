@@ -215,6 +215,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     PreferenceScreen rootPreferenceScreen = getPreferenceScreen();
 
     detail = (EditTextPreference)findPreference("detail");
+    detail.setText(detail_str);
     detail.setTitle(detail_str);
     detail.setOnPreferenceChangeListener(this);
 
@@ -604,7 +605,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     switch(preference.getKey()) {
       case "detail": {
         detail_str = (String)newValue;
-        detail.setTitle((String)newValue);
+        detail.setTitle(detail_str);
         return true;
       }
     }
@@ -627,6 +628,9 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     if(order == 0 || order == 1 || order == 4 || is_moving_task) {
 
+      if(detail_str.equals("")) {
+        detail_str = activity.getString(R.string.default_detail);
+      }
       item.setDetail(detail_str);
 
       if(order == 0 || order == 4 || is_moving_task) {

@@ -60,6 +60,7 @@ import static com.example.hideaki.reminder.UtilClass.SAVED_DATA;
 import static com.example.hideaki.reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
 import static com.example.hideaki.reminder.UtilClass.SUBMENU_POSITION;
 import static com.example.hideaki.reminder.UtilClass.deserialize;
+import static com.example.hideaki.reminder.UtilClass.getPxFromDp;
 import static com.example.hideaki.reminder.UtilClass.serialize;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -115,6 +116,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     generalSettings = querySettingsDB();
     if(generalSettings == null) {
       initGeneralSettings();
+    }
+    else if(generalSettings.isChange_in_notification()) {
+      generalSettings.setChange_in_notification(false);
+      updateSettingsDB();
     }
 
     //テーマの設定
@@ -473,9 +478,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           LinearLayout.LayoutParams.WRAP_CONTENT
       ));
       linearLayout.addView(editText);
-      int paddingDp = 20; //dpを指定
-      float scale = getResources().getDisplayMetrics().density; //画面のdensityを指定
-      int paddingPx = (int) (paddingDp * scale + 0.5f); //dpをpxに変換
+      int paddingPx = getPxFromDp(this, 20);
       linearLayout.setPadding(paddingPx, 0, paddingPx, 0);
 
       //新しいリストの名前を設定するダイアログを表示

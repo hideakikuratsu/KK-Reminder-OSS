@@ -91,6 +91,8 @@ public class TagEditListAdapter extends BaseAdapter {
             LinearLayout linearLayout = new LinearLayout(activity);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             final EditText editText = new EditText(activity);
+            editText.setText(tag.getName());
+            editText.setSelection(tag.getName().length());
             editText.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT

@@ -37,7 +37,9 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
 
     if(MainEditFragment.minuteRepeat.getWhich_setted() == 1) {
       count = view.findViewById(R.id.count);
+      count.requestFocus();
       count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrg_count()));
+      count.setSelection(count.getText().length());
       count.addTextChangedListener(this);
 
       ImageView plus = view.findViewById(R.id.plus);

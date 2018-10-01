@@ -24,6 +24,7 @@
     <string name="below_picker2">+3時間</string>
     <string name="below_picker3">+1週間</string>
     <string name="below_picker4">カレンダー</string>
+    <string name="default_detail">新しいタスク</string>
     <string name="tag">タグ</string>
     <string name="notify_option">通知設定</string>
     <string name="interval">通知の繰り返しと頻度</string>

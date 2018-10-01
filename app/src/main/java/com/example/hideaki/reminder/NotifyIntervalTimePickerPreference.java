@@ -37,7 +37,9 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
 
     if(MainEditFragment.notifyInterval.getWhich_setted() == (1 << 7)) {
       time = view.findViewById(R.id.time);
+      time.requestFocus();
       time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrg_time()));
+      time.setSelection(time.getText().length());
       time.addTextChangedListener(this);
 
       ImageView plus = view.findViewById(R.id.plus);

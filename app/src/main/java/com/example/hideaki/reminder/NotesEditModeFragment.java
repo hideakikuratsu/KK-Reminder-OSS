@@ -40,6 +40,7 @@ public class NotesEditModeFragment extends Fragment {
   private EditText memo;
   private ActionBar actionBar;
   private MenuItem clearNotesItem;
+  private String notes;
 
   public static NotesEditModeFragment newInstance(Item item) {
 
@@ -85,6 +86,15 @@ public class NotesEditModeFragment extends Fragment {
       public boolean onKey(View v, int keyCode, KeyEvent event) {
 
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+
+          if(is_editing) {
+            new AlertDialog.Builder(activity)
+                .setTitle(R.string.is_editing_title)
+                .setMessage(R.string.is_editing_message)
+                .show();
+
+            return true;
+          }
 
           MainEditFragment.is_popping = true;
         }
@@ -134,6 +144,7 @@ public class NotesEditModeFragment extends Fragment {
       else stringBuilder.append(notes.getString()).append(LINE_SEPARATOR);
     }
     memo.setText(stringBuilder.toString());
+    notes = stringBuilder.toString();
 
     return view;
   }
@@ -174,6 +185,7 @@ public class NotesEditModeFragment extends Fragment {
 
                 NotesEditModeFragment.item.setNotesList(new ArrayList<Notes>());
                 memo.setText(null);
+                notes = null;
 
                 if(activity.isItemExists(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE)) {
                   activity.updateDB(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE);
@@ -208,17 +220,21 @@ public class NotesEditModeFragment extends Fragment {
 
         List<Notes> NotesList = NotesEditModeFragment.item.getNotesList();
 
+        StringBuilder stringBuilder = new StringBuilder();
         List<String> revised = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(memo.getText().toString()));
         String line;
         try {
           while((line = reader.readLine()) != null) {
             revised.add(line);
+            stringBuilder.append(line).append(LINE_SEPARATOR);
           }
         }
         catch(IOException e) {
           e.printStackTrace();
         }
+
+        notes = stringBuilder.toString();
 
         NotesList.clear();
         int size = revised.size();
@@ -245,7 +261,7 @@ public class NotesEditModeFragment extends Fragment {
 
         if(is_editing) {
           memo.clearFocus();
-          memo.setText(null);
+          memo.setText(notes);
           is_editing = false;
           actionBar.setHomeAsUpIndicator(activity.upArrow);
           clearNotesItem.setVisible(true);
