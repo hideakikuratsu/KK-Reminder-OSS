@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -142,6 +144,7 @@ public class NotesChecklistModeFragment extends Fragment {
     NotesTodoListAdapter.is_sorting = false;
     sortableListView = view.findViewById(R.id.notes_todo);
     todoHeader = View.inflate(activity, R.layout.notes_todo_list_header, null);
+    todoHeader.setOnClickListener(null);
     todoHeader.setBackgroundColor(activity.accent_color);
     TextView todoHeaderTitle = todoHeader.findViewById(R.id.todo);
     todoHeaderTitle.setTextColor(activity.secondary_text_color);
@@ -156,6 +159,7 @@ public class NotesChecklistModeFragment extends Fragment {
     //NotesDoneListの初期化
     listView = view.findViewById(R.id.notes_done);
     doneHeader = View.inflate(activity, R.layout.notes_done_list_header, null);
+    doneHeader.setOnClickListener(null);
     doneHeader.setBackgroundColor(activity.accent_color);
     TextView doneHeaderTitle = doneHeader.findViewById(R.id.done);
     doneHeaderTitle.setTextColor(activity.secondary_text_color);
@@ -165,6 +169,11 @@ public class NotesChecklistModeFragment extends Fragment {
     listView.setAdapter(notesDoneListAdapter);
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
+    Drawable drawable = toolbar.getOverflowIcon();
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    toolbar.setOverflowIcon(drawable);
     activity.setSupportActionBar(toolbar);
     actionBar = activity.getSupportActionBar();
     checkNotNull(actionBar);
@@ -188,9 +197,25 @@ public class NotesChecklistModeFragment extends Fragment {
   public void onPrepareOptionsMenu(Menu menu) {
 
     super.onPrepareOptionsMenu(menu);
+
+    MenuItem sortItem = menu.findItem(R.id.sort);
+    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_sort_24dp);
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    sortItem.setIcon(drawable);
+
     editModeItem = menu.findItem(R.id.edit_mode);
+    drawable = ContextCompat.getDrawable(activity, R.drawable.ic_edit_24dp);
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    editModeItem.setIcon(drawable);
+
     deleteItem = menu.findItem(R.id.delete_checked_items);
+
     unselectItem = menu.findItem(R.id.unselect_all_items);
+
     if(NotesDoneListAdapter.notesList.size() != 0) {
       deleteItem.setVisible(true);
       unselectItem.setVisible(true);

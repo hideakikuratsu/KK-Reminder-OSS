@@ -6,7 +6,7 @@ import java.util.List;
 
 class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = 6339809123019754072L;
+  private static final long serialVersionUID = 2969579071872650012L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
   private List<Tag> tagList = new ArrayList<>();
   private boolean expandable_todo = true;
@@ -52,7 +52,7 @@ class GeneralSettings implements Serializable {
     return snooze_default_minute;
   }
 
-  public boolean isChange_in_notification() {
+  boolean isChange_in_notification() {
     return change_in_notification;
   }
 
@@ -113,7 +113,7 @@ class GeneralSettings implements Serializable {
     this.snooze_default_minute = snooze_default_minute;
   }
 
-  public void setChange_in_notification(boolean change_in_notification) {
+  void setChange_in_notification(boolean change_in_notification) {
     this.change_in_notification = change_in_notification;
   }
 

@@ -44,7 +44,6 @@ public class ActionBarFragment extends Fragment {
   private MenuItem addItem;
   private MenuItem searchItem;
   private MenuItem tagSearchItem;
-  private MenuItem expandItem;
   private MenuItem sortItem;
   long checked_tag;
   List<List<Item>> filteredLists;
@@ -108,10 +107,6 @@ public class ActionBarFragment extends Fragment {
     tagSearchItem = menu.findItem(R.id.tag_search);
     initTagSearchItem();
 
-    //次の親グループを展開するメニューボタンの実装
-    expandItem = menu.findItem(R.id.next_group_expand);
-    initExpandItem();
-
     //タスクの並び替えを行うメニューボタンの実装
     sortItem = menu.findItem(R.id.sort);
     initSortItem();
@@ -128,14 +123,12 @@ public class ActionBarFragment extends Fragment {
     //各アイテムの表示処理
     toggleItem.setVisible(false);
     tagSearchItem.setVisible(false);
-    expandItem.setVisible(false);
     sortItem.setVisible(false);
     addItem.setVisible(false);
 
     if(order == 0) {
       toggleItem.setVisible(true);
       if(activity.generalSettings.isExpandable_todo()) {
-        expandItem.setVisible(true);
         addItem.setVisible(true);
       }
     }
@@ -442,7 +435,6 @@ public class ActionBarFragment extends Fragment {
 
         if(order == 0) {
           if(!activity.generalSettings.isExpandable_todo()) {
-            expandItem.setVisible(true);
             addItem.setVisible(true);
             activity.generalSettings.setExpandable_todo(true);
             activity.updateSettingsDB();
@@ -471,7 +463,6 @@ public class ActionBarFragment extends Fragment {
 
         if(order == 0) {
           if(activity.generalSettings.isExpandable_todo()) {
-            expandItem.setVisible(false);
             addItem.setVisible(false);
             activity.generalSettings.setExpandable_todo(false);
             activity.updateSettingsDB();
@@ -524,15 +515,6 @@ public class ActionBarFragment extends Fragment {
     tagSearchItem.setIcon(drawable);
   }
 
-  private void initExpandItem() {
-
-    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_next_group_expand_white_24dp);
-    checkNotNull(drawable);
-    drawable = drawable.mutate();
-    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
-    expandItem.setIcon(drawable);
-  }
-
   private void initSortItem() {
 
     Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_sort_24dp);
@@ -568,7 +550,6 @@ public class ActionBarFragment extends Fragment {
       @Override
       public void onClick(View v) {
 
-        expandItem.setVisible(false);
         toggleItem.setVisible(false);
         sortItem.setVisible(false);
         addItem.setVisible(false);
@@ -587,7 +568,6 @@ public class ActionBarFragment extends Fragment {
         if(order == 0) {
           toggleItem.setVisible(true);
           if(activity.generalSettings.isExpandable_todo()) {
-            expandItem.setVisible(true);
             addItem.setVisible(true);
           }
         }

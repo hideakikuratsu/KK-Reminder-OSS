@@ -76,8 +76,9 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     activity.drawerToggle.setDrawerIndicatorEnabled(true);
     actionBar.setTitle(R.string.settings);
 
-    ListView list = view.findViewById(android.R.id.list);
-    list.setDivider(null);
+    //設定項目間の区切り線の非表示
+    ListView listView = view.findViewById(android.R.id.list);
+    listView.setDivider(null);
 
     return view;
   }

@@ -24,8 +24,12 @@
     <string name="below_picker2">+3時間</string>
     <string name="below_picker3">+1週間</string>
     <string name="below_picker4">カレンダー</string>
+    <string name="title">タイトル</string>
     <string name="default_detail">新しいタスク</string>
+    <string name="detail_hint">タイトルを入力してください</string>
+    <string name="schedule_task">タスクの期限</string>
     <string name="tag">タグ</string>
+    <string name="category">カテゴリー</string>
     <string name="notify_option">通知設定</string>
     <string name="interval">通知の繰り返しと頻度</string>
     <string name="repeat_option">繰り返し設定</string>
@@ -116,6 +120,7 @@
     <string name="non_tag">タグなし</string>
     <string name="tag_search">タグを使って検索</string>
     <string name="add_tag">新しいタグを追加</string>
+    <string name="tag_hint">タグ名を入力してください</string>
     <string name="name_tag">タグ名の設定</string>
     <string name="default_tag">新しいタグ</string>
     <string name="delete_tag_title">タグの削除</string>
@@ -192,6 +197,7 @@
     <string name="add_list">新しいリストを追加</string>
     <string name="add">追加</string>
     <string name="default_list">新しいリスト</string>
+    <string name="list_hint">リスト名を入力してください</string>
     <string name="add_task">新しいタスクを追加</string>
     <string name="nav_other">その他</string>
     <string name="manage_lists">リストを管理する</string>

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.example.hideaki.reminder.UtilClass.LINE_SEPARATOR;
+
 public class Item implements Serializable, Cloneable {
 
   private static final long serialVersionUID = 7815316756235209582L;
@@ -80,7 +82,7 @@ public class Item implements Serializable, Cloneable {
 
     StringBuilder stringBuilder = new StringBuilder();
     for(Notes notes : notesList) {
-      stringBuilder.append(notes.getString());
+      stringBuilder.append(notes.getString()).append(LINE_SEPARATOR);
     }
 
     return stringBuilder.toString();

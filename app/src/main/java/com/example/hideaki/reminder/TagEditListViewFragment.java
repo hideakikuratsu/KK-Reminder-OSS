@@ -241,6 +241,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     LinearLayout linearLayout = new LinearLayout(activity);
     linearLayout.setOrientation(LinearLayout.VERTICAL);
     final EditText editText = new EditText(activity);
+    editText.setHint(R.string.tag_hint);
     editText.setLayoutParams(new LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
         LinearLayout.LayoutParams.WRAP_CONTENT

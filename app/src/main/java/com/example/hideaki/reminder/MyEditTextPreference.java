@@ -26,6 +26,7 @@ public class MyEditTextPreference extends EditTextPreference {
     super.onBindDialogView(view);
 
     EditText editText = view.findViewById(android.R.id.edit);
+    editText.setHint(R.string.detail_hint);
     editText.setSelection(editText.getText().length());
   }
 }

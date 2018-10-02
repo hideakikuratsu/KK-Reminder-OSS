@@ -3,6 +3,7 @@ package com.example.hideaki.reminder;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -123,6 +124,7 @@ public class NotesEditModeFragment extends Fragment {
           Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_cancel_24dp);
           checkNotNull(drawable);
           drawable = drawable.mutate();
+          drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
           actionBar.setHomeAsUpIndicator(drawable);
 
           clearNotesItem.setVisible(false);
@@ -162,11 +164,26 @@ public class NotesEditModeFragment extends Fragment {
     super.onPrepareOptionsMenu(menu);
 
     checklistModeItem = menu.findItem(R.id.checklist_mode);
+    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_list_24dp);
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    checklistModeItem.setIcon(drawable);
 
     doneItem = menu.findItem(R.id.done);
+    drawable = ContextCompat.getDrawable(activity, R.drawable.ic_check_circle_24dp);
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    doneItem.setIcon(drawable);
     doneItem.setVisible(false);
 
     clearNotesItem = menu.findItem(R.id.clear_notes);
+    drawable = ContextCompat.getDrawable(activity, R.drawable.ic_delete_24dp);
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    clearNotesItem.setIcon(drawable);
   }
 
   @Override
@@ -220,21 +237,17 @@ public class NotesEditModeFragment extends Fragment {
 
         List<Notes> NotesList = NotesEditModeFragment.item.getNotesList();
 
-        StringBuilder stringBuilder = new StringBuilder();
         List<String> revised = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(memo.getText().toString()));
         String line;
         try {
           while((line = reader.readLine()) != null) {
             revised.add(line);
-            stringBuilder.append(line).append(LINE_SEPARATOR);
           }
         }
         catch(IOException e) {
           e.printStackTrace();
         }
-
-        notes = stringBuilder.toString();
 
         NotesList.clear();
         int size = revised.size();
@@ -247,6 +260,8 @@ public class NotesEditModeFragment extends Fragment {
             NotesList.add(new Notes(string, false, i));
           }
         }
+
+        notes = NotesEditModeFragment.item.getNotesString();
 
         if(activity.isItemExists(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE)) {
           activity.updateDB(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE);

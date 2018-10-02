@@ -473,6 +473,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       LinearLayout linearLayout = new LinearLayout(MainActivity.this);
       linearLayout.setOrientation(LinearLayout.VERTICAL);
       final EditText editText = new EditText(MainActivity.this);
+      editText.setHint(R.string.list_hint);
       editText.setLayoutParams(new LinearLayout.LayoutParams(
           LinearLayout.LayoutParams.MATCH_PARENT,
           LinearLayout.LayoutParams.WRAP_CONTENT

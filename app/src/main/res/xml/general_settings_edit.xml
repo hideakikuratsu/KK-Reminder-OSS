@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
+    <com.example.hideaki.reminder.MyPreferenceCategory
         android:title="@string/default_settings">
 
         <PreferenceScreen
@@ -17,9 +17,9 @@
             android:title="@string/default_quick_picker"
             android:key="quick_picker"
             android:summary="@string/about_quick_picker"/>
-    </PreferenceCategory>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
 
-    <PreferenceCategory
+    <com.example.hideaki.reminder.MyPreferenceCategory
         android:title="@string/theme">
 
         <PreferenceScreen
@@ -32,18 +32,18 @@
 
         <PreferenceScreen
             android:summary="@string/after_theme_set_message"/>
-    </PreferenceCategory>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
 
 
-    <PreferenceCategory
+    <com.example.hideaki.reminder.MyPreferenceCategory
         android:title="@string/backup">
 
         <PreferenceScreen
             android:title="@string/backup_and_restore"
             android:key="backup"/>
-    </PreferenceCategory>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
 
-    <PreferenceCategory
+    <com.example.hideaki.reminder.MyPreferenceCategory
         android:title="@string/about">
 
         <PreferenceScreen
@@ -54,6 +54,6 @@
         <PreferenceScreen
             android:title="@string/about_this_app"
             android:key="this_app"/>
-    </PreferenceCategory>
+    </com.example.hideaki.reminder.MyPreferenceCategory>
 
 </PreferenceScreen>

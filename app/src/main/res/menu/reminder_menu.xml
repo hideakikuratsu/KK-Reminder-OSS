@@ -4,11 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/next_group_expand"
-        android:icon="@drawable/ic_next_group_expand_white_24dp"
-        android:title="@string/next_group"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/tag_search"
         android:icon="@drawable/ic_pallet_24dp"
         android:title="@string/tag_search"

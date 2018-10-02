@@ -28,6 +28,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,6 +52,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   private PreferenceScreen dayRepeatItem;
   private PreferenceScreen minuteRepeatItem;
   private PreferenceScreen pickAlarm;
+  private PreferenceScreen notes;
   static Item item;
   static String detail_str;
   static Calendar final_cal;
@@ -214,12 +216,13 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     //各プリファレンスの初期化
     PreferenceScreen rootPreferenceScreen = getPreferenceScreen();
 
+    PreferenceCategory title = (PreferenceCategory)findPreference("title");
     detail = (EditTextPreference)findPreference("detail");
     detail.setText(detail_str);
     detail.setTitle(detail_str);
     detail.setOnPreferenceChangeListener(this);
 
-    Preference datePicker = findPreference("date_picker");
+    PreferenceCategory schedule = (PreferenceCategory)findPreference("schedule");
 
     PreferenceCategory colorCategory = (PreferenceCategory)findPreference("color");
     PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
@@ -227,6 +230,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     PreferenceScreen secondaryColor = (PreferenceScreen)findPreference("secondary_color");
     secondaryColor.setOnPreferenceClickListener(this);
 
+    PreferenceCategory tagCategory = (PreferenceCategory)findPreference("tag_category");
     tag = (PreferenceScreen)findPreference("tag");
     tag.setOnPreferenceClickListener(this);
 
@@ -242,7 +246,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     pickAlarm.setOnPreferenceClickListener(this);
 
     PreferenceCategory notes_category = (PreferenceCategory)findPreference("notes_category");
-    PreferenceScreen notes = (PreferenceScreen)findPreference("notes");
+    notes = (PreferenceScreen)findPreference("notes");
     notes.setOnPreferenceClickListener(this);
 
     if(order == 0 || is_moving_task) {
@@ -250,19 +254,19 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     }
     else if(order == 1) {
       rootPreferenceScreen.removeAll();
-      rootPreferenceScreen.addPreference(detail);
-      rootPreferenceScreen.addPreference(tag);
+      rootPreferenceScreen.addPreference(title);
+      rootPreferenceScreen.addPreference(tagCategory);
       rootPreferenceScreen.addPreference(notes_category);
     }
     else if(order == 3) {
       rootPreferenceScreen.removeAll();
-      rootPreferenceScreen.addPreference(detail);
-      rootPreferenceScreen.addPreference(tag);
+      rootPreferenceScreen.addPreference(title);
+      rootPreferenceScreen.addPreference(tagCategory);
       rootPreferenceScreen.addPreference(colorCategory);
     }
     else if(order == 4) {
-      rootPreferenceScreen.removePreference(detail);
-      rootPreferenceScreen.removePreference(datePicker);
+      rootPreferenceScreen.removePreference(title);
+      rootPreferenceScreen.removePreference(schedule);
       rootPreferenceScreen.removePreference(colorCategory);
       rootPreferenceScreen.removePreference(notes_category);
     }
@@ -303,10 +307,25 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.edit);
 
+    //タイトルが未入力の場合、ヒントを表示
+    if(detail_str == null || detail_str.equals("")) {
+      detail.setSummary(R.string.detail_hint);
+    }
+
+    //メモがあるかどうかでメモのsummary部分の表示を変える
+    if(item.getNotesList().size() == 0) {
+      notes.setSummary(R.string.none);
+    }
+    else notes.setSummary(item.getNotesString());
+
+    //設定項目間の区切り線の非表示
+    ListView listView = view.findViewById(android.R.id.list);
+    listView.setDivider(null);
+
     //Tagのラベルの初期化
     if(order == 0 || order == 1 || order == 4 || is_moving_task) {
       if(item.getWhich_tag_belongs() == 0) {
-        tag.setSummary(activity.getString(R.string.non_tag));
+        tag.setSummary(activity.getString(R.string.none));
       }
       else {
         tag.setSummary(activity.generalSettings.getTagById(item.getWhich_tag_belongs()).getName());
@@ -314,7 +333,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     }
     else if(order == 3) {
       if(list.getWhich_tag_belongs() == 0) {
-        tag.setSummary(activity.getString(R.string.non_tag));
+        tag.setSummary(activity.getString(R.string.none));
       }
       else {
         tag.setSummary(activity.generalSettings.getTagById(list.getWhich_tag_belongs()).getName());
@@ -605,7 +624,14 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     switch(preference.getKey()) {
       case "detail": {
         detail_str = (String)newValue;
+
+        //タイトルが未入力の場合、ヒントを表示
+        if(detail_str == null || detail_str.equals("")) {
+          detail.setSummary(R.string.detail_hint);
+        }
+        else detail.setSummary(null);
         detail.setTitle(detail_str);
+
         return true;
       }
     }
@@ -628,7 +654,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     if(order == 0 || order == 1 || order == 4 || is_moving_task) {
 
-      if(detail_str.equals("")) {
+      if(detail_str == null || detail_str.equals("")) {
         detail_str = activity.getString(R.string.default_detail);
       }
       item.setDetail(detail_str);

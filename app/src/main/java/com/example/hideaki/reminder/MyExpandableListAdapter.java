@@ -59,6 +59,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private static boolean manually_checked;
   private List<List<Item>> filteredList;
   ColorStateList colorStateList;
+  private ColorStateList defaultColorStateList;
 
   MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
 
@@ -90,6 +91,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     CheckBox checkBox;
     ImageView tagPallet;
     TableLayout control_panel;
+    TextView notes;
   }
 
   private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
@@ -1756,6 +1758,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
+      viewHolder.notes = convertView.findViewById(R.id.notes);
+      defaultColorStateList = viewHolder.notes.getTextColors();
 
       convertView.setTag(viewHolder);
     }
@@ -1814,6 +1818,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         viewHolder.tagPallet.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray));
       }
     }
+    if(item.getNotesList().size() == 0) {
+      viewHolder.notes.setTextColor(defaultColorStateList);
+    }
+    else viewHolder.notes.setTextColor(activity.accent_color);
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
     if(viewHolder.control_panel.getVisibility() == View.VISIBLE

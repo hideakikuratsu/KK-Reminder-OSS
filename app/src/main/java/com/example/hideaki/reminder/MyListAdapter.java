@@ -55,6 +55,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
   static boolean is_sorting;
   private List<Item> filteredItem;
   ColorStateList colorStateList;
+  private ColorStateList defaultColorStateList;
 
   MyListAdapter(MainActivity activity) {
 
@@ -71,6 +72,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     CheckBox checkBox;
     ImageView tagPallet;
     TableLayout control_panel;
+    TextView notes;
   }
 
   private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
@@ -639,6 +641,8 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
+      viewHolder.notes = convertView.findViewById(R.id.notes);
+      defaultColorStateList = viewHolder.notes.getTextColors();
 
       convertView.setTag(viewHolder);
     }
@@ -683,6 +687,10 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         viewHolder.tagPallet.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray));
       }
     }
+    if(item.getNotesList().size() == 0) {
+      viewHolder.notes.setTextColor(defaultColorStateList);
+    }
+    else viewHolder.notes.setTextColor(activity.accent_color);
 
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
     if(viewHolder.control_panel.getVisibility() == View.VISIBLE
