@@ -42,9 +42,9 @@ public class ActionBarFragment extends Fragment {
   private int order;
   private ActionBar actionBar;
   private MenuItem addItem;
-  private MenuItem searchItem;
+  MenuItem searchItem;
   private MenuItem tagSearchItem;
-  private MenuItem sortItem;
+  MenuItem sortItem;
   long checked_tag;
   List<List<Item>> filteredLists;
   List<Item> filteredList;
@@ -121,6 +121,7 @@ public class ActionBarFragment extends Fragment {
     initSearchItem();
 
     //各アイテムの表示処理
+    searchItem.setVisible(false);
     toggleItem.setVisible(false);
     tagSearchItem.setVisible(false);
     sortItem.setVisible(false);
@@ -129,19 +130,38 @@ public class ActionBarFragment extends Fragment {
     if(order == 0) {
       toggleItem.setVisible(true);
       if(activity.generalSettings.isExpandable_todo()) {
+        if(activity.expandableListAdapter.getGroupCount() != 0) {
+          searchItem.setVisible(true);
+        }
         addItem.setVisible(true);
+      }
+      else {
+        if(DoneListAdapter.itemList.size() != 0) {
+          searchItem.setVisible(true);
+        }
       }
     }
     else if(order == 1) {
       toggleItem.setVisible(true);
       if(activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).isTodo()) {
         addItem.setVisible(true);
-        sortItem.setVisible(true);
+        if(MyListAdapter.itemList.size() != 0) {
+          searchItem.setVisible(true);
+          sortItem.setVisible(true);
+        }
+      }
+      else {
+        if(DoneListAdapter.itemList.size() != 0) {
+          searchItem.setVisible(true);
+        }
       }
     }
     else if(order == 3) {
       addItem.setVisible(true);
-      sortItem.setVisible(true);
+      if(ManageListAdapter.nonScheduledLists.size() != 0) {
+        searchItem.setVisible(true);
+        sortItem.setVisible(true);
+      }
     }
   }
 

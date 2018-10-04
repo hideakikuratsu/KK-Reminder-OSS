@@ -98,6 +98,15 @@ public class DoneListViewFragment extends Fragment {
     DoneListAdapter.checked_item_num = 0;
     DoneListAdapter.order = activity.order;
     activity.listView = view.findViewById(R.id.listView);
+    View emptyView;
+    if(activity.order == 0) {
+      emptyView = View.inflate(activity, R.layout.expandable_list_empty_layout, null);
+    }
+    else {
+      emptyView = View.inflate(activity, R.layout.nonscheduled_list_empty_layout, null);
+    }
+    ((ViewGroup)activity.listView.getParent()).addView(emptyView);
+    activity.listView.setEmptyView(emptyView);
     activity.listView.setAdapter(activity.doneListAdapter);
     activity.listView.setTextFilterEnabled(true);
 

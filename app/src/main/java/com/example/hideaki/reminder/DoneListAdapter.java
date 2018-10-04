@@ -89,7 +89,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
         case R.id.item_card: {
 
           if(actionMode == null) {
-            String[] items = new String[3];
+            final String[] items = new String[3];
             if(order == 0) {
               Calendar now = Calendar.getInstance();
               tmp = (Calendar)now.clone();
@@ -122,6 +122,10 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                     itemList.remove(position);
                     notifyDataSetChanged();
                     activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
+
+                    if(itemList.size() == 0) {
+                      activity.actionBarFragment.searchItem.setVisible(false);
+                    }
 
                     if(which_list == 0) {
                       if(order == 0) {
@@ -412,6 +416,10 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
         if(item.isSelected()) {
           item.setSelected(false);
         }
+      }
+
+      if(itemList.size() == 0) {
+        activity.actionBarFragment.searchItem.setVisible(false);
       }
 
       checked_item_num = 0;

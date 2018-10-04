@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 public class ListViewFragment extends Fragment {
 
@@ -83,6 +84,9 @@ public class ListViewFragment extends Fragment {
     MyListAdapter.is_sorting = false;
     MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
     activity.listView = view.findViewById(R.id.listView);
+    View emptyView = View.inflate(activity, R.layout.nonscheduled_list_empty_layout, null);
+    ((ViewGroup)activity.listView.getParent()).addView(emptyView);
+    activity.listView.setEmptyView(emptyView);
     activity.listView.setDragListener(activity.listAdapter.dragListener);
     activity.listView.setSortable(true);
     activity.listView.setAdapter(activity.listAdapter);

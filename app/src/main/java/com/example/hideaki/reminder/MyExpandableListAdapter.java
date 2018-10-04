@@ -1150,20 +1150,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-
-          Timer timer = new Timer();
-          final Handler handler = new Handler();
-          timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  notifyDataSetChanged();
-                }
-              });
-            }
-          }, 400);
         }
         else {
           children.get(group_position).remove(child_position);
@@ -1173,20 +1159,24 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
           activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
 
-          Timer timer = new Timer();
-          final Handler handler = new Handler();
-          timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  notifyDataSetChanged();
-                }
-              });
-            }
-          }, 400);
+          if(getGroupCount() == 0) {
+            activity.actionBarFragment.searchItem.setVisible(false);
+          }
         }
+
+        Timer timer = new Timer();
+        final Handler handler = new Handler();
+        timer.schedule(new TimerTask() {
+          @Override
+          public void run() {
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                notifyDataSetChanged();
+              }
+            });
+          }
+        }, 400);
 
         Snackbar.make(convertView, activity.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
             .addCallback(new Snackbar.Callback() {
@@ -1248,6 +1238,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   }
                   activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
                   activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
+
+                  activity.actionBarFragment.searchItem.setVisible(true);
                 }
               }
             })
@@ -1569,6 +1561,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             item.setSelected(false);
           }
         }
+      }
+
+      if(getGroupCount() == 0) {
+        activity.actionBarFragment.searchItem.setVisible(false);
       }
 
       checked_item_num = 0;

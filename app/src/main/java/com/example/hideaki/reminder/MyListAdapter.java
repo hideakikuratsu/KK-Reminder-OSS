@@ -146,6 +146,11 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
         activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
 
+        if(itemList.size() == 0) {
+          activity.actionBarFragment.searchItem.setVisible(false);
+          activity.actionBarFragment.sortItem.setVisible(false);
+        }
+
         Timer timer = new Timer();
         final Handler handler = new Handler();
         timer.schedule(new TimerTask() {
@@ -194,6 +199,10 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                 notifyDataSetChanged();
 
                 activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
+
+                activity.actionBarFragment.searchItem.setVisible(true);
+                activity.actionBarFragment.sortItem.setVisible(true);
               }
             })
             .show();
@@ -338,6 +347,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                 public void onClick(DialogInterface dialog, int which) {
 
                   if(which_list == 0) {
+                    for(Item item : itemListToMove) item.setSelected(false);
                     MainEditFragment.checked_item_num = checked_item_num;
                     MainEditFragment.itemListToMove = new ArrayList<>(itemListToMove);
                     activity.showMainEditFragment(
@@ -503,6 +513,11 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         if(item.isSelected()) {
           item.setSelected(false);
         }
+      }
+
+      if(itemList.size() == 0) {
+        activity.actionBarFragment.searchItem.setVisible(false);
+        activity.actionBarFragment.sortItem.setVisible(false);
       }
 
       checked_item_num = 0;

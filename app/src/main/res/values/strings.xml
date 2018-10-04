@@ -67,6 +67,7 @@
     <string name="sort_notes">メモを並び替える</string>
     <string name="edit_mode">メモを編集する</string>
     <string name="checklist_mode">メモをチェックリストとして表示する</string>
+    <string name="notes_hint">メモを入力してください</string>
     <string name="done_edit">編集を終える</string>
     <string name="delete_checked_items">チェックした項目を削除</string>
     <string name="unselect_all_items">すべてのチェックを外す</string>
@@ -230,6 +231,9 @@
     <string name="recycle_and_edit_task">タスクをリサイクルして編集する</string>
     <string name="delete_task">タスクを削除する</string>
     <string name="at">に</string>
+    <string name="task_not_pushed_yet">タスクがありません</string>
+    <string name="list_not_pushed_yet">リストがありません</string>
+    <string name="notes_not_pushed_yet">メモがありません</string>
 
     <string name="red">赤色</string>
     <string name="pink">ピンク色</string>

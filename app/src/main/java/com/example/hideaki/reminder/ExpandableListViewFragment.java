@@ -70,6 +70,9 @@ public class ExpandableListViewFragment extends Fragment {
     MyExpandableListAdapter.checked_item_num = 0;
     MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
     activity.expandableListView = view.findViewById(R.id.expandable_list);
+    View emptyView = View.inflate(activity, R.layout.expandable_list_empty_layout, null);
+    ((ViewGroup)activity.expandableListView.getParent()).addView(emptyView);
+    activity.expandableListView.setEmptyView(emptyView);
     activity.expandableListView.setAdapter(activity.wrapperExpandableListAdapter);
     activity.expandableListView.setTextFilterEnabled(true);
 

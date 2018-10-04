@@ -74,7 +74,7 @@ public class NotesEditModeFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-    if(MainEditFragment.is_popping) {
+    if(MainEditFragment.is_notes_popping) {
       getFragmentManager().popBackStack();
     }
 
@@ -97,7 +97,7 @@ public class NotesEditModeFragment extends Fragment {
             return true;
           }
 
-          MainEditFragment.is_popping = true;
+          MainEditFragment.is_notes_popping = true;
         }
 
         return false;
@@ -284,7 +284,7 @@ public class NotesEditModeFragment extends Fragment {
           doneItem.setVisible(false);
         }
         else {
-          MainEditFragment.is_popping = true;
+          MainEditFragment.is_notes_popping = true;
           getFragmentManager().popBackStack();
         }
 

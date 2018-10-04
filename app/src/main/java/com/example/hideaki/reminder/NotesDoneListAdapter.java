@@ -69,9 +69,11 @@ public class NotesDoneListAdapter extends BaseAdapter {
         int todo_list_size = NotesTodoListAdapter.notesList.size();
         if(todo_list_size != 0 && fragment.sortableListView.getHeaderViewsCount() == 0) {
           fragment.sortableListView.addHeaderView(fragment.todoHeader);
+          fragment.sortItem.setVisible(true);
         }
         else if(todo_list_size == 0 && fragment.sortableListView.getHeaderViewsCount() != 0) {
           fragment.sortableListView.removeHeaderView(fragment.todoHeader);
+          fragment.sortItem.setVisible(false);
         }
 
         //doneListにおけるheaderの管理

@@ -69,7 +69,9 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   private static boolean is_moving_task;
   static boolean is_cloning_task;
   private Item nextItem;
-  static boolean is_popping; //Notesフラグメントで戻るボタンを押したときに一気にもとの画面に戻るために使う
+  static boolean is_notes_popping; //Notesフラグメントで戻るボタンを押したときに一気にもとの画面に戻るために使う
+  static boolean is_main_popping;
+  private boolean next_edit_exists;
 
   public static MainEditFragment newInstance() {
 
@@ -275,6 +277,9 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+    if(MainEditFragment.is_main_popping) {
+      getFragmentManager().popBackStack();
+    }
     View view = super.onCreateView(inflater, container, savedInstanceState);
     checkNotNull(view);
 
@@ -286,11 +291,18 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       public boolean onKey(View v, int keyCode, KeyEvent event) {
 
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+
+          next_edit_exists = false;
           if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
-            activity.showMainEditFragment(nextItem, TAG);
+            activity.showMainEditFragment(nextItem.clone(), TAG);
+            next_edit_exists = true;
           }
           else if(is_cloning_task) {
             is_cloning_task = false;
+          }
+
+          if(!next_edit_exists) {
+            is_main_popping = true;
           }
         }
         return false;
@@ -312,15 +324,17 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       detail.setSummary(R.string.detail_hint);
     }
 
-    //メモがあるかどうかでメモのsummary部分の表示を変える
-    if(item.getNotesList().size() == 0) {
-      notes.setSummary(R.string.none);
-    }
-    else notes.setSummary(item.getNotesString());
-
     //設定項目間の区切り線の非表示
     ListView listView = view.findViewById(android.R.id.list);
     listView.setDivider(null);
+
+    //メモのラベルの初期化
+    if(order == 0 || order == 1 || is_moving_task) {
+      if(item.getNotesList().size() == 0) {
+        notes.setSummary(R.string.none);
+      }
+      else notes.setSummary(item.getNotesString());
+    }
 
     //Tagのラベルの初期化
     if(order == 0 || order == 1 || order == 4 || is_moving_task) {
@@ -521,14 +535,20 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       }
       case android.R.id.home: {
 
-        getFragmentManager().popBackStack();
-
+        next_edit_exists = false;
         if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
-          activity.showMainEditFragment(nextItem, TAG);
+          activity.showMainEditFragment(nextItem.clone(), TAG);
+          next_edit_exists = true;
         }
         else if(is_cloning_task) {
           is_cloning_task = false;
         }
+
+        if(!next_edit_exists) {
+          is_main_popping = true;
+          getFragmentManager().popBackStack();
+        }
+
         return true;
       }
       default: {
@@ -809,13 +829,18 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
     }
 
-    getFragmentManager().popBackStack();
-
+    next_edit_exists = false;
     if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
-      activity.showMainEditFragment(nextItem, TAG);
+      activity.showMainEditFragment(nextItem.clone(), TAG);
+      next_edit_exists = true;
     }
     else if(is_cloning_task) {
       is_cloning_task = false;
+    }
+
+    if(!next_edit_exists) {
+      is_main_popping = true;
+      getFragmentManager().popBackStack();
     }
   }
 }

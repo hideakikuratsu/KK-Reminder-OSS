@@ -59,6 +59,9 @@ public class ManageListViewFragment extends Fragment {
     });
 
     activity.listView = view.findViewById(R.id.listView);
+    View emptyView = View.inflate(activity, R.layout.nonscheduled_lists_empty_layout, null);
+    ((ViewGroup)activity.listView.getParent()).addView(emptyView);
+    activity.listView.setEmptyView(emptyView);
     activity.listView.setDragListener(activity.manageListAdapter.dragListener);
     activity.listView.setSortable(true);
     activity.listView.setAdapter(activity.manageListAdapter);

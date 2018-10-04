@@ -20,7 +20,7 @@
         android:ellipsize="end"
         android:ems="10"
         android:gravity="top"
-        android:hint="@string/memo"
+        android:hint="@string/notes_hint"
         android:inputType="textPersonName|textMultiLine"
         android:maxLines="300"
         app:layout_constraintBottom_toBottomOf="parent"

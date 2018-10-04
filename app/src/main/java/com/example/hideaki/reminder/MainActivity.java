@@ -1153,18 +1153,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   //編集画面を表示(引数にitemを渡すとそのitemの情報が入力された状態で表示)
   public void showMainEditFragment(String TAG) {
 
+    MainEditFragment.is_main_popping = false;
     showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstance(),
         null, null, true);
   }
 
   public void showMainEditFragment(String detail, String TAG) {
 
+    MainEditFragment.is_main_popping = false;
     showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstance(detail),
         null, null, true);
   }
 
   public void showMainEditFragment(Item item, String TAG) {
 
+    MainEditFragment.is_main_popping = false;
     if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
         || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
       showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstance(item.clone()),
@@ -1178,12 +1181,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public void showMainEditFragmentForList(String TAG) {
 
+    MainEditFragment.is_main_popping = false;
     showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstanceForList(),
         null, null, true);
   }
 
   public void showMainEditFragmentForList(NonScheduledList list, String TAG) {
 
+    MainEditFragment.is_main_popping = false;
     showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstanceForList(list.clone()),
         null, null, true);
   }
@@ -1201,8 +1206,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       nextFragmentTAG = NotesEditModeFragment.TAG;
     }
 
+    MainEditFragment.is_notes_popping = false;
     if(TAG.equals(MainEditFragment.TAG)) {
-      MainEditFragment.is_popping = false;
       showFragment(TAG, null, nextFragmentTAG, nextFragment, null, null,
           true);
     }
@@ -1211,7 +1216,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           true);
     }
     else {
-      MainEditFragment.is_popping = false;
       showFragment(TAG, ActionBarFragment.TAG, nextFragmentTAG, nextFragment, null, null,
           true);
     }
