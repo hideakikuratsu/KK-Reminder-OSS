@@ -463,6 +463,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           }
         }
       }
+      else drawerLayout.closeDrawer(GravityCompat.START);
     }
     else {
       //ダイアログに表示するEditTextの設定
