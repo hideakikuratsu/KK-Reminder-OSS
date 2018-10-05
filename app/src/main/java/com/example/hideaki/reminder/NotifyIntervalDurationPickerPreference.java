@@ -1,6 +1,7 @@
 package com.example.hideaki.reminder;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.NumberPicker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class NotifyIntervalDurationPickerPreference extends Preference {
 
@@ -17,11 +19,34 @@ public class NotifyIntervalDurationPickerPreference extends Preference {
   private static List<String> minute_list = new ArrayList<>();
   private NumberPicker hour_picker;
   private NumberPicker minute_picker;
+  private static Locale locale = Locale.getDefault();
 
   static {
 
-    for(int i = 0; i < 24; i++) hour_list.add(i + "時間");
-    for(int i = 0; i < 60; i++) minute_list.add(i + "分");
+    if(locale.equals(Locale.JAPAN)) {
+      for(int i = 0; i < 24; i++) {
+        hour_list.add(i + "時間");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        minute_list.add(i + "分");
+      }
+    }
+    else {
+      for(int i = 0; i < 24; i++) {
+        if(i == 0 || i == 1) {
+          hour_list.add(i + " hour");
+        }
+        else hour_list.add(i + " hours");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        if(i == 0 || i == 1) {
+          minute_list.add(i + " minute");
+        }
+        else minute_list.add(i + " minutes");
+      }
+    }
   }
 
   public NotifyIntervalDurationPickerPreference(Context context, AttributeSet attrs) {
@@ -67,21 +92,42 @@ public class NotifyIntervalDurationPickerPreference extends Preference {
 
               NotifyInterval interval = MainEditFragment.notifyInterval;
               if(interval.getOrg_time() != 0) {
-                String summary = activity.getString(R.string.unless_complete_task);
-                if(interval.getHour() != 0) {
-                  summary += interval.getHour() + activity.getString(R.string.hour);
-                }
-                if(interval.getMinute() != 0) {
-                  summary += interval.getMinute() + activity.getString(R.string.minute);
-                }
-                summary += activity.getString(R.string.per);
-                if(interval.getOrg_time() == -1) {
-                  summary += activity.getString(R.string.infinite_times_notify);
+                Resources res = activity.getResources();
+                String summary;
+                if(locale.equals(Locale.JAPAN)) {
+                  summary = activity.getString(R.string.unless_complete_task);
+                  if(interval.getHour() != 0) {
+                    summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
+                  }
+                  if(interval.getMinute() != 0) {
+                    summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
+                  }
+                  summary += activity.getString(R.string.per);
+                  if(interval.getOrg_time() == -1) {
+                    summary += activity.getString(R.string.infinite_times_notify);
+                  }
+                  else {
+                    summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
+                        interval.getOrg_time());
+                  }
                 }
                 else {
-                  summary += activity.getString(R.string.max) + interval.getOrg_time()
-                      + activity.getString(R.string.times_notify);
+                  summary = "Notify every ";
+                  if(interval.getHour() != 0) {
+                    summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
+                    if(!locale.equals(Locale.JAPAN)) summary += " ";
+                  }
+                  if(interval.getMinute() != 0) {
+                    summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
+                    if(!locale.equals(Locale.JAPAN)) summary += " ";
+                  }
+                  if(interval.getOrg_time() != -1) {
+                    summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
+                        interval.getOrg_time()) + " ";
+                  }
+                  summary += activity.getString(R.string.unless_complete_task);
                 }
+                
                 NotifyIntervalEditFragment.label.setSummary(summary);
 
                 MainEditFragment.notifyInterval.setLabel(summary);
@@ -122,21 +168,42 @@ public class NotifyIntervalDurationPickerPreference extends Preference {
 
               NotifyInterval interval = MainEditFragment.notifyInterval;
               if(interval.getOrg_time() != 0) {
-                String summary = activity.getString(R.string.unless_complete_task);
-                if(interval.getHour() != 0) {
-                  summary += interval.getHour() + activity.getString(R.string.hour);
-                }
-                if(interval.getMinute() != 0) {
-                  summary += interval.getMinute() + activity.getString(R.string.minute);
-                }
-                summary += activity.getString(R.string.per);
-                if(interval.getOrg_time() == -1) {
-                  summary += activity.getString(R.string.infinite_times_notify);
+                Resources res = activity.getResources();
+                String summary;
+                if(locale.equals(Locale.JAPAN)) {
+                  summary = activity.getString(R.string.unless_complete_task);
+                  if(interval.getHour() != 0) {
+                    summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
+                  }
+                  if(interval.getMinute() != 0) {
+                    summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
+                  }
+                  summary += activity.getString(R.string.per);
+                  if(interval.getOrg_time() == -1) {
+                    summary += activity.getString(R.string.infinite_times_notify);
+                  }
+                  else {
+                    summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
+                        interval.getOrg_time());
+                  }
                 }
                 else {
-                  summary += activity.getString(R.string.max) + interval.getOrg_time()
-                      + activity.getString(R.string.times_notify);
+                  summary = "Notify every ";
+                  if(interval.getHour() != 0) {
+                    summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
+                    if(!locale.equals(Locale.JAPAN)) summary += " ";
+                  }
+                  if(interval.getMinute() != 0) {
+                    summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
+                    if(!locale.equals(Locale.JAPAN)) summary += " ";
+                  }
+                  if(interval.getOrg_time() != -1) {
+                    summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
+                        interval.getOrg_time()) + " ";
+                  }
+                  summary += activity.getString(R.string.unless_complete_task);
                 }
+
                 NotifyIntervalEditFragment.label.setSummary(summary);
 
                 MainEditFragment.notifyInterval.setLabel(summary);

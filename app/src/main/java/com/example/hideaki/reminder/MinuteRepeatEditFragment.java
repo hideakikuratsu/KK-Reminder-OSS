@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Locale;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MinuteRepeatEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -30,6 +32,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
   private Preference count_picker;
   private Preference duration_picker;
   private MainActivity activity;
+  private static Locale locale = Locale.getDefault();
 
   public static MinuteRepeatEditFragment newInstance() {
 
@@ -174,14 +177,21 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
       }
       case "count": {
         if(count.isChecked()) {
-          label_str = "タスク完了から";
-          if(MainEditFragment.minuteRepeat.getHour() != 0) {
-            label_str += MainEditFragment.minuteRepeat.getHour() + "時間";
+
+          String interval = "";
+          int hour = MainEditFragment.minuteRepeat.getHour();
+          if(hour != 0) {
+            interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+            if(!locale.equals(Locale.JAPAN)) interval += " ";
           }
-          if(MainEditFragment.minuteRepeat.getMinute() != 0) {
-            label_str += MainEditFragment.minuteRepeat.getMinute() + "分";
+          int minute = MainEditFragment.minuteRepeat.getMinute();
+          if(minute != 0) {
+            interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+            if(!locale.equals(Locale.JAPAN)) interval += " ";
           }
-          label_str += "間隔で" + MainEditFragment.minuteRepeat.getOrg_count() + "回繰り返す";
+          int count = MainEditFragment.minuteRepeat.getOrg_count();
+          label_str = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
+              count, interval, count);
           label.setSummary(label_str);
 
           MainEditFragment.minuteRepeat.setLabel(label_str);
@@ -199,21 +209,31 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
       }
       case "duration": {
         if(duration.isChecked()) {
-          label_str = "タスク完了から";
-          if(MainEditFragment.minuteRepeat.getHour() != 0) {
-            label_str += MainEditFragment.minuteRepeat.getHour() + "時間";
+
+          String interval = "";
+          int hour = MainEditFragment.minuteRepeat.getHour();
+          if(hour != 0) {
+            interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+            if(!locale.equals(Locale.JAPAN)) interval += " ";
           }
-          if(MainEditFragment.minuteRepeat.getMinute() != 0) {
-            label_str += MainEditFragment.minuteRepeat.getMinute() + "分";
+          int minute = MainEditFragment.minuteRepeat.getMinute();
+          if(minute != 0) {
+            interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+            if(!locale.equals(Locale.JAPAN)) interval += " ";
           }
-          label_str += "間隔で";
-          if(MainEditFragment.minuteRepeat.getOrg_duration_hour() != 0) {
-            label_str += MainEditFragment.minuteRepeat.getOrg_duration_hour() + "時間";
+          String duration = "";
+          int duration_hour = MainEditFragment.minuteRepeat.getOrg_duration_hour();
+          if(duration_hour != 0) {
+            duration += activity.getResources().getQuantityString(R.plurals.hour, duration_hour, duration_hour);
+            if(!locale.equals(Locale.JAPAN)) duration += " ";
           }
-          if(MainEditFragment.minuteRepeat.getOrg_duration_minute() != 0) {
-            label_str += MainEditFragment.minuteRepeat.getOrg_duration_minute() + "分";
+          int duration_minute = MainEditFragment.minuteRepeat.getOrg_duration_minute();
+          if(duration_minute != 0) {
+            duration += activity.getResources().getQuantityString(R.plurals.minute, duration_minute, duration_minute);
+            if(!locale.equals(Locale.JAPAN)) duration += " ";
           }
-          label_str += "経過するまで繰り返す";
+          label_str = activity.getString(R.string.repeat_minute_duration_format, interval, duration);
+
           label.setSummary(label_str);
 
           MainEditFragment.minuteRepeat.setLabel(label_str);

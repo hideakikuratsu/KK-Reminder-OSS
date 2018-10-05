@@ -14,10 +14,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class DatePickerPreference extends Preference implements View.OnClickListener {
 
-  private final String[] DAY_OF_WEEK_LIST = {"日", "月", "火", "水", "木", "金", "土"};
+  private final String[] DAY_OF_WEEK_LIST_JA = {"日", "月", "火", "水", "木", "金", "土"};
+  private final String[] DAY_OF_WEEK_LIST_EN = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
   private MainActivity activity;
   private List<String> day_list = new ArrayList<>();
   private static List<String> hour_list = new ArrayList<>();
@@ -35,15 +37,27 @@ public class DatePickerPreference extends Preference implements View.OnClickList
   private NumberPicker minute_picker;
   private View saved_view;
   private FragmentManager manager;
+  private static Locale locale = Locale.getDefault();
 
   static {
 
-    for(int i = 0; i < 24; i++) {
-      hour_list.add(i + "時");
-    }
+    if(locale.equals(Locale.JAPAN)) {
+      for(int i = 0; i < 24; i++) {
+        hour_list.add(i + "時");
+      }
 
-    for(int i = 0; i < 60; i++) {
-      minute_list.add(i + "分");
+      for(int i = 0; i < 60; i++) {
+        minute_list.add(i + "分");
+      }
+    }
+    else {
+      for(int i = 0; i < 24; i++) {
+        hour_list.add(i + "");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        minute_list.add(i + "");
+      }
     }
   }
 
@@ -229,8 +243,14 @@ public class DatePickerPreference extends Preference implements View.OnClickList
       cal.set(Calendar.MONTH, i);
       for(int j = 1; j <= cal.getActualMaximum(Calendar.DAY_OF_MONTH); j++) {
         cal.set(Calendar.DAY_OF_MONTH, j);
-        day_list.add(cal.get(Calendar.YEAR) + "年" + (i+1) + "月" + j + "日 " +
-            DAY_OF_WEEK_LIST[cal.get(Calendar.DAY_OF_WEEK) - 1]);
+        if(locale.equals(Locale.JAPAN)) {
+          day_list.add(cal.get(Calendar.YEAR) + "年" + (i + 1) + "月" + j + "日 " +
+              DAY_OF_WEEK_LIST_JA[cal.get(Calendar.DAY_OF_WEEK) - 1]);
+        }
+        else {
+          day_list.add(cal.get(Calendar.YEAR) + "/" + (i + 1) + "/" + j + " " +
+              DAY_OF_WEEK_LIST_EN[cal.get(Calendar.DAY_OF_WEEK) - 1]);
+        }
       }
     }
 

@@ -9,28 +9,49 @@ import android.widget.NumberPicker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MinuteRepeatIntervalPickerPreference extends Preference {
 
+  private MainActivity activity;
   private static List<String> hour_list = new ArrayList<>();
   private static List<String> minute_list = new ArrayList<>();
   private NumberPicker hour_picker;
   private NumberPicker minute_picker;
+  private static Locale locale = Locale.getDefault();
 
   static {
 
-    for(int i = 0; i < 24; i++) {
-      hour_list.add(i + "時間");
-    }
+    if(locale.equals(Locale.JAPAN)) {
+      for(int i = 0; i < 24; i++) {
+        hour_list.add(i + "時間");
+      }
 
-    for(int i = 0; i < 60; i++) {
-      minute_list.add(i + "分");
+      for(int i = 0; i < 60; i++) {
+        minute_list.add(i + "分");
+      }
+    }
+    else {
+      for(int i = 0; i < 24; i++) {
+        if(i == 0 || i == 1) {
+          hour_list.add(i + " hour");
+        }
+        else hour_list.add(i + " hours");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        if(i == 0 || i == 1) {
+          minute_list.add(i + " minute");
+        }
+        else minute_list.add(i + " minutes");
+      }
     }
   }
 
   public MinuteRepeatIntervalPickerPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
+    activity = (MainActivity)context;
   }
 
   @Override
@@ -64,38 +85,55 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
 
             if(MinuteRepeatEditFragment.count.isChecked()) {
 
-              MinuteRepeatEditFragment.label_str = "タスク完了から";
-              if(MainEditFragment.minuteRepeat.getHour() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getHour() + "時間";
+              String interval = "";
+              int hour = MainEditFragment.minuteRepeat.getHour();
+              if(hour != 0) {
+                interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+                if(!locale.equals(Locale.JAPAN)) interval += " ";
               }
-              if(MainEditFragment.minuteRepeat.getMinute() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getMinute() + "分";
+              int minute = MainEditFragment.minuteRepeat.getMinute();
+              if(minute != 0) {
+                interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+                if(!locale.equals(Locale.JAPAN)) interval += " ";
               }
-              MinuteRepeatEditFragment.label_str += "間隔で" + MainEditFragment.minuteRepeat.getOrg_count() + "回繰り返す";
-              MinuteRepeatEditFragment.label.setSummary(MinuteRepeatEditFragment.label_str);
+              int count = MainEditFragment.minuteRepeat.getOrg_count();
+              String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
+                  count, interval, count);
+              MinuteRepeatEditFragment.label_str = label;
+              MinuteRepeatEditFragment.label.setSummary(label);
 
-              MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
+              MainEditFragment.minuteRepeat.setLabel(label);
             }
             else if(MinuteRepeatEditFragment.duration.isChecked()) {
 
-              MinuteRepeatEditFragment.label_str = "タスク完了から";
-              if(MainEditFragment.minuteRepeat.getHour() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getHour() + "時間";
+              String interval = "";
+              int hour = MainEditFragment.minuteRepeat.getHour();
+              if(hour != 0) {
+                interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+                if(!locale.equals(Locale.JAPAN)) interval += " ";
               }
-              if(MainEditFragment.minuteRepeat.getMinute() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getMinute() + "分";
+              int minute = MainEditFragment.minuteRepeat.getMinute();
+              if(minute != 0) {
+                interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+                if(!locale.equals(Locale.JAPAN)) interval += " ";
               }
-              MinuteRepeatEditFragment.label_str += "間隔で";
-              if(MainEditFragment.minuteRepeat.getOrg_duration_hour() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getOrg_duration_hour() + "時間";
+              String duration = "";
+              int duration_hour = MainEditFragment.minuteRepeat.getOrg_duration_hour();
+              if(duration_hour != 0) {
+                duration += activity.getResources().getQuantityString(R.plurals.hour, duration_hour, duration_hour);
+                if(!locale.equals(Locale.JAPAN)) duration += " ";
               }
-              if(MainEditFragment.minuteRepeat.getOrg_duration_minute() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getOrg_duration_minute() + "分";
+              int duration_minute = MainEditFragment.minuteRepeat.getOrg_duration_minute();
+              if(duration_minute != 0) {
+                duration += activity.getResources().getQuantityString(R.plurals.minute, duration_minute, duration_minute);
+                if(!locale.equals(Locale.JAPAN)) duration += " ";
               }
-              MinuteRepeatEditFragment.label_str += "経過するまで繰り返す";
-              MinuteRepeatEditFragment.label.setSummary(MinuteRepeatEditFragment.label_str);
+              String label = activity.getString(R.string.repeat_minute_duration_format, interval, duration);
 
-              MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
+              MinuteRepeatEditFragment.label_str = label;
+              MinuteRepeatEditFragment.label.setSummary(label);
+
+              MainEditFragment.minuteRepeat.setLabel(label);
             }
             break;
           }
@@ -126,38 +164,55 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
 
             if(MinuteRepeatEditFragment.count.isChecked()) {
 
-              MinuteRepeatEditFragment.label_str = "タスク完了から";
-              if(MainEditFragment.minuteRepeat.getHour() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getHour() + "時間";
+              String interval = "";
+              int hour = MainEditFragment.minuteRepeat.getHour();
+              if(hour != 0) {
+                interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+                if(!locale.equals(Locale.JAPAN)) interval += " ";
               }
-              if(MainEditFragment.minuteRepeat.getMinute() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getMinute() + "分";
+              int minute = MainEditFragment.minuteRepeat.getMinute();
+              if(minute != 0) {
+                interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+                if(!locale.equals(Locale.JAPAN)) interval += " ";
               }
-              MinuteRepeatEditFragment.label_str += "間隔で" + MainEditFragment.minuteRepeat.getOrg_count() + "回繰り返す";
-              MinuteRepeatEditFragment.label.setSummary(MinuteRepeatEditFragment.label_str);
+              int count = MainEditFragment.minuteRepeat.getOrg_count();
+              String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
+                  count, interval, count);
+              MinuteRepeatEditFragment.label_str = label;
+              MinuteRepeatEditFragment.label.setSummary(label);
 
-              MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
+              MainEditFragment.minuteRepeat.setLabel(label);
             }
             else if(MinuteRepeatEditFragment.duration.isChecked()) {
 
-              MinuteRepeatEditFragment.label_str = "タスク完了から";
-              if(MainEditFragment.minuteRepeat.getHour() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getHour() + "時間";
+              String interval = "";
+              int hour = MainEditFragment.minuteRepeat.getHour();
+              if(hour != 0) {
+                interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+                if(!locale.equals(Locale.JAPAN)) interval += " ";
               }
-              if(MainEditFragment.minuteRepeat.getMinute() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getMinute() + "分";
+              int minute = MainEditFragment.minuteRepeat.getMinute();
+              if(minute != 0) {
+                interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+                if(!locale.equals(Locale.JAPAN)) interval += " ";
               }
-              MinuteRepeatEditFragment.label_str += "間隔で";
-              if(MainEditFragment.minuteRepeat.getOrg_duration_hour() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getOrg_duration_hour() + "時間";
+              String duration = "";
+              int duration_hour = MainEditFragment.minuteRepeat.getOrg_duration_hour();
+              if(duration_hour != 0) {
+                duration += activity.getResources().getQuantityString(R.plurals.hour, duration_hour, duration_hour);
+                if(!locale.equals(Locale.JAPAN)) duration += " ";
               }
-              if(MainEditFragment.minuteRepeat.getOrg_duration_minute() != 0) {
-                MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getOrg_duration_minute() + "分";
+              int duration_minute = MainEditFragment.minuteRepeat.getOrg_duration_minute();
+              if(duration_minute != 0) {
+                duration += activity.getResources().getQuantityString(R.plurals.minute, duration_minute, duration_minute);
+                if(!locale.equals(Locale.JAPAN)) duration += " ";
               }
-              MinuteRepeatEditFragment.label_str += "経過するまで繰り返す";
-              MinuteRepeatEditFragment.label.setSummary(MinuteRepeatEditFragment.label_str);
+              String label = activity.getString(R.string.repeat_minute_duration_format, interval, duration);
 
-              MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
+              MinuteRepeatEditFragment.label_str = label;
+              MinuteRepeatEditFragment.label.setSummary(label);
+
+              MainEditFragment.minuteRepeat.setLabel(label);
             }
             break;
           }

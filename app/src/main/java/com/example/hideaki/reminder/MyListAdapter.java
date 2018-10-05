@@ -277,8 +277,8 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
             }
           }
 
-          String message = itemListToMove.size() + activity.getString(R.string.cab_delete_message)
-              + "(" + activity.getString(R.string.delete_dialog_message) + ")";
+          String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
+              itemListToMove.size(), itemListToMove.size()) + "(" + activity.getString(R.string.delete_dialog_message) + ")";
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_delete)
               .setMessage(message)
@@ -329,8 +329,8 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
             else j = 0;
           }
 
-          String title = itemListToMove.size() + activity.getString(R.string.cab_selected_task_num)
-              + activity.getString(R.string.cab_move_task_message);
+          String title = activity.getResources().getQuantityString(R.plurals.cab_selected_task_num,
+              itemListToMove.size(), itemListToMove.size()) + activity.getString(R.string.cab_move_task_message);
           new AlertDialog.Builder(activity)
               .setTitle(title)
               .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
@@ -412,7 +412,8 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
             }
           }
 
-          String message = itemListToMove.size() + activity.getString(R.string.cab_clone_message);
+          String message = activity.getResources().getQuantityString(R.plurals.cab_clone_message,
+              itemListToMove.size(), itemListToMove.size());
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_clone)
               .setMessage(message)
@@ -454,7 +455,8 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
             }
           }
 
-          String message = itemListToMove.size() + activity.getString(R.string.cab_share_message);
+          String message = activity.getResources().getQuantityString(R.plurals.cab_share_message,
+              itemListToMove.size(), itemListToMove.size());
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_share)
               .setMessage(message)

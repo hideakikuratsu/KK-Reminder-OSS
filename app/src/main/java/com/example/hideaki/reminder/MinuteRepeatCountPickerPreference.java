@@ -11,11 +11,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.util.Locale;
+
 public class MinuteRepeatCountPickerPreference extends Preference implements TextWatcher {
 
   private MainActivity activity;
   private EditText count;
   private String oldString = "";
+  private static Locale locale = Locale.getDefault();
 
   public MinuteRepeatCountPickerPreference(Context context, AttributeSet attrs) {
 
@@ -55,17 +58,24 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
           MainEditFragment.minuteRepeat.addOrg_count(1);
           count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrg_count()));
 
-          MinuteRepeatEditFragment.label_str = "タスク完了から";
-          if(MainEditFragment.minuteRepeat.getHour() != 0) {
-            MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getHour() + "時間";
+          String interval = "";
+          int hour = MainEditFragment.minuteRepeat.getHour();
+          if(hour != 0) {
+            interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+            if(!locale.equals(Locale.JAPAN)) interval += " ";
           }
-          if(MainEditFragment.minuteRepeat.getMinute() != 0) {
-            MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getMinute() + "分";
+          int minute = MainEditFragment.minuteRepeat.getMinute();
+          if(minute != 0) {
+            interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+            if(!locale.equals(Locale.JAPAN)) interval += " ";
           }
-          MinuteRepeatEditFragment.label_str += "間隔で" + MainEditFragment.minuteRepeat.getOrg_count() + "回繰り返す";
-          MinuteRepeatEditFragment.label.setSummary(MinuteRepeatEditFragment.label_str);
+          int count = MainEditFragment.minuteRepeat.getOrg_count();
+          String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
+              count, interval, count);
+          MinuteRepeatEditFragment.label_str = label;
+          MinuteRepeatEditFragment.label.setSummary(label);
 
-          MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
+          MainEditFragment.minuteRepeat.setLabel(label);
         }
       });
 
@@ -83,17 +93,24 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
             MainEditFragment.minuteRepeat.addOrg_count(-1);
             count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrg_count()));
 
-            MinuteRepeatEditFragment.label_str = "タスク完了から";
-            if(MainEditFragment.minuteRepeat.getHour() != 0) {
-              MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getHour() + "時間";
+            String interval = "";
+            int hour = MainEditFragment.minuteRepeat.getHour();
+            if(hour != 0) {
+              interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+              if(!locale.equals(Locale.JAPAN)) interval += " ";
             }
-            if(MainEditFragment.minuteRepeat.getMinute() != 0) {
-              MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getMinute() + "分";
+            int minute = MainEditFragment.minuteRepeat.getMinute();
+            if(minute != 0) {
+              interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+              if(!locale.equals(Locale.JAPAN)) interval += " ";
             }
-            MinuteRepeatEditFragment.label_str += "間隔で" + MainEditFragment.minuteRepeat.getOrg_count() + "回繰り返す";
-            MinuteRepeatEditFragment.label.setSummary(MinuteRepeatEditFragment.label_str);
+            int count = MainEditFragment.minuteRepeat.getOrg_count();
+            String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
+                count, interval, count);
+            MinuteRepeatEditFragment.label_str = label;
+            MinuteRepeatEditFragment.label.setSummary(label);
 
-            MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
+            MainEditFragment.minuteRepeat.setLabel(label);
           }
         }
       });
@@ -114,17 +131,24 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
       if(Integer.parseInt(s.toString()) != 0) {
         MainEditFragment.minuteRepeat.setOrg_count(Integer.parseInt(s.toString()));
 
-        MinuteRepeatEditFragment.label_str = "タスク完了から";
-        if(MainEditFragment.minuteRepeat.getHour() != 0) {
-          MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getHour() + "時間";
+        String interval = "";
+        int hour = MainEditFragment.minuteRepeat.getHour();
+        if(hour != 0) {
+          interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+          if(!locale.equals(Locale.JAPAN)) interval += " ";
         }
-        if(MainEditFragment.minuteRepeat.getMinute() != 0) {
-          MinuteRepeatEditFragment.label_str += MainEditFragment.minuteRepeat.getMinute() + "分";
+        int minute = MainEditFragment.minuteRepeat.getMinute();
+        if(minute != 0) {
+          interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+          if(!locale.equals(Locale.JAPAN)) interval += " ";
         }
-        MinuteRepeatEditFragment.label_str += "間隔で" + MainEditFragment.minuteRepeat.getOrg_count() + "回繰り返す";
-        MinuteRepeatEditFragment.label.setSummary(MinuteRepeatEditFragment.label_str);
+        int count = MainEditFragment.minuteRepeat.getOrg_count();
+        String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
+            count, interval, count);
+        MinuteRepeatEditFragment.label_str = label;
+        MinuteRepeatEditFragment.label.setSummary(label);
 
-        MainEditFragment.minuteRepeat.setLabel(MinuteRepeatEditFragment.label_str);
+        MainEditFragment.minuteRepeat.setLabel(label);
       }
     }
   }

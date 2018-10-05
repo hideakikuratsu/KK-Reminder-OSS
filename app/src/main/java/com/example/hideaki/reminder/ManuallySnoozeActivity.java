@@ -17,10 +17,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
-import static com.example.hideaki.reminder.UtilClass.*;
+import static com.example.hideaki.reminder.UtilClass.BOOT_FROM_NOTIFICATION;
+import static com.example.hideaki.reminder.UtilClass.HOUR;
+import static com.example.hideaki.reminder.UtilClass.ITEM;
+import static com.example.hideaki.reminder.UtilClass.MINUTE;
+import static com.example.hideaki.reminder.UtilClass.NOTIFICATION_ID;
+import static com.example.hideaki.reminder.UtilClass.deserialize;
+import static com.example.hideaki.reminder.UtilClass.serialize;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ManuallySnoozeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -38,11 +44,34 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
   int custom_hour;
   int custom_minute;
   String summary;
+  private static Locale locale = Locale.getDefault();
 
   static {
 
-    for(int i = 0; i < 24; i++) hour_list.add(i + "時間");
-    for(int i = 0; i < 60; i++) minute_list.add(i + "分");
+    if(locale.equals(Locale.JAPAN)) {
+      for(int i = 0; i < 24; i++) {
+        hour_list.add(i + "時間");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        minute_list.add(i + "分");
+      }
+    }
+    else {
+      for(int i = 0; i < 24; i++) {
+        if(i == 0 || i == 1) {
+          hour_list.add(i + " hour");
+        }
+        else hour_list.add(i + " hours");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        if(i == 0 || i == 1) {
+          minute_list.add(i + " minute");
+        }
+        else minute_list.add(i + " minutes");
+      }
+    }
   }
 
   @Override
@@ -83,10 +112,12 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     //タイトルの設定
     summary = "";
     if(custom_hour != 0) {
-      summary += custom_hour + getString(R.string.hour);
+      summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
+      if(!locale.equals(Locale.JAPAN)) summary += " ";
     }
     if(custom_minute != 0) {
-      summary += custom_minute + getString(R.string.minute);
+      summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
+      if(!locale.equals(Locale.JAPAN)) summary += " ";
     }
     summary += getString(R.string.snooze);
     title.setText(summary);
@@ -146,74 +177,10 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     return sender != null;
   }
 
-  public List<List<Item>> getChildren(String table) {
-
-    List<Item> past_list = new ArrayList<>();
-    List<Item> today_list = new ArrayList<>();
-    List<Item> tomorrow_list = new ArrayList<>();
-    List<Item> week_list = new ArrayList<>();
-    List<Item> future_list = new ArrayList<>();
-
-    Calendar now = Calendar.getInstance();
-    Calendar tomorrow = (Calendar)now.clone();
-    tomorrow.add(Calendar.DAY_OF_MONTH, 1);
-
-    for(Item item : queryAllDB(table)) {
-
-      if(item.getWhich_list_belongs() == 0) {
-        deleteAlarm(item);
-        if(!item.isAlarm_stopped()) setAlarm(item);
-
-        int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
-        long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
-        long sub_day = sub_time / (1000 * 60 * 60 * 24);
-
-        if(sub_time < 0) {
-          past_list.add(item);
-        }
-        else if(sub_day < 1 && spec_day == now.get(Calendar.DAY_OF_MONTH)) {
-          today_list.add(item);
-        }
-        else if(sub_day < 2 && spec_day == tomorrow.get(Calendar.DAY_OF_MONTH)) {
-          tomorrow_list.add(item);
-        }
-        else if(sub_day < 8) {
-          week_list.add(item);
-        }
-        else {
-          future_list.add(item);
-        }
-      }
-    }
-
-    List<List<Item>> children = new ArrayList<>();
-    children.add(past_list);
-    children.add(today_list);
-    children.add(tomorrow_list);
-    children.add(week_list);
-    children.add(future_list);
-
-    for(List<Item> itemList : children) {
-      Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
-    }
-    return children;
-  }
 
   public void updateDB(Item item, String table) {
 
     accessor.executeUpdate(item.getId(), serialize(item), table);
-  }
-
-  //指定されたテーブルからオブジェクトのバイト列をすべて取り出し、デシリアライズしてオブジェクトのリストで返す。
-  public List<Item> queryAllDB(String table) {
-
-    List<Item> itemList = new ArrayList<>();
-
-    for(byte[] stream : accessor.executeQueryAll(table)) {
-      itemList.add((Item)deserialize(stream));
-    }
-
-    return itemList;
   }
 
   public GeneralSettings querySettingsDB() {
@@ -294,10 +261,12 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
 
             summary = "";
             if(custom_hour != 0) {
-              summary += custom_hour + getString(R.string.hour);
+              summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
+              if(!locale.equals(Locale.JAPAN)) summary += " ";
             }
             if(custom_minute != 0) {
-              summary += custom_minute + getString(R.string.minute);
+              summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
+              if(!locale.equals(Locale.JAPAN)) summary += " ";
             }
             summary += getString(R.string.snooze);
             title.setText(summary);
@@ -332,10 +301,12 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
 
             summary = "";
             if(custom_hour != 0) {
-              summary += custom_hour + getString(R.string.hour);
+              summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
+              if(!locale.equals(Locale.JAPAN)) summary += " ";
             }
             if(custom_minute != 0) {
-              summary += custom_minute + getString(R.string.minute);
+              summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
+              if(!locale.equals(Locale.JAPAN)) summary += " ";
             }
             summary += getString(R.string.snooze);
             title.setText(summary);

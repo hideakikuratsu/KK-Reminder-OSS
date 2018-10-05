@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
@@ -36,6 +37,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -60,6 +62,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private List<List<Item>> filteredList;
   ColorStateList colorStateList;
   private ColorStateList defaultColorStateList;
+  private static Locale locale = Locale.getDefault();
 
   MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
 
@@ -70,8 +73,16 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     Calendar now = Calendar.getInstance();
     Calendar tomorrow_cal = (Calendar)now.clone();
     tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
-    CharSequence today = DateFormat.format(" - yyyy年M月d日(E)", now);
-    CharSequence tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
+    CharSequence today;
+    CharSequence tomorrow;
+    if(locale.equals(Locale.JAPAN)) {
+      today = DateFormat.format(" - yyyy年M月d日(E)", now);
+      tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
+    }
+    else {
+      today = DateFormat.format(" - yyyy/M/d (E)", now);
+      tomorrow = DateFormat.format(" - yyyy/M/d (E)", tomorrow_cal);
+    }
     groups.add(activity.getString(R.string.past));
     groups.add(activity.getString(R.string.today) + today);
     groups.add(activity.getString(R.string.tomorrow) + tomorrow);
@@ -1323,8 +1334,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             }
           }
 
-          String message = itemListToMove.size() + activity.getString(R.string.cab_delete_message)
-              + "(" + activity.getString(R.string.delete_dialog_message) + ")";
+          String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
+              itemListToMove.size(), itemListToMove.size()) + "(" + activity.getString(R.string.delete_dialog_message) + ")";
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_delete)
               .setMessage(message)
@@ -1377,8 +1388,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             items[i] = ManageListAdapter.nonScheduledLists.get(i).getTitle();
           }
 
-          String title = itemListToMove.size() + activity.getString(R.string.cab_selected_task_num)
-              + activity.getString(R.string.cab_move_task_message);
+          String title = activity.getResources().getQuantityString(R.plurals.cab_selected_task_num,
+              itemListToMove.size(), itemListToMove.size()) + activity.getString(R.string.cab_move_task_message);
           new AlertDialog.Builder(activity)
               .setTitle(title)
               .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
@@ -1453,7 +1464,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             }
           }
 
-          String message = itemListToMove.size() + activity.getString(R.string.cab_clone_message);
+          String message = activity.getResources().getQuantityString(R.plurals.cab_clone_message,
+              itemListToMove.size(), itemListToMove.size());
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_clone)
               .setMessage(message)
@@ -1497,7 +1509,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             }
           }
 
-          String message = itemListToMove.size() + activity.getString(R.string.cab_share_message);
+          String message = activity.getResources().getQuantityString(R.plurals.cab_share_message,
+              itemListToMove.size(), itemListToMove.size());
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_share)
               .setMessage(message)
@@ -1506,8 +1519,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 public void onClick(DialogInterface dialog, int which) {
 
                   for(Item item : itemListToMove) {
-                    String send_content = activity.getString(R.string.days_of_month) + ": "
-                        + DateFormat.format("yyyy/MM/dd HH:mm", item.getDate())
+                    String send_content = activity.getString(R.string.due_date) + ": "
+                        + DateFormat.format("yyyy/M/d H:mm", item.getDate())
                         + LINE_SEPARATOR
                         + activity.getString(R.string.detail) + ": " + item.getDetail()
                         + LINE_SEPARATOR
@@ -1851,10 +1864,20 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     Calendar now = Calendar.getInstance();
     String set_time;
     if(now.get(Calendar.YEAR) == item.getDate().get(Calendar.YEAR)) {
-      set_time = (String)DateFormat.format("M月d日(E)H:mm", item.getDate());
+      if(locale.equals(Locale.JAPAN)) {
+        set_time = (String)DateFormat.format("M月d日(E) H:mm", item.getDate());
+      }
+      else {
+        set_time = (String)DateFormat.format("M/d (E) H:mm", item.getDate());
+      }
     }
     else {
-      set_time = (String)DateFormat.format("yyyy年M月d日(E)H:mm", item.getDate());
+      if(locale.equals(Locale.JAPAN)) {
+        set_time = (String)DateFormat.format("yyyy年M月d日(E) H:mm", item.getDate());
+      }
+      else {
+        set_time = (String)DateFormat.format("yyyy/M/d (E) H:mm", item.getDate());
+      }
     }
     long date_sub = item.getDate().getTimeInMillis() - now.getTimeInMillis();
 
@@ -1918,39 +1941,63 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       }
     }
 
-    long how_far_days = date_sub / (1000 * 60 * 60 * 24);
-    long how_far_hours = date_sub / (1000 * 60 * 60);
-    long how_far_minutes = date_sub / (1000 * 60);
+    int how_far_days = (int)(date_sub / (1000 * 60 * 60 * 24));
+    int how_far_hours = (int)(date_sub / (1000 * 60 * 60));
+    int how_far_minutes = (int)(date_sub / (1000 * 60));
 
 
+    Resources res = activity.getResources();
     String display_date = set_time + " (";
+    if(!locale.equals(Locale.JAPAN)) display_date += " ";
     if(how_far_years != 0) {
-      display_date += how_far_years + "年";
-      if(how_far_months != 0) display_date += how_far_months + "ヶ月";
-      if(how_far_weeks != 0) display_date += how_far_weeks + "週間";
+      display_date += res.getQuantityString(R.plurals.year, how_far_years, how_far_years);
+      if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      if(how_far_months != 0) {
+        display_date += res.getQuantityString(R.plurals.month, how_far_months, how_far_months);
+        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      }
+      if(how_far_weeks != 0) {
+        display_date += res.getQuantityString(R.plurals.week, how_far_weeks, how_far_weeks);
+        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      }
     }
     else if(how_far_months != 0) {
-      display_date += how_far_months + "ヶ月";
-      if(how_far_weeks != 0) display_date += how_far_weeks + "週間";
+      display_date += res.getQuantityString(R.plurals.month, how_far_months, how_far_months);
+      if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      if(how_far_weeks != 0) {
+        display_date += res.getQuantityString(R.plurals.week, how_far_weeks, how_far_weeks);
+        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      }
     }
     else if(how_far_weeks != 0) {
-      display_date += how_far_weeks + "週間";
+      display_date += res.getQuantityString(R.plurals.week, how_far_weeks, how_far_weeks);
+      if(!locale.equals(Locale.JAPAN)) display_date += " ";
       how_far_days -= 7 * how_far_weeks;
-      if(how_far_days != 0) display_date += how_far_days + "日";
+      if(how_far_days != 0) {
+        display_date += res.getQuantityString(R.plurals.day, how_far_days, how_far_days);
+        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      }
     }
     else if(how_far_days != 0) {
-      display_date += how_far_days + "日";
+      display_date += res.getQuantityString(R.plurals.day, how_far_days, how_far_days);
+      if(!locale.equals(Locale.JAPAN)) display_date += " ";
     }
     else if(how_far_hours != 0) {
-      display_date += how_far_hours + "時間";
+      display_date += res.getQuantityString(R.plurals.hour, how_far_hours, how_far_hours);
+      if(!locale.equals(Locale.JAPAN)) display_date += " ";
       how_far_minutes -= 60 * how_far_hours;
-      if(how_far_minutes != 0) display_date += how_far_minutes + "分";
+      if(how_far_minutes != 0) {
+        display_date += res.getQuantityString(R.plurals.minute, how_far_minutes, how_far_minutes);
+        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      }
     }
     else if(how_far_minutes != 0) {
-      display_date += how_far_minutes + "分";
+      display_date += res.getQuantityString(R.plurals.minute, how_far_minutes, how_far_minutes);
+      if(!locale.equals(Locale.JAPAN)) display_date += " ";
     }
     else {
-      display_date += "<< 1分 >>";
+      display_date += activity.getString(R.string.within_one_minute);
+      if(!locale.equals(Locale.JAPAN)) display_date += " ";
     }
     display_date += ")";
 
@@ -1971,21 +2018,26 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     String repeat_str = "";
     if(item.getDayRepeat().getLabel() != null
         && !item.getDayRepeat().getLabel().equals(activity.getString(R.string.none))) {
+      if(!locale.equals(Locale.JAPAN)) repeat_str += "Repeat ";
       repeat_str += item.getDayRepeat().getLabel();
-      if(!item.getDayRepeat().getLabel().equals(activity.getString(R.string.everyday))) {
+      if(!item.getDayRepeat().getLabel().equals(activity.getString(R.string.everyday)) && locale.equals(Locale.JAPAN)) {
         repeat_str += "に";
       }
     }
+
     if(item.getMinuteRepeat().getLabel() != null
         && !item.getMinuteRepeat().getLabel().equals(activity.getString(R.string.none))) {
+      if(!locale.equals(Locale.JAPAN)) repeat_str += " and ";
       repeat_str += item.getMinuteRepeat().getLabel();
     }
-    if(item.getDayRepeat().getLabel() != null
+
+    if(locale.equals(Locale.JAPAN) && item.getDayRepeat().getLabel() != null
         && !item.getDayRepeat().getLabel().equals(activity.getString(R.string.none))
         && (item.getMinuteRepeat().getLabel() == null
         || item.getMinuteRepeat().getLabel().equals(activity.getString(R.string.none)))) {
       repeat_str += "繰り返す";
     }
+
     if(repeat_str.equals("")) {
       viewHolder.repeat.setText(R.string.non_repeat);
     }

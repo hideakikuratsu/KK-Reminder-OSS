@@ -29,6 +29,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +46,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
   private List<Item> filteredItem;
   static int order;
   ColorStateList colorStateList;
+  private static Locale locale = Locale.getDefault();
 
   DoneListAdapter(MainActivity activity) {
 
@@ -98,8 +100,14 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
               if(tmp.before(now)) {
                 tmp.add(Calendar.DAY_OF_MONTH, 1);
               }
-              items[0] = DateFormat.format("yyyy年M月d日(E) H時m分", tmp).toString() +
-                  activity.getString(R.string.at) + activity.getString(R.string.recycle_task);
+              if(locale.equals(Locale.JAPAN)) {
+                items[0] = DateFormat.format("yyyy年M月d日(E) H時m分", tmp).toString() +
+                    "に" + activity.getString(R.string.recycle_task);
+              }
+              else {
+                items[0] = activity.getString(R.string.recycle_task) +
+                    " at " + DateFormat.format("yyyy/M/d (E) H:mm", tmp).toString();
+              }
             }
             else if(order == 1) {
               items[0] = activity.getString(R.string.recycle_task);
@@ -241,8 +249,8 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
             }
           }
 
-          String message = itemListToMove.size() + activity.getString(R.string.cab_delete_message)
-              + "(" + activity.getString(R.string.delete_dialog_message) + ")";
+          String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
+              itemListToMove.size(), itemListToMove.size()) + "(" + activity.getString(R.string.delete_dialog_message) + ")";
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_delete)
               .setMessage(message)
@@ -283,7 +291,8 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
             }
           }
 
-          String message = itemListToMove.size() + activity.getString(R.string.cab_recycle_task_message);
+          String message = activity.getResources().getQuantityString(R.plurals.cab_recycle_task_message,
+              itemListToMove.size(), itemListToMove.size());
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_recycle_task_title)
               .setMessage(message)
@@ -348,7 +357,8 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
             }
           }
 
-          String message = itemListToMove.size() + activity.getString(R.string.cab_share_message);
+          String message = activity.getResources().getQuantityString(R.plurals.cab_share_message,
+              itemListToMove.size(), itemListToMove.size());
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_share)
               .setMessage(message)
@@ -359,8 +369,8 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                   for(Item item : itemListToMove) {
                     String send_content = "";
                     if(order == 0) {
-                      send_content = activity.getString(R.string.days_of_month) + ": "
-                          + DateFormat.format("yyyy/MM/dd HH:mm", item.getDate())
+                      send_content = activity.getString(R.string.due_date) + ": "
+                          + DateFormat.format("yyyy/M/d H:mm", item.getDate())
                           + LINE_SEPARATOR
                           + activity.getString(R.string.detail) + ": " + item.getDetail()
                           + LINE_SEPARATOR
@@ -589,10 +599,20 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
       Calendar now = Calendar.getInstance();
       String set_time;
       if(now.get(Calendar.YEAR) == item.getDate().get(Calendar.YEAR)) {
-        set_time = (String)DateFormat.format("M月d日(E)H:mm", item.getDate());
+        if(locale.equals(Locale.JAPAN)) {
+          set_time = (String)DateFormat.format("M月d日(E) H:mm", item.getDate());
+        }
+        else {
+          set_time = (String)DateFormat.format("M/d (E) H:mm", item.getDate());
+        }
       }
       else {
-        set_time = (String)DateFormat.format("yyyy年M月d日(E)H:mm", item.getDate());
+        if(locale.equals(Locale.JAPAN)) {
+          set_time = (String)DateFormat.format("yyyy年M月d日(E) H:mm", item.getDate());
+        }
+        else {
+          set_time = (String)DateFormat.format("yyyy/M/d (E) H:mm", item.getDate());
+        }
       }
       viewHolder.time.setText(set_time);
       viewHolder.time.setTextColor(Color.GRAY);

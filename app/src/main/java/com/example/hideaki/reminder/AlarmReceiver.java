@@ -13,6 +13,8 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
+import java.util.Locale;
+
 import static com.example.hideaki.reminder.UtilClass.BOOT_FROM_NOTIFICATION;
 import static com.example.hideaki.reminder.UtilClass.ITEM;
 import static com.example.hideaki.reminder.UtilClass.NOTIFICATION_ID;
@@ -23,6 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AlarmReceiver extends BroadcastReceiver {
 
   DBAccessor accessor = null;
+  private static Locale locale = Locale.getDefault();
 
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -42,8 +45,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         context, 0, open_activity, PendingIntent.FLAG_UPDATE_CURRENT
     );
 
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "reminder_01")
-        .setContentTitle("Reminder")
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "kk_reminder_01")
+        .setContentTitle("KK Reminder")
         .setContentText(item.getDetail())
         .setSmallIcon(R.mipmap.ic_launcher_round)
         .setWhen(System.currentTimeMillis())
@@ -67,10 +70,12 @@ public class AlarmReceiver extends BroadcastReceiver {
     int minute = generalSettings.getSnooze_default_minute();
     String summary = "";
     if(hour != 0) {
-      summary += hour + context.getString(R.string.hour);
+      summary += context.getResources().getQuantityString(R.plurals.hour, hour, hour);
+      if(!locale.equals(Locale.JAPAN)) summary += " ";
     }
     if(minute != 0) {
-      summary += minute + context.getString(R.string.minute);
+      summary += context.getResources().getQuantityString(R.plurals.minute, minute, minute);
+      if(!locale.equals(Locale.JAPAN)) summary += " ";
     }
     summary += context.getString(R.string.snooze);
 

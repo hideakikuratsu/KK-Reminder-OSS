@@ -17,11 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DayRepeatEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
+  private static final String[] MONTH_LIST_EN = {"Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.",
+      "Aug.", "Sep.", "Oct.", "Nov.", "Dec."};
   static CheckBoxPreference never;
   static CheckBoxPreference everyday;
   static CheckBoxPreference everyweekday;
@@ -36,6 +39,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
   static String label_str_custom;
   private int mask_num;
   MainActivity activity;
+  private static Locale locale = Locale.getDefault();
 
   public static DayRepeatEditFragment newInstance() {
 
@@ -92,16 +96,44 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.repeat_day_unit);
 
-    label_str_everyweek = activity.getResources().getString(R.string.everyweek)
-        + DateFormat.format("E曜日", MainEditFragment.final_cal);
+    label_str_everyweek = activity.getResources().getString(R.string.everyweek);
+    if(locale.equals(Locale.JAPAN)) {
+      label_str_everyweek += DateFormat.format("E曜日", MainEditFragment.final_cal);
+    }
+    else {
+      label_str_everyweek += DateFormat.format(" on E", MainEditFragment.final_cal);
+    }
     everyweek.setTitle(label_str_everyweek);
 
-    label_str_everymonth = activity.getResources().getString(R.string.everymonth)
-        + DateFormat.format("d日", MainEditFragment.final_cal);
+    label_str_everymonth = activity.getResources().getString(R.string.everymonth);
+    if(locale.equals(Locale.JAPAN)) {
+      label_str_everymonth += MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH) + "日";
+    }
+    else {
+      int day_of_month = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
+      label_str_everymonth += " on the " + day_of_month;
+      if(day_of_month == 1) label_str_everymonth += "st";
+      else if(day_of_month == 2) label_str_everymonth += "nd";
+      else if(day_of_month == 3) label_str_everymonth += "rd";
+      else label_str_everymonth += "th";
+    }
     everymonth.setTitle(label_str_everymonth);
 
-    label_str_everyyear = activity.getResources().getString(R.string.everyyear)
-        + DateFormat.format("M月d日", MainEditFragment.final_cal);
+    label_str_everyyear = activity.getResources().getString(R.string.everyyear);
+    if(locale.equals(Locale.JAPAN)) {
+      label_str_everyyear += DateFormat.format("M月d日", MainEditFragment.final_cal);
+    }
+    else {
+      int day_of_month = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
+      label_str_everyyear += " on the " + day_of_month;
+      if(day_of_month == 1) label_str_everyyear += "st";
+      else if(day_of_month == 2) label_str_everyyear += "nd";
+      else if(day_of_month == 3) label_str_everyyear += "rd";
+      else label_str_everyyear += "th";
+
+      label_str_everyyear += " of " + MONTH_LIST_EN[MainEditFragment.final_cal.get(Calendar.MONTH)];
+    }
+
     everyyear.setTitle(label_str_everyyear);
 
     //チェック状態の初期化

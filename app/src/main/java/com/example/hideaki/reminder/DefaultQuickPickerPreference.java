@@ -28,11 +28,28 @@ public class DefaultQuickPickerPreference extends Preference implements View.OnC
   private TextView abovePicker2;
   private TextView abovePicker3;
   private TextView abovePicker4;
+  private static Locale locale = Locale.getDefault();
 
   static {
 
-    for(int i = 0; i < 24; i++) hour_list.add(i + "時");
-    for(int i = 0; i < 60; i++) minute_list.add(i + "分");
+    if(locale.equals(Locale.JAPAN)) {
+      for(int i = 0; i < 24; i++) {
+        hour_list.add(i + "時");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        minute_list.add(i + "分");
+      }
+    }
+    else {
+      for(int i = 0; i < 24; i++) {
+        hour_list.add(i + "");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        minute_list.add(i + "");
+      }
+    }
   }
 
   public DefaultQuickPickerPreference(Context context, AttributeSet attrs) {

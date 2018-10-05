@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private int which_list;
   private boolean is_in_on_create;
   private static String BASE_FRAGMENT_TAG;
+  private static Locale locale = Locale.getDefault();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -197,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
       checkNotNull(notificationManager);
-      NotificationChannel notificationChannel = new NotificationChannel("reminder_01",
+      NotificationChannel notificationChannel = new NotificationChannel("kk_reminder_01",
           getString(R.string.notification_channel_name), NotificationManager.IMPORTANCE_HIGH);
 
       notificationManager.createNotificationChannel(notificationChannel);
@@ -632,8 +634,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Calendar now = Calendar.getInstance();
             Calendar tomorrow_cal = (Calendar)now.clone();
             tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
-            CharSequence today = DateFormat.format(" - yyyy年M月d日(E)", now);
-            CharSequence tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
+            CharSequence today;
+            CharSequence tomorrow;
+            if(locale.equals(Locale.JAPAN)) {
+              today = DateFormat.format(" - yyyy年M月d日(E)", now);
+              tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
+            }
+            else {
+              today = DateFormat.format(" - yyyy/M/d (E)", now);
+              tomorrow = DateFormat.format(" - yyyy/M/d (E)", tomorrow_cal);
+            }
             MyExpandableListAdapter.groups.set(1, getString(R.string.today) + today);
             MyExpandableListAdapter.groups.set(2, getString(R.string.tomorrow) + tomorrow);
 
@@ -826,20 +836,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     notifyInterval.setWhich_setted(1);
 
     if(notifyInterval.getOrg_time() != 0) {
-      String summary = getString(R.string.unless_complete_task);
-      if(notifyInterval.getHour() != 0) {
-        summary += notifyInterval.getHour() + getString(R.string.hour);
-      }
-      if(notifyInterval.getMinute() != 0) {
-        summary += notifyInterval.getMinute() + getString(R.string.minute);
-      }
-      summary += getString(R.string.per);
-      if(notifyInterval.getOrg_time() == -1) {
-        summary += getString(R.string.infinite_times_notify);
+      String summary;
+      if(locale.equals(Locale.JAPAN)) {
+        summary = getString(R.string.unless_complete_task);
+        if(notifyInterval.getHour() != 0) {
+          summary += getResources().getQuantityString(R.plurals.hour, notifyInterval.getHour(), notifyInterval.getHour());
+        }
+        if(notifyInterval.getMinute() != 0) {
+          summary += getResources().getQuantityString(R.plurals.minute, notifyInterval.getMinute(), notifyInterval.getMinute());
+        }
+        summary += getString(R.string.per);
+        if(notifyInterval.getOrg_time() == -1) {
+          summary += getString(R.string.infinite_times_notify);
+        }
+        else {
+          summary += getResources().getQuantityString(R.plurals.times_notify, notifyInterval.getOrg_time(),
+              notifyInterval.getOrg_time());
+        }
       }
       else {
-        summary += getString(R.string.max) + notifyInterval.getOrg_time()
-            + getString(R.string.times_notify);
+        summary = "Notify every ";
+        if(notifyInterval.getHour() != 0) {
+          summary += getResources().getQuantityString(R.plurals.hour, notifyInterval.getHour(), notifyInterval.getHour());
+          if(!locale.equals(Locale.JAPAN)) summary += " ";
+        }
+        if(notifyInterval.getMinute() != 0) {
+          summary += getResources().getQuantityString(R.plurals.minute, notifyInterval.getMinute(), notifyInterval.getMinute());
+          if(!locale.equals(Locale.JAPAN)) summary += " ";
+        }
+        if(notifyInterval.getOrg_time() != -1) {
+          summary += getResources().getQuantityString(R.plurals.times_notify, notifyInterval.getOrg_time(),
+              notifyInterval.getOrg_time()) + " ";
+        }
+        summary += getString(R.string.unless_complete_task);
       }
 
       notifyInterval.setLabel(summary);

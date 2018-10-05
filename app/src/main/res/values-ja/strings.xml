@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">KK リマインダー</string>
+    <string name="past">過去</string>
+    <string name="today">今日</string>
+    <string name="tomorrow">明日</string>
+    <string name="this_week">今週</string>
+    <string name="future">来週以降</string>
+    <string name="minus5m">-5分</string>
+    <string name="plus5m">+5分</string>
+    <string name="minus1h">-1時間</string>
+    <string name="plus1h">+1時間</string>
+    <string name="minus1d">-1日</string>
+    <string name="plus1d">+1日</string>
+    <string name="edit">編集</string>
+    <string name="notes">メモ</string>
+    <string name="alarm">アラーム</string>
+    <string name="above_picker1_default">9:00</string>
+    <string name="above_picker2_default">12:00</string>
+    <string name="above_picker3_default">15:00</string>
+    <string name="above_picker4_default">18:00</string>
+    <string name="below_picker1">今</string>
+    <string name="below_picker2">+3時間</string>
+    <string name="below_picker3">+1週間</string>
+    <string name="below_picker4">カレンダー</string>
+    <string name="title">タイトル</string>
+    <string name="default_detail">新しいタスク</string>
+    <string name="detail_hint">タイトルを入力してください</string>
+    <string name="schedule_task">タスクの期限</string>
+    <string name="due_date">期日</string>
+    <string name="tag">タグ</string>
+    <string name="notify_option">通知設定</string>
+    <string name="interval">通知の繰り返しと頻度</string>
+    <string name="repeat_option">繰り返し設定</string>
+    <string name="repeat_day_unit">繰り返し(日単位)</string>
+    <string name="per_day">%1$d日おき</string>
+    <plurals name="per_week">
+        <item quantity="other">%1$d週間おきの</item>
+    </plurals>
+    <plurals name="per_month">
+        <item quantity="other">ヶ月おきの</item>
+    </plurals>
+    <plurals name="per_year">
+        <item quantity="other">%1$d年おきの</item>
+    </plurals>
+    <string name="repeat_minute_unit">繰り返し(分単位)</string>
+    <string name="repeat_minute_count">繰り返す回数</string>
+    <plurals name="repeat_minute_count_format">
+        <item quantity="other">タスク完了から%1$s間隔で%2$d回繰り返す</item>
+    </plurals>
+    <string name="repeat_minute_duration">繰り返す長さ</string>
+    <string name="repeat_minute_duration_format">タスク完了から%1$s間隔で%2$s経過するまで繰り返す</string>
+    <string name="repeat_minute_illegal_dialog">繰り返しの間隔が繰り返す長さを超えています\n繰り返す長さよりも短い間隔を設定し直してください</string>
+    <string name="alarm_option">通知音の設定</string>
+    <string name="pick_alarm">通知音の選択</string>
+    <string name="default_snooze">デフォルト</string>
+    <string name="snooze">スヌーズ</string>
+    <string name="more_advanced_snooze">細かいスヌーズ</string>
+    <string name="manually_snooze_description">時間と分を両方0に合わせると、24時間として設定されます。</string>
+
+    <string name="fifteen_minutes">15分</string>
+    <string name="thirty_minutes">30分</string>
+    <string name="one_hour">1時間</string>
+    <string name="three_hours">3時間</string>
+    <string name="ten_hours">10時間</string>
+    <string name="one_day">1日</string>
+
+    <string-array name="snooze_list">
+        <item>@string/fifteen_minutes</item>
+        <item>@string/thirty_minutes</item>
+        <item>@string/one_hour</item>
+        <item>@string/three_hours</item>
+        <item>@string/ten_hours</item>
+        <item>@string/one_day</item>
+        <item>@string/custom</item>
+    </string-array>
+
+    <string name="sort_notes">メモを並び替える</string>
+    <string name="edit_mode">メモを編集する</string>
+    <string name="checklist_mode">メモをチェックリストとして表示する</string>
+    <string name="notes_hint">メモを入力してください</string>
+    <string name="done_edit">編集を終える</string>
+    <string name="delete_checked_items">チェックした項目を削除</string>
+    <string name="unselect_all_items">すべてのチェックを外す</string>
+    <string name="clear_notes">メモをクリアする</string>
+    <string name="clear_notes_message">メモの内容をすべてクリアしますか？クリアするともとに戻すことができません。</string>
+    <string name="delete_checked_items_message">チェックした項目を削除しますか？削除するともとに戻すことができません。</string>
+    <string name="settings">設定</string>
+    <string name="default_settings">デフォルト設定</string>
+    <string name="default_new_task">新しく追加するタスク</string>
+    <string name="default_new_task_summary">新しく追加するタスクの初期状態を決めておくことができます。</string>
+    <string name="default_manually_snooze">手動スヌーズの延長時間</string>
+    <string name="default_quick_picker">クイックピッカー</string>
+    <string name="about_quick_picker">クイックピッカーとは、あらかじめ好きな時間を登録しておくことで、期限付きリマインダーにタスクを追加する際にその時間にすばやくセットすることのできる機能です。</string>
+    <string name="theme">テーマ</string>
+    <string name="after_theme_set_message">主題テーマ設定後は自動的にアプリを再起動します</string>
+    <string name="backup">バックアップ</string>
+    <string name="backup_and_restore">バックアップと復元</string>
+    <string name="manually_backup">手動バックアップ</string>
+    <string name="backup_to_google_drive">Googleドライブに保存</string>
+    <string name="restore_from_google_drive">Googleドライブから復元</string>
+    <string name="logout">ログアウト</string>
+    <string name="backup_not_exists">バックアップが存在しません。一度バックアップしてから復元を行ってください。</string>
+    <string name="fail_to_query">クエリの送信に失敗しました。</string>
+    <string name="success_to_restore">バックアップの復元に成功しました。</string>
+    <string name="fail_to_restore">バックアップの復元に失敗しました。</string>
+    <string name="create_new_backup">新しいバックアップを作成しました。</string>
+    <string name="fail_to_create_new_backup">新しいバックアップの作成に失敗しました。</string>
+    <string name="update_backup">バックアップを更新しました。</string>
+    <string name="fail_to_update_backup">バックアップの更新に失敗しました。</string>
+    <string name="logout_done">ログアウトしました。</string>
+    <string name="fail_to_logout">ログアウトに失敗しました。</string>
+    <string name="error">予期せぬエラーが発生しました。</string>
+    <string name="about">概要</string>
+    <string name="version">バージョン</string>
+    <string name="about_this_app">このアプリについて</string>
+    <string name="times">回</string>
+    <string name="none">なし</string>
+    <string name="home">家事</string>
+    <string name="work">仕事</string>
+    <string name="shopping">買い物</string>
+    <string name="todo_menu">未完了</string>
+    <string name="done_menu">完了済</string>
+    <string name="done">完了</string>
+    <string name="delete_dialog_title">タスクを削除しますか？</string>
+    <string name="delete_dialog_message">削除すると完了済みリストに保存されず、もとに戻すことができません</string>
+    <string name="delete">削除</string>
+    <string name="list_delete_dialog_title">リストを削除しますか？</string>
+    <string name="list_delete_dialog_message">削除すると、このリスト内のタスクも全て削除されます</string>
+    <string name="search_task">タスクを検索</string>
+    <string name="tag_label">タグ:</string>
+    <string name="non_tag">タグなし</string>
+    <string name="tag_search">タグを使って検索</string>
+    <string name="add_tag">新しいタグを追加</string>
+    <string name="tag_hint">タグ名を入力してください</string>
+    <string name="name_tag">タグ名の設定</string>
+    <string name="default_tag">新しいタグ</string>
+    <string name="delete_tag_title">タグの削除</string>
+    <string name="delete_tag_message">タグを削除しますか？削除するともとに戻せません</string>
+    <string name="is_editing_title">編集が完了していません</string>
+    <string name="is_editing_message">編集ボタンを再度押して、編集を完了してから前の画面に戻ってください</string>
+    <string name="is_sorting_title">並び替えが完了していません</string>
+    <string name="is_sorting_message">並び替えボタンを再度押して、並び替えを完了してから前の画面に戻ってください</string>
+    <string name="non_notify">通知の繰り返しなし</string>
+    <string name="notify_default">デフォルト</string>
+    <string name="notify_every_minute">毎分</string>
+    <string name="every_minute_summary">タスクを完了しない限り1分おきに通知し続ける</string>
+    <string name="notify_every_five_minutes">5分おき</string>
+    <string name="every_five_minutes_summary">タスクを完了しない限り5分おきに最大6回通知する</string>
+    <string name="notify_every_fifteen_minutes">15分おき</string>
+    <string name="every_fifteen_minutes_summary">タスクを完了しない限り15分おきに最大6回通知する</string>
+    <string name="notify_every_thirty_minutes">30分おき</string>
+    <string name="every_thirty_minutes_summary">タスクを完了しない限り30分おきに最大6回通知する</string>
+    <string name="notify_every_hour">毎時間</string>
+    <string name="every_hour_summary">タスクを完了しない限り1時間おきに最大6回通知する</string>
+    <string name="notify_every_day">毎日</string>
+    <string name="every_day_summary">タスクを完了しない限り24時間おきに通知し続ける</string>
+    <string name="unless_complete_task">タスクを完了しない限り</string>
+    <plurals name="year">
+        <item quantity="other">%1$d年</item>
+    </plurals>
+    <plurals name="month">
+        <item quantity="other">%1$dヶ月</item>
+    </plurals>
+    <plurals name="week">
+        <item quantity="other">%1$d週間</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="other">%1$d日</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="other">%1$d時間</item>
+    </plurals>
+    <plurals name="minute">
+        <item quantity="other">%1$d分</item>
+    </plurals>
+    <string name="within_one_minute">&lt;&lt; 1分 &gt;&gt;</string>
+    <string name="per">おきに</string>
+    <plurals name="times_notify">
+        <item quantity="other">最大%1$d回通知する</item>
+    </plurals>
+    <string name="infinite_times_notify">通知し続ける</string>
+    <string name="num_of_notification">通知回数</string>
+    <string name="description_for_notify_custom">通知回数を-1回に設定すると無限に通知し、0回に設定すると通知は一度しか行われません。また、時間と分を両方0に合わせると、24時間として設定されます。</string>
+    <string name="everyday">毎日</string>
+    <string name="everyweekday">毎週平日 (月 - 金)</string>
+    <string name="everyweek">毎週</string>
+    <string name="everymonth">毎月</string>
+    <string name="everyyear">毎年</string>
+    <string name="custom">カスタム</string>
+    <string name="non_repeat">繰り返しなし</string>
+    <string name="days_of_month">日付</string>
+    <string name="on_the_month">月の...</string>
+    <string name="on_days">選択した曜日に通知します</string>
+    <string name="monday">月曜</string>
+    <string name="tuesday">火曜</string>
+    <string name="wednesday">水曜</string>
+    <string name="thursday">木曜</string>
+    <string name="friday">金曜</string>
+    <string name="saturday">土曜</string>
+    <string name="sunday">日曜</string>
+    <string name="on_months">選択した月に通知します</string>
+    <string name="january">1月</string>
+    <string name="february">2月</string>
+    <string name="march">3月</string>
+    <string name="april">4月</string>
+    <string name="may">5月</string>
+    <string name="june">6月</string>
+    <string name="july">7月</string>
+    <string name="august">8月</string>
+    <string name="september">9月</string>
+    <string name="october">10月</string>
+    <string name="november">11月</string>
+    <string name="december">12月</string>
+    <string name="memo">メモ</string>
+    <string name="complete">タスクを完了しました。</string>
+    <string name="undo">元に戻す</string>
+    <string name="repeat_conflict_dialog_message">リピートが設定された状態で予定日時が変更されました。\nこの変更は一時的なものですか？</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="cancel">キャンセル</string>
+    <string name="drawer_open">ドロワーを開く</string>
+    <string name="drawer_close">ドロワーを閉じる</string>
+    <string name="nav_scheduled_item">期限付きリマインダー</string>
+    <string name="add_list">新しいリストを追加</string>
+    <string name="add">追加</string>
+    <string name="default_list">新しいリスト</string>
+    <string name="list_hint">リスト名を入力してください</string>
+    <string name="add_task">新しいタスクを追加</string>
+    <string name="nav_other">その他</string>
+    <string name="manage_lists">リストを管理する</string>
+    <string name="manage_lists_title">リストの管理</string>
+    <string name="nav_settings">設定</string>
+    <string name="nav_help">ヘルプ</string>
+    <string name="nav_feedback">フィードバック</string>
+    <string name="notification_channel_name">Reminder 通知チャンネル</string>
+    <plurals name="cab_selected_task_num">
+        <item quantity="other">%1$d個のタスクが選択されています。</item>
+    </plurals>
+    <string name="cab_delete">タスクの削除</string>
+    <plurals name="cab_delete_message">
+        <item quantity="other">%1$d個のタスクを削除します。\nよろしいですか？</item>
+    </plurals>
+    <string name="cab_move_task">タスクを別のリストへ移動</string>
+    <string name="cab_move_task_message">\nどのリストへ移動しますか？</string>
+    <string name="cab_recycle_task_title">タスクのリサイクル</string>
+    <plurals name="cab_recycle_task_message">
+        <item quantity="other">%1$d個のタスクをリサイクルします。\nよろしいですか？</item>
+    </plurals>
+    <string name="cab_clone">タスクの複製</string>
+    <plurals name="cab_clone_message">
+        <item quantity="other">%1$d個のタスクを複製します。\nよろしいですか？</item>
+    </plurals>
+    <string name="cab_share">タスクの共有</string>
+    <plurals name="cab_share_message">
+        <item quantity="other">%1$d個のタスクを共有します。\nよろしいですか？</item>
+    </plurals>
+    <string name="detail">詳細</string>
+    <string name="determine">決定</string>
+    <string name="pick_primary_color">主体(基調)となる色を選択</string>
+    <string name="pick_secondary_color">ワンポイント(アクセント)となる色を選択</string>
+    <string name="pick_color">色の選択</string>
+    <string name="pick_color_description">色のバリエーションを選択してください</string>
+    <string name="action_send_booted_dialog_title">新たなタスクを作成します。タスクを追加するリストを選択してください。</string>
+    <string name="sort">タスクの並び替え</string>
+    <string name="done_task_click_title">このタスクに行う処理を次から選んでください</string>
+    <string name="recycle_task">タスクをリサイクルする</string>
+    <string name="recycle_and_edit_task">タスクをリサイクルして編集する</string>
+    <string name="delete_task">タスクを削除する</string>
+    <string name="task_not_pushed_yet">タスクがありません</string>
+    <string name="list_not_pushed_yet">リストがありません</string>
+    <string name="notes_not_pushed_yet">メモがありません</string>
+
+    <string name="red">赤色</string>
+    <string name="pink">ピンク色</string>
+    <string name="purple">紫色</string>
+    <string name="deep_purple">深紫色</string>
+    <string name="indigo">藍色</string>
+    <string name="blue">青色</string>
+    <string name="light_blue">空色</string>
+    <string name="cyan">シアン</string>
+    <string name="teal">青緑色</string>
+    <string name="green">緑色</string>
+    <string name="light_green">薄緑色</string>
+    <string name="lime">ライムグリーン</string>
+    <string name="yellow">黄色</string>
+    <string name="amber">琥珀色</string>
+    <string name="orange">橙色</string>
+    <string name="deep_orange">橙赤色</string>
+    <string name="brown">茶色</string>
+    <string name="grey">灰色</string>
+    <string name="blue_grey">青灰色</string>
+
+    <string-array name="colors_array">
+        <item>@string/red</item>
+        <item>@string/pink</item>
+        <item>@string/purple</item>
+        <item>@string/deep_purple</item>
+        <item>@string/indigo</item>
+        <item>@string/blue</item>
+        <item>@string/light_blue</item>
+        <item>@string/cyan</item>
+        <item>@string/teal</item>
+        <item>@string/green</item>
+        <item>@string/light_green</item>
+        <item>@string/lime</item>
+        <item>@string/yellow</item>
+        <item>@string/amber</item>
+        <item>@string/orange</item>
+        <item>@string/deep_orange</item>
+        <item>@string/brown</item>
+        <item>@string/grey</item>
+        <item>@string/blue_grey</item>
+    </string-array>
+</resources>

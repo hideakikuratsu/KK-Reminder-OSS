@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DefaultManuallySnoozePreference extends Preference {
 
@@ -22,11 +23,28 @@ public class DefaultManuallySnoozePreference extends Preference {
   private int hour;
   private int minute;
   private String summary;
+  private static Locale locale = Locale.getDefault();
 
   static {
 
-    for(int i = 0; i < 24; i++) hour_list.add(i + "時間");
-    for(int i = 0; i < 60; i++) minute_list.add(i + "分");
+    if(locale.equals(Locale.JAPAN)) {
+      for(int i = 0; i < 24; i++) {
+        hour_list.add(i + "時");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        minute_list.add(i + "分");
+      }
+    }
+    else {
+      for(int i = 0; i < 24; i++) {
+        hour_list.add(i + "");
+      }
+
+      for(int i = 0; i < 60; i++) {
+        minute_list.add(i + "");
+      }
+    }
   }
 
   public DefaultManuallySnoozePreference(Context context, AttributeSet attrs) {
@@ -71,10 +89,12 @@ public class DefaultManuallySnoozePreference extends Preference {
 
             summary = "";
             if(hour != 0) {
-              summary += hour + activity.getString(R.string.hour);
+              summary += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+              if(!locale.equals(Locale.JAPAN)) summary += " ";
             }
             if(minute != 0) {
-              summary += minute + activity.getString(R.string.minute);
+              summary += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+              if(!locale.equals(Locale.JAPAN)) summary += " ";
             }
             summary += activity.getString(R.string.snooze);
             DefaultManuallySnoozeFragment.label.setSummary(summary);
@@ -112,10 +132,12 @@ public class DefaultManuallySnoozePreference extends Preference {
 
             summary = "";
             if(hour != 0) {
-              summary += hour + activity.getString(R.string.hour);
+              summary += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+              if(!locale.equals(Locale.JAPAN)) summary += " ";
             }
             if(minute != 0) {
-              summary += minute + activity.getString(R.string.minute);
+              summary += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+              if(!locale.equals(Locale.JAPAN)) summary += " ";
             }
             summary += activity.getString(R.string.snooze);
             DefaultManuallySnoozeFragment.label.setSummary(summary);

@@ -13,12 +13,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Locale;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DefaultManuallySnoozeFragment extends PreferenceFragment {
 
   private MainActivity activity;
   static PreferenceScreen label;
+  private static Locale locale = Locale.getDefault();
 
   public static DefaultManuallySnoozeFragment newInstance() {
 
@@ -65,10 +68,12 @@ public class DefaultManuallySnoozeFragment extends PreferenceFragment {
     int minute = activity.generalSettings.getSnooze_default_minute();
     String summary = "";
     if(hour != 0) {
-      summary += hour + activity.getString(R.string.hour);
+      summary += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+      if(!locale.equals(Locale.JAPAN)) summary += " ";
     }
     if(minute != 0) {
-      summary += minute + activity.getString(R.string.minute);
+      summary += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+      if(!locale.equals(Locale.JAPAN)) summary += " ";
     }
     summary += activity.getString(R.string.snooze);
     label.setSummary(summary);
