@@ -1,6 +1,5 @@
 package com.example.hideaki.reminder;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -183,12 +182,6 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                 super.onDismissed(transientBottomBar, event);
                 is_control_panel_locked = false;
                 notifyDataSetChanged();
-
-                //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                  Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                  direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                }
               }
             })
             .setAction(R.string.undo, new View.OnClickListener() {
@@ -291,12 +284,6 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                   }
                   itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
 
-                  //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                  if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                    direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                  }
-
                   actionMode.finish();
                 }
               })
@@ -383,12 +370,6 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
                     itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
                     notifyDataSetChanged();
-
-                    //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                      Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                      direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                    }
                   }
 
                   actionMode.finish();

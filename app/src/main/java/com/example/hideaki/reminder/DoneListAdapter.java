@@ -1,6 +1,5 @@
 package com.example.hideaki.reminder;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -147,13 +146,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                       activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
                       activity.showMainEditFragment(item, DoneListViewFragment.TAG);
                     }
-
-                    //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                      Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                      direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                      direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.DONE_TABLE);
-                    }
                   }
                 })
                 .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -264,12 +256,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                   itemList = activity.getDoneItem();
                   notifyDataSetChanged();
 
-                  //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                  if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                    direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.DONE_TABLE);
-                  }
-
                   actionMode.finish();
                 }
               })
@@ -329,12 +315,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
 
                   itemList = activity.getDoneItem();
                   notifyDataSetChanged();
-
-                  //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                  if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                    direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                  }
 
                   actionMode.finish();
                 }

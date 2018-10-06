@@ -1,6 +1,5 @@
 package com.example.hideaki.reminder;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -129,7 +128,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     @Override
     public void onClick(View v) {
 
-      boolean is_database_updated = false;
       activity.actionBarFragment.searchView.clearFocus();
       switch(v.getId()) {
         case R.id.child_card: {
@@ -175,7 +173,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             }
 
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-            is_database_updated = true;
 
             displayDate(viewHolder, item);
           }
@@ -198,7 +195,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.deleteAlarm(item);
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-            is_database_updated = true;
 
             displayDate(viewHolder, item);
           }
@@ -217,7 +213,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.deleteAlarm(item);
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-            is_database_updated = true;
 
             displayDate(viewHolder, item);
           }
@@ -236,7 +231,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.deleteAlarm(item);
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-            is_database_updated = true;
 
             displayDate(viewHolder, item);
           }
@@ -267,7 +261,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-          is_database_updated = true;
 
           displayDate(viewHolder, item);
           break;
@@ -290,7 +283,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-          is_database_updated = true;
 
           displayDate(viewHolder, item);
           break;
@@ -313,7 +305,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-          is_database_updated = true;
 
           displayDate(viewHolder, item);
           break;
@@ -322,15 +313,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.expandableListView.clearTextFilter();
           activity.showNotesFragment(item, ExpandableListViewFragment.TAG);
           break;
-        }
-      }
-
-      if(is_database_updated) {
-
-        //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-          direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
         }
       }
     }
@@ -1207,12 +1189,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 super.onDismissed(transientBottomBar, event);
                 is_control_panel_locked = false;
                 notifyDataSetChanged();
-
-                //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                  Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                  direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                }
               }
             })
             .setAction(R.string.undo, new View.OnClickListener() {
@@ -1353,12 +1329,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     }
                   }
 
-                  //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                  if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                    direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                  }
-
                   actionMode.finish();
                 }
               })
@@ -1434,12 +1404,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   }
 
                   children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
-
-                  //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                  if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                    direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                  }
 
                   actionMode.finish();
                 }

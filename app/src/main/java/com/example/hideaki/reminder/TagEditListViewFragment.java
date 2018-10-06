@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -278,12 +277,6 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
             TagEditListAdapter.tagList = new ArrayList<>(activity.generalSettings.getTagList());
             activity.tagEditListAdapter.notifyDataSetChanged();
             activity.updateSettingsDB();
-
-            //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-              Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-              direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-            }
           }
         })
         .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {

@@ -1,9 +1,7 @@
 package com.example.hideaki.reminder;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
-import android.os.Build;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CompoundButtonCompat;
@@ -172,12 +170,6 @@ public class TagEditListAdapter extends BaseAdapter {
                     notifyDataSetChanged();
 
                     activity.updateSettingsDB();
-
-                    //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                      Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                      direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                    }
                   }
                 })
                 .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {

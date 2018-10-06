@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -515,12 +514,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                   activity.updateSettingsDB();
                 }
 
-                //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                  Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-                  direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
-                }
-
                 getFragmentManager().popBackStack();
               }
             })
@@ -821,12 +814,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
       //データベースへの反映
       activity.updateSettingsDB();
-    }
-
-    //データベースを更新したら、そのデータベースを端末暗号化ストレージへコピーする
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      Context direct_boot_context = activity.createDeviceProtectedStorageContext();
-      direct_boot_context.moveDatabaseFrom(activity, MyDatabaseHelper.TODO_TABLE);
     }
 
     next_edit_exists = false;

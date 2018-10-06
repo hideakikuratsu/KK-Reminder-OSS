@@ -350,6 +350,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       generalSettings.setChange_in_notification(false);
       updateSettingsDB();
     }
+
+    //データベースを端末暗号化ストレージへコピーする
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      Context direct_boot_context = createDeviceProtectedStorageContext();
+      direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.TODO_TABLE);
+      direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.DONE_TABLE);
+      direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.SETTINGS_TABLE);
+    }
   }
 
   @Override
@@ -372,6 +380,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
     checkNotNull(manager);
     manager.cancelAll();
+
+    //データベースを端末暗号化ストレージへコピーする
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      Context direct_boot_context = createDeviceProtectedStorageContext();
+      direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.TODO_TABLE);
+      direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.DONE_TABLE);
+      direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.SETTINGS_TABLE);
+    }
   }
 
   @Override
