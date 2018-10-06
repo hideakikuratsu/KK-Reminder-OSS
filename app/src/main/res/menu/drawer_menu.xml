@@ -49,16 +49,16 @@
                 android:orderInCategory="4"/>
 
             <item
-                android:id="@+id/help"
+                android:id="@+id/help_and_feedback"
                 android:icon="@drawable/ic_help"
-                android:title="@string/nav_help"
+                android:title="@string/nav_help_and_feedback"
                 android:checkable="true"
                 android:orderInCategory="5"/>
 
             <item
-                android:id="@+id/feedback"
+                android:id="@+id/share"
                 android:icon="@drawable/ic_feedback"
-                android:title="@string/nav_feedback"
+                android:title="@string/share_this_app"
                 android:checkable="true"
                 android:orderInCategory="6"/>
 

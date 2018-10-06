@@ -316,6 +316,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     else if(order == 3) showManageListViewFragment(BASE_FRAGMENT_TAG);
     else if(order == 4) showGeneralSettingsFragment(BASE_FRAGMENT_TAG);
+    else if(order == 5) showHelpAndFeedbackFragment(BASE_FRAGMENT_TAG);
   }
 
   @Override
@@ -401,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-    if(menuItem.getItemId() != R.id.add_list) {
+    if(menuItem.getItemId() != R.id.add_list && menuItem.getItemId() != R.id.share) {
 
       //選択されたメニューアイテム以外のチェックを外す
       if(!menuItem.isChecked()) {
@@ -458,16 +459,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             break;
           }
           case 5: {
-            break;
-          }
-          case 6: {
+            showHelpAndFeedbackFragment(BASE_FRAGMENT_TAG);
             break;
           }
         }
       }
       else drawerLayout.closeDrawer(GravityCompat.START);
     }
-    else {
+    else if(menuItem.getItemId() == R.id.add_list) {
       //ダイアログに表示するEditTextの設定
       LinearLayout linearLayout = new LinearLayout(MainActivity.this);
       linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -554,6 +553,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           }
         }
       });
+    }
+    else if(menuItem.getItemId() == R.id.share) {
+      String title = getString(R.string.app_promotion);
+      String content = "URL"; //TODO: "URL"の部分には、公開したアプリのURLを入れる
+
+      Intent intent = new Intent()
+          .setAction(Intent.ACTION_SEND)
+          .setType("text/plain")
+          .putExtra(Intent.EXTRA_SUBJECT, title)
+          .putExtra(Intent.EXTRA_TEXT, content);
+
+      startActivity(intent);
     }
 
     return false;
@@ -1264,6 +1275,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     BASE_FRAGMENT_TAG = GeneralSettingsFragment.TAG;
+  }
+
+  public void showHelpAndFeedbackFragment(String TAG) {
+
+    if(getFragmentManager().findFragmentByTag(TAG) == null) {
+      showFragment(null, null, HelpAndFeedbackFragment.TAG,
+          HelpAndFeedbackFragment.newInstance(), null, null, false);
+    }
+    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
+        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
+      showFragment(TAG, ActionBarFragment.TAG, HelpAndFeedbackFragment.TAG,
+          HelpAndFeedbackFragment.newInstance(), null, null, false);
+    }
+    else {
+      showFragment(TAG, null, HelpAndFeedbackFragment.TAG, HelpAndFeedbackFragment.newInstance(),
+          null, null, false);
+    }
+
+    BASE_FRAGMENT_TAG = HelpAndFeedbackFragment.TAG;
+  }
+
+  public void showAboutThisAppFragment(String TAG) {
+
+    showFragment(TAG, null, AboutThisAppFragment.TAG, AboutThisAppFragment.newInstance(),
+        null, null, true);
   }
 
   private void showFragment(String remove1, String remove2, String add1, Fragment addFragment1,

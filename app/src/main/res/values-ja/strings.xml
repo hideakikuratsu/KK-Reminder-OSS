@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">KK リマインダー</string>
+    <string name="app_promotion">KK リマインダー  -  タスクや予定を整理してわかりやすく管理</string>
     <string name="past">過去</string>
     <string name="today">今日</string>
     <string name="tomorrow">明日</string>
@@ -232,8 +233,13 @@
     <string name="manage_lists">リストを管理する</string>
     <string name="manage_lists_title">リストの管理</string>
     <string name="nav_settings">設定</string>
-    <string name="nav_help">ヘルプ</string>
-    <string name="nav_feedback">フィードバック</string>
+    <string name="nav_help_and_feedback">ヘルプとフィードバック</string>
+    <string name="help">ヘルプ</string>
+    <string name="contact">お問い合わせ</string>
+    <string name="feedback">フィードバック</string>
+    <string name="review">Google Playで評価をつける</string>
+    <string name="request">ご意見・ご要望</string>
+    <string name="share_this_app">このアプリをシェア</string>
     <string name="notification_channel_name">Reminder 通知チャンネル</string>
     <plurals name="cab_selected_task_num">
         <item quantity="other">%1$d個のタスクが選択されています。</item>

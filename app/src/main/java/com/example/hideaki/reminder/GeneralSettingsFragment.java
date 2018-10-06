@@ -122,6 +122,8 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         return true;
       }
       case "this_app": {
+
+        activity.showAboutThisAppFragment(TAG);
         return true;
       }
 
