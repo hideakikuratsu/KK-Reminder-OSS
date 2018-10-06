@@ -15,6 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ColorPickerListViewFragment extends Fragment {
@@ -111,6 +114,10 @@ public class ColorPickerListViewFragment extends Fragment {
     actionBar.setHomeAsUpIndicator(activity.upArrow);
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.pick_color);
+
+    AdView adView = view.findViewById(R.id.adView);
+    AdRequest adRequest = new AdRequest.Builder().build();
+    adView.loadAd(adRequest);
 
     return view;
   }

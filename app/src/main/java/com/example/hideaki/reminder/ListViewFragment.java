@@ -13,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 public class ListViewFragment extends Fragment {
 
   static final String TAG = ListViewFragment.class.getSimpleName();
@@ -90,6 +93,10 @@ public class ListViewFragment extends Fragment {
     activity.listView.setSortable(true);
     activity.listView.setAdapter(activity.listAdapter);
     activity.listView.setTextFilterEnabled(true);
+
+    AdView adView = view.findViewById(R.id.adView);
+    AdRequest adRequest = new AdRequest.Builder().build();
+    adView.loadAd(adRequest);
 
     return view;
   }

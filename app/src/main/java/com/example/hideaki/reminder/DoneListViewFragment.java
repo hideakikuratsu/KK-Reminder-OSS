@@ -13,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,6 +112,10 @@ public class DoneListViewFragment extends Fragment {
     activity.listView.setEmptyView(emptyView);
     activity.listView.setAdapter(activity.doneListAdapter);
     activity.listView.setTextFilterEnabled(true);
+
+    AdView adView = view.findViewById(R.id.adView);
+    AdRequest adRequest = new AdRequest.Builder().build();
+    adView.loadAd(adRequest);
 
     return view;
   }

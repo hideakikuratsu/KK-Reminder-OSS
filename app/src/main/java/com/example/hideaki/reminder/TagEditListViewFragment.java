@@ -26,6 +26,9 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 
 import static com.example.hideaki.reminder.UtilClass.getPxFromDp;
@@ -137,6 +140,10 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     }
     else actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.tag);
+
+    AdView adView = view.findViewById(R.id.adView);
+    AdRequest adRequest = new AdRequest.Builder().build();
+    adView.loadAd(adRequest);
 
     return view;
   }

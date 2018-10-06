@@ -41,6 +41,8 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.ads.MobileAds;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -204,6 +206,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
       notificationManager.createNotificationChannel(notificationChannel);
     }
+
+    MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
   }
 
   @Override

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <com.example.hideaki.reminder.AdViewPreference/>
+
     <com.example.hideaki.reminder.MyPreferenceCategory
         android:title="@string/help">
 
