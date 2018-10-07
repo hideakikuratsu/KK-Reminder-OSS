@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -48,7 +49,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "kk_reminder_01")
         .setContentTitle("KK Reminder")
         .setContentText(item.getDetail())
-        .setSmallIcon(R.mipmap.ic_launcher_round)
+        .setSmallIcon(R.mipmap.ic_launcher)
+        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
         .setWhen(System.currentTimeMillis())
         .setContentIntent(sender)
         .setAutoCancel(true)
