@@ -22,6 +22,7 @@ public class AboutThisAppFragment extends Fragment {
   static final String TAG = AboutThisAppFragment.class.getSimpleName();
   private MainActivity activity;
   private static Locale locale = Locale.getDefault();
+  private WebView webView;
 
   public static AboutThisAppFragment newInstance() {
 
@@ -48,7 +49,7 @@ public class AboutThisAppFragment extends Fragment {
     View view = inflater.inflate(R.layout.about_this_app_layout, container, false);
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
 
-    WebView webView = view.findViewById(R.id.webView);
+    webView = view.findViewById(R.id.webView);
     if(locale.equals(Locale.JAPAN)) {
       webView.loadUrl("file:///android_asset/about_this_app_ja.html");
     }
@@ -74,5 +75,16 @@ public class AboutThisAppFragment extends Fragment {
 
     getFragmentManager().popBackStack();
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  public void onDestroyView() {
+
+    super.onDestroyView();
+    webView.stopLoading();
+    webView.setWebChromeClient(null);
+    webView.setWebViewClient(null);
+    webView.destroy();
+    webView = null;
   }
 }
