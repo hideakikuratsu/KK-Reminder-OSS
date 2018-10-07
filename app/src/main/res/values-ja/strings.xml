@@ -277,6 +277,22 @@
     <string name="task_not_pushed_yet">タスクがありません</string>
     <string name="list_not_pushed_yet">リストがありません</string>
     <string name="notes_not_pushed_yet">メモがありません</string>
+    <string name="upgrade">アップグレード</string>
+    <string name="premium_account_promotion">プレミアムアカウント限定の機能</string>
+    <string name="upgrade_to_premium_account">プレミアムアカウントにアップグレード</string>
+    <string name="premium_upgrade_message">プレミアムアカウントにアップグレードすると、以下のような機能を利用することができます。</string>
+    <string name="feature_one">1. 広告の非表示</string>
+    <string name="feature_two">2. 通知音の変更</string>
+    <string name="feature_three">3. アプリのテーマカラーの変更</string>
+    <string name="feature_four">4. Googleドライブを利用したデータのバックアップと復元</string>
+
+    <string-array name="feature_list">
+        <item>@string/premium_upgrade_message</item>
+        <item>@string/feature_one</item>
+        <item>@string/feature_two</item>
+        <item>@string/feature_three</item>
+        <item>@string/feature_four</item>
+    </string-array>
 
     <string name="red">赤色</string>
     <string name="pink">ピンク色</string>

@@ -245,6 +245,9 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     pickAlarm = (PreferenceScreen)findPreference("pick_alarm");
     pickAlarm.setOnPreferenceClickListener(this);
+    if(!activity.generalSettings.isPremium()) {
+      pickAlarm.setTitle(pickAlarm.getTitle() + " (" + activity.getString(R.string.premium_account_promotion) + ")");
+    }
 
     PreferenceCategory notes_category = (PreferenceCategory)findPreference("notes_category");
     notes = (PreferenceScreen)findPreference("notes");
@@ -608,17 +611,38 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       }
       case "pick_alarm": {
 
-        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, activity.getString(R.string.pick_alarm));
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(activity.generalSettings.getItem().getSoundUri()));
-        String uriString = item.getSoundUri();
-        if(uriString != null) {
-          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(uriString));
+        if(activity.generalSettings.isPremium()) {
+          Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, activity.getString(R.string.pick_alarm));
+          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL);
+          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(activity.generalSettings.getItem().getSoundUri()));
+          String uriString = item.getSoundUri();
+          if(uriString != null) {
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(uriString));
+          }
+          startActivityForResult(intent, REQUEST_CODE_RINGTONE_PICKER);
         }
-        startActivityForResult(intent, REQUEST_CODE_RINGTONE_PICKER);
+        else {
+          String[] items = activity.getResources().getStringArray(R.array.feature_list);
+
+          new AlertDialog.Builder(activity)
+              .setTitle(R.string.upgrade_to_premium_account)
+              .setItems(items, null)
+              .setPositiveButton(R.string.upgrade, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                  activity.onBuyButtonClicked();
+                }
+              })
+              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+              })
+              .show();
+        }
         return true;
       }
       case "notes": {

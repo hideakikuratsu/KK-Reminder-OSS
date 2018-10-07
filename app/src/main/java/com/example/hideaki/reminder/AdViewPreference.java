@@ -32,7 +32,12 @@ public class AdViewPreference extends Preference {
     super.onBindView(view);
 
     AdView adView = view.findViewById(R.id.adView);
-    AdRequest adRequest = new AdRequest.Builder().build();
-    adView.loadAd(adRequest);
+    if(activity.generalSettings.isPremium()) {
+      adView.setVisibility(View.GONE);
+    }
+    else {
+      AdRequest adRequest = new AdRequest.Builder().build();
+      adView.loadAd(adRequest);
+    }
   }
 }

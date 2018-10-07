@@ -292,6 +292,22 @@
     <string name="task_not_pushed_yet">No task exists</string>
     <string name="list_not_pushed_yet">No list exists</string>
     <string name="notes_not_pushed_yet">No notes exist</string>
+    <string name="upgrade">Upgrade</string>
+    <string name="premium_account_promotion">Only Premium Account can use this feature</string>
+    <string name="upgrade_to_premium_account">Upgrade to Premium Account</string>
+    <string name="premium_upgrade_message">If you upgrade to Premium Account, you can use following features.</string>
+    <string name="feature_one">1. Disable ads</string>
+    <string name="feature_two">2. You can change a notification sound</string>
+    <string name="feature_three">3. You can set a theme color of this app</string>
+    <string name="feature_four">4. You can backup and restore data using Google Drive</string>
+
+    <string-array name="feature_list">
+        <item>@string/premium_upgrade_message</item>
+        <item>@string/feature_one</item>
+        <item>@string/feature_two</item>
+        <item>@string/feature_three</item>
+        <item>@string/feature_four</item>
+    </string-array>
 
     <string name="red">Red</string>
     <string name="pink">Pink</string>

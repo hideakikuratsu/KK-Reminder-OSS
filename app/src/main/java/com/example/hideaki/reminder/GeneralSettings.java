@@ -6,7 +6,7 @@ import java.util.List;
 
 class GeneralSettings implements Serializable {
 
-  private static final long serialVersionUID = 2969579071872650012L;
+  private static final long serialVersionUID = 3717054861436739940L;
   private List<NonScheduledList> nonScheduledLists = new ArrayList<>();
   private List<Tag> tagList = new ArrayList<>();
   private boolean expandable_todo = true;
@@ -19,6 +19,7 @@ class GeneralSettings implements Serializable {
   private String defaultQuickPicker3;
   private String defaultQuickPicker4;
   private MyTheme theme = new MyTheme();
+  private boolean premium;
 
   List<NonScheduledList> getNonScheduledLists() {
     return nonScheduledLists;
@@ -74,6 +75,10 @@ class GeneralSettings implements Serializable {
 
   MyTheme getTheme() {
     return theme;
+  }
+
+  public boolean isPremium() {
+    return premium;
   }
 
   void setNonScheduledLists(List<NonScheduledList> nonScheduledLists) {
@@ -135,5 +140,9 @@ class GeneralSettings implements Serializable {
 
   void setTheme(MyTheme theme) {
     this.theme = theme;
+  }
+
+  public void setPremium(boolean premium) {
+    this.premium = premium;
   }
 }
