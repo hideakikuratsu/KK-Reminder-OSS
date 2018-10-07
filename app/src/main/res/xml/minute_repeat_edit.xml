@@ -5,22 +5,22 @@
         android:key="label"
         android:summary="@string/non_repeat"/>
 
-    <com.example.hideaki.reminder.MinuteRepeatIntervalPickerPreference/>
+    <com.hideaki.kk_reminder.MinuteRepeatIntervalPickerPreference/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="never"
         android:title="@string/none"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="count"
         android:title="@string/repeat_minute_count"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="duration"
         android:title="@string/repeat_minute_duration"/>
 
-    <com.example.hideaki.reminder.MinuteRepeatCountPickerPreference android:key="count_picker"/>
+    <com.hideaki.kk_reminder.MinuteRepeatCountPickerPreference android:key="count_picker"/>
 
-    <com.example.hideaki.reminder.MinuteRepeatDurationPickerPreference android:key="duration_picker"/>
+    <com.hideaki.kk_reminder.MinuteRepeatDurationPickerPreference android:key="duration_picker"/>
 
 </PreferenceScreen>

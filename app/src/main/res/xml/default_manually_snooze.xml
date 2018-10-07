@@ -4,6 +4,6 @@
     <PreferenceScreen
         android:key="label"/>
 
-    <com.example.hideaki.reminder.DefaultManuallySnoozePreference/>
+    <com.hideaki.kk_reminder.DefaultManuallySnoozePreference/>
 
 </PreferenceScreen>

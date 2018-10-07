@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="app_id">******************</string>
+    <string name="ad_unit_id">******************</string>
     <string name="app_name">KK リマインダー</string>
     <string name="app_promotion">KK リマインダー  -  タスクや予定を整理してわかりやすく管理</string>
     <string name="past">過去</string>

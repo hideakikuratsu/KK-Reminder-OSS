@@ -26,43 +26,43 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="10dp">
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="1" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="2" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="3" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="4" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="5" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="6" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -75,43 +75,43 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="10dp">
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="8" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="9" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="10" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="11" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="12" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="13" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -124,43 +124,43 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="10dp">
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="15" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="16" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="17" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="18" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="19" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="20" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -172,43 +172,43 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="22" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="23" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="24" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="25" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="26" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="27" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -222,19 +222,19 @@
             android:layout_height="match_parent"
             android:layout_marginTop="10dp">
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="29" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="30" />
 
-            <com.example.hideaki.reminder.CheckableTextView
+            <com.hideaki.kk_reminder.CheckableTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"

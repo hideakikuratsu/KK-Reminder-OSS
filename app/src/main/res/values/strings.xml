@@ -1,5 +1,7 @@
 <resources>
 
+    <string name="app_id">******************</string>
+    <string name="ad_unit_id">******************</string>
     <string name="app_name">KK Reminder</string>
     <string name="app_promotion">KK Reminder  -  Manage Tasks and Schedules easily</string>
     <string name="past">Past</string>

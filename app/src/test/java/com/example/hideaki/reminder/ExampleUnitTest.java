@@ -1,4 +1,4 @@
-package com.example.hideaki.reminder;
+package com.hideaki.kk_reminder;
 
 import org.junit.Test;
 

@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.example.hideaki.reminder.DayRepeatCustomPickerPreference android:key="picker"/>
+    <com.hideaki.kk_reminder.DayRepeatCustomPickerPreference android:key="picker"/>
 
-    <com.example.hideaki.reminder.DayRepeatCustomWeekPickerPreference android:key="week"/>
+    <com.hideaki.kk_reminder.DayRepeatCustomWeekPickerPreference android:key="week"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="days_of_month"
         android:title="@string/days_of_month"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="on_the_month"
         android:title="@string/on_the_month"/>
 
-    <com.example.hideaki.reminder.DayRepeatCustomDaysOfMonthPickerPreference android:key="days_of_month_picker"/>
+    <com.hideaki.kk_reminder.DayRepeatCustomDaysOfMonthPickerPreference android:key="days_of_month_picker"/>
 
-    <com.example.hideaki.reminder.DayRepeatCustomOnTheMonthPickerPreference android:key="on_the_month_picker"/>
+    <com.hideaki.kk_reminder.DayRepeatCustomOnTheMonthPickerPreference android:key="on_the_month_picker"/>
 
-    <com.example.hideaki.reminder.DayRepeatCustomYearPickerPreference android:key="year"/>
+    <com.hideaki.kk_reminder.DayRepeatCustomYearPickerPreference android:key="year"/>
 
 </PreferenceScreen>

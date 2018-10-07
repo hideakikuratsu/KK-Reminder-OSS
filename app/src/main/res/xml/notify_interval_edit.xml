@@ -4,46 +4,46 @@
     <PreferenceScreen
         android:key="label"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="none"
         android:title="@string/none"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="default"
         android:title="@string/notify_default"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="every_minute"
         android:title="@string/notify_every_minute"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="every_five_minutes"
         android:title="@string/notify_every_five_minutes"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="every_fifteen_minutes"
         android:title="@string/notify_every_fifteen_minutes"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="every_thirty_minutes"
         android:title="@string/notify_every_thirty_minutes"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="every_hour"
         android:title="@string/notify_every_hour"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="every_day"
         android:title="@string/notify_every_day"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="custom"
         android:title="@string/custom"/>
 
-    <com.example.hideaki.reminder.NotifyIntervalDurationPickerPreference
+    <com.hideaki.kk_reminder.NotifyIntervalDurationPickerPreference
         android:key="duration"/>
 
-    <com.example.hideaki.reminder.NotifyIntervalTimePickerPreference
+    <com.hideaki.kk_reminder.NotifyIntervalTimePickerPreference
         android:key="time"/>
 
     <PreferenceScreen

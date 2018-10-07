@@ -1,4 +1,4 @@
-package com.example.hideaki.reminder;
+package com.hideaki.kk_reminder;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     // Context of the app under test.
     Context appContext = InstrumentationRegistry.getTargetContext();
 
-    assertEquals("com.example.hideaki.reminder", appContext.getPackageName());
+    assertEquals("com.hideaki.kk_reminder", appContext.getPackageName());
   }
 }

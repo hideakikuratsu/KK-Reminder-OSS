@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.hideaki.reminder.SortableListView
+    <com.hideaki.kk_reminder.SortableListView
         android:id="@+id/notes_todo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

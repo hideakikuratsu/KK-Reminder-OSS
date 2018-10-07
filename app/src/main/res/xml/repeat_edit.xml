@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="never"
         android:title="@string/none"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="everyday"
         android:title="@string/everyday"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="everyweekday"
         android:title="@string/everyweekday"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="everyweek"
         android:title="@string/everyweek"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="everymonth"
         android:title="@string/everymonth"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="everyyear"
         android:title="@string/everyyear"/>
 
-    <com.example.hideaki.reminder.MyCheckBoxPreference
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="custom"
         android:title="@string/custom"/>
 

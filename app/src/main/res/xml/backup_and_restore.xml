@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.example.hideaki.reminder.MyPreferenceCategory
+    <com.hideaki.kk_reminder.MyPreferenceCategory
         android:title="@string/manually_backup"
         android:key="backup_and_restore">
 
@@ -16,6 +16,6 @@
         <PreferenceScreen
             android:title="@string/logout"
             android:key="logout"/>
-    </com.example.hideaki.reminder.MyPreferenceCategory>
+    </com.hideaki.kk_reminder.MyPreferenceCategory>
 
 </PreferenceScreen>

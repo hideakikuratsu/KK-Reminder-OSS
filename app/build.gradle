@@ -5,12 +5,13 @@ android {
     compileSdkVersion 28
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
-        applicationId "com.example.hideaki.reminder"
+        applicationId "com.hideaki.kk_reminder"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -40,4 +41,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.google.firebase:firebase-ads:17.0.0'
     implementation 'com.android.billingclient:billing:1.1'
+    implementation 'com.android.support:multidex:1.0.3'
 }
