@@ -48,9 +48,6 @@ import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
@@ -61,6 +58,8 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_URI_SOUND;
 import static com.hideaki.kk_reminder.UtilClass.DONE_ITEM_COMPARATOR;
@@ -74,8 +73,6 @@ import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PurchasesUpdatedListener {
 
@@ -116,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private boolean is_in_on_create;
   private static String BASE_FRAGMENT_TAG;
   private static Locale locale = Locale.getDefault();
+  private int try_count;
   private BillingClient billingClient;
 
   @Override
@@ -135,8 +133,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       updateSettingsDB();
     }
 
+    //TODO: 強制的にプレミアムアカウントへアップグレードさせる。テスト用なので必ず取り除くこと
     generalSettings.setPremium(true);
     updateSettingsDB();
+
+    //広告読み出し機能のセットアップ
+    MobileAds.initialize(this, getString(R.string.app_id));
+
+    //ビリングサービスのセットアップ
+    setupBillingServices();
 
     //テーマの設定
     MyTheme theme = generalSettings.getTheme();
@@ -221,62 +226,82 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
       notificationManager.createNotificationChannel(notificationChannel);
     }
+  }
 
-    MobileAds.initialize(this, getString(R.string.app_id));
+  private void setupBillingServices() {
 
-    billingClient = BillingClient
-        .newBuilder(this)
-        .setListener(this)
-        .build();
-    billingClient.startConnection(new BillingClientStateListener() {
-      @Override
-      public void onBillingSetupFinished(int responseCode) {
+    if(billingClient == null) {
+      try_count = 0;
+      billingClient = BillingClient
+          .newBuilder(this)
+          .setListener(this)
+          .build();
+      billingClient.startConnection(new BillingClientStateListener() {
+        @Override
+        public void onBillingSetupFinished(int responseCode) {
 
-        if(responseCode == BillingClient.BillingResponse.OK) {
-          Toast.makeText(MainActivity.this, "セットアップ完了", Toast.LENGTH_LONG).show();
+          if(responseCode == BillingClient.BillingResponse.OK) {
 
-          List<String> skuList = new ArrayList<>();
-          skuList.add(PRODUCT_ID_PREMIUM);
-          SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder()
-              .setSkusList(skuList)
-              .setType(BillingClient.SkuType.INAPP);
-
-          billingClient.querySkuDetailsAsync(params.build(), new SkuDetailsResponseListener() {
-            @Override
-            public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
-
-              if(responseCode == BillingClient.BillingResponse.OK && skuDetailsList != null) {
-                for(SkuDetails skuDetails : skuDetailsList) {
-                  String sku = skuDetails.getSku();
-                  String price = skuDetails.getPrice();
-                  if(PRODUCT_ID_PREMIUM.equals(sku)) {
-                    Toast.makeText(MainActivity.this, "商品ID: " + PRODUCT_ID_PREMIUM, Toast.LENGTH_LONG).show();
-                    Toast.makeText(MainActivity.this, "値段: " + price, Toast.LENGTH_LONG).show();
-                  }
-                }
-              }
-            }
-          });
+            //プレミアムアカウントかどうかの確認
+            checkIsPremium();
+          }
+          else {
+            Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
+            try_count++;
+            if(try_count < 3) billingClient.startConnection(this);
+          }
+//          Toast.makeText(MainActivity.this, "セットアップ完了", Toast.LENGTH_LONG).show();
+//
+//          List<String> skuList = new ArrayList<>();
+//          skuList.add(PRODUCT_ID_PREMIUM);
+//          SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder()
+//              .setSkusList(skuList)
+//              .setType(BillingClient.SkuType.INAPP);
+//
+//          billingClient.querySkuDetailsAsync(params.build(), new SkuDetailsResponseListener() {
+//            @Override
+//            public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
+//
+//              if(responseCode == BillingClient.BillingResponse.OK && skuDetailsList != null) {
+//                for(SkuDetails skuDetails : skuDetailsList) {
+//                  String sku = skuDetails.getSku();
+//                  String price = skuDetails.getPrice();
+//                  if(PRODUCT_ID_PREMIUM.equals(sku)) {
+//                    Toast.makeText(MainActivity.this, "商品ID: " + PRODUCT_ID_PREMIUM, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(MainActivity.this, "値段: " + price, Toast.LENGTH_LONG).show();
+//                  }
+//                }
+//              }
+//            }
+//          });
+//        }
         }
-      }
 
-      @Override
-      public void onBillingServiceDisconnected() {
+        @Override
+        public void onBillingServiceDisconnected() {
 
-        Toast.makeText(MainActivity.this, "セットアップ失敗", Toast.LENGTH_LONG).show();
-      }
-    });
+          Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
+          try_count++;
+          if(try_count < 3) billingClient.startConnection(this);
+        }
+      });
+    }
+    else checkIsPremium();
+  }
 
-    //プレミアムアカウントかどうかの確認
+  private void checkIsPremium() {
+
     if(!generalSettings.isPremium()) {
       Purchase.PurchasesResult purchasesResult = billingClient.queryPurchases(BillingClient.SkuType.INAPP);
       List<Purchase> purchaseList = purchasesResult.getPurchasesList();
       if(purchaseList != null) {
         for(Purchase purchase : purchaseList) {
           if(PRODUCT_ID_PREMIUM.equals(purchase.getSku())) {
-            Toast.makeText(MainActivity.this, "購入済み", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.succeed_to_upgrade), Toast.LENGTH_LONG).show();
             generalSettings.setPremium(true);
             updateSettingsDB();
+            finish();
+            startActivity(new Intent(this, MainActivity.class));
           }
         }
       }
@@ -289,17 +314,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     if(responseCode == BillingClient.BillingResponse.OK && purchases != null) {
       for(Purchase purchase : purchases) {
         if(PRODUCT_ID_PREMIUM.equals(purchase.getSku())) {
-          Toast.makeText(this, PRODUCT_ID_PREMIUM + "を購入しました", Toast.LENGTH_LONG).show();
+          Toast.makeText(this, getString(R.string.succeed_to_upgrade), Toast.LENGTH_LONG).show();
           generalSettings.setPremium(true);
           updateSettingsDB();
+          finish();
+          startActivity(new Intent(this, MainActivity.class));
         }
       }
     }
     else if(responseCode == BillingClient.BillingResponse.USER_CANCELED) {
-      Toast.makeText(MainActivity.this, "購入がキャンセルされました", Toast.LENGTH_LONG).show();
+      Toast.makeText(MainActivity.this, getString(R.string.cancel_to_buy), Toast.LENGTH_LONG).show();
     }
     else {
-      Toast.makeText(MainActivity.this, "エラーが発生しました", Toast.LENGTH_LONG).show();
+      Toast.makeText(MainActivity.this, getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
     }
   }
 
@@ -453,20 +480,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       updateSettingsDB();
     }
 
-    //プレミアムアカウントかどうかの確認
-    if(!generalSettings.isPremium()) {
-      Purchase.PurchasesResult purchasesResult = billingClient.queryPurchases(BillingClient.SkuType.INAPP);
-      List<Purchase> purchaseList = purchasesResult.getPurchasesList();
-      if(purchaseList != null) {
-        for(Purchase purchase : purchaseList) {
-          if(PRODUCT_ID_PREMIUM.equals(purchase.getSku())) {
-            Toast.makeText(MainActivity.this, "購入済み", Toast.LENGTH_LONG).show();
-            generalSettings.setPremium(true);
-            updateSettingsDB();
-          }
-        }
-      }
-    }
+    //ビリングサービスのセットアップ
+    setupBillingServices();
 
     //データベースを端末暗号化ストレージへコピーする
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

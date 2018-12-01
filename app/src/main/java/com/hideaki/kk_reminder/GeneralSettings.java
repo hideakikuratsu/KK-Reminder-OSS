@@ -19,7 +19,7 @@ class GeneralSettings implements Serializable {
   private String defaultQuickPicker3;
   private String defaultQuickPicker4;
   private MyTheme theme = new MyTheme();
-  private boolean premium;
+  private boolean premium = false;
 
   List<NonScheduledList> getNonScheduledLists() {
     return nonScheduledLists;

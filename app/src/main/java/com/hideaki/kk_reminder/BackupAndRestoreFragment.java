@@ -3,6 +3,7 @@ package com.hideaki.kk_reminder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -13,7 +14,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,16 +50,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-import static com.hideaki.kk_reminder.UtilClass.RC_SIGN_IN;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.RC_SIGN_IN;
 
 public class BackupAndRestoreFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
   @SuppressLint("SdCardPath")
   private static final String DATABASE_PATH = "/data/data/com.hideaki.kk_reminder/databases/";
   private static final String FILE_NAME = MyDatabaseHelper.DATABASE;
+  private static final String FOLDER_NAME = "KK_Reminder_Backup";
   private static final String MIME_TYPE = "application/x-sqlite-3";
 
   private MainActivity activity;
@@ -66,6 +72,8 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
   private GoogleSignInClient signInClient;
   private PreferenceScreen logout;
   private boolean is_backup;
+  private int choice;
+  private DriveFolder rootFolder;
 
   public static BackupAndRestoreFragment newInstance() {
 
@@ -118,11 +126,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
     signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
 
     if(signInAccount != null) {
-      GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-          .requestScopes(Drive.SCOPE_APPFOLDER)
-          .build();
-      signInClient = GoogleSignIn.getClient(activity, signInOptions);
-
+      setSignInClient();
       preferenceCategory.addPreference(logout);
     }
     else preferenceCategory.removePreference(logout);
@@ -150,7 +154,8 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
         }
         else {
           is_backup = true;
-          signIn();
+          setSignInClient();
+          startActivityForResult(signInClient.getSignInIntent(), RC_SIGN_IN);
         }
         return true;
       }
@@ -162,7 +167,8 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
         }
         else {
           is_backup = false;
-          signIn();
+          setSignInClient();
+          startActivityForResult(signInClient.getSignInIntent(), RC_SIGN_IN);
         }
         return true;
       }
@@ -177,21 +183,24 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
 
   private void restoreFromDrive() {
 
-    final Query query = new Query.Builder()
-        .addFilter(Filters.and(
-            Filters.eq(SearchableField.TITLE, FILE_NAME),
-            Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE)
-        ))
-        .build();
-
     driveResourceClient
-        .getAppFolder()
+        .getRootFolder()
         .continueWithTask(new Continuation<DriveFolder, Task<MetadataBuffer>>() {
           @Override
           public Task<MetadataBuffer> then(@NonNull Task<DriveFolder> task) {
 
-            DriveFolder appFolder = task.getResult();
-            return driveResourceClient.queryChildren(appFolder, query);
+            DriveFolder rootFolder = task.getResult();
+            checkNotNull(rootFolder);
+
+            final Query backupFolderQuery = new Query.Builder()
+                .addFilter(Filters.and(
+                    Filters.eq(SearchableField.TITLE, FOLDER_NAME),
+                    Filters.eq(SearchableField.MIME_TYPE, DriveFolder.MIME_TYPE),
+                    Filters.eq(SearchableField.STARRED, true)
+                ))
+                .build();
+
+            return driveResourceClient.queryChildren(rootFolder, backupFolderQuery);
           }
         })
         .addOnSuccessListener(new OnSuccessListener<MetadataBuffer>() {
@@ -206,7 +215,69 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
               ).show();
             }
             else {
-              readDriveFile(metadata.get(0).getDriveId().asDriveFile());
+              DriveFolder backupFolder = metadata.get(0).getDriveId().asDriveFolder();
+              final Query backupFileQuery = new Query.Builder()
+                  .addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE))
+                  .build();
+
+              driveResourceClient
+                  .queryChildren(backupFolder, backupFileQuery)
+                  .addOnSuccessListener(new OnSuccessListener<MetadataBuffer>() {
+                    @Override
+                    public void onSuccess(final MetadataBuffer metadata) {
+
+                      choice = 0;
+                      final int size = metadata.getCount();
+                      if(size == 0) {
+                        Toast.makeText(activity,
+                            activity.getString(R.string.backup_not_exists), Toast.LENGTH_LONG
+                        ).show();
+
+                        metadata.release();
+                      }
+                      else {
+                        final List<String> itemList = new ArrayList<>();
+                        List<Task<DriveContents>> tasks = new ArrayList<>();
+                        for(int i = 0; i < size; i++) {
+
+                          final int j = i;
+                          tasks.add(driveResourceClient
+                              .openFile(metadata.get(i).getDriveId().asDriveFile(), DriveFile.MODE_READ_ONLY)
+                              .addOnSuccessListener(new OnSuccessListener<DriveContents>() {
+                                @Override
+                                public void onSuccess(DriveContents driveContents) {
+
+                                  itemList.add(metadata.get(j).getTitle());
+                                }
+                              })
+                              .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {}
+                              })
+                          );
+                        }
+
+                        Tasks.whenAll(tasks)
+                            .continueWithTask(new Continuation<Void, Task<Void>>() {
+                              @Override
+                              public Task<Void> then(@NonNull Task<Void> task) {
+
+                                displayDialog(itemList, metadata);
+                                return null;
+                              }
+                            });
+                      }
+                    }
+                  })
+                  .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                      Toast.makeText(activity,
+                          activity.getString(R.string.fail_to_query), Toast.LENGTH_LONG
+                      ).show();
+                    }
+                  });
             }
 
             metadata.release();
@@ -223,6 +294,61 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
         });
   }
 
+  private void displayDialog(List<String> itemList, final MetadataBuffer metadata) {
+
+    if(itemList.size() == 0) {
+      Toast.makeText(activity,
+          activity.getString(R.string.backup_not_exists), Toast.LENGTH_LONG
+      ).show();
+
+      metadata.release();
+    }
+    else {
+      String[] items = itemList.toArray(new String[0]);
+      new AlertDialog.Builder(activity)
+          .setTitle(R.string.choose_backup_data_message)
+          .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+              choice = which;
+            }
+          })
+          .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+              readDriveFile(metadata.get(choice).getDriveId().asDriveFile());
+
+              metadata.release();
+            }
+          })
+          .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+              Toast.makeText(activity,
+                  activity.getString(R.string.canceled), Toast.LENGTH_LONG
+              ).show();
+
+              metadata.release();
+            }
+          })
+          .setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+
+              Toast.makeText(activity,
+                  activity.getString(R.string.canceled), Toast.LENGTH_LONG
+              ).show();
+
+              metadata.release();
+            }
+          })
+          .show();
+    }
+  }
+
   private void readDriveFile(DriveFile file) {
 
     driveResourceClient
@@ -232,6 +358,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public Task<Void> then(@NonNull Task<DriveContents> task) {
 
             DriveContents contents = task.getResult();
+            checkNotNull(contents);
 
             File file = new File(DATABASE_PATH + FILE_NAME);
             InputStream inputStream = contents.getInputStream();
@@ -278,21 +405,24 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
 
   private void backupToDrive() {
 
-    final Query query = new Query.Builder()
-        .addFilter(Filters.and(
-            Filters.eq(SearchableField.TITLE, FILE_NAME),
-            Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE)
-        ))
-        .build();
-
     driveResourceClient
-        .getAppFolder()
+        .getRootFolder()
         .continueWithTask(new Continuation<DriveFolder, Task<MetadataBuffer>>() {
           @Override
           public Task<MetadataBuffer> then(@NonNull Task<DriveFolder> task) {
 
-            DriveFolder appFolder = task.getResult();
-            return driveResourceClient.queryChildren(appFolder, query);
+            rootFolder = task.getResult();
+            checkNotNull(rootFolder);
+
+            final Query backupFolderQuery = new Query.Builder()
+                .addFilter(Filters.and(
+                    Filters.eq(SearchableField.TITLE, FOLDER_NAME),
+                    Filters.eq(SearchableField.MIME_TYPE, DriveFolder.MIME_TYPE),
+                    Filters.eq(SearchableField.STARRED, true)
+                ))
+                .build();
+
+            return driveResourceClient.queryChildren(rootFolder, backupFolderQuery);
           }
         })
         .addOnSuccessListener(new OnSuccessListener<MetadataBuffer>() {
@@ -301,9 +431,36 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
 
             int count = metadata.getCount();
 
-            if(count == 0) createFileInAppFolder();
+            if(count == 0) {
+
+              MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
+                  .setTitle(FOLDER_NAME)
+                  .setMimeType(DriveFolder.MIME_TYPE)
+                  .setStarred(true)
+                  .build();
+
+              driveResourceClient
+                  .createFolder(rootFolder, changeSet)
+                  .addOnSuccessListener(new OnSuccessListener<DriveFolder>() {
+                    @Override
+                    public void onSuccess(DriveFolder driveFolder) {
+
+                      createBackupFile(driveFolder);
+                    }
+                  })
+                  .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                      Toast.makeText(activity,
+                          activity.getString(R.string.fail_to_make_backup_folder), Toast.LENGTH_LONG
+                      ).show();
+                    }
+                  });
+            }
             else {
-              writeToDriveFile(metadata.get(0).getDriveId().asDriveFile());
+              DriveFolder backupFolder = metadata.get(0).getDriveId().asDriveFolder();
+              createBackupFile(backupFolder);
             }
 
             metadata.release();
@@ -320,18 +477,16 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
         });
   }
 
-  private void createFileInAppFolder() {
+  private void createBackupFile(final DriveFolder folder) {
 
-    final Task<DriveFolder> appFolderTask = driveResourceClient.getAppFolder();
-    final Task<DriveContents> createContentsTask = driveResourceClient.createContents();
-
-    Tasks.whenAll(appFolderTask, createContentsTask)
-        .continueWithTask(new Continuation<Void, Task<DriveFile>>() {
+    driveResourceClient
+        .createContents()
+        .continueWithTask(new Continuation<DriveContents, Task<DriveFile>>() {
           @Override
-          public Task<DriveFile> then(@NonNull Task<Void> task) {
+          public Task<DriveFile> then(@NonNull Task<DriveContents> task) {
 
-            DriveFolder appFolder = appFolderTask.getResult();
-            DriveContents contents = createContentsTask.getResult();
+            DriveContents contents = task.getResult();
+            checkNotNull(contents);
 
             File file = new File(DATABASE_PATH + FILE_NAME);
             OutputStream outputStream = contents.getOutputStream();
@@ -349,16 +504,16 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
             }
 
             MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                .setTitle(FILE_NAME)
+                .setTitle(DateFormat.format("yyyy_MM_dd_HH_mm_ss", new Date()).toString() + ".db")
                 .setMimeType(MIME_TYPE)
                 .build();
 
-            return driveResourceClient.createFile(appFolder, changeSet, contents);
+            return driveResourceClient.createFile(folder, changeSet, contents);
           }
         })
         .addOnSuccessListener(new OnSuccessListener<DriveFile>() {
           @Override
-          public void onSuccess(DriveFile driveFile) {
+          public void onSuccess(DriveFile file) {
 
             Toast.makeText(activity,
                 activity.getString(R.string.create_new_backup), Toast.LENGTH_LONG
@@ -385,6 +540,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public Task<Void> then(@NonNull Task<DriveContents> task) {
 
             DriveContents contents = task.getResult();
+            checkNotNull(contents);
 
             File file = new File(DATABASE_PATH + FILE_NAME);
             OutputStream outputStream = contents.getOutputStream();
@@ -428,21 +584,13 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
         });
   }
 
-  private void signIn() {
+  private void setSignInClient() {
 
-    if(signInAccount == null) {
+    if(signInClient == null) {
       GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-          .requestScopes(Drive.SCOPE_APPFOLDER)
+          .requestScopes(Drive.SCOPE_FILE)
           .build();
       signInClient = GoogleSignIn.getClient(activity, signInOptions);
-
-      startActivityForResult(signInClient.getSignInIntent(), RC_SIGN_IN);
-    }
-    else {
-      preferenceCategory.addPreference(logout);
-      driveResourceClient = Drive.getDriveResourceClient(activity, signInAccount);
-      if(is_backup) backupToDrive();
-      else restoreFromDrive();
     }
   }
 

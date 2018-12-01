@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
-
 public class ExpandableListViewFragment extends Fragment {
 
   static final String TAG = ExpandableListViewFragment.class.getSimpleName();
@@ -77,20 +75,23 @@ public class ExpandableListViewFragment extends Fragment {
     activity.expandableListView = view.findViewById(R.id.expandable_list);
     View emptyView = View.inflate(activity, R.layout.expandable_list_empty_layout, null);
     ((ViewGroup)activity.expandableListView.getParent()).addView(emptyView);
-    int paddingPx = getPxFromDp(activity, 150);
-    ((ViewGroup)activity.expandableListView.getParent()).setPadding(0, paddingPx, 0, 0);
+//    int paddingPx = getPxFromDp(activity, 150);
+//    ((ViewGroup)activity.expandableListView.getParent()).setPadding(0, paddingPx, 0, 0);
     activity.expandableListView.setEmptyView(emptyView);
     activity.expandableListView.setAdapter(activity.expandableListAdapter);
     activity.expandableListView.setTextFilterEnabled(true);
 
     AdView adView = view.findViewById(R.id.adView);
-    if(activity.generalSettings.isPremium()) {
-      adView.setVisibility(View.GONE);
-    }
-    else {
-      AdRequest adRequest = new AdRequest.Builder().build();
-      adView.loadAd(adRequest);
-    }
+    //TODO: 広告テスト。テストが終わったら元に戻すこと
+//    if(activity.generalSettings.isPremium()) {
+//      adView.setVisibility(View.GONE);
+//    }
+//    else {
+//      AdRequest adRequest = new AdRequest.Builder().build();
+//      adView.loadAd(adRequest);
+//    }
+    AdRequest adRequest = new AdRequest.Builder().build();
+    adView.loadAd(adRequest);
 
     return view;
   }

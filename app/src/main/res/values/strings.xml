@@ -115,6 +115,9 @@
     <string name="fail_to_create_new_backup">Failed to create a new backup</string>
     <string name="update_backup">Updated backups</string>
     <string name="fail_to_update_backup">Failed to update backups</string>
+    <string name="choose_backup_data_message">Which backup data do you want to restore from?</string>
+    <string name="canceled">Canceled</string>
+    <string name="fail_to_make_backup_folder">Failed to make a backup folder</string>
     <string name="logout_done">Logout</string>
     <string name="fail_to_logout">Failed to logout</string>
     <string name="error">Unexpected error occurred</string>
@@ -297,7 +300,11 @@
     <string name="upgrade">Upgrade</string>
     <string name="premium_account_promotion">Only Premium Account can use this feature</string>
     <string name="upgrade_to_premium_account">Upgrade to Premium Account</string>
-    <string name="premium_upgrade_message">If you upgrade to Premium Account, you can use following features.</string>
+    <string name="premium_upgrade_message">If you upgrade to Premium Account, you can use following features</string>
+    <string name="fail_to_setup_billing">Failed to setup billing services</string>
+    <string name="succeed_to_upgrade">Succeeded to upgrade to Premium Account</string>
+    <string name="cancel_to_buy">Canceled to buy</string>
+    <string name="error_occurred">Error Occurred</string>
     <string name="feature_one">1. Disable ads</string>
     <string name="feature_two">2. You can change a notification sound</string>
     <string name="feature_three">3. You can set a theme color of this app</string>
