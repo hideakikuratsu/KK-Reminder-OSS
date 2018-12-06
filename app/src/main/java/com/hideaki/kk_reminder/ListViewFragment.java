@@ -8,10 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -88,11 +90,18 @@ public class ListViewFragment extends Fragment {
     MyListAdapter.is_sorting = false;
     MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
     activity.listView = view.findViewById(R.id.listView);
+    LinearLayout linearLayout = new LinearLayout(activity);
+    linearLayout.setOrientation(LinearLayout.VERTICAL);
+    LinearLayout.LayoutParams layoutParams =
+        new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+    layoutParams.gravity = Gravity.CENTER;
     View emptyView = View.inflate(activity, R.layout.nonscheduled_list_empty_layout, null);
-    ((ViewGroup)activity.listView.getParent()).addView(emptyView);
-    int paddingPx = getPxFromDp(activity, 150);
-    ((ViewGroup)activity.listView.getParent()).setPadding(0, paddingPx, 0, 0);
-    activity.listView.setEmptyView(emptyView);
+    emptyView.setLayoutParams(layoutParams);
+    linearLayout.addView(emptyView);
+    int paddingPx = getPxFromDp(activity, 75);
+    linearLayout.setPadding(0, 0, 0, paddingPx);
+    ((ViewGroup)activity.listView.getParent()).addView(linearLayout, layoutParams);
+    activity.listView.setEmptyView(linearLayout);
     activity.listView.setDragListener(activity.listAdapter.dragListener);
     activity.listView.setSortable(true);
     activity.listView.setAdapter(activity.listAdapter);

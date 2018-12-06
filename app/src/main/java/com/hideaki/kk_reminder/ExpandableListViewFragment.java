@@ -7,13 +7,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+
+import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 
 public class ExpandableListViewFragment extends Fragment {
 
@@ -73,11 +77,18 @@ public class ExpandableListViewFragment extends Fragment {
     MyExpandableListAdapter.checked_item_num = 0;
     MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
     activity.expandableListView = view.findViewById(R.id.expandable_list);
+    LinearLayout linearLayout = new LinearLayout(activity);
+    linearLayout.setOrientation(LinearLayout.VERTICAL);
+    LinearLayout.LayoutParams layoutParams =
+        new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+    layoutParams.gravity = Gravity.CENTER;
     View emptyView = View.inflate(activity, R.layout.expandable_list_empty_layout, null);
-    ((ViewGroup)activity.expandableListView.getParent()).addView(emptyView);
-//    int paddingPx = getPxFromDp(activity, 150);
-//    ((ViewGroup)activity.expandableListView.getParent()).setPadding(0, paddingPx, 0, 0);
-    activity.expandableListView.setEmptyView(emptyView);
+    emptyView.setLayoutParams(layoutParams);
+    linearLayout.addView(emptyView);
+    int paddingPx = getPxFromDp(activity, 75);
+    linearLayout.setPadding(0, 0, 0, paddingPx);
+    ((ViewGroup)activity.expandableListView.getParent()).addView(linearLayout, layoutParams);
+    activity.expandableListView.setEmptyView(linearLayout);
     activity.expandableListView.setAdapter(activity.expandableListAdapter);
     activity.expandableListView.setTextFilterEnabled(true);
 

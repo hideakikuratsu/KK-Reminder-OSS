@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,10 +27,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.NOTES_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class NotesChecklistModeFragment extends Fragment {
 
@@ -175,9 +177,16 @@ public class NotesChecklistModeFragment extends Fragment {
     emptyView = View.inflate(activity, R.layout.notes_list_empty_layout, null);
     is_empty_view_added = false;
     if(NotesChecklistModeFragment.item.getNotesList().size() == 0) {
-      ((ViewGroup)sortableListView.getParent()).addView(emptyView);
-      int paddingPx = getPxFromDp(activity, 150);
-      ((ViewGroup)sortableListView.getParent()).setPadding(0, paddingPx, 0, 0);
+      LinearLayout linearLayout = new LinearLayout(activity);
+      linearLayout.setOrientation(LinearLayout.VERTICAL);
+      LinearLayout.LayoutParams layoutParams =
+          new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+      layoutParams.gravity = Gravity.CENTER;
+      emptyView.setLayoutParams(layoutParams);
+      linearLayout.addView(emptyView);
+      int paddingPx = getPxFromDp(activity, 75);
+      linearLayout.setPadding(0, 0, 0, paddingPx);
+      ((ViewGroup)sortableListView.getParent()).addView(linearLayout, layoutParams);
       is_empty_view_added = true;
     }
 
@@ -271,9 +280,16 @@ public class NotesChecklistModeFragment extends Fragment {
                 NotesChecklistModeFragment.item.setNotesList(new ArrayList<>(NotesTodoListAdapter.notesList));
 
                 if(NotesChecklistModeFragment.item.getNotesList().size() == 0 && !is_empty_view_added) {
-                  ((ViewGroup)sortableListView.getParent()).addView(emptyView);
-                  int paddingPx = getPxFromDp(activity, 218);
-                  ((ViewGroup)sortableListView.getParent()).setPadding(0, paddingPx, 0, 0);
+                  LinearLayout linearLayout = new LinearLayout(activity);
+                  linearLayout.setOrientation(LinearLayout.VERTICAL);
+                  LinearLayout.LayoutParams layoutParams =
+                      new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                  layoutParams.gravity = Gravity.CENTER;
+                  emptyView.setLayoutParams(layoutParams);
+                  linearLayout.addView(emptyView);
+                  int paddingPx = getPxFromDp(activity, 75);
+                  linearLayout.setPadding(0, 0, 0, paddingPx);
+                  ((ViewGroup)sortableListView.getParent()).addView(linearLayout, layoutParams);
                   is_empty_view_added = true;
                 }
 
