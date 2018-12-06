@@ -93,16 +93,13 @@ public class ExpandableListViewFragment extends Fragment {
     activity.expandableListView.setTextFilterEnabled(true);
 
     AdView adView = view.findViewById(R.id.adView);
-    //TODO: 広告テスト。テストが終わったら元に戻すこと
-//    if(activity.generalSettings.isPremium()) {
-//      adView.setVisibility(View.GONE);
-//    }
-//    else {
-//      AdRequest adRequest = new AdRequest.Builder().build();
-//      adView.loadAd(adRequest);
-//    }
-    AdRequest adRequest = new AdRequest.Builder().build();
-    adView.loadAd(adRequest);
+    if(activity.generalSettings.isPremium()) {
+      adView.setVisibility(View.GONE);
+    }
+    else {
+      AdRequest adRequest = new AdRequest.Builder().build();
+      adView.loadAd(adRequest);
+    }
 
     return view;
   }

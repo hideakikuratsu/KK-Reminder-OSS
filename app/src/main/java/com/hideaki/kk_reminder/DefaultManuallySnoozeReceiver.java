@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 
 import java.util.ArrayList;
@@ -13,15 +14,20 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_SNOOZE;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
+import static com.hideaki.kk_reminder.UtilClass.LIFECYCLE_COUNT;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.STARTED;
+import static com.hideaki.kk_reminder.UtilClass.STOPPED;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
 
@@ -57,8 +63,16 @@ public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
     setAlarm(item);
     updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-    generalSettings.setChange_in_notification(true);
-    updateSettingsDB();
+    SharedPreferences preferences = context.getSharedPreferences(LIFECYCLE_COUNT, MODE_PRIVATE);
+    int started = preferences.getInt(STARTED, -1);
+    int stopped = preferences.getInt(STOPPED, -1);
+    if(started > stopped) {
+      context.sendBroadcast(new Intent(DEFAULT_SNOOZE));
+    }
+    else {
+      generalSettings.setChange_in_notification(true);
+      updateSettingsDB();
+    }
   }
 
   public void setAlarm(Item item) {

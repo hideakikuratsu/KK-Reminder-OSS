@@ -22,6 +22,7 @@ class UtilClass {
   static final NotesComparator NOTES_COMPARATOR = new NotesComparator();
   static final Uri DEFAULT_URI_SOUND = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
   static final String NOTIFICATION_ID = "NOTIFICATION_ID";
+  static final String DEFAULT_SNOOZE = "DEFAULT_SNOOZE";
   static final String BOOT_FROM_NOTIFICATION = "BOOT_FROM_NOTIFICATION";
   static final int REQUEST_CODE_RINGTONE_PICKER = 0;
   static final String ITEM = "ITEM";
@@ -29,6 +30,11 @@ class UtilClass {
   static final String SAVED_DATA = "SAVED_DATA";
   static final String MENU_POSITION = "MENU_POSITION";
   static final String SUBMENU_POSITION = "SUBMENU_POSITION";
+  static final String LIFECYCLE_COUNT = "LIFECYCLE_COUNT";
+  static final String RESUMED = "RESUMED";
+  static final String PAUSED = "PAUSED";
+  static final String STARTED = "STARTED";
+  static final String STOPPED = "STOPPED";
   static final String LINE_SEPARATOR = System.getProperty("line.separator");
   static final String PRODUCT_ID_PREMIUM = "com.hideaki.premium";
   static final int RC_SIGN_IN = 1;

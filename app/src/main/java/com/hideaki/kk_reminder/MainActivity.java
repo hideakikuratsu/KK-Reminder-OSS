@@ -7,9 +7,11 @@ import android.app.FragmentTransaction;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -61,6 +63,7 @@ import java.util.TimerTask;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_SNOOZE;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_URI_SOUND;
 import static com.hideaki.kk_reminder.UtilClass.DONE_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
@@ -117,6 +120,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private BillingClient billingClient;
   public AlertDialog promotionDialog;
   private GeneralSettingsFragment generalSettingsFragment;
+  private BroadcastReceiver defaultSnoozeReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+
+      MyExpandableListAdapter.children = getChildren(MyDatabaseHelper.TODO_TABLE);
+      expandableListAdapter.notifyDataSetChanged();
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -142,11 +153,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //広告読み出し機能のセットアップ
     MobileAds.initialize(this, getString(R.string.app_id));
 
-    //ビリングサービスのセットアップ
-    setupBillingServices();
+    if(!generalSettings.isPremium()) {
 
-    //プロモーション用ダイアログのセットアップ
-    createPromotionDialog();
+      //ビリングサービスのセットアップ
+      setupBillingServices();
+
+      //プロモーション用ダイアログのセットアップ
+      createPromotionDialog();
+    }
 
     //テーマの設定
     MyTheme theme = generalSettings.getTheme();
@@ -231,6 +245,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
       notificationManager.createNotificationChannel(notificationChannel);
     }
+
+    //画面がフォアグラウンドの状態におけるDefaultManuallySnoozeReceiverからのインテントを待ち受ける
+    registerReceiver(defaultSnoozeReceiver, new IntentFilter(DEFAULT_SNOOZE));
+  }
+
+  @Override
+  protected void onDestroy() {
+
+    super.onDestroy();
+    unregisterReceiver(defaultSnoozeReceiver);
   }
 
   private void setupBillingServices() {
@@ -511,8 +535,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       updateSettingsDB();
     }
 
-    //ビリングサービスのセットアップ
-    setupBillingServices();
+    if(!generalSettings.isPremium()) {
+
+      //ビリングサービスのセットアップ
+      setupBillingServices();
+    }
 
     //データベースを端末暗号化ストレージへコピーする
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

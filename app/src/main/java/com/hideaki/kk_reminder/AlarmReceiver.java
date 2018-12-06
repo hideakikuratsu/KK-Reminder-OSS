@@ -152,6 +152,7 @@ public class AlarmReceiver extends BroadcastReceiver {
   }
 
   public void updateDB(Item item, String table) {
+
     accessor.executeUpdate(item.getId(), serialize(item), table);
   }
 
