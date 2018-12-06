@@ -624,25 +624,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
           }
           startActivityForResult(intent, REQUEST_CODE_RINGTONE_PICKER);
         }
-        else {
-          String[] items = activity.getResources().getStringArray(R.array.feature_list);
-
-          new AlertDialog.Builder(activity)
-              .setTitle(R.string.upgrade_to_premium_account)
-              .setItems(items, null)
-              .setPositiveButton(R.string.upgrade, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                  activity.onBuyButtonClicked();
-                }
-              })
-              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {}
-              })
-              .show();
-        }
+        else activity.promotionDialog.show();
         return true;
       }
       case "notes": {

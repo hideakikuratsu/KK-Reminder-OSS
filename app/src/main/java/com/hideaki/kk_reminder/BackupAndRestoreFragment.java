@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -121,6 +122,10 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
     actionBar.setHomeAsUpIndicator(activity.upArrow);
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.backup_and_restore);
+
+    //設定項目間の区切り線の非表示
+    ListView listView = view.findViewById(android.R.id.list);
+    listView.setDivider(null);
 
     //ログイン状態の初期化
     signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
@@ -436,6 +441,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
               MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
                   .setTitle(FOLDER_NAME)
                   .setMimeType(DriveFolder.MIME_TYPE)
+                  .setPinned(true)
                   .setStarred(true)
                   .build();
 
@@ -506,6 +512,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
             MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
                 .setTitle(DateFormat.format("yyyy_MM_dd_HH_mm_ss", new Date()).toString() + ".db")
                 .setMimeType(MIME_TYPE)
+                .setPinned(true)
                 .build();
 
             return driveResourceClient.createFile(folder, changeSet, contents);
@@ -594,31 +601,33 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
     }
   }
 
-  private void signOut() {
+  public void signOut() {
 
-    signInClient.signOut()
-        .addOnCompleteListener(new OnCompleteListener<Void>() {
-          @Override
-          public void onComplete(@NonNull Task<Void> task) {
+    if(signInClient != null) {
+      signInClient.signOut()
+          .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
 
-            preferenceCategory.removePreference(logout);
-            signInAccount = null;
-            signInClient = null;
-            driveResourceClient = null;
-            Toast.makeText(activity,
-                activity.getString(R.string.logout_done), Toast.LENGTH_LONG
-            ).show();
-          }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
+              preferenceCategory.removePreference(logout);
+              signInAccount = null;
+              signInClient = null;
+              driveResourceClient = null;
+              Toast.makeText(activity,
+                  activity.getString(R.string.logout_done), Toast.LENGTH_LONG
+              ).show();
+            }
+          })
+          .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-            Toast.makeText(activity,
-                activity.getString(R.string.fail_to_logout), Toast.LENGTH_LONG
-            ).show();
-          }
-        });
+              Toast.makeText(activity,
+                  activity.getString(R.string.fail_to_logout), Toast.LENGTH_LONG
+              ).show();
+            }
+          });
+    }
   }
 
   @Override

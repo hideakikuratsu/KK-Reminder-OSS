@@ -16,6 +16,9 @@
         <PreferenceScreen
             android:title="@string/logout"
             android:key="logout"/>
+
+        <PreferenceScreen
+            android:summary="@string/backup_and_restore_note"/>
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
 </PreferenceScreen>

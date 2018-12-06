@@ -2,7 +2,6 @@ package com.hideaki.kk_reminder;
 
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
@@ -12,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +24,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
   static final String TAG = GeneralSettingsFragment.class.getSimpleName();
 
   private MainActivity activity;
+  public BackupAndRestoreFragment backupAndRestoreFragment;
 
   public static GeneralSettingsFragment newInstance() {
 
@@ -120,23 +119,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
       }
       case "upgrade": {
 
-        String[] items = activity.getResources().getStringArray(R.array.feature_list);
-
-        new AlertDialog.Builder(activity)
-            .setTitle(R.string.upgrade_to_premium_account)
-            .setItems(items, null)
-            .setPositiveButton(R.string.upgrade, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-
-                activity.onBuyButtonClicked();
-              }
-            })
-            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {}
-            })
-            .show();
+        activity.promotionDialog.show();
         return true;
       }
       case "primary_color": {
@@ -145,25 +128,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
           ColorPickerListAdapter.is_general_settings = true;
           activity.showColorPickerListViewFragment(TAG);
         }
-        else {
-          String[] items = activity.getResources().getStringArray(R.array.feature_list);
-
-          new AlertDialog.Builder(activity)
-              .setTitle(R.string.upgrade_to_premium_account)
-              .setItems(items, null)
-              .setPositiveButton(R.string.upgrade, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                  activity.onBuyButtonClicked();
-                }
-              })
-              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {}
-              })
-              .show();
-        }
+        else activity.promotionDialog.show();
         return true;
       }
       case "secondary_color": {
@@ -173,51 +138,16 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
           activity.generalSettings.getTheme().setColor_primary(false);
           activity.showColorPickerListViewFragment(TAG);
         }
-        else {
-          String[] items = activity.getResources().getStringArray(R.array.feature_list);
-
-          new AlertDialog.Builder(activity)
-              .setTitle(R.string.upgrade_to_premium_account)
-              .setItems(items, null)
-              .setPositiveButton(R.string.upgrade, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                  activity.onBuyButtonClicked();
-                }
-              })
-              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {}
-              })
-              .show();
-        }
+        else activity.promotionDialog.show();
         return true;
       }
       case "backup": {
 
         if(activity.generalSettings.isPremium()) {
-          transitionFragment(BackupAndRestoreFragment.newInstance());
+          backupAndRestoreFragment = BackupAndRestoreFragment.newInstance();
+          transitionFragment(backupAndRestoreFragment);
         }
-        else {
-          String[] items = activity.getResources().getStringArray(R.array.feature_list);
-
-          new AlertDialog.Builder(activity)
-              .setTitle(R.string.upgrade_to_premium_account)
-              .setItems(items, null)
-              .setPositiveButton(R.string.upgrade, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                  activity.onBuyButtonClicked();
-                }
-              })
-              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {}
-              })
-              .show();
-        }
+        else activity.promotionDialog.show();
         return true;
       }
       case "this_app": {

@@ -115,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private static Locale locale = Locale.getDefault();
   private int try_count;
   private BillingClient billingClient;
+  public AlertDialog promotionDialog;
+  private GeneralSettingsFragment generalSettingsFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //ビリングサービスのセットアップ
     setupBillingServices();
+
+    createPromotionDialog();
 
     //テーマの設定
     MyTheme theme = generalSettings.getTheme();
@@ -246,8 +250,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             checkIsPremium();
           }
           else {
-            Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
             try_count++;
+            if(try_count == 3) {
+              Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
+            }
             if(try_count < 3) billingClient.startConnection(this);
           }
 //          Toast.makeText(MainActivity.this, "セットアップ完了", Toast.LENGTH_LONG).show();
@@ -280,8 +286,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void onBillingServiceDisconnected() {
 
-          Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
           try_count++;
+          if(try_count == 3) {
+            Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
+          }
           if(try_count < 3) billingClient.startConnection(this);
         }
       });
@@ -330,7 +338,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
   }
 
-  public void onBuyButtonClicked() {
+  private void createPromotionDialog() {
+
+    String[] items = getResources().getStringArray(R.array.feature_list);
+
+    promotionDialog = new AlertDialog.Builder(this)
+        .setTitle(R.string.upgrade_to_premium_account)
+        .setItems(items, null)
+        .setPositiveButton(R.string.upgrade, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+
+            onBuyButtonClicked();
+          }
+        })
+        .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+          }
+        })
+        .create();
+  }
+
+  private void onBuyButtonClicked() {
 
     BillingFlowParams flowParams = BillingFlowParams.newBuilder()
         .setSku(PRODUCT_ID_PREMIUM)
@@ -489,6 +519,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.TODO_TABLE);
       direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.DONE_TABLE);
       direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.SETTINGS_TABLE);
+    }
+  }
+
+  @Override
+  protected void onStop() {
+
+    super.onStop();
+
+    //バックアップアカウントにログインしている場合はここでログアウトする
+    if(generalSettings.isPremium() && generalSettingsFragment != null) {
+      if(generalSettingsFragment.backupAndRestoreFragment != null) {
+        generalSettingsFragment.backupAndRestoreFragment.signOut();
+      }
     }
   }
 
@@ -1412,17 +1455,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public void showGeneralSettingsFragment(String TAG) {
 
+    generalSettingsFragment = GeneralSettingsFragment.newInstance();
     if(getFragmentManager().findFragmentByTag(TAG) == null) {
       showFragment(null, null, GeneralSettingsFragment.TAG,
-          GeneralSettingsFragment.newInstance(), null, null, false);
+          generalSettingsFragment, null, null, false);
     }
     else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
         || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
       showFragment(TAG, ActionBarFragment.TAG, GeneralSettingsFragment.TAG,
-          GeneralSettingsFragment.newInstance(), null, null, false);
+          generalSettingsFragment, null, null, false);
     }
     else {
-      showFragment(TAG, null, GeneralSettingsFragment.TAG, GeneralSettingsFragment.newInstance(),
+      showFragment(TAG, null, GeneralSettingsFragment.TAG, generalSettingsFragment,
           null, null, false);
     }
 

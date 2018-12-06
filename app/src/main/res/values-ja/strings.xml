@@ -115,9 +115,10 @@
     <string name="choose_backup_data_message">どのバックアップデータから復元しますか？</string>
     <string name="canceled">キャンセルされました。</string>
     <string name="fail_to_make_backup_folder">バックアップフォルダの作成に失敗しました。</string>
-    <string name="logout_done">ログアウトしました。</string>
+    <string name="logout_done">バックアップアカウントからログアウトしました。</string>
     <string name="fail_to_logout">ログアウトに失敗しました。</string>
     <string name="error">予期せぬエラーが発生しました。</string>
+    <string name="backup_and_restore_note">復元ポイントが上手く同期されない場合は、一度ログアウトした上で復元操作を何回か試してみてください。</string>
     <string name="about">概要</string>
     <string name="version">バージョン</string>
     <string name="about_this_app">このアプリについて</string>

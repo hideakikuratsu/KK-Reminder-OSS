@@ -118,9 +118,10 @@
     <string name="choose_backup_data_message">Which backup data do you want to restore from?</string>
     <string name="canceled">Canceled</string>
     <string name="fail_to_make_backup_folder">Failed to make a backup folder</string>
-    <string name="logout_done">Logout</string>
+    <string name="logout_done">Logouted from backup account</string>
     <string name="fail_to_logout">Failed to logout</string>
     <string name="error">Unexpected error occurred</string>
+    <string name="backup_and_restore_note">If the latest backup data doesn\'t sync properly, try to logout, and then restore some times.</string>
     <string name="about">About</string>
     <string name="version">Version</string>
     <string name="about_this_app">About this app</string>
