@@ -1,6 +1,7 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
+import android.os.Handler;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -73,75 +74,77 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
     hour_picker.setMinValue(0);
     hour_picker.setValue(MainEditFragment.minuteRepeat.getHour());
     hour_picker.setDisplayedValues(hour_list.toArray(new String[0]));
-    hour_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    hour_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
-              hour_picker.setValue(1);
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            if(newVal == hour_picker.getValue()) {
+
+              if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
+                hour_picker.setValue(1);
+              }
+              MainEditFragment.minuteRepeat.setHour(hour_picker.getValue());
+
+              if(MinuteRepeatEditFragment.count.isChecked()) {
+
+                String interval = "";
+                int hour = MainEditFragment.minuteRepeat.getHour();
+                if(hour != 0) {
+                  interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+                  if(!locale.equals(Locale.JAPAN)) interval += " ";
+                }
+                int minute = MainEditFragment.minuteRepeat.getMinute();
+                if(minute != 0) {
+                  interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+                  if(!locale.equals(Locale.JAPAN)) interval += " ";
+                }
+                int count = MainEditFragment.minuteRepeat.getOrg_count();
+                String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
+                    count, interval, count);
+                MinuteRepeatEditFragment.label_str = label;
+                MinuteRepeatEditFragment.label.setSummary(label);
+
+                MainEditFragment.minuteRepeat.setLabel(label);
+              }
+              else if(MinuteRepeatEditFragment.duration.isChecked()) {
+
+                String interval = "";
+                int hour = MainEditFragment.minuteRepeat.getHour();
+                if(hour != 0) {
+                  interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+                  if(!locale.equals(Locale.JAPAN)) interval += " ";
+                }
+                int minute = MainEditFragment.minuteRepeat.getMinute();
+                if(minute != 0) {
+                  interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+                  if(!locale.equals(Locale.JAPAN)) interval += " ";
+                }
+                String duration = "";
+                int duration_hour = MainEditFragment.minuteRepeat.getOrg_duration_hour();
+                if(duration_hour != 0) {
+                  duration += activity.getResources().getQuantityString(R.plurals.hour, duration_hour, duration_hour);
+                  if(!locale.equals(Locale.JAPAN)) duration += " ";
+                }
+                int duration_minute = MainEditFragment.minuteRepeat.getOrg_duration_minute();
+                if(duration_minute != 0) {
+                  duration += activity.getResources().getQuantityString(R.plurals.minute, duration_minute, duration_minute);
+                  if(!locale.equals(Locale.JAPAN)) duration += " ";
+                }
+                String label = activity.getString(R.string.repeat_minute_duration_format, interval, duration);
+
+                MinuteRepeatEditFragment.label_str = label;
+                MinuteRepeatEditFragment.label.setSummary(label);
+
+                MainEditFragment.minuteRepeat.setLabel(label);
+              }
             }
-            MainEditFragment.minuteRepeat.setHour(hour_picker.getValue());
-
-            if(MinuteRepeatEditFragment.count.isChecked()) {
-
-              String interval = "";
-              int hour = MainEditFragment.minuteRepeat.getHour();
-              if(hour != 0) {
-                interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-                if(!locale.equals(Locale.JAPAN)) interval += " ";
-              }
-              int minute = MainEditFragment.minuteRepeat.getMinute();
-              if(minute != 0) {
-                interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-                if(!locale.equals(Locale.JAPAN)) interval += " ";
-              }
-              int count = MainEditFragment.minuteRepeat.getOrg_count();
-              String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
-                  count, interval, count);
-              MinuteRepeatEditFragment.label_str = label;
-              MinuteRepeatEditFragment.label.setSummary(label);
-
-              MainEditFragment.minuteRepeat.setLabel(label);
-            }
-            else if(MinuteRepeatEditFragment.duration.isChecked()) {
-
-              String interval = "";
-              int hour = MainEditFragment.minuteRepeat.getHour();
-              if(hour != 0) {
-                interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-                if(!locale.equals(Locale.JAPAN)) interval += " ";
-              }
-              int minute = MainEditFragment.minuteRepeat.getMinute();
-              if(minute != 0) {
-                interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-                if(!locale.equals(Locale.JAPAN)) interval += " ";
-              }
-              String duration = "";
-              int duration_hour = MainEditFragment.minuteRepeat.getOrg_duration_hour();
-              if(duration_hour != 0) {
-                duration += activity.getResources().getQuantityString(R.plurals.hour, duration_hour, duration_hour);
-                if(!locale.equals(Locale.JAPAN)) duration += " ";
-              }
-              int duration_minute = MainEditFragment.minuteRepeat.getOrg_duration_minute();
-              if(duration_minute != 0) {
-                duration += activity.getResources().getQuantityString(R.plurals.minute, duration_minute, duration_minute);
-                if(!locale.equals(Locale.JAPAN)) duration += " ";
-              }
-              String label = activity.getString(R.string.repeat_minute_duration_format, interval, duration);
-
-              MinuteRepeatEditFragment.label_str = label;
-              MinuteRepeatEditFragment.label.setSummary(label);
-
-              MainEditFragment.minuteRepeat.setLabel(label);
-            }
-            break;
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
 
@@ -152,75 +155,77 @@ public class MinuteRepeatIntervalPickerPreference extends Preference {
     minute_picker.setMinValue(0);
     minute_picker.setValue(MainEditFragment.minuteRepeat.getMinute());
     minute_picker.setDisplayedValues(minute_list.toArray(new String[0]));
-    minute_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    minute_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
-              hour_picker.setValue(1);
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            if(newVal == minute_picker.getValue()) {
+
+              if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
+                hour_picker.setValue(1);
+              }
+              MainEditFragment.minuteRepeat.setMinute(minute_picker.getValue());
+
+              if(MinuteRepeatEditFragment.count.isChecked()) {
+
+                String interval = "";
+                int hour = MainEditFragment.minuteRepeat.getHour();
+                if(hour != 0) {
+                  interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+                  if(!locale.equals(Locale.JAPAN)) interval += " ";
+                }
+                int minute = MainEditFragment.minuteRepeat.getMinute();
+                if(minute != 0) {
+                  interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+                  if(!locale.equals(Locale.JAPAN)) interval += " ";
+                }
+                int count = MainEditFragment.minuteRepeat.getOrg_count();
+                String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
+                    count, interval, count);
+                MinuteRepeatEditFragment.label_str = label;
+                MinuteRepeatEditFragment.label.setSummary(label);
+
+                MainEditFragment.minuteRepeat.setLabel(label);
+              }
+              else if(MinuteRepeatEditFragment.duration.isChecked()) {
+
+                String interval = "";
+                int hour = MainEditFragment.minuteRepeat.getHour();
+                if(hour != 0) {
+                  interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+                  if(!locale.equals(Locale.JAPAN)) interval += " ";
+                }
+                int minute = MainEditFragment.minuteRepeat.getMinute();
+                if(minute != 0) {
+                  interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+                  if(!locale.equals(Locale.JAPAN)) interval += " ";
+                }
+                String duration = "";
+                int duration_hour = MainEditFragment.minuteRepeat.getOrg_duration_hour();
+                if(duration_hour != 0) {
+                  duration += activity.getResources().getQuantityString(R.plurals.hour, duration_hour, duration_hour);
+                  if(!locale.equals(Locale.JAPAN)) duration += " ";
+                }
+                int duration_minute = MainEditFragment.minuteRepeat.getOrg_duration_minute();
+                if(duration_minute != 0) {
+                  duration += activity.getResources().getQuantityString(R.plurals.minute, duration_minute, duration_minute);
+                  if(!locale.equals(Locale.JAPAN)) duration += " ";
+                }
+                String label = activity.getString(R.string.repeat_minute_duration_format, interval, duration);
+
+                MinuteRepeatEditFragment.label_str = label;
+                MinuteRepeatEditFragment.label.setSummary(label);
+
+                MainEditFragment.minuteRepeat.setLabel(label);
+              }
             }
-            MainEditFragment.minuteRepeat.setMinute(minute_picker.getValue());
-
-            if(MinuteRepeatEditFragment.count.isChecked()) {
-
-              String interval = "";
-              int hour = MainEditFragment.minuteRepeat.getHour();
-              if(hour != 0) {
-                interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-                if(!locale.equals(Locale.JAPAN)) interval += " ";
-              }
-              int minute = MainEditFragment.minuteRepeat.getMinute();
-              if(minute != 0) {
-                interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-                if(!locale.equals(Locale.JAPAN)) interval += " ";
-              }
-              int count = MainEditFragment.minuteRepeat.getOrg_count();
-              String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
-                  count, interval, count);
-              MinuteRepeatEditFragment.label_str = label;
-              MinuteRepeatEditFragment.label.setSummary(label);
-
-              MainEditFragment.minuteRepeat.setLabel(label);
-            }
-            else if(MinuteRepeatEditFragment.duration.isChecked()) {
-
-              String interval = "";
-              int hour = MainEditFragment.minuteRepeat.getHour();
-              if(hour != 0) {
-                interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-                if(!locale.equals(Locale.JAPAN)) interval += " ";
-              }
-              int minute = MainEditFragment.minuteRepeat.getMinute();
-              if(minute != 0) {
-                interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-                if(!locale.equals(Locale.JAPAN)) interval += " ";
-              }
-              String duration = "";
-              int duration_hour = MainEditFragment.minuteRepeat.getOrg_duration_hour();
-              if(duration_hour != 0) {
-                duration += activity.getResources().getQuantityString(R.plurals.hour, duration_hour, duration_hour);
-                if(!locale.equals(Locale.JAPAN)) duration += " ";
-              }
-              int duration_minute = MainEditFragment.minuteRepeat.getOrg_duration_minute();
-              if(duration_minute != 0) {
-                duration += activity.getResources().getQuantityString(R.plurals.minute, duration_minute, duration_minute);
-                if(!locale.equals(Locale.JAPAN)) duration += " ";
-              }
-              String label = activity.getString(R.string.repeat_minute_duration_format, interval, duration);
-
-              MinuteRepeatEditFragment.label_str = label;
-              MinuteRepeatEditFragment.label.setSummary(label);
-
-              MainEditFragment.minuteRepeat.setLabel(label);
-            }
-            break;
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
   }

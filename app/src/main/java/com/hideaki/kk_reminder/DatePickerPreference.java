@@ -1,6 +1,7 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
+import android.os.Handler;
 import android.preference.Preference;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
@@ -134,56 +135,58 @@ public class DatePickerPreference extends Preference implements View.OnClickList
 
     day_picker = view.findViewById(R.id.day);
     day_picker.setDisplayedValues(null);
-    day_picker.setMaxValue(day_list.size()-1);
+    day_picker.setMaxValue(day_list.size() - 1);
     day_picker.setMinValue(0);
     day_picker.setValue((int)day);
     day_picker.setDisplayedValues(day_list.toArray(new String[0]));
-    day_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    day_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        if((offset = day_picker.getValue()) < 10) {
-          change_to_bottom = true;
-          if(change_to_top) {
-            now_year -= 1;
-            change_to_top = false;
-          }
-          day_list.clear();
-          setDayList(-1);
-          first_list_size = day_list.size();
-          setDayList(1);
-          now_year -= 1;
-          day_picker.setMaxValue(day_list.size()-1);
-          day_picker.setDisplayedValues(day_list.toArray(new String[0]));
-          day_picker.setValue(first_list_size + offset);
-        }
-        else if((offset = day_picker.getValue()) > day_list.size() - 10) {
-          change_to_top = true;
-          if(change_to_bottom) {
-            now_year += 1;
-            change_to_bottom = false;
-          }
-          whole_list_size = day_list.size();
-          day_list.clear();
-          setDayList(0);
-          first_list_size = day_list.size();
-          setDayList(1);
-          day_picker.setMaxValue(day_list.size()-1);
-          day_picker.setDisplayedValues(day_list.toArray(new String[0]));
-          day_picker.setValue(offset - (whole_list_size - first_list_size));
-        }
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
 
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            Calendar tmp = (Calendar)norm.clone();
-            tmp.add(Calendar.DAY_OF_MONTH, day_picker.getValue());
-            MainEditFragment.final_cal.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), tmp.get(Calendar.DAY_OF_MONTH));
-            break;
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            if((offset = day_picker.getValue()) < 20) {
+              change_to_bottom = true;
+              if(change_to_top) {
+                now_year -= 1;
+                change_to_top = false;
+              }
+              day_list.clear();
+              setDayList(-1);
+              first_list_size = day_list.size();
+              setDayList(1);
+              now_year -= 1;
+              day_picker.setMaxValue(day_list.size() - 1);
+              day_picker.setDisplayedValues(day_list.toArray(new String[0]));
+              day_picker.setValue(first_list_size + offset);
+            }
+            else if((offset = day_picker.getValue()) > day_list.size() - 20) {
+              change_to_top = true;
+              if(change_to_bottom) {
+                now_year += 1;
+                change_to_bottom = false;
+              }
+              whole_list_size = day_list.size();
+              day_list.clear();
+              setDayList(0);
+              first_list_size = day_list.size();
+              setDayList(1);
+              day_picker.setMaxValue(day_list.size()-1);
+              day_picker.setDisplayedValues(day_list.toArray(new String[0]));
+              day_picker.setValue(offset - (whole_list_size - first_list_size));
+            }
+
+            if(newVal == day_picker.getValue()) {
+
+              Calendar tmp = (Calendar)norm.clone();
+              tmp.add(Calendar.DAY_OF_MONTH, day_picker.getValue());
+              MainEditFragment.final_cal.set(tmp.get(Calendar.YEAR), tmp.get(Calendar.MONTH), tmp.get(Calendar.DAY_OF_MONTH));
+            }
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
 
@@ -194,19 +197,20 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     hour_picker.setMinValue(0);
     hour_picker.setValue(now.get(Calendar.HOUR_OF_DAY));
     hour_picker.setDisplayedValues(hour_list.toArray(new String[0]));
-    hour_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    hour_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY, hour_picker.getValue());
-            break;
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            if(newVal == hour_picker.getValue()) {
+              MainEditFragment.final_cal.set(Calendar.HOUR_OF_DAY, hour_picker.getValue());
+            }
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
 
@@ -217,19 +221,20 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     minute_picker.setMinValue(0);
     minute_picker.setValue(now.get(Calendar.MINUTE));
     minute_picker.setDisplayedValues(minute_list.toArray(new String[0]));
-    minute_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    minute_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            MainEditFragment.final_cal.set(Calendar.MINUTE, minute_picker.getValue());
-            break;
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            if(newVal == minute_picker.getValue()) {
+              MainEditFragment.final_cal.set(Calendar.MINUTE, minute_picker.getValue());
+            }
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
   }

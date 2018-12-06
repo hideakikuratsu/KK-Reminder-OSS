@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -249,35 +250,36 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     hour_picker.setMinValue(0);
     hour_picker.setValue(custom_hour);
     hour_picker.setDisplayedValues(hour_list.toArray(new String[0]));
-    hour_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    hour_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
-              custom_hour = 24;
-            }
-            else custom_hour = hour_picker.getValue();
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
 
-            summary = "";
-            if(custom_hour != 0) {
-              summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
-              if(!locale.equals(Locale.JAPAN)) summary += " ";
-            }
-            if(custom_minute != 0) {
-              summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
-              if(!locale.equals(Locale.JAPAN)) summary += " ";
-            }
-            summary += getString(R.string.snooze);
-            title.setText(summary);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
 
-            break;
+            if(newVal == hour_picker.getValue()) {
+
+              if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
+                custom_hour = 24;
+              }
+              else custom_hour = hour_picker.getValue();
+
+              summary = "";
+              if(custom_hour != 0) {
+                summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
+                if(!locale.equals(Locale.JAPAN)) summary += " ";
+              }
+              if(custom_minute != 0) {
+                summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
+                if(!locale.equals(Locale.JAPAN)) summary += " ";
+              }
+              summary += getString(R.string.snooze);
+              title.setText(summary);
+            }
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
 
@@ -288,36 +290,37 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     minute_picker.setMinValue(0);
     minute_picker.setValue(custom_minute);
     minute_picker.setDisplayedValues(minute_list.toArray(new String[0]));
-    minute_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    minute_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
-              custom_hour = 24;
-            }
-            else custom_hour = hour_picker.getValue();
-            custom_minute = minute_picker.getValue();
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
 
-            summary = "";
-            if(custom_hour != 0) {
-              summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
-              if(!locale.equals(Locale.JAPAN)) summary += " ";
-            }
-            if(custom_minute != 0) {
-              summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
-              if(!locale.equals(Locale.JAPAN)) summary += " ";
-            }
-            summary += getString(R.string.snooze);
-            title.setText(summary);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
 
-            break;
+            if(newVal == minute_picker.getValue()) {
+
+              if(hour_picker.getValue() == 0 && minute_picker.getValue() == 0) {
+                custom_hour = 24;
+              }
+              else custom_hour = hour_picker.getValue();
+              custom_minute = minute_picker.getValue();
+
+              summary = "";
+              if(custom_hour != 0) {
+                summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
+                if(!locale.equals(Locale.JAPAN)) summary += " ";
+              }
+              if(custom_minute != 0) {
+                summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
+                if(!locale.equals(Locale.JAPAN)) summary += " ";
+              }
+              summary += getString(R.string.snooze);
+              title.setText(summary);
+            }
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
   }

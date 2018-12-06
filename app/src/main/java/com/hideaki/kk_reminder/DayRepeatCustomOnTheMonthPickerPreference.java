@@ -1,6 +1,7 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
+import android.os.Handler;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -54,19 +55,20 @@ public class DayRepeatCustomOnTheMonthPickerPreference extends Preference {
     else {
       ordinal_number.setDisplayedValues(ORDINAL_NUMBER_LIST_EN);
     }
-    ordinal_number.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    ordinal_number.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            MainEditFragment.dayRepeat.setOrdinal_number(ordinal_number.getValue());
-            break;
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            if(newVal == ordinal_number.getValue()) {
+              MainEditFragment.dayRepeat.setOrdinal_number(ordinal_number.getValue());
+            }
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
 
@@ -85,19 +87,20 @@ public class DayRepeatCustomOnTheMonthPickerPreference extends Preference {
     else {
       day_of_week.setDisplayedValues(DAY_OF_WEEK_LIST_EN);
     }
-    day_of_week.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    day_of_week.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            MainEditFragment.dayRepeat.setOn_the_month(Week.values()[day_of_week.getValue()]);
-            break;
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            if(newVal == day_of_week.getValue()) {
+              MainEditFragment.dayRepeat.setOn_the_month(Week.values()[day_of_week.getValue()]);
+            }
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
   }

@@ -1,6 +1,7 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
+import android.os.Handler;
 import android.preference.Preference;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -111,48 +112,49 @@ public class DefaultQuickPickerPreference extends Preference implements View.OnC
     hour_picker.setMinValue(0);
     hour_picker.setValue(now.get(Calendar.HOUR_OF_DAY));
     hour_picker.setDisplayedValues(hour_list.toArray(new String[0]));
-    hour_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    hour_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
 
-            String time = String.format(Locale.US, "%d:%02d", hour_picker.getValue(), minute_picker.getValue());
-            switch(which_picker_selected) {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
 
-              case 0: {
+            if(newVal == hour_picker.getValue()) {
 
-                activity.generalSettings.setDefaultQuickPicker1(time);
-                abovePicker1.setText(time);
-                break;
+              String time = String.format(Locale.US, "%d:%02d", hour_picker.getValue(), minute_picker.getValue());
+              switch(which_picker_selected) {
+
+                case 0: {
+
+                  activity.generalSettings.setDefaultQuickPicker1(time);
+                  abovePicker1.setText(time);
+                  break;
+                }
+                case 1: {
+
+                  activity.generalSettings.setDefaultQuickPicker2(time);
+                  abovePicker2.setText(time);
+                  break;
+                }
+                case 2: {
+
+                  activity.generalSettings.setDefaultQuickPicker3(time);
+                  abovePicker3.setText(time);
+                  break;
+                }
+                case 3: {
+
+                  activity.generalSettings.setDefaultQuickPicker4(time);
+                  abovePicker4.setText(time);
+                  break;
+                }
               }
-              case 1: {
-
-                activity.generalSettings.setDefaultQuickPicker2(time);
-                abovePicker2.setText(time);
-                break;
-              }
-              case 2: {
-
-                activity.generalSettings.setDefaultQuickPicker3(time);
-                abovePicker3.setText(time);
-                break;
-              }
-              case 3: {
-
-                activity.generalSettings.setDefaultQuickPicker4(time);
-                abovePicker4.setText(time);
-                break;
-              }
+              activity.updateSettingsDB();
             }
-            activity.updateSettingsDB();
-            break;
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
 
@@ -163,48 +165,49 @@ public class DefaultQuickPickerPreference extends Preference implements View.OnC
     minute_picker.setMinValue(0);
     minute_picker.setValue(now.get(Calendar.MINUTE));
     minute_picker.setDisplayedValues(minute_list.toArray(new String[0]));
-    minute_picker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    minute_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
 
-            String time = String.format(Locale.US, "%d:%02d", hour_picker.getValue(), minute_picker.getValue());
-            switch(which_picker_selected) {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
 
-              case 0: {
+            if(newVal == minute_picker.getValue()) {
 
-                activity.generalSettings.setDefaultQuickPicker1(time);
-                abovePicker1.setText(time);
-                break;
+              String time = String.format(Locale.US, "%d:%02d", hour_picker.getValue(), minute_picker.getValue());
+              switch(which_picker_selected) {
+
+                case 0: {
+
+                  activity.generalSettings.setDefaultQuickPicker1(time);
+                  abovePicker1.setText(time);
+                  break;
+                }
+                case 1: {
+
+                  activity.generalSettings.setDefaultQuickPicker2(time);
+                  abovePicker2.setText(time);
+                  break;
+                }
+                case 2: {
+
+                  activity.generalSettings.setDefaultQuickPicker3(time);
+                  abovePicker3.setText(time);
+                  break;
+                }
+                case 3: {
+
+                  activity.generalSettings.setDefaultQuickPicker4(time);
+                  abovePicker4.setText(time);
+                  break;
+                }
               }
-              case 1: {
-
-                activity.generalSettings.setDefaultQuickPicker2(time);
-                abovePicker2.setText(time);
-                break;
-              }
-              case 2: {
-
-                activity.generalSettings.setDefaultQuickPicker3(time);
-                abovePicker3.setText(time);
-                break;
-              }
-              case 3: {
-
-                activity.generalSettings.setDefaultQuickPicker4(time);
-                abovePicker4.setText(time);
-                break;
-              }
+              activity.updateSettingsDB();
             }
-            activity.updateSettingsDB();
-            break;
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
   }

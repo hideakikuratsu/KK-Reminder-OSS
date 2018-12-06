@@ -1,6 +1,7 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
+import android.os.Handler;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -50,19 +51,20 @@ public class DayRepeatCustomPickerPreference extends Preference {
       MainEditFragment.dayRepeat.setInterval(1);
     }
     interval.setValue(MainEditFragment.dayRepeat.getInterval());
-    interval.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    interval.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            MainEditFragment.dayRepeat.setInterval(interval.getValue());
-            break;
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            if(newVal == interval.getValue()) {
+              MainEditFragment.dayRepeat.setInterval(interval.getValue());
+            }
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
 
@@ -106,119 +108,121 @@ public class DayRepeatCustomPickerPreference extends Preference {
       year = true;
       DayRepeatCustomPickerFragment.addYearPreference();
     }
-    scale.setOnScrollListener(new NumberPicker.OnScrollListener() {
+    scale.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override
-      public void onScrollStateChange(NumberPicker view, int scrollState) {
-        switch(scrollState) {
-          case SCROLL_STATE_IDLE: {
-            MainEditFragment.dayRepeat.setScale(scale.getValue());
-            if(MainEditFragment.dayRepeat.getScale() == 1) {
+      public void onValueChange(NumberPicker picker, int oldVal, final int newVal) {
 
-              MainEditFragment.dayRepeat.setDay(true);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
 
-              if(week) {
-                DayRepeatCustomPickerFragment.removeWeekPreference();
-                week = false;
+            if(newVal == scale.getValue()) {
+
+              MainEditFragment.dayRepeat.setScale(scale.getValue());
+              if(MainEditFragment.dayRepeat.getScale() == 1) {
+
+                MainEditFragment.dayRepeat.setDay(true);
+
+                if(week) {
+                  DayRepeatCustomPickerFragment.removeWeekPreference();
+                  week = false;
+                }
+                else if(month) {
+                  DayRepeatCustomPickerFragment.removeDaysOfMonthPreference();
+                  DayRepeatCustomPickerFragment.removeOnTheMonthPreference();
+                  if(MainEditFragment.dayRepeat.isDays_of_month_setted()) {
+                    DayRepeatCustomPickerFragment.removeDaysOfMonthPickerPreference();
+                  }
+                  else {
+                    DayRepeatCustomPickerFragment.removeOnTheMonthPickerPreference();
+                  }
+                  month = false;
+                }
+                else if(year) {
+                  DayRepeatCustomPickerFragment.removeYearPreference();
+                  year = false;
+                }
+
+                day = true;
               }
-              else if(month) {
-                DayRepeatCustomPickerFragment.removeDaysOfMonthPreference();
-                DayRepeatCustomPickerFragment.removeOnTheMonthPreference();
+              else if(MainEditFragment.dayRepeat.getScale() == 2) {
+
+                if(day) day = false;
+                else if(month) {
+                  DayRepeatCustomPickerFragment.removeDaysOfMonthPreference();
+                  DayRepeatCustomPickerFragment.removeOnTheMonthPreference();
+                  if(MainEditFragment.dayRepeat.isDays_of_month_setted()) {
+                    DayRepeatCustomPickerFragment.removeDaysOfMonthPickerPreference();
+                  }
+                  else {
+                    DayRepeatCustomPickerFragment.removeOnTheMonthPickerPreference();
+                  }
+                  month = false;
+                }
+                else if(year) {
+                  DayRepeatCustomPickerFragment.removeYearPreference();
+                  year = false;
+                }
+
+                DayRepeatCustomPickerFragment.addWeekPreference();
+                week = true;
+              }
+              else if(MainEditFragment.dayRepeat.getScale() == 3) {
+
+                if(day) day = false;
+                else if(week) {
+                  DayRepeatCustomPickerFragment.removeWeekPreference();
+                  week = false;
+                }
+                else if(year) {
+                  DayRepeatCustomPickerFragment.removeYearPreference();
+                  year = false;
+                }
+
+                DayRepeatCustomPickerFragment.addDaysOfMonthPreference();
+                DayRepeatCustomPickerFragment.addOnTheMonthPreference();
                 if(MainEditFragment.dayRepeat.isDays_of_month_setted()) {
-                  DayRepeatCustomPickerFragment.removeDaysOfMonthPickerPreference();
+                  DayRepeatCustomPickerFragment.addDaysOfMonthPickerPreference();
                 }
                 else {
-                  DayRepeatCustomPickerFragment.removeOnTheMonthPickerPreference();
+                  DayRepeatCustomPickerFragment.addOnTheMonthPickerPreference();
                 }
-                month = false;
-              }
-              else if(year) {
-                DayRepeatCustomPickerFragment.removeYearPreference();
-                year = false;
-              }
+                month = true;
 
-              day = true;
-            }
-            else if(MainEditFragment.dayRepeat.getScale() == 2) {
-
-              if(day) day = false;
-              else if(month) {
-                DayRepeatCustomPickerFragment.removeDaysOfMonthPreference();
-                DayRepeatCustomPickerFragment.removeOnTheMonthPreference();
-                if(MainEditFragment.dayRepeat.isDays_of_month_setted()) {
-                  DayRepeatCustomPickerFragment.removeDaysOfMonthPickerPreference();
+                if(MainEditFragment.dayRepeat.getDays_of_month() == 0) {
+                  mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
+                  MainEditFragment.dayRepeat.setDays_of_month(1 << (mask_num - 1));
+                  DayRepeatCustomPickerFragment.days_of_month.setChecked(true);
+                  DayRepeatCustomPickerFragment.on_the_month.setChecked(false);
+                  MainEditFragment.dayRepeat.setDays_of_month_setted(true);
                 }
-                else {
-                  DayRepeatCustomPickerFragment.removeOnTheMonthPickerPreference();
+              }
+              else if(MainEditFragment.dayRepeat.getScale() == 4) {
+
+                if(day) day = false;
+                else if(week) {
+                  DayRepeatCustomPickerFragment.removeWeekPreference();
+                  week = false;
                 }
-                month = false;
-              }
-              else if(year) {
-                DayRepeatCustomPickerFragment.removeYearPreference();
-                year = false;
-              }
+                else if(month) {
+                  DayRepeatCustomPickerFragment.removeDaysOfMonthPreference();
+                  DayRepeatCustomPickerFragment.removeOnTheMonthPreference();
+                  if(MainEditFragment.dayRepeat.isDays_of_month_setted()) {
+                    DayRepeatCustomPickerFragment.removeDaysOfMonthPickerPreference();
+                  }
+                  else {
+                    DayRepeatCustomPickerFragment.removeOnTheMonthPickerPreference();
+                  }
+                  month = false;
+                }
 
-              DayRepeatCustomPickerFragment.addWeekPreference();
-              week = true;
-            }
-            else if(MainEditFragment.dayRepeat.getScale() == 3) {
-
-              if(day) day = false;
-              else if(week) {
-                DayRepeatCustomPickerFragment.removeWeekPreference();
-                week = false;
-              }
-              else if(year) {
-                DayRepeatCustomPickerFragment.removeYearPreference();
-                year = false;
-              }
-
-              DayRepeatCustomPickerFragment.addDaysOfMonthPreference();
-              DayRepeatCustomPickerFragment.addOnTheMonthPreference();
-              if(MainEditFragment.dayRepeat.isDays_of_month_setted()) {
-                DayRepeatCustomPickerFragment.addDaysOfMonthPickerPreference();
-              }
-              else {
-                DayRepeatCustomPickerFragment.addOnTheMonthPickerPreference();
-              }
-              month = true;
-
-              if(MainEditFragment.dayRepeat.getDays_of_month() == 0) {
-                mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
-                MainEditFragment.dayRepeat.setDays_of_month(1 << (mask_num - 1));
-                DayRepeatCustomPickerFragment.days_of_month.setChecked(true);
-                DayRepeatCustomPickerFragment.on_the_month.setChecked(false);
-                MainEditFragment.dayRepeat.setDays_of_month_setted(true);
+                DayRepeatCustomPickerFragment.addYearPreference();
+                year = true;
               }
             }
-            else if(MainEditFragment.dayRepeat.getScale() == 4) {
-
-              if(day) day = false;
-              else if(week) {
-                DayRepeatCustomPickerFragment.removeWeekPreference();
-                week = false;
-              }
-              else if(month) {
-                DayRepeatCustomPickerFragment.removeDaysOfMonthPreference();
-                DayRepeatCustomPickerFragment.removeOnTheMonthPreference();
-                if(MainEditFragment.dayRepeat.isDays_of_month_setted()) {
-                  DayRepeatCustomPickerFragment.removeDaysOfMonthPickerPreference();
-                }
-                else {
-                  DayRepeatCustomPickerFragment.removeOnTheMonthPickerPreference();
-                }
-                month = false;
-              }
-
-              DayRepeatCustomPickerFragment.addYearPreference();
-              year = true;
-            }
-            break;
           }
-          case SCROLL_STATE_FLING:
-          case SCROLL_STATE_TOUCH_SCROLL: {
-            break;
-          }
-        }
+        }, 100);
       }
     });
   }
