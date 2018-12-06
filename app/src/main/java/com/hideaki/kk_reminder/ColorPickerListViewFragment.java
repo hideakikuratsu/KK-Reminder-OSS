@@ -88,13 +88,12 @@ public class ColorPickerListViewFragment extends Fragment {
           if(order == 3) MainEditFragment.list.setColor_primary(true);
           if(ColorPickerListAdapter.is_general_settings) {
             ColorPickerListAdapter.is_general_settings = false;
-            if(activity.generalSettings.getTheme().isColor_primary()) {
-              activity.finish();
-              startActivity(new Intent(activity, MainActivity.class));
-            }
-            else {
+            if(!activity.generalSettings.getTheme().isColor_primary()) {
               activity.generalSettings.getTheme().setColor_primary(true);
+              activity.updateSettingsDB();
             }
+            activity.finish();
+            startActivity(new Intent(activity, MainActivity.class));
           }
         }
 
@@ -136,13 +135,12 @@ public class ColorPickerListViewFragment extends Fragment {
         if(order == 3) MainEditFragment.list.setColor_primary(true);
         if(ColorPickerListAdapter.is_general_settings) {
           ColorPickerListAdapter.is_general_settings = false;
-          if(activity.generalSettings.getTheme().isColor_primary()) {
-            activity.finish();
-            startActivity(new Intent(activity, MainActivity.class));
-          }
-          else {
+          if(!activity.generalSettings.getTheme().isColor_primary()) {
             activity.generalSettings.getTheme().setColor_primary(true);
+            activity.updateSettingsDB();
           }
+          activity.finish();
+          startActivity(new Intent(activity, MainActivity.class));
         }
         getFragmentManager().popBackStack();
         return true;

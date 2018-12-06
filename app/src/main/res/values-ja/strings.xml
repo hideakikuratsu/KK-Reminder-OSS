@@ -97,7 +97,7 @@
     <string name="default_quick_picker">クイックピッカー</string>
     <string name="about_quick_picker">クイックピッカーとは、あらかじめ好きな時間を登録しておくことで、期限付きリマインダーにタスクを追加する際にその時間にすばやくセットすることのできる機能です。</string>
     <string name="theme">テーマ</string>
-    <string name="after_theme_set_message">主題テーマ設定後は自動的にアプリを再起動します</string>
+    <string name="after_theme_set_message">テーマ設定後は自動的にアプリを再起動します</string>
     <string name="backup">バックアップ</string>
     <string name="backup_and_restore">バックアップと復元</string>
     <string name="manually_backup">手動バックアップ</string>

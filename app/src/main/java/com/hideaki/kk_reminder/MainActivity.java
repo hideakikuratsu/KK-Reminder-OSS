@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //ビリングサービスのセットアップ
     setupBillingServices();
 
+    //プロモーション用ダイアログのセットアップ
     createPromotionDialog();
 
     //テーマの設定

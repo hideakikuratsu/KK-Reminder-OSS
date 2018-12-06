@@ -2,9 +2,9 @@ package com.hideaki.kk_reminder;
 
 import java.io.Serializable;
 
-public class MyTheme implements Serializable {
+class MyTheme implements Serializable {
 
-  private static final long serialVersionUID = 2210024867656617528L;
+  private static final long serialVersionUID = 1616767247996293375L;
   private boolean color_primary = true;
   private int primary_color;
   private int primary_light_color;

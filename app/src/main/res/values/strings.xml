@@ -100,7 +100,7 @@
     <string name="default_quick_picker">Quick Picker</string>
     <string name="about_quick_picker">Quick Picker is a time picker. You can set time previously and pick the time with it when you add a new task to Scheduled Reminder</string>
     <string name="theme">Theme</string>
-    <string name="after_theme_set_message">After you set primary theme, this app reboots automatically</string>
+    <string name="after_theme_set_message">After you set theme, this app reboots automatically</string>
     <string name="backup">Backup</string>
     <string name="backup_and_restore">Backup and Restore</string>
     <string name="manually_backup">Manual backup</string>
