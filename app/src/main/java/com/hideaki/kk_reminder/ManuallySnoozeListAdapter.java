@@ -29,12 +29,12 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
 
     snoozeList = new ArrayList<>(Arrays.asList(activity.getResources().getStringArray(R.array.snooze_list)));
     defaultSnoozeTime = "";
-    int default_hour = activity.generalSettings.getSnooze_default_hour();
+    int default_hour = activity.snooze_default_hour;
     if(default_hour != 0) {
       defaultSnoozeTime += activity.getResources().getQuantityString(R.plurals.hour, default_hour, default_hour);
       if(!locale.equals(Locale.JAPAN)) defaultSnoozeTime += " ";
     }
-    int default_minute = activity.generalSettings.getSnooze_default_minute();
+    int default_minute = activity.snooze_default_minute;
     if(default_minute != 0) {
       defaultSnoozeTime += activity.getResources().getQuantityString(R.plurals.minute, default_minute, default_minute);
       if(!locale.equals(Locale.JAPAN)) defaultSnoozeTime += " ";

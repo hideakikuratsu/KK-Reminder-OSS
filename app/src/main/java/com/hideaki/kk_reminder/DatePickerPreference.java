@@ -17,6 +17,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import static com.hideaki.kk_reminder.UtilClass.HOUR;
+
 public class DatePickerPreference extends Preference implements View.OnClickListener {
 
   private final String[] DAY_OF_WEEK_LIST_JA = {"日", "月", "火", "水", "木", "金", "土"};
@@ -106,10 +108,10 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     abovePicker3.setOnClickListener(this);
     abovePicker4.setOnClickListener(this);
 
-    abovePicker1.setText(activity.generalSettings.getDefaultQuickPicker1());
-    abovePicker2.setText(activity.generalSettings.getDefaultQuickPicker2());
-    abovePicker3.setText(activity.generalSettings.getDefaultQuickPicker3());
-    abovePicker4.setText(activity.generalSettings.getDefaultQuickPicker4());
+    abovePicker1.setText(activity.defaultQuickPicker1);
+    abovePicker2.setText(activity.defaultQuickPicker2);
+    abovePicker3.setText(activity.defaultQuickPicker3);
+    abovePicker4.setText(activity.defaultQuickPicker4);
 
     TableLayout below_quick_time_picker = view.findViewById(R.id.below_quick_time_picker);
     int below_quick_time_picker_size = below_quick_time_picker.getChildCount();
@@ -127,10 +129,11 @@ public class DatePickerPreference extends Preference implements View.OnClickList
     cal = (Calendar)MainEditFragment.final_cal.clone();
     Calendar now = (Calendar)MainEditFragment.final_cal.clone();
     MainEditFragment.final_cal.set(Calendar.SECOND, 0);
+    MainEditFragment.final_cal.set(Calendar.MILLISECOND, 0);
     day_list.clear();
     now_year = cal.get(Calendar.YEAR);
     norm.set(now_year, 0, 1, 0, 0, 0);
-    long day = (cal.getTimeInMillis() - norm.getTimeInMillis()) / (1000 * 60 * 60 * 24);
+    long day = (cal.getTimeInMillis() - norm.getTimeInMillis()) / (24 * HOUR);
     setDayList(0);
 
     day_picker = view.findViewById(R.id.day);

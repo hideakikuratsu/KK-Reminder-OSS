@@ -141,7 +141,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     actionBar.setTitle(R.string.tag);
 
     AdView adView = view.findViewById(R.id.adView);
-    if(activity.generalSettings.isPremium()) {
+    if(activity.is_premium) {
       adView.setVisibility(View.GONE);
     }
     else {

@@ -62,16 +62,27 @@ import java.util.TimerTask;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.BOOLEAN_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
-import static com.hideaki.kk_reminder.UtilClass.DEFAULT_SNOOZE;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER1;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER2;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER3;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER4;
+import static com.hideaki.kk_reminder.UtilClass.HOUR;
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_URI_SOUND;
 import static com.hideaki.kk_reminder.UtilClass.DONE_ITEM_COMPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
+import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.PRODUCT_ID_PREMIUM;
-import static com.hideaki.kk_reminder.UtilClass.SAVED_DATA;
+import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
+import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
@@ -85,8 +96,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private Intent intent;
   private PendingIntent sender;
   private AlarmManager alarmManager;
+  int snooze_default_hour;
+  int snooze_default_minute;
   int which_menu_open;
   int which_submenu_open;
+  boolean is_expandable_todo;
+  boolean is_premium;
+  String defaultQuickPicker1;
+  String defaultQuickPicker2;
+  String defaultQuickPicker3;
+  String defaultQuickPicker4;
   ExpandableListView expandableListView;
   MyExpandableListAdapter expandableListAdapter;
   SortableListView listView;
@@ -139,21 +158,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //共通設定と新しく追加したリストのリストア
     generalSettings = querySettingsDB();
     if(generalSettings == null) {
-      initGeneralSettings();
-    }
-    else if(generalSettings.isChange_in_notification()) {
-      generalSettings.setChange_in_notification(false);
-      updateSettingsDB();
+      initSettings();
     }
 
+    //SharedPreferencesの内、intを読み出す
+    SharedPreferences intPreferences = getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
+    snooze_default_hour = intPreferences.getInt(SNOOZE_DEFAULT_HOUR, 0);
+    snooze_default_minute = intPreferences.getInt(SNOOZE_DEFAULT_MINUTE, 15);
+    which_menu_open = intPreferences.getInt(MENU_POSITION, 0);
+    which_submenu_open = intPreferences.getInt(SUBMENU_POSITION, 0);
+
+    //SharedPreferencesの内、booleanを読み出す
+    SharedPreferences booleanPreferences = getSharedPreferences(BOOLEAN_GENERAL, MODE_PRIVATE);
+    is_expandable_todo = booleanPreferences.getBoolean(IS_EXPANDABLE_TODO, true);
+    is_premium = booleanPreferences.getBoolean(IS_PREMIUM, false);
+
+    //SharedPreferencesの内、Stringを読み出す
+    SharedPreferences stringPreferences = getSharedPreferences(STRING_GENERAL, MODE_PRIVATE);
+    defaultQuickPicker1 = stringPreferences.getString(DEFAULT_QUICK_PICKER1, getString(R.string.above_picker1_default));
+    defaultQuickPicker2 = stringPreferences.getString(DEFAULT_QUICK_PICKER2, getString(R.string.above_picker2_default));
+    defaultQuickPicker3 = stringPreferences.getString(DEFAULT_QUICK_PICKER3, getString(R.string.above_picker3_default));
+    defaultQuickPicker4 = stringPreferences.getString(DEFAULT_QUICK_PICKER4, getString(R.string.above_picker4_default));
+
     //TODO: 強制的にプレミアムアカウントへアップグレードさせる。テスト用なので必ず取り除くこと
-    generalSettings.setPremium(true);
-    updateSettingsDB();
+    setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
 
     //広告読み出し機能のセットアップ
     MobileAds.initialize(this, getString(R.string.app_id));
 
-    if(!generalSettings.isPremium()) {
+    if(!is_premium) {
 
       //ビリングサービスのセットアップ
       setupBillingServices();
@@ -204,11 +237,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     navigationView.setItemIconTintList(null);
     navigationView.setNavigationItemSelectedListener(this);
 
-    //前回開いていたFragmentのインデックスを取得する
-    SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
-    which_menu_open = preferences.getInt(MENU_POSITION, 0);
-    which_submenu_open = preferences.getInt(SUBMENU_POSITION, 0);
-
+    //各NonScheduledListを読み込む
     for(NonScheduledList list : generalSettings.getNonScheduledLists()) {
       Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_my_list_24dp);
       checkNotNull(drawable);
@@ -247,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     //画面がフォアグラウンドの状態におけるDefaultManuallySnoozeReceiverからのインテントを待ち受ける
-    registerReceiver(defaultSnoozeReceiver, new IntentFilter(DEFAULT_SNOOZE));
+    registerReceiver(defaultSnoozeReceiver, new IntentFilter(SNOOZE));
   }
 
   @Override
@@ -324,18 +353,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   private void checkIsPremium() {
 
-    if(!generalSettings.isPremium()) {
-      Purchase.PurchasesResult purchasesResult = billingClient.queryPurchases(BillingClient.SkuType.INAPP);
-      List<Purchase> purchaseList = purchasesResult.getPurchasesList();
-      if(purchaseList != null) {
-        for(Purchase purchase : purchaseList) {
-          if(PRODUCT_ID_PREMIUM.equals(purchase.getSku())) {
-            Toast.makeText(this, getString(R.string.succeed_to_upgrade), Toast.LENGTH_LONG).show();
-            generalSettings.setPremium(true);
-            updateSettingsDB();
-            finish();
-            startActivity(new Intent(this, MainActivity.class));
-          }
+    Purchase.PurchasesResult purchasesResult = billingClient.queryPurchases(BillingClient.SkuType.INAPP);
+    List<Purchase> purchaseList = purchasesResult.getPurchasesList();
+    if(purchaseList != null) {
+      for(Purchase purchase : purchaseList) {
+        if(PRODUCT_ID_PREMIUM.equals(purchase.getSku())) {
+          Toast.makeText(this, getString(R.string.succeed_to_upgrade), Toast.LENGTH_LONG).show();
+          setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
+          finish();
+          startActivity(new Intent(this, MainActivity.class));
         }
       }
     }
@@ -348,8 +374,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       for(Purchase purchase : purchases) {
         if(PRODUCT_ID_PREMIUM.equals(purchase.getSku())) {
           Toast.makeText(this, getString(R.string.succeed_to_upgrade), Toast.LENGTH_LONG).show();
-          generalSettings.setPremium(true);
-          updateSettingsDB();
+          setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
           finish();
           startActivity(new Intent(this, MainActivity.class));
         }
@@ -410,8 +435,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     if(detail == null) {
       if(BOOT_FROM_NOTIFICATION.equals(intent.getAction())) {
-        which_menu_open = 0;
-        which_submenu_open = 0;
+        setIntGeneralInSharedPreferences(MENU_POSITION, 0);
+        setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
       }
 
       showList();
@@ -438,8 +463,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-              which_menu_open = which_list;
-              which_submenu_open = 0;
+              setIntGeneralInSharedPreferences(MENU_POSITION, which_list);
+              setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
 
               showList();
               is_in_on_create = false;
@@ -491,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     createAndSetFragmentColor();
 
     if(order == 0) {
-      if(generalSettings.isExpandable_todo()) {
+      if(is_expandable_todo) {
         showExpandableListViewFragment(BASE_FRAGMENT_TAG);
       }
       else showDoneListViewFragment(BASE_FRAGMENT_TAG);
@@ -525,17 +550,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     checkNotNull(manager);
     manager.cancelAll();
 
-    //通知でタスクの更新を行った場合は起動時にExpandableListViewの更新を行う
-    generalSettings = querySettingsDB();
-    if(generalSettings.isChange_in_notification()) {
-      MyExpandableListAdapter.children = getChildren(MyDatabaseHelper.TODO_TABLE);
-      expandableListAdapter.notifyDataSetChanged();
-
-      generalSettings.setChange_in_notification(false);
-      updateSettingsDB();
-    }
-
-    if(!generalSettings.isPremium()) {
+    if(!is_premium) {
 
       //ビリングサービスのセットアップ
       setupBillingServices();
@@ -556,7 +571,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     super.onStop();
 
     //バックアップアカウントにログインしている場合はここでログアウトする
-    if(generalSettings.isPremium() && generalSettingsFragment != null) {
+    if(is_premium && generalSettingsFragment != null) {
       if(generalSettingsFragment.backupAndRestoreFragment != null) {
         generalSettingsFragment.backupAndRestoreFragment.signOut();
       }
@@ -572,12 +587,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       timer.cancel();
       timer = null;
     }
-
-    SharedPreferences preferences = getSharedPreferences(SAVED_DATA, MODE_PRIVATE);
-    SharedPreferences.Editor editor = preferences.edit();
-    editor.putInt(MENU_POSITION, which_menu_open);
-    editor.putInt(SUBMENU_POSITION, which_submenu_open);
-    editor.apply();
 
     //すべての通知を既読する
     NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -634,7 +643,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for(int i = 0; i < size; i++) {
 
           if(menu.getItem(i) == menuItem) {
-            which_menu_open = i;
+            setIntGeneralInSharedPreferences(MENU_POSITION, i);
           }
 
           if(menu.getItem(i).hasSubMenu()) {
@@ -642,8 +651,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             int sub_size = subMenu.size();
             for(int j = 0; j < sub_size; j++) {
               if(subMenu.getItem(j) == menuItem) {
-                which_menu_open = i;
-                which_submenu_open = j;
+                setIntGeneralInSharedPreferences(MENU_POSITION, i);
+                setIntGeneralInSharedPreferences(SUBMENU_POSITION, j);
               }
               subMenu.getItem(j).setChecked(false);
             }
@@ -660,7 +669,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         createAndSetFragmentColor();
         switch(order) {
           case 0: {
-            if(generalSettings.isExpandable_todo()) {
+            if(is_expandable_todo) {
               showExpandableListViewFragment(BASE_FRAGMENT_TAG);
             }
             else showDoneListViewFragment(BASE_FRAGMENT_TAG);
@@ -818,7 +827,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
               int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
               long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
-              long sub_day = sub_time / (1000 * 60 * 60 * 24);
+              long sub_day = sub_time / (24 * HOUR);
 
               if(sub_time < 0) {
                 if(group_count != 0) {
@@ -884,8 +893,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             for(List<Item> itemList : MyExpandableListAdapter.children) {
               Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
             }
-            expandableListAdapter.notifyDataSetChanged();
           }
+          expandableListAdapter.notifyDataSetChanged();
         }
       });
     }
@@ -915,7 +924,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
         long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
-        long sub_day = sub_time / (1000 * 60 * 60 * 24);
+        long sub_day = sub_time / (24 * HOUR);
 
         if(sub_time < 0) {
           past_list.add(item);
@@ -956,7 +965,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
     long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
-    long sub_day = sub_time / (1000 * 60 * 60 * 24);
+    long sub_day = sub_time / (24 * HOUR);
 
     if(sub_time < 0) {
       MyExpandableListAdapter.children.get(0).add(item);
@@ -1009,7 +1018,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     return itemList;
   }
 
-  private void initGeneralSettings() {
+  private void initSettings() {
 
     generalSettings = new GeneralSettings();
 
@@ -1116,14 +1125,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     item.setSoundUri(DEFAULT_URI_SOUND.toString());
 
     //手動スヌーズ時間のデフォルト設定
-    generalSettings.setSnooze_default_hour(0);
-    generalSettings.setSnooze_default_minute(15);
+    setIntGeneralInSharedPreferences(SNOOZE_DEFAULT_HOUR, 0);
+    setIntGeneralInSharedPreferences(SNOOZE_DEFAULT_MINUTE, 15);
 
     //クイックピッカーのデフォルト設定
-    generalSettings.setDefaultQuickPicker1(getString(R.string.above_picker1_default));
-    generalSettings.setDefaultQuickPicker2(getString(R.string.above_picker2_default));
-    generalSettings.setDefaultQuickPicker3(getString(R.string.above_picker3_default));
-    generalSettings.setDefaultQuickPicker4(getString(R.string.above_picker4_default));
+    setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER1, getString(R.string.above_picker1_default));
+    setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER2, getString(R.string.above_picker2_default));
+    setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER3, getString(R.string.above_picker3_default));
+    setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER4, getString(R.string.above_picker4_default));
 
     insertSettingsDB();
   }
@@ -1174,6 +1183,75 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   public GeneralSettings querySettingsDB() {
 
     return (GeneralSettings)deserialize(accessor.executeQueryById(1, MyDatabaseHelper.SETTINGS_TABLE));
+  }
+
+  public void setIntGeneralInSharedPreferences(String TAG, int value) {
+
+    switch(TAG) {
+      case SNOOZE_DEFAULT_HOUR:
+        snooze_default_hour = value;
+        break;
+      case SNOOZE_DEFAULT_MINUTE:
+        snooze_default_minute = value;
+        break;
+      case MENU_POSITION:
+        which_menu_open = value;
+        break;
+      case SUBMENU_POSITION:
+        which_submenu_open = value;
+        break;
+      default:
+        throw new IllegalArgumentException(TAG);
+    }
+
+    getSharedPreferences(INT_GENERAL, Context.MODE_PRIVATE)
+        .edit()
+        .putInt(TAG, value)
+        .apply();
+  }
+
+  public void setBooleanGeneralInSharedPreferences(String TAG, boolean value) {
+
+    switch(TAG) {
+      case IS_EXPANDABLE_TODO:
+        is_expandable_todo = value;
+        break;
+      case IS_PREMIUM:
+        is_premium = value;
+        break;
+      default:
+        throw new IllegalArgumentException(TAG);
+    }
+
+    getSharedPreferences(BOOLEAN_GENERAL, Context.MODE_PRIVATE)
+        .edit()
+        .putBoolean(TAG, value)
+        .apply();
+  }
+
+  public void setStringGeneralInSharedPreferences(String TAG, String value) {
+
+    switch(TAG) {
+      case DEFAULT_QUICK_PICKER1:
+        defaultQuickPicker1 = value;
+        break;
+      case DEFAULT_QUICK_PICKER2:
+        defaultQuickPicker2 = value;
+        break;
+      case DEFAULT_QUICK_PICKER3:
+        defaultQuickPicker3 = value;
+        break;
+      case DEFAULT_QUICK_PICKER4:
+        defaultQuickPicker4 = value;
+        break;
+      default:
+        throw new IllegalArgumentException(TAG);
+    }
+
+    getSharedPreferences(STRING_GENERAL, Context.MODE_PRIVATE)
+        .edit()
+        .putString(TAG, value)
+        .apply();
   }
 
   public void setAlarm(Item item) {

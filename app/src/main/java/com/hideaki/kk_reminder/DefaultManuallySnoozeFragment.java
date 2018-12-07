@@ -64,8 +64,8 @@ public class DefaultManuallySnoozeFragment extends PreferenceFragment {
     actionBar.setTitle(R.string.default_manually_snooze);
 
     //時間表示の初期化
-    int hour = activity.generalSettings.getSnooze_default_hour();
-    int minute = activity.generalSettings.getSnooze_default_minute();
+    int hour = activity.snooze_default_hour;
+    int minute = activity.snooze_default_minute;
     String summary = "";
     if(hour != 0) {
       summary += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);

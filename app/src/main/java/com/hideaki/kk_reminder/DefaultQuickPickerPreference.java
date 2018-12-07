@@ -17,6 +17,11 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER1;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER2;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER3;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER4;
+
 public class DefaultQuickPickerPreference extends Preference implements View.OnClickListener {
 
   private MainActivity activity;
@@ -95,10 +100,10 @@ public class DefaultQuickPickerPreference extends Preference implements View.OnC
     abovePicker3.setOnClickListener(this);
     abovePicker4.setOnClickListener(this);
 
-    abovePicker1.setText(activity.generalSettings.getDefaultQuickPicker1());
-    abovePicker2.setText(activity.generalSettings.getDefaultQuickPicker2());
-    abovePicker3.setText(activity.generalSettings.getDefaultQuickPicker3());
-    abovePicker4.setText(activity.generalSettings.getDefaultQuickPicker4());
+    abovePicker1.setText(activity.defaultQuickPicker1);
+    abovePicker2.setText(activity.defaultQuickPicker2);
+    abovePicker3.setText(activity.defaultQuickPicker3);
+    abovePicker4.setText(activity.defaultQuickPicker4);
 
     abovePicker1.setBackgroundColor(activity.accent_color);
     which_picker_selected = 0;
@@ -128,25 +133,25 @@ public class DefaultQuickPickerPreference extends Preference implements View.OnC
 
                 case 0: {
 
-                  activity.generalSettings.setDefaultQuickPicker1(time);
+                  activity.setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER1, time);
                   abovePicker1.setText(time);
                   break;
                 }
                 case 1: {
 
-                  activity.generalSettings.setDefaultQuickPicker2(time);
+                  activity.setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER2, time);
                   abovePicker2.setText(time);
                   break;
                 }
                 case 2: {
 
-                  activity.generalSettings.setDefaultQuickPicker3(time);
+                  activity.setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER3, time);
                   abovePicker3.setText(time);
                   break;
                 }
                 case 3: {
 
-                  activity.generalSettings.setDefaultQuickPicker4(time);
+                  activity.setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER4, time);
                   abovePicker4.setText(time);
                   break;
                 }
@@ -181,25 +186,25 @@ public class DefaultQuickPickerPreference extends Preference implements View.OnC
 
                 case 0: {
 
-                  activity.generalSettings.setDefaultQuickPicker1(time);
+                  activity.setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER1, time);
                   abovePicker1.setText(time);
                   break;
                 }
                 case 1: {
 
-                  activity.generalSettings.setDefaultQuickPicker2(time);
+                  activity.setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER2, time);
                   abovePicker2.setText(time);
                   break;
                 }
                 case 2: {
 
-                  activity.generalSettings.setDefaultQuickPicker3(time);
+                  activity.setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER3, time);
                   abovePicker3.setText(time);
                   break;
                 }
                 case 3: {
 
-                  activity.generalSettings.setDefaultQuickPicker4(time);
+                  activity.setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER4, time);
                   abovePicker4.setText(time);
                   break;
                 }

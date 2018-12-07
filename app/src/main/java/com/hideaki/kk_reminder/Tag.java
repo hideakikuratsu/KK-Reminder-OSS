@@ -3,9 +3,9 @@ package com.hideaki.kk_reminder;
 import java.io.Serializable;
 import java.util.Calendar;
 
-public class Tag implements Serializable {
+class Tag implements Serializable {
 
-  private static final long serialVersionUID = -2939023932780256262L;
+  private static final long serialVersionUID = -3736385384498980010L;
   private final long id;
   private String name;
   private int primary_color;

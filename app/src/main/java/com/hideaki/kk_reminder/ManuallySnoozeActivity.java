@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,18 +22,24 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
+import static com.hideaki.kk_reminder.UtilClass.CREATED;
+import static com.hideaki.kk_reminder.UtilClass.DESTROYED;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
+import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID;
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE;
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
+import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ManuallySnoozeActivity extends AppCompatActivity implements View.OnClickListener {
 
-  GeneralSettings generalSettings;
   private DBAccessor accessor = null;
   TextView title;
   ListView listView;
@@ -42,6 +49,8 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
   private static final List<String> minute_list = new ArrayList<>();
   private NumberPicker hour_picker;
   private NumberPicker minute_picker;
+  int snooze_default_hour;
+  int snooze_default_minute;
   int custom_hour;
   int custom_minute;
   String summary;
@@ -85,7 +94,11 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     //AlarmReceiverからItemとNotificationIDを受け取る
     Intent intent = getIntent();
     item = (Item)deserialize(intent.getByteArrayExtra(ITEM));
-    generalSettings = querySettingsDB();
+
+    //SharedPreferencesからデフォルトのスヌーズ時間を取得
+    SharedPreferences intPreferences = getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
+    snooze_default_hour = intPreferences.getInt(SNOOZE_DEFAULT_HOUR, 0);
+    snooze_default_minute = intPreferences.getInt(SNOOZE_DEFAULT_MINUTE, 15);
 
     //通知を既読する
     int notification_id = intent.getIntExtra(NOTIFICATION_ID, -1);
@@ -100,8 +113,8 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
 
     //customレイアウトとして表示するfooterの設定
     footer = View.inflate(this, R.layout.manually_snooze_custom_layout, null);
-    custom_hour = generalSettings.getSnooze_default_hour();
-    custom_minute = generalSettings.getSnooze_default_minute();
+    custom_hour = snooze_default_hour;
+    custom_minute = snooze_default_minute;
     initPicker();
 
     //listView以外のレイアウトの設定
@@ -184,16 +197,6 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     accessor.executeUpdate(item.getId(), serialize(item), table);
   }
 
-  public GeneralSettings querySettingsDB() {
-
-    return (GeneralSettings)deserialize(accessor.executeQueryById(1, MyDatabaseHelper.SETTINGS_TABLE));
-  }
-
-  public void updateSettingsDB() {
-
-    accessor.executeUpdate(1, serialize(generalSettings), MyDatabaseHelper.SETTINGS_TABLE);
-  }
-
   @Override
   public void onClick(View v) {
 
@@ -216,15 +219,14 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
         //チェックされた項目に応じた時間スヌーズする
         int checked_position = ManuallySnoozeListAdapter.checked_position;
 
-        long default_snooze = generalSettings.getSnooze_default_hour() * HOUR
-            + generalSettings.getSnooze_default_minute() * MINUTE;
+        long default_snooze = snooze_default_hour * HOUR + snooze_default_minute * MINUTE;
         long custom_snooze = custom_hour * HOUR + custom_minute * MINUTE;
         long[] how_long = {default_snooze, 15 * MINUTE, 30 * MINUTE, HOUR, 3 * HOUR, 10 * HOUR, 24 * HOUR, custom_snooze};
 
         if(item.getTime_altered() == 0) {
           item.setOrg_date((Calendar)item.getDate().clone());
         }
-        item.getDate().setTimeInMillis(System.currentTimeMillis() + how_long[checked_position]);
+        item.getDate().setTimeInMillis(currentTimeMinutes() + how_long[checked_position]);
         item.addTime_altered(how_long[checked_position]);
 
         //更新
@@ -232,8 +234,10 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
         setAlarm(item);
         updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-        generalSettings.setChange_in_notification(true);
-        updateSettingsDB();
+        SharedPreferences preferences = getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
+        int created = preferences.getInt(CREATED, -1);
+        int destroyed = preferences.getInt(DESTROYED, -1);
+        if(created > destroyed) sendBroadcast(new Intent(SNOOZE));
 
         this.finish();
         break;

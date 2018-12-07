@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
@@ -16,12 +17,19 @@ import android.support.v4.app.NotificationCompat;
 
 import java.util.Locale;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
+import static com.hideaki.kk_reminder.UtilClass.HOUR;
+import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
+import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID;
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
+import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -67,9 +75,9 @@ public class AlarmReceiver extends BroadcastReceiver {
     //手動スヌーズ用のIntentの設定
 
     //デフォルトスヌーズ
-    GeneralSettings generalSettings = querySettingsDB();
-    int hour = generalSettings.getSnooze_default_hour();
-    int minute = generalSettings.getSnooze_default_minute();
+    SharedPreferences intPreferences = context.getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
+    int hour = intPreferences.getInt(SNOOZE_DEFAULT_HOUR, 0);
+    int minute = intPreferences.getInt(SNOOZE_DEFAULT_MINUTE, 15);
     String summary = "";
     if(hour != 0) {
       summary += context.getResources().getQuantityString(R.plurals.hour, hour, hour);
@@ -129,9 +137,9 @@ public class AlarmReceiver extends BroadcastReceiver {
       PendingIntent recursive_sender = PendingIntent.getBroadcast(
           context, (int)item.getId(), recursive_alarm, PendingIntent.FLAG_UPDATE_CURRENT);
 
-      long reset_schedule = System.currentTimeMillis()
-          + item.getNotify_interval().getHour() * 60 * 60 * 1000
-          + item.getNotify_interval().getMinute() * 60 * 1000;
+      long reset_schedule = currentTimeMinutes()
+          + item.getNotify_interval().getHour() * HOUR
+          + item.getNotify_interval().getMinute() * MINUTE;
 
       AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
       checkNotNull(alarmManager);
@@ -154,10 +162,5 @@ public class AlarmReceiver extends BroadcastReceiver {
   public void updateDB(Item item, String table) {
 
     accessor.executeUpdate(item.getId(), serialize(item), table);
-  }
-
-  public GeneralSettings querySettingsDB() {
-
-    return (GeneralSettings)deserialize(accessor.executeQueryById(1, MyDatabaseHelper.SETTINGS_TABLE));
   }
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class DBAccessor {
+
   private SQLiteDatabase sdb;
   private MyDatabaseHelper helper;
   private String state_str;

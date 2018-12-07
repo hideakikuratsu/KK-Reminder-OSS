@@ -42,9 +42,12 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 
@@ -183,13 +186,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           break;
         }
         case R.id.m5m: {
-          if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 5 * 60 * 1000) {
+          if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 5 * MINUTE) {
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
             }
-            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + -5 * 60 * 1000);
+            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + -5 * MINUTE);
 
-            item.addTime_altered(-5 * 60 * 1000);
+            item.addTime_altered(-5 * MINUTE);
             if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
             activity.deleteAlarm(item);
@@ -201,13 +204,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           break;
         }
         case R.id.m1h: {
-          if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 60 * 60 * 1000) {
+          if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + HOUR) {
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
             }
-            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + -1 * 60 * 60 * 1000);
+            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + -1 * HOUR);
 
-            item.addTime_altered(-1 * 60 * 60 * 1000);
+            item.addTime_altered(-1 * HOUR);
             if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
             activity.deleteAlarm(item);
@@ -219,13 +222,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           break;
         }
         case R.id.m1d: {
-          if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 24 * 60 * 60 * 1000) {
+          if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 24 * HOUR) {
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
             }
-            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + -24 * 60 * 60 * 1000);
+            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + -24 * HOUR);
 
-            item.addTime_altered(-24 * 60 * 60 * 1000);
+            item.addTime_altered(-24 * HOUR);
             if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
             activity.deleteAlarm(item);
@@ -249,13 +252,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
 
           if(item.getDate().getTimeInMillis() < System.currentTimeMillis()) {
-            item.getDate().setTimeInMillis(System.currentTimeMillis() + 5 * 60 * 1000);
+            item.getDate().setTimeInMillis(currentTimeMinutes() + 5 * MINUTE);
           }
           else {
-            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + 5 * 60 * 1000);
+            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + 5 * MINUTE);
           }
 
-          item.addTime_altered(5 * 60 * 1000);
+          item.addTime_altered(5 * MINUTE);
           if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
           activity.deleteAlarm(item);
@@ -271,13 +274,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
 
           if(item.getDate().getTimeInMillis() < System.currentTimeMillis()) {
-            item.getDate().setTimeInMillis(System.currentTimeMillis() + 60 * 60 * 1000);
+            item.getDate().setTimeInMillis(currentTimeMinutes() + HOUR);
           }
           else {
-            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + 60 * 60 * 1000);
+            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + HOUR);
           }
 
-          item.addTime_altered(60 * 60 * 1000);
+          item.addTime_altered(HOUR);
           if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
           activity.deleteAlarm(item);
@@ -293,13 +296,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
 
           if(item.getDate().getTimeInMillis() < System.currentTimeMillis()) {
-            item.getDate().setTimeInMillis(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
+            item.getDate().setTimeInMillis(currentTimeMinutes() + 24 * HOUR);
           }
           else {
-            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + 24 * 60 * 60 * 1000);
+            item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + 24 * HOUR);
           }
 
-          item.addTime_altered(24 * 60 * 60 * 1000);
+          item.addTime_altered(24 * HOUR);
           if(item.isAlarm_stopped()) item.setAlarm_stopped(false);
 
           activity.deleteAlarm(item);
@@ -420,6 +423,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
             tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
             tmp.set(Calendar.SECOND, 0);
+            tmp.set(Calendar.MILLISECOND, 0);
 
             if(tmp.before(now)) tmp.add(Calendar.DAY_OF_MONTH, item.getDayRepeat().getInterval());
           }
@@ -465,6 +469,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
             tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
             tmp.set(Calendar.SECOND, 0);
+            tmp.set(Calendar.MILLISECOND, 0);
             day_of_week = now.get(Calendar.DAY_OF_WEEK) < 2 ?
                 now.get(Calendar.DAY_OF_WEEK) + 5 : now.get(Calendar.DAY_OF_WEEK) - 2;
 
@@ -567,6 +572,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
               tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
               tmp.set(Calendar.SECOND, 0);
+              tmp.set(Calendar.MILLISECOND, 0);
               day_of_month = now.get(Calendar.DAY_OF_MONTH);
 
               //intervalの処理
@@ -816,6 +822,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
               tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
               tmp.set(Calendar.SECOND, 0);
+              tmp.set(Calendar.MILLISECOND, 0);
 
               if(day_of_week < 8) {
                 month = tmp.get(Calendar.MONTH);
@@ -1064,6 +1071,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
             tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
             tmp.set(Calendar.SECOND, 0);
+            tmp.set(Calendar.MILLISECOND, 0);
             month = now.get(Calendar.MONTH);
 
             //intervalの処理
@@ -1905,9 +1913,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       }
     }
 
-    int how_far_days = (int)(date_sub / (1000 * 60 * 60 * 24));
-    int how_far_hours = (int)(date_sub / (1000 * 60 * 60));
-    int how_far_minutes = (int)(date_sub / (1000 * 60));
+    int how_far_days = (int)(date_sub / (24 * HOUR));
+    int how_far_hours = (int)(date_sub / HOUR);
+    int how_far_minutes = (int)(date_sub / MINUTE);
 
 
     Resources res = activity.getResources();

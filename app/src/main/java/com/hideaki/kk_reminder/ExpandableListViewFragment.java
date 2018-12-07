@@ -93,7 +93,7 @@ public class ExpandableListViewFragment extends Fragment {
     activity.expandableListView.setTextFilterEnabled(true);
 
     AdView adView = view.findViewById(R.id.adView);
-    if(activity.generalSettings.isPremium()) {
+    if(activity.is_premium) {
       adView.setVisibility(View.GONE);
     }
     else {

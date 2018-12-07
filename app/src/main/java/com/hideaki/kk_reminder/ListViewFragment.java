@@ -108,7 +108,7 @@ public class ListViewFragment extends Fragment {
     activity.listView.setTextFilterEnabled(true);
 
     AdView adView = view.findViewById(R.id.adView);
-    if(activity.generalSettings.isPremium()) {
+    if(activity.is_premium) {
       adView.setVisibility(View.GONE);
     }
     else {

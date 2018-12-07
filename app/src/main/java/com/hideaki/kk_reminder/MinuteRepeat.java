@@ -2,6 +2,9 @@ package com.hideaki.kk_reminder;
 
 import java.io.Serializable;
 
+import static com.hideaki.kk_reminder.UtilClass.HOUR;
+import static com.hideaki.kk_reminder.UtilClass.MINUTE;
+
 public class MinuteRepeat implements Serializable, Cloneable {
 
   private static final long serialVersionUID = 6882023574179727992L;
@@ -31,7 +34,7 @@ public class MinuteRepeat implements Serializable, Cloneable {
   }
 
   long getInterval() {
-    return (this.hour * 60 + this.minute) * 60 * 1000;
+    return hour * HOUR + minute * MINUTE;
   }
 
   int getCount() {
@@ -47,7 +50,7 @@ public class MinuteRepeat implements Serializable, Cloneable {
   }
 
   long getDuration() {
-    return (this.duration_hour * 60 + this.duration_minute) * 60 * 1000;
+    return duration_hour * HOUR + duration_minute * MINUTE;
   }
 
   int getOrg_duration_hour() {
@@ -59,7 +62,7 @@ public class MinuteRepeat implements Serializable, Cloneable {
   }
 
   long getOrgDuration() {
-    return (this.org_duration_hour * 60 + this.org_duration_minute) * 60 * 1000;
+    return org_duration_hour * HOUR + org_duration_minute * MINUTE;
   }
 
   long getOrg_duration2() {
@@ -99,8 +102,8 @@ public class MinuteRepeat implements Serializable, Cloneable {
   }
 
   void setDuration(long rest) {
-    this.duration_hour = (int)(rest / (1000 * 60 * 60));
-    this.duration_minute = (int)(rest / (1000 * 60) - this.duration_hour * 60);
+    duration_hour = (int)(rest / HOUR);
+    duration_minute = (int)(rest / MINUTE - duration_hour * 60);
   }
  void setOrg_duration_hour(int org_duration_hour) {
     this.org_duration_hour = org_duration_hour;

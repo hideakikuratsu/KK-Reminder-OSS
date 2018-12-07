@@ -56,7 +56,9 @@ import java.util.Date;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.RC_SIGN_IN;
+import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 
 public class BackupAndRestoreFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
@@ -391,8 +393,8 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
                 activity.getString(R.string.success_to_restore), Toast.LENGTH_LONG
             ).show();
 
-            activity.which_menu_open = 0;
-            activity.which_submenu_open = 0;
+            activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
+            activity.setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
             activity.finish();
             startActivity(new Intent(activity, MainActivity.class));
           }

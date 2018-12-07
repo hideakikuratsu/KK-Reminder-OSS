@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class UtilClass {
@@ -22,24 +23,51 @@ class UtilClass {
   static final NotesComparator NOTES_COMPARATOR = new NotesComparator();
   static final Uri DEFAULT_URI_SOUND = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
   static final String NOTIFICATION_ID = "NOTIFICATION_ID";
-  static final String DEFAULT_SNOOZE = "DEFAULT_SNOOZE";
+  static final String SNOOZE = "SNOOZE";
   static final String BOOT_FROM_NOTIFICATION = "BOOT_FROM_NOTIFICATION";
   static final int REQUEST_CODE_RINGTONE_PICKER = 0;
   static final String ITEM = "ITEM";
   static final String LIST = "LIST";
-  static final String SAVED_DATA = "SAVED_DATA";
+  static final String INT_GENERAL = "INT_GENERAL";
+  static final String SNOOZE_DEFAULT_HOUR = "SNOOZE_DEFAULT_HOUR";
+  static final String SNOOZE_DEFAULT_MINUTE = "SNOOZE_DEFAULT_MINUTE";
   static final String MENU_POSITION = "MENU_POSITION";
   static final String SUBMENU_POSITION = "SUBMENU_POSITION";
-  static final String LIFECYCLE_COUNT = "LIFECYCLE_COUNT";
-  static final String RESUMED = "RESUMED";
-  static final String PAUSED = "PAUSED";
-  static final String STARTED = "STARTED";
-  static final String STOPPED = "STOPPED";
+  static final String CREATED = "CREATED";
+  static final String DESTROYED = "DESTROYED";
+//  static final String RESUMED = "RESUMED";
+//  static final String PAUSED = "PAUSED";
+//  static final String STARTED = "STARTED";
+//  static final String STOPPED = "STOPPED";
+  static final String BOOLEAN_GENERAL = "BOOLEAN_GENERAL";
+  static final String IS_EXPANDABLE_TODO = "IS_EXPANDABLE_TODO";
+  static final String IS_PREMIUM = "IS_PREMIUM";
+  static final String STRING_GENERAL = "STRING_GENERAL";
+  static final String DEFAULT_QUICK_PICKER1 = "DEFAULT_QUICK_PICKER1";
+  static final String DEFAULT_QUICK_PICKER2 = "DEFAULT_QUICK_PICKER2";
+  static final String DEFAULT_QUICK_PICKER3 = "DEFAULT_QUICK_PICKER3";
+  static final String DEFAULT_QUICK_PICKER4 = "DEFAULT_QUICK_PICKER4";
   static final String LINE_SEPARATOR = System.getProperty("line.separator");
   static final String PRODUCT_ID_PREMIUM = "com.hideaki.premium";
   static final int RC_SIGN_IN = 1;
   static long MINUTE = 60 * 1000;
   static long HOUR = 60 * 60 * 1000;
+
+  static long currentTimeMinutes() {
+
+    Calendar now = Calendar.getInstance();
+    if(now.get(Calendar.SECOND) < 30) {
+      now.set(Calendar.SECOND, 0);
+      now.set(Calendar.MILLISECOND, 0);
+    }
+    else {
+      now.add(Calendar.MINUTE, 1);
+      now.set(Calendar.SECOND, 0);
+      now.set(Calendar.MILLISECOND, 0);
+    }
+
+    return now.getTimeInMillis();
+  }
 
   static int getPxFromDp(Context context, int dp) {
 

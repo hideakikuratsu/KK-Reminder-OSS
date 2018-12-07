@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
 
 
 public class ActionBarFragment extends Fragment {
@@ -129,7 +130,7 @@ public class ActionBarFragment extends Fragment {
 
     if(order == 0) {
       toggleItem.setVisible(true);
-      if(activity.generalSettings.isExpandable_todo()) {
+      if(activity.is_expandable_todo) {
         if(activity.expandableListAdapter.getGroupCount() != 0) {
           searchItem.setVisible(true);
         }
@@ -205,7 +206,7 @@ public class ActionBarFragment extends Fragment {
 
                     if(order == 0) {
 
-                      if(activity.generalSettings.isExpandable_todo()) {
+                      if(activity.is_expandable_todo) {
                         MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
 
                         filteredLists = new ArrayList<>();
@@ -435,7 +436,7 @@ public class ActionBarFragment extends Fragment {
     doneDrawable = (GradientDrawable)doneDrawable.mutate();
 
     if(order == 0) {
-      if(activity.generalSettings.isExpandable_todo()) {
+      if(activity.is_expandable_todo) {
         setTodoPushedColor();
       }
       else setDonePushedColor();
@@ -454,10 +455,9 @@ public class ActionBarFragment extends Fragment {
       public void onClick(View v) {
 
         if(order == 0) {
-          if(!activity.generalSettings.isExpandable_todo()) {
+          if(!activity.is_expandable_todo) {
             addItem.setVisible(true);
-            activity.generalSettings.setExpandable_todo(true);
-            activity.updateSettingsDB();
+            activity.setBooleanGeneralInSharedPreferences(IS_EXPANDABLE_TODO, true);
             activity.showExpandableListViewFragment(DoneListViewFragment.TAG);
 
             setTodoPushedColor();
@@ -482,10 +482,9 @@ public class ActionBarFragment extends Fragment {
       public void onClick(View v) {
 
         if(order == 0) {
-          if(activity.generalSettings.isExpandable_todo()) {
+          if(activity.is_expandable_todo) {
             addItem.setVisible(false);
-            activity.generalSettings.setExpandable_todo(false);
-            activity.updateSettingsDB();
+            activity.setBooleanGeneralInSharedPreferences(IS_EXPANDABLE_TODO, false);
             activity.showDoneListViewFragment(ExpandableListViewFragment.TAG);
 
             setDonePushedColor();
@@ -587,7 +586,7 @@ public class ActionBarFragment extends Fragment {
         //各アイテムの表示処理
         if(order == 0) {
           toggleItem.setVisible(true);
-          if(activity.generalSettings.isExpandable_todo()) {
+          if(activity.is_expandable_todo) {
             addItem.setVisible(true);
           }
         }
@@ -606,7 +605,7 @@ public class ActionBarFragment extends Fragment {
 
         if(checked_tag != -1) {
           if(order == 0) {
-            if(activity.generalSettings.isExpandable_todo()) {
+            if(activity.is_expandable_todo) {
               MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
             }
             else {
@@ -640,7 +639,7 @@ public class ActionBarFragment extends Fragment {
       public boolean onQueryTextChange(String text) {
 
         if(text == null || text.equals("")) {
-          if(order == 0 && activity.generalSettings.isExpandable_todo()) {
+          if(order == 0 && activity.is_expandable_todo) {
             activity.expandableListView.clearTextFilter();
           }
           else activity.listView.clearTextFilter();
@@ -649,7 +648,7 @@ public class ActionBarFragment extends Fragment {
           filteredText = null;
         }
         else {
-          if(order == 0 && activity.generalSettings.isExpandable_todo()) {
+          if(order == 0 && activity.is_expandable_todo) {
             activity.expandableListView.setFilterText(text);
           }
           else activity.listView.setFilterText(text);

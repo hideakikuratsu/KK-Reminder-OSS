@@ -115,7 +115,7 @@ public class ColorPickerListViewFragment extends Fragment {
     actionBar.setTitle(R.string.pick_color);
 
     AdView adView = view.findViewById(R.id.adView);
-    if(activity.generalSettings.isPremium()) {
+    if(activity.is_premium) {
       adView.setVisibility(View.GONE);
     }
     else {

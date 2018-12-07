@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
+import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
+
 public class DefaultManuallySnoozePreference extends Preference {
 
   private MainActivity activity;
@@ -68,8 +71,8 @@ public class DefaultManuallySnoozePreference extends Preference {
 
     TextView description = view.findViewById(R.id.description);
     description.setTextColor(Color.BLACK);
-    hour = activity.generalSettings.getSnooze_default_hour();
-    minute = activity.generalSettings.getSnooze_default_minute();
+    hour = activity.snooze_default_hour;
+    minute = activity.snooze_default_minute;
 
     //hour_pickerの実装
     hour_picker = view.findViewById(R.id.hour);
@@ -106,8 +109,7 @@ public class DefaultManuallySnoozePreference extends Preference {
               summary += activity.getString(R.string.snooze);
               DefaultManuallySnoozeFragment.label.setSummary(summary);
 
-              activity.generalSettings.setSnooze_default_hour(hour);
-              activity.updateSettingsDB();
+              activity.setIntGeneralInSharedPreferences(SNOOZE_DEFAULT_HOUR, hour);
             }
           }
         }, 100);
@@ -150,8 +152,7 @@ public class DefaultManuallySnoozePreference extends Preference {
               summary += activity.getString(R.string.snooze);
               DefaultManuallySnoozeFragment.label.setSummary(summary);
 
-              activity.generalSettings.setSnooze_default_minute(minute);
-              activity.updateSettingsDB();
+              activity.setIntGeneralInSharedPreferences(SNOOZE_DEFAULT_MINUTE, minute);
             }
           }
         }, 100);

@@ -64,7 +64,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     backup.setOnPreferenceClickListener(this);
     about.setOnPreferenceClickListener(this);
 
-    if(activity.generalSettings.isPremium()) {
+    if(activity.is_premium) {
       getPreferenceScreen().removePreference(upgradeCategory);
     }
     else {
@@ -124,7 +124,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
       }
       case "primary_color": {
 
-        if(activity.generalSettings.isPremium()) {
+        if(activity.is_premium) {
           ColorPickerListAdapter.is_general_settings = true;
           activity.showColorPickerListViewFragment(TAG);
         }
@@ -133,7 +133,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
       }
       case "secondary_color": {
 
-        if(activity.generalSettings.isPremium()) {
+        if(activity.is_premium) {
           ColorPickerListAdapter.is_general_settings = true;
           activity.generalSettings.getTheme().setColor_primary(false);
           activity.showColorPickerListViewFragment(TAG);
@@ -143,7 +143,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
       }
       case "backup": {
 
-        if(activity.generalSettings.isPremium()) {
+        if(activity.is_premium) {
           backupAndRestoreFragment = BackupAndRestoreFragment.newInstance();
           transitionFragment(backupAndRestoreFragment);
         }

@@ -34,11 +34,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LIST;
 import static com.hideaki.kk_reminder.UtilClass.REQUEST_CODE_RINGTONE_PICKER;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
     Preference.OnPreferenceChangeListener {
@@ -245,7 +245,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     pickAlarm = (PreferenceScreen)findPreference("pick_alarm");
     pickAlarm.setOnPreferenceClickListener(this);
-    if(!activity.generalSettings.isPremium()) {
+    if(!activity.is_premium) {
       pickAlarm.setTitle(pickAlarm.getTitle() + " (" + activity.getString(R.string.premium_account_promotion) + ")");
     }
 
@@ -423,9 +423,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
                   if(MainEditFragment.item.getTime_altered() == 0) {
                     MainEditFragment.item.setOrg_date((Calendar)MainEditFragment.item.getDate().clone());
                   }
-                  long altered_time = (final_cal.getTimeInMillis()
-                      - MainEditFragment.item.getDate().getTimeInMillis()) / (1000 * 60);
-                  MainEditFragment.item.addTime_altered(altered_time * 60 * 1000);
+                  long altered_time = final_cal.getTimeInMillis() - MainEditFragment.item.getDate().getTimeInMillis();
+                  MainEditFragment.item.addTime_altered(altered_time);
 
                   registerItem();
                 }
@@ -611,7 +610,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       }
       case "pick_alarm": {
 
-        if(activity.generalSettings.isPremium()) {
+        if(activity.is_premium) {
           Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
           intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, activity.getString(R.string.pick_alarm));
           intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL);
