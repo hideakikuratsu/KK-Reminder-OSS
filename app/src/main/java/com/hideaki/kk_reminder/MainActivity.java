@@ -62,16 +62,19 @@ import java.util.TimerTask;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.ATTACHED;
 import static com.hideaki.kk_reminder.UtilClass.BOOLEAN_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER1;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER2;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER3;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER4;
+import static com.hideaki.kk_reminder.UtilClass.DETACHED;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_URI_SOUND;
 import static com.hideaki.kk_reminder.UtilClass.DONE_ITEM_COMPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.IDLE;
 import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
 import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
@@ -181,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     defaultQuickPicker4 = stringPreferences.getString(DEFAULT_QUICK_PICKER4, getString(R.string.above_picker4_default));
 
     //TODO: 強制的にプレミアムアカウントへアップグレードさせる。テスト用なので必ず取り除くこと
-    setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
+//    setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
 
     //広告読み出し機能のセットアップ
     MobileAds.initialize(this, getString(R.string.app_id));
@@ -555,6 +558,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.DONE_TABLE);
       direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.SETTINGS_TABLE);
     }
+
+    saveCountAndSetUpdateListTimer(IDLE);
   }
 
   @Override
@@ -587,6 +592,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.DONE_TABLE);
       direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.SETTINGS_TABLE);
     }
+
+    //ExpandableListViewの自動更新を止める
+    setUpdateListTimerTask(false);
   }
 
   @Override
@@ -889,14 +897,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public void setUpdateListTimerTask(boolean is_set) {
 
-    if(timer != null) {
+    if(timer != null && !is_set) {
       timer.cancel();
       timer = null;
     }
-    if(is_set) {
+    else if(timer == null && is_set) {
       timer = new Timer();
       TimerTask timerTask = new UpdateListTimerTask();
       timer.schedule(timerTask, 0, 1000);
+    }
+  }
+
+  public void saveCountAndSetUpdateListTimer(String TAG) {
+
+    SharedPreferences intSharedPreferences = getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
+    int attached = intSharedPreferences.getInt(ATTACHED, 0);
+    int detached = intSharedPreferences.getInt(DETACHED, 0);
+    boolean is_idle = false;
+
+    switch(TAG) {
+      case ATTACHED:
+        attached++;
+        break;
+      case DETACHED:
+        detached++;
+        break;
+      case IDLE:
+        is_idle = true;
+        break;
+      default:
+        throw new IllegalArgumentException(TAG);
+    }
+
+    if(attached > detached) setUpdateListTimerTask(true);
+    else if(attached == detached) {
+      attached = 0;
+      detached = 0;
+      setUpdateListTimerTask(false);
+    }
+
+    if(!is_idle) {
+      getSharedPreferences(INT_GENERAL, MODE_PRIVATE)
+          .edit()
+          .putInt(ATTACHED, attached)
+          .putInt(DETACHED, detached)
+          .apply();
     }
   }
 

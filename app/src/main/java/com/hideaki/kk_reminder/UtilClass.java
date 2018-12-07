@@ -35,6 +35,10 @@ class UtilClass {
   static final String SUBMENU_POSITION = "SUBMENU_POSITION";
   static final String CREATED = "CREATED";
   static final String DESTROYED = "DESTROYED";
+  static final String ATTACHED = "ATTACHED";
+  static final String DETACHED = "DETACHED";
+  static final String IDLE = "IDLE";
+  static final String CHANGE_GRADE = "I am sceoppa100 developer";
 //  static final String RESUMED = "RESUMED";
 //  static final String PAUSED = "PAUSED";
 //  static final String STARTED = "STARTED";

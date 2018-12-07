@@ -44,7 +44,7 @@
             android:key="interval"
             android:title="@string/interval" />
 
-        <PreferenceScreen
+        <com.hideaki.kk_reminder.TwoLineTitlePreference
             android:key="pick_alarm"
             android:title="@string/pick_alarm"/>
     </com.hideaki.kk_reminder.MyPreferenceCategory>

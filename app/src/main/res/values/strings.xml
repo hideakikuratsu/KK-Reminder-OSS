@@ -35,7 +35,7 @@
     <string name="notify_option">Notification options</string>
     <string name="interval">Notification repeat and frequency</string>
     <string name="repeat_option">Repeat options</string>
-    <string name="repeat_day_unit">Repeat(per day)</string>
+    <string name="repeat_day_unit">Repeat (per day)</string>
     <string name="per_day">Every %1$d days</string>
     <plurals name="per_week">
         <item quantity="one">Every week</item>
@@ -49,7 +49,7 @@
         <item quantity="one">Every year</item>
         <item quantity="other">Every %1$d years</item>
     </plurals>
-    <string name="repeat_minute_unit">Repeat(per minute)</string>
+    <string name="repeat_minute_unit">Repeat (per minute)</string>
     <string name="repeat_minute_count">Repeat count</string>
     <plurals name="repeat_minute_count_format">
         <item quantity="one">Repeat every %1$sx 1 time since you finish this task</item>
@@ -124,6 +124,7 @@
     <string name="backup_and_restore_note">If the latest backup data doesn\'t sync properly, try to logout, and then restore some times.</string>
     <string name="about">About</string>
     <string name="version">Version</string>
+    <string name="version_value">2.0.2.0.11</string>
     <string name="about_this_app">About this app</string>
     <string name="times">times</string>
     <string name="none">None</string>
@@ -247,7 +248,7 @@
     <string name="add_task">Add a new task</string>
     <string name="nav_other">Other</string>
     <string name="manage_lists">Manage lists</string>
-    <string name="manage_lists_title">Lists management</string>
+    <string name="manage_lists_title">Manage Lists</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_help_and_feedback">Help and Feedback</string>
     <string name="help">Help</string>

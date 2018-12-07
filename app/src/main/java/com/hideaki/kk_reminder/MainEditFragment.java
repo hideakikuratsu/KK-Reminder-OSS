@@ -50,7 +50,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   private PreferenceScreen intervalItem;
   private PreferenceScreen dayRepeatItem;
   private PreferenceScreen minuteRepeatItem;
-  private PreferenceScreen pickAlarm;
+  private Preference pickAlarm;
   private PreferenceScreen notes;
   static Item item;
   static String detail_str;
@@ -243,7 +243,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     minuteRepeatItem = (PreferenceScreen)findPreference("repeat_minute_unit");
     minuteRepeatItem.setOnPreferenceClickListener(this);
 
-    pickAlarm = (PreferenceScreen)findPreference("pick_alarm");
+    pickAlarm = findPreference("pick_alarm");
     pickAlarm.setOnPreferenceClickListener(this);
     if(!activity.is_premium) {
       pickAlarm.setTitle(pickAlarm.getTitle() + " (" + activity.getString(R.string.premium_account_promotion) + ")");
@@ -774,6 +774,9 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     }
     else if(order == 3) {
 
+      if(detail_str == null || detail_str.equals("")) {
+        detail_str = activity.getString(R.string.default_list);
+      }
       list.setTitle(detail_str);
 
       if(!is_edit) {

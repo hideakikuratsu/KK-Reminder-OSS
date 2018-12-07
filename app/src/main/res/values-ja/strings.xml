@@ -121,6 +121,7 @@
     <string name="backup_and_restore_note">復元ポイントが上手く同期されない場合は、一度ログアウトした上で復元操作を何回か試してみてください。</string>
     <string name="about">概要</string>
     <string name="version">バージョン</string>
+    <string name="version_value">2.0.2.0.11</string>
     <string name="about_this_app">このアプリについて</string>
     <string name="times">回</string>
     <string name="none">なし</string>

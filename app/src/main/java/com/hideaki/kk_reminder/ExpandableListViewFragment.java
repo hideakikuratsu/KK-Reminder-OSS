@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import static com.hideaki.kk_reminder.UtilClass.ATTACHED;
+import static com.hideaki.kk_reminder.UtilClass.DETACHED;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 
 public class ExpandableListViewFragment extends Fragment {
@@ -51,14 +53,14 @@ public class ExpandableListViewFragment extends Fragment {
         }
     );
 
-    activity.setUpdateListTimerTask(true);
+    activity.saveCountAndSetUpdateListTimer(ATTACHED);
   }
 
   @Override
   public void onDetach() {
 
     super.onDetach();
-    activity.setUpdateListTimerTask(false);
+    activity.saveCountAndSetUpdateListTimer(DETACHED);
   }
 
   @Nullable

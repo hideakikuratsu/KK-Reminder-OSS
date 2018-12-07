@@ -41,10 +41,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
+import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.CHANGE_GRADE;
 import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
@@ -1556,6 +1558,16 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     return new Filter() {
       @Override
       protected FilterResults performFiltering(CharSequence constraint) {
+
+        //アカウントテスト用
+        if(CHANGE_GRADE.equals(constraint.toString())) {
+          if(activity.is_premium) {
+            activity.setBooleanGeneralInSharedPreferences(IS_PREMIUM, false);
+          }
+          else {
+            activity.setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
+          }
+        }
 
         //入力文字列が大文字を含むかどうか調べる
         boolean is_upper = false;

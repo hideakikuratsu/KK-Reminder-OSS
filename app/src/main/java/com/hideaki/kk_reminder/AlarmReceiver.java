@@ -51,7 +51,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     Intent open_activity = new Intent(context, MainActivity.class);
     open_activity.setAction(BOOT_FROM_NOTIFICATION);
     PendingIntent sender = PendingIntent.getActivity(
-        context, 0, open_activity, PendingIntent.FLAG_UPDATE_CURRENT
+        context, (int)System.currentTimeMillis(), open_activity, PendingIntent.FLAG_UPDATE_CURRENT
     );
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "kk_reminder_01")

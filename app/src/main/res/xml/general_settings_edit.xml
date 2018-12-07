@@ -59,7 +59,7 @@
 
         <PreferenceScreen
             android:title="@string/version"
-            android:summary="1.0"
+            android:summary="@string/version_value"
             android:key="version"/>
 
         <PreferenceScreen
