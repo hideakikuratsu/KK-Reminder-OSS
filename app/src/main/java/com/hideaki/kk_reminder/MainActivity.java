@@ -69,7 +69,7 @@ import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER2;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER3;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER4;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
-import static com.hideaki.kk_reminder.UtilClass.SNOOZE;
+import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_URI_SOUND;
 import static com.hideaki.kk_reminder.UtilClass.DONE_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     //画面がフォアグラウンドの状態におけるDefaultManuallySnoozeReceiverからのインテントを待ち受ける
-    registerReceiver(defaultSnoozeReceiver, new IntentFilter(SNOOZE));
+    registerReceiver(defaultSnoozeReceiver, new IntentFilter(ACTION_IN_NOTIFICATION));
   }
 
   @Override

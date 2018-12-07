@@ -31,7 +31,7 @@ import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID;
-import static com.hideaki.kk_reminder.UtilClass.SNOOZE;
+import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
@@ -237,7 +237,7 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
         SharedPreferences preferences = getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
         int created = preferences.getInt(CREATED, -1);
         int destroyed = preferences.getInt(DESTROYED, -1);
-        if(created > destroyed) sendBroadcast(new Intent(SNOOZE));
+        if(created > destroyed) sendBroadcast(new Intent(ACTION_IN_NOTIFICATION));
 
         this.finish();
         break;

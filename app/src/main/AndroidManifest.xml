@@ -62,6 +62,10 @@
             android:name=".DefaultManuallySnoozeReceiver"
             android:process=":remote"/>
 
+        <receiver
+            android:name=".DoneReceiver"
+            android:process=":remote"/>
+
         <service android:name=".DeleteDoneListService"/>
 
         <meta-data

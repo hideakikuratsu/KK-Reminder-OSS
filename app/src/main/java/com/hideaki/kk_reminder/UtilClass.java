@@ -23,7 +23,7 @@ class UtilClass {
   static final NotesComparator NOTES_COMPARATOR = new NotesComparator();
   static final Uri DEFAULT_URI_SOUND = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
   static final String NOTIFICATION_ID = "NOTIFICATION_ID";
-  static final String SNOOZE = "SNOOZE";
+  static final String ACTION_IN_NOTIFICATION = "ACTION_IN_NOTIFICATION";
   static final String BOOT_FROM_NOTIFICATION = "BOOT_FROM_NOTIFICATION";
   static final int REQUEST_CODE_RINGTONE_PICKER = 0;
   static final String ITEM = "ITEM";

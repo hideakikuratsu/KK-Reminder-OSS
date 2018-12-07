@@ -89,6 +89,16 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
     summary += context.getString(R.string.snooze);
 
+    //完了
+    Intent doneIntent = new Intent(context, DoneReceiver.class);
+    doneIntent.putExtra(ITEM, serialize(item));
+    doneIntent.putExtra(NOTIFICATION_ID, id);
+    PendingIntent doneSender = PendingIntent.getBroadcast(
+        context, (int)item.getId(), doneIntent, PendingIntent.FLAG_UPDATE_CURRENT
+    );
+    builder.addAction(R.drawable.done, context.getString(R.string.done), doneSender);
+
+    //デフォルトスヌーズ
     Intent defaultSnoozeIntent = new Intent(context, DefaultManuallySnoozeReceiver.class);
     defaultSnoozeIntent.putExtra(ITEM, serialize(item));
     defaultSnoozeIntent.putExtra(NOTIFICATION_ID, id);
@@ -131,7 +141,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     //再帰通知処理
     if(time != 0) {
-      item.getNotify_interval().setTime(--time);
+      item.getNotify_interval().setTime(time - 1);
       Intent recursive_alarm = new Intent(context, AlarmReceiver.class);
       recursive_alarm.putExtra(ITEM, serialize(item));
       PendingIntent recursive_sender = PendingIntent.getBroadcast(
