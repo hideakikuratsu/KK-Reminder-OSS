@@ -50,6 +50,15 @@ public class ExpandableListViewFragment extends Fragment {
             activity.accent_color
         }
     );
+
+    activity.setUpdateListTimerTask(true);
+  }
+
+  @Override
+  public void onDetach() {
+
+    super.onDetach();
+    activity.setUpdateListTimerTask(false);
   }
 
   @Nullable

@@ -537,14 +537,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     super.onResume();
 
-    if(timer != null) {
-      timer.cancel();
-      timer = null;
-    }
-    timer = new Timer();
-    TimerTask timerTask = new UpdateListTimerTask();
-    timer.schedule(timerTask, 0, 1000);
-
     //すべての通知を既読する
     NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
     checkNotNull(manager);
@@ -582,11 +574,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   protected void onPause() {
 
     super.onPause();
-
-    if(timer != null) {
-      timer.cancel();
-      timer = null;
-    }
 
     //すべての通知を既読する
     NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -802,7 +789,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     return false;
   }
 
-  public class UpdateListTimerTask extends TimerTask {
+  private class UpdateListTimerTask extends TimerTask {
 
     @Override
     public void run() {
@@ -897,6 +884,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           expandableListAdapter.notifyDataSetChanged();
         }
       });
+    }
+  }
+
+  public void setUpdateListTimerTask(boolean is_set) {
+
+    if(timer != null) {
+      timer.cancel();
+      timer = null;
+    }
+    if(is_set) {
+      timer = new Timer();
+      TimerTask timerTask = new UpdateListTimerTask();
+      timer.schedule(timerTask, 0, 1000);
     }
   }
 

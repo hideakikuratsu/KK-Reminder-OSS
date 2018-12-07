@@ -37,8 +37,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1165,17 +1163,12 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
         }
 
-        Timer timer = new Timer();
         final Handler handler = new Handler();
-        timer.schedule(new TimerTask() {
+        handler.postDelayed(new Runnable() {
           @Override
           public void run() {
-            handler.post(new Runnable() {
-              @Override
-              public void run() {
-                notifyDataSetChanged();
-              }
-            });
+
+            notifyDataSetChanged();
           }
         }, 400);
 
