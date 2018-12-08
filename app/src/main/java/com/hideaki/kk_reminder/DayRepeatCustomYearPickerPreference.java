@@ -65,7 +65,7 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
       for(int j = 0; j < table_row_size; j++) {
         checkBox = (CheckBox)tableRow.getChildAt(j);
         CompoundButtonCompat.setButtonTintList(checkBox, colorStateList);
-        if((year & (1 << (i * 6 + j))) != 0) checkBox.setChecked(true);
+        if((year & (1 << (i * 4 + j))) != 0) checkBox.setChecked(true);
         checkBox.setOnCheckedChangeListener(this);
       }
     }

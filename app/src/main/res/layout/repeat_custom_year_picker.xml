@@ -26,7 +26,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:stretchColumns="0,1,2,3,4,5,6"
+        android:stretchColumns="0,1,2,3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -60,6 +60,11 @@
                 android:layout_height="match_parent"
                 android:tag="3"
                 android:text="@string/april" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -72,11 +77,6 @@
                 android:layout_height="match_parent"
                 android:tag="5"
                 android:text="@string/june" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -89,6 +89,11 @@
                 android:layout_height="match_parent"
                 android:tag="7"
                 android:text="@string/august" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <CheckBox
                 android:layout_width="match_parent"
