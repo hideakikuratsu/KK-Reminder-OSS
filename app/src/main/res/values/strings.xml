@@ -124,7 +124,7 @@
     <string name="backup_and_restore_note">If the latest backup data doesn\'t sync properly, try to logout, and then restore some times.</string>
     <string name="about">About</string>
     <string name="version">Version</string>
-    <string name="version_value">2.0.2.0.11</string>
+    <string name="version_value">2.0.2.0.12</string>
     <string name="about_this_app">About this app</string>
     <string name="times">times</string>
     <string name="none">None</string>
