@@ -96,7 +96,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     PendingIntent doneSender = PendingIntent.getBroadcast(
         context, (int)item.getId(), doneIntent, PendingIntent.FLAG_UPDATE_CURRENT
     );
-    builder.addAction(R.drawable.done, context.getString(R.string.done), doneSender);
+    builder.addAction(R.mipmap.done, context.getString(R.string.done), doneSender);
 
     //デフォルトスヌーズ
     Intent defaultSnoozeIntent = new Intent(context, DefaultManuallySnoozeReceiver.class);
@@ -105,7 +105,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     PendingIntent defaultSnoozeSender = PendingIntent.getBroadcast(
         context, (int)item.getId(), defaultSnoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
     );
-    builder.addAction(R.drawable.ic_update_24dp, summary, defaultSnoozeSender);
+    builder.addAction(R.mipmap.update, summary, defaultSnoozeSender);
 
     //細かいスヌーズ
     Intent advancedSnoozeIntent = new Intent(context, ManuallySnoozeActivity.class);
@@ -114,7 +114,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     PendingIntent snoozeSender = PendingIntent.getActivity(
         context, (int)item.getId(), advancedSnoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
     );
-    builder.addAction(R.drawable.ic_snooze_24dp, context.getString(R.string.more_advanced_snooze), snoozeSender);
+    builder.addAction(R.mipmap.snooze, context.getString(R.string.more_advanced_snooze), snoozeSender);
 
     //通知を発行
     NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
