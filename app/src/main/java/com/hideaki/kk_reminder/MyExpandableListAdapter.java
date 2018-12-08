@@ -1487,7 +1487,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
                   for(Item item : itemListToMove) {
                     String send_content = activity.getString(R.string.due_date) + ": "
-                        + DateFormat.format("yyyy/M/d H:mm", item.getDate())
+                        + DateFormat.format("yyyy/M/d k:mm", item.getDate())
                         + LINE_SEPARATOR
                         + activity.getString(R.string.detail) + ": " + item.getDetail()
                         + LINE_SEPARATOR
@@ -1842,18 +1842,18 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     String set_time;
     if(now.get(Calendar.YEAR) == item.getDate().get(Calendar.YEAR)) {
       if(locale.equals(Locale.JAPAN)) {
-        set_time = (String)DateFormat.format("M月d日(E) H:mm", item.getDate());
+        set_time = (String)DateFormat.format("M月d日(E) k:mm", item.getDate());
       }
       else {
-        set_time = (String)DateFormat.format("M/d (E) H:mm", item.getDate());
+        set_time = (String)DateFormat.format("M/d (E) k:mm", item.getDate());
       }
     }
     else {
       if(locale.equals(Locale.JAPAN)) {
-        set_time = (String)DateFormat.format("yyyy年M月d日(E) H:mm", item.getDate());
+        set_time = (String)DateFormat.format("yyyy年M月d日(E) k:mm", item.getDate());
       }
       else {
-        set_time = (String)DateFormat.format("yyyy/M/d (E) H:mm", item.getDate());
+        set_time = (String)DateFormat.format("yyyy/M/d (E) k:mm", item.getDate());
       }
     }
     long date_sub = item.getDate().getTimeInMillis() - now.getTimeInMillis();

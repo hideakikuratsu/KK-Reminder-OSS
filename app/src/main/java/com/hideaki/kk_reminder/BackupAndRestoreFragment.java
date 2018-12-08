@@ -532,7 +532,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
             }
 
             MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                .setTitle(DateFormat.format("yyyy_MM_dd_HH_mm_ss", new Date()).toString() + ".db")
+                .setTitle(DateFormat.format("yyyy_MM_dd_kk_mm_ss", new Date()).toString() + ".db")
                 .setMimeType(MIME_TYPE)
                 .setPinned(true)
                 .build();

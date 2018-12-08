@@ -100,12 +100,12 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                 tmp.add(Calendar.DAY_OF_MONTH, 1);
               }
               if(locale.equals(Locale.JAPAN)) {
-                items[0] = DateFormat.format("yyyy年M月d日(E) H時m分", tmp).toString() +
+                items[0] = DateFormat.format("yyyy年M月d日(E) k時m分", tmp).toString() +
                     "に" + activity.getString(R.string.recycle_task);
               }
               else {
                 items[0] = activity.getString(R.string.recycle_task) +
-                    " at " + DateFormat.format("yyyy/M/d (E) H:mm", tmp).toString();
+                    " at " + DateFormat.format("yyyy/M/d (E) k:mm", tmp).toString();
               }
             }
             else if(order == 1) {
@@ -350,7 +350,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                     String send_content = "";
                     if(order == 0) {
                       send_content = activity.getString(R.string.due_date) + ": "
-                          + DateFormat.format("yyyy/M/d H:mm", item.getDate())
+                          + DateFormat.format("yyyy/M/d k:mm", item.getDate())
                           + LINE_SEPARATOR
                           + activity.getString(R.string.detail) + ": " + item.getDetail()
                           + LINE_SEPARATOR
@@ -580,18 +580,18 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
       String set_time;
       if(now.get(Calendar.YEAR) == item.getDate().get(Calendar.YEAR)) {
         if(locale.equals(Locale.JAPAN)) {
-          set_time = (String)DateFormat.format("M月d日(E) H:mm", item.getDate());
+          set_time = (String)DateFormat.format("M月d日(E) k:mm", item.getDate());
         }
         else {
-          set_time = (String)DateFormat.format("M/d (E) H:mm", item.getDate());
+          set_time = (String)DateFormat.format("M/d (E) k:mm", item.getDate());
         }
       }
       else {
         if(locale.equals(Locale.JAPAN)) {
-          set_time = (String)DateFormat.format("yyyy年M月d日(E) H:mm", item.getDate());
+          set_time = (String)DateFormat.format("yyyy年M月d日(E) k:mm", item.getDate());
         }
         else {
-          set_time = (String)DateFormat.format("yyyy/M/d (E) H:mm", item.getDate());
+          set_time = (String)DateFormat.format("yyyy/M/d (E) k:mm", item.getDate());
         }
       }
       viewHolder.time.setText(set_time);
