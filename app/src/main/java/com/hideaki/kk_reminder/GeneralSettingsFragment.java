@@ -1,7 +1,10 @@
 package com.hideaki.kk_reminder;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
@@ -31,10 +34,28 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     return new GeneralSettingsFragment();
   }
 
+  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
+    onAttachToContext(context);
+  }
+
+  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
+  @SuppressWarnings("deprecation")
+  @Override
+  public void onAttach(Activity activity) {
+
+    super.onAttach(activity);
+    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      onAttachToContext(activity);
+    }
+  }
+
+  //2つのonAttachの共通処理部分
+  protected void onAttachToContext(Context context) {
+
     activity = (MainActivity)context;
     activity.drawerLayout.closeDrawer(GravityCompat.START);
   }

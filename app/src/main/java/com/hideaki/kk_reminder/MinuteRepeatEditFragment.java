@@ -1,6 +1,9 @@
 package com.hideaki.kk_reminder;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -39,10 +42,28 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
     return new MinuteRepeatEditFragment();
   }
 
+  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
+    onAttachToContext(context);
+  }
+
+  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
+  @SuppressWarnings("deprecation")
+  @Override
+  public void onAttach(Activity activity) {
+
+    super.onAttach(activity);
+    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      onAttachToContext(activity);
+    }
+  }
+
+  //2つのonAttachの共通処理部分
+  protected void onAttachToContext(Context context) {
+
     activity = (MainActivity)context;
   }
 

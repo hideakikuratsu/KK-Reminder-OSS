@@ -59,6 +59,7 @@ public class DefaultQuickPickerPreference extends Preference implements View.OnC
   }
 
   public DefaultQuickPickerPreference(Context context, AttributeSet attrs) {
+
     super(context, attrs);
   }
 

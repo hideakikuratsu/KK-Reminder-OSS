@@ -183,9 +183,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     defaultQuickPicker3 = stringPreferences.getString(DEFAULT_QUICK_PICKER3, getString(R.string.above_picker3_default));
     defaultQuickPicker4 = stringPreferences.getString(DEFAULT_QUICK_PICKER4, getString(R.string.above_picker4_default));
 
-    //TODO: 強制的にプレミアムアカウントへアップグレードさせる。テスト用なので必ず取り除くこと
-//    setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
-
     //広告読み出し機能のセットアップ
     MobileAds.initialize(this, getString(R.string.app_id));
 

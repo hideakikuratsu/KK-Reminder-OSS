@@ -1,5 +1,7 @@
 package com.hideaki.kk_reminder;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -152,10 +155,28 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     return fragment;
   }
 
+  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
+    onAttachToContext(context);
+  }
+
+  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
+  @SuppressWarnings("deprecation")
+  @Override
+  public void onAttach(Activity activity) {
+
+    super.onAttach(activity);
+    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      onAttachToContext(activity);
+    }
+  }
+
+  //2つのonAttachの共通処理部分
+  protected void onAttachToContext(Context context) {
+
     activity = (MainActivity)context;
 
     checkArgument(checked_item_num >= 0);
