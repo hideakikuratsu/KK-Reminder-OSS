@@ -1,5 +1,6 @@
 package com.hideaki.kk_reminder;
 
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -40,13 +41,15 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.CHANGE_GRADE;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
-import static com.hideaki.kk_reminder.UtilClass.CHANGE_GRADE;
 import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
@@ -325,6 +328,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
       if(isChecked && actionMode == null && manually_checked) {
 
+        //すべての通知を既読する
+        NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
+        checkNotNull(manager);
+        manager.cancelAll();
+
         viewHolder.checkBox.jumpDrawablesToCurrentState();
         activity.actionBarFragment.searchView.clearFocus();
         if(item.getTime_altered() == 0) {
@@ -362,6 +370,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           //countリピート設定時
           in_minute_repeat = true;
           now = Calendar.getInstance();
+          if(now.get(Calendar.SECOND) >= 30) {
+            now.add(Calendar.MINUTE, 1);
+          }
+          now.set(Calendar.SECOND, 0);
+          now.set(Calendar.MILLISECOND, 0);
 
           if(item.getMinuteRepeat().getCount() == item.getMinuteRepeat().getOrg_count()) {
             item.setOrg_date2((Calendar)item.getOrg_date().clone());
@@ -388,6 +401,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           //durationリピート設定時
           in_minute_repeat = true;
           now = Calendar.getInstance();
+          if(now.get(Calendar.SECOND) >= 30) {
+            now.add(Calendar.MINUTE, 1);
+          }
+          now.set(Calendar.SECOND, 0);
+          now.set(Calendar.MILLISECOND, 0);
 
           if(item.getMinuteRepeat().getDuration() == item.getMinuteRepeat().getOrgDuration()) {
             item.setOrg_date2((Calendar)item.getOrg_date().clone());
@@ -413,6 +431,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           //Dayリピート設定時
           now = Calendar.getInstance();
+          if(now.get(Calendar.SECOND) >= 30) {
+            now.add(Calendar.MINUTE, 1);
+          }
+          now.set(Calendar.SECOND, 0);
+          now.set(Calendar.MILLISECOND, 0);
 
           if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
             tmp = (Calendar)item.getDate().clone();
@@ -432,6 +455,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           //Weekリピート設定時
           now = Calendar.getInstance();
+          if(now.get(Calendar.SECOND) >= 30) {
+            now.add(Calendar.MINUTE, 1);
+          }
+          now.set(Calendar.SECOND, 0);
+          now.set(Calendar.MILLISECOND, 0);
           int day_of_week_last;
           
           if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
@@ -521,6 +549,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           //Monthリピート設定時
           now = Calendar.getInstance();
+          if(now.get(Calendar.SECOND) >= 30) {
+            now.add(Calendar.MINUTE, 1);
+          }
+          now.set(Calendar.SECOND, 0);
+          now.set(Calendar.MILLISECOND, 0);
 
           if(item.getDayRepeat().isDays_of_month_setted()) {
 
@@ -625,6 +658,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             Calendar tmp2;
             Calendar tmp3;
             now = Calendar.getInstance();
+            if(now.get(Calendar.SECOND) >= 30) {
+              now.add(Calendar.MINUTE, 1);
+            }
+            now.set(Calendar.SECOND, 0);
+            now.set(Calendar.MILLISECOND, 0);
             if(item.getDayRepeat().getOn_the_month().ordinal() < 6) {
               day_of_week = item.getDayRepeat().getOn_the_month().ordinal() + 2;
             }
@@ -1022,6 +1060,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           //Yearリピート設定時
           now = Calendar.getInstance();
+          if(now.get(Calendar.SECOND) >= 30) {
+            now.add(Calendar.MINUTE, 1);
+          }
+          now.set(Calendar.SECOND, 0);
+          now.set(Calendar.MILLISECOND, 0);
           int month_last;
           
           if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
@@ -1159,10 +1202,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.deleteAlarm(item);
           activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
           activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
-
-          if(getGroupCount() == 0) {
-            activity.actionBarFragment.searchItem.setVisible(false);
-          }
         }
 
         final Handler handler = new Handler();
@@ -1228,8 +1267,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   }
                   activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
                   activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
-
-                  activity.actionBarFragment.searchItem.setVisible(true);
                 }
               }
             })
@@ -1314,13 +1351,18 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
 
           String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
-              itemListToMove.size(), itemListToMove.size()) + "(" + activity.getString(R.string.delete_dialog_message) + ")";
+              itemListToMove.size(), itemListToMove.size()) + " (" + activity.getString(R.string.delete_dialog_message) + ")";
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_delete)
               .setMessage(message)
               .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+
+                  //すべての通知を既読する
+                  NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
+                  checkNotNull(manager);
+                  manager.cancelAll();
 
                   for(List<Item> itemList : children) {
                     for(Item item : itemList) {
@@ -1368,12 +1410,18 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+
                   which_list = which;
                 }
               })
               .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+
+                  //すべての通知を既読する
+                  NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
+                  checkNotNull(manager);
+                  manager.cancelAll();
 
                   long list_id = activity.generalSettings.getNonScheduledLists().get(which_list).getId();
                   MyListAdapter.itemList = new ArrayList<>();
@@ -1439,6 +1487,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+
+                  //すべての通知を既読する
+                  NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
+                  checkNotNull(manager);
+                  manager.cancelAll();
 
                   MainEditFragment.checked_item_num = checked_item_num;
                   MainEditFragment.itemListToMove = new ArrayList<>(itemListToMove);
@@ -1541,10 +1594,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             item.setSelected(false);
           }
         }
-      }
-
-      if(getGroupCount() == 0) {
-        activity.actionBarFragment.searchItem.setVisible(false);
       }
 
       checked_item_num = 0;
@@ -1993,25 +2042,27 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private void displayRepeat(ChildViewHolder viewHolder, Item item) {
 
     String repeat_str = "";
-    if(item.getDayRepeat().getLabel() != null
-        && !item.getDayRepeat().getLabel().equals(activity.getString(R.string.none))) {
+    String tmp = item.getDayRepeat().getLabel();
+    if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
       if(!locale.equals(Locale.JAPAN)) repeat_str += "Repeat ";
-      repeat_str += item.getDayRepeat().getLabel();
-      if(!item.getDayRepeat().getLabel().equals(activity.getString(R.string.everyday)) && locale.equals(Locale.JAPAN)) {
+      repeat_str += tmp;
+      if(!activity.getString(R.string.everyday).equals(tmp) && locale.equals(Locale.JAPAN)) {
         repeat_str += "に";
       }
     }
 
-    if(item.getMinuteRepeat().getLabel() != null
-        && !item.getMinuteRepeat().getLabel().equals(activity.getString(R.string.none))) {
-      if(!locale.equals(Locale.JAPAN)) repeat_str += " and ";
-      repeat_str += item.getMinuteRepeat().getLabel();
+    tmp = item.getMinuteRepeat().getLabel();
+    if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
+      if(!locale.equals(Locale.JAPAN) && !"".equals(repeat_str)) {
+        repeat_str += " and ";
+      }
+      repeat_str += tmp;
     }
 
-    if(locale.equals(Locale.JAPAN) && item.getDayRepeat().getLabel() != null
-        && !item.getDayRepeat().getLabel().equals(activity.getString(R.string.none))
-        && (item.getMinuteRepeat().getLabel() == null
-        || item.getMinuteRepeat().getLabel().equals(activity.getString(R.string.none)))) {
+    String day = item.getDayRepeat().getLabel();
+    String minute = item.getMinuteRepeat().getLabel();
+    if(locale.equals(Locale.JAPAN) && day != null && !"".equals(day) && !activity.getString(R.string.none).equals(day)
+        && (minute == null || "".equals(minute) || activity.getString(R.string.none).equals(minute))) {
       repeat_str += "繰り返す";
     }
 

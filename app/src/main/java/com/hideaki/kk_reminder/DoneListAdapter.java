@@ -119,6 +119,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                 .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
+
                     which_list = which;
                   }
                 })
@@ -129,10 +130,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                     itemList.remove(position);
                     notifyDataSetChanged();
                     activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
-
-                    if(itemList.size() == 0) {
-                      activity.actionBarFragment.searchItem.setVisible(false);
-                    }
 
                     if(which_list == 0) {
                       if(order == 0) {
@@ -242,7 +239,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
           }
 
           String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
-              itemListToMove.size(), itemListToMove.size()) + "(" + activity.getString(R.string.delete_dialog_message) + ")";
+              itemListToMove.size(), itemListToMove.size()) + " (" + activity.getString(R.string.delete_dialog_message) + ")";
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_delete)
               .setMessage(message)
@@ -406,10 +403,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
         if(item.isSelected()) {
           item.setSelected(false);
         }
-      }
-
-      if(itemList.size() == 0) {
-        activity.actionBarFragment.searchItem.setVisible(false);
       }
 
       checked_item_num = 0;

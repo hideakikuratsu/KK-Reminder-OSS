@@ -143,11 +143,6 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
         activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
 
-        if(itemList.size() == 0) {
-          activity.actionBarFragment.searchItem.setVisible(false);
-          activity.actionBarFragment.sortItem.setVisible(false);
-        }
-
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
           @Override
@@ -186,9 +181,6 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
                 activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
                 activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
-
-                activity.actionBarFragment.searchItem.setVisible(true);
-                activity.actionBarFragment.sortItem.setVisible(true);
               }
             })
             .show();
@@ -264,7 +256,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
           }
 
           String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
-              itemListToMove.size(), itemListToMove.size()) + "(" + activity.getString(R.string.delete_dialog_message) + ")";
+              itemListToMove.size(), itemListToMove.size()) + " (" + activity.getString(R.string.delete_dialog_message) + ")";
           new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_delete)
               .setMessage(message)
@@ -489,11 +481,6 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         if(item.isSelected()) {
           item.setSelected(false);
         }
-      }
-
-      if(itemList.size() == 0) {
-        activity.actionBarFragment.searchItem.setVisible(false);
-        activity.actionBarFragment.sortItem.setVisible(false);
       }
 
       checked_item_num = 0;

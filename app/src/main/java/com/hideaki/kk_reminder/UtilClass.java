@@ -110,15 +110,11 @@ class UtilClass {
   static long currentTimeMinutes() {
 
     Calendar now = Calendar.getInstance();
-    if(now.get(Calendar.SECOND) < 30) {
-      now.set(Calendar.SECOND, 0);
-      now.set(Calendar.MILLISECOND, 0);
-    }
-    else {
+    if(now.get(Calendar.SECOND) >= 30) {
       now.add(Calendar.MINUTE, 1);
-      now.set(Calendar.SECOND, 0);
-      now.set(Calendar.MILLISECOND, 0);
     }
+    now.set(Calendar.SECOND, 0);
+    now.set(Calendar.MILLISECOND, 0);
 
     return now.getTimeInMillis();
   }

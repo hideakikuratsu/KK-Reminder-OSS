@@ -96,9 +96,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private Timer timer;
   private Handler handler = new Handler();
   private DBAccessor accessor = null;
-  private Intent intent;
-  private PendingIntent sender;
-  private AlarmManager alarmManager;
   int snooze_default_hour;
   int snooze_default_minute;
   int which_menu_open;
@@ -853,13 +850,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
               }
             }
 
+            int remove_count = 0;
             int binary_length = Integer.toBinaryString(group_changed).length();
             for(int i = 0; i < binary_length; i++) {
               if((group_changed & (1 << i)) != 0) {
-//                if(MyExpandableListAdapter.children.get(group_count).size() > i) {
-//                  MyExpandableListAdapter.children.get(group_count).remove(i);
-//                }
-                MyExpandableListAdapter.children.get(group_count).remove(i);
+                MyExpandableListAdapter.children.get(group_count).remove(i - remove_count);
+                remove_count++;
                 is_updated = true;
               }
             }
@@ -1300,13 +1296,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     if(item.getDate().getTimeInMillis() > System.currentTimeMillis() && item.getWhich_list_belongs() == 0) {
       item.getNotify_interval().setTime(item.getNotify_interval().getOrg_time());
-      intent = new Intent(this, AlarmReceiver.class);
+      Intent intent = new Intent(this, AlarmReceiver.class);
       byte[] ob_array = serialize(item);
       intent.putExtra(ITEM, ob_array);
-      sender = PendingIntent.getBroadcast(
+      PendingIntent sender = PendingIntent.getBroadcast(
           this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-      alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      checkNotNull(alarmManager);
+
       if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         alarmManager.setAlarmClock(
             new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
@@ -1323,11 +1321,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   public void deleteAlarm(Item item) {
 
     if(isAlarmSetted(item)) {
-      intent = new Intent(this, AlarmReceiver.class);
-      sender = PendingIntent.getBroadcast(
+      Intent intent = new Intent(this, AlarmReceiver.class);
+      PendingIntent sender = PendingIntent.getBroadcast(
           this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-      alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       checkNotNull(alarmManager);
 
       alarmManager.cancel(sender);
@@ -1337,8 +1335,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public boolean isAlarmSetted(Item item) {
 
-    intent = new Intent(this, AlarmReceiver.class);
-    sender = PendingIntent.getBroadcast(
+    Intent intent = new Intent(this, AlarmReceiver.class);
+    PendingIntent sender = PendingIntent.getBroadcast(
         this, (int)item.getId(), intent, PendingIntent.FLAG_NO_CREATE);
 
     return sender != null;

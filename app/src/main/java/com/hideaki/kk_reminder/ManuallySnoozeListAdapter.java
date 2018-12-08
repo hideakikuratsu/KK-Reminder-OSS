@@ -43,7 +43,7 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
       snoozeList.add(0, activity.getString(R.string.default_snooze) + " (" + defaultSnoozeTime + ")");
     }
     else {
-      snoozeList.add(0, activity.getString(R.string.default_snooze) + " ( " + defaultSnoozeTime + ")");
+      snoozeList.add(0, activity.getString(R.string.default_snooze) + " (" + defaultSnoozeTime + ")");
     }
 
     manually_checked = false;

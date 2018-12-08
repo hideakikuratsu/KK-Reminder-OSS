@@ -244,6 +244,7 @@ public class NotesEditModeFragment extends Fragment {
       case R.id.checklist_mode: {
 
         NotesEditModeFragment.item.setChecklist_mode(true);
+        activity.updateDB(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE);
         activity.showNotesFragment(NotesEditModeFragment.item, TAG);
         return true;
       }

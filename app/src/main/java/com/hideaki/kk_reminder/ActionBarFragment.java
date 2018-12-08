@@ -152,38 +152,24 @@ public class ActionBarFragment extends Fragment {
     if(order == 0) {
       toggleItem.setVisible(true);
       if(activity.is_expandable_todo) {
-        if(activity.expandableListAdapter.getGroupCount() != 0) {
-          searchItem.setVisible(true);
-        }
+        searchItem.setVisible(true);
         addItem.setVisible(true);
       }
-      else {
-        if(DoneListAdapter.itemList.size() != 0) {
-          searchItem.setVisible(true);
-        }
-      }
+      else searchItem.setVisible(true);
     }
     else if(order == 1) {
       toggleItem.setVisible(true);
       if(activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).isTodo()) {
         addItem.setVisible(true);
-        if(MyListAdapter.itemList.size() != 0) {
-          searchItem.setVisible(true);
-          sortItem.setVisible(true);
-        }
-      }
-      else {
-        if(DoneListAdapter.itemList.size() != 0) {
-          searchItem.setVisible(true);
-        }
-      }
-    }
-    else if(order == 3) {
-      addItem.setVisible(true);
-      if(ManageListAdapter.nonScheduledLists.size() != 0) {
         searchItem.setVisible(true);
         sortItem.setVisible(true);
       }
+      else searchItem.setVisible(true);
+    }
+    else if(order == 3) {
+      addItem.setVisible(true);
+      searchItem.setVisible(true);
+      sortItem.setVisible(true);
     }
   }
 
@@ -628,21 +614,26 @@ public class ActionBarFragment extends Fragment {
           if(order == 0) {
             if(activity.is_expandable_todo) {
               MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+              activity.expandableListAdapter.notifyDataSetChanged();
             }
             else {
               DoneListAdapter.itemList = activity.getDoneItem();
+              activity.doneListAdapter.notifyDataSetChanged();
             }
           }
           else if(order == 1) {
             if(activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).isTodo()) {
               MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+              activity.listAdapter.notifyDataSetChanged();
             }
             else {
               DoneListAdapter.itemList = activity.getDoneItem();
+              activity.doneListAdapter.notifyDataSetChanged();
             }
           }
           else if(order == 3) {
             ManageListAdapter.nonScheduledLists = new ArrayList<>(activity.generalSettings.getNonScheduledLists());
+            activity.manageListAdapter.notifyDataSetChanged();
           }
         }
 
