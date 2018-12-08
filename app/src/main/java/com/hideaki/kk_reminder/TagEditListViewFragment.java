@@ -238,7 +238,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
           int size = TagEditListAdapter.tagList.size();
           boolean is_updated = false;
           for(int i = 0; i < size; i++) {
-            Tag tag = activity.generalSettings.getTagList().get(i);
+            Tag tag = TagEditListAdapter.tagList.get(i);
             if(tag.getOrder() != i) {
               tag.setOrder(i);
               is_updated = true;
@@ -251,7 +251,6 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
           }
         }
 
-        activity.tagEditListAdapter.notifyDataSetChanged();
         return true;
       }
       case android.R.id.home: {
