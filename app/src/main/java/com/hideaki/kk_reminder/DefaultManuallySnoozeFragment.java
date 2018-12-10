@@ -89,14 +89,14 @@ public class DefaultManuallySnoozeFragment extends PreferenceFragment {
     int minute = activity.snooze_default_minute;
     String summary = "";
     if(hour != 0) {
-      summary += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+      summary += getResources().getQuantityString(R.plurals.hour, hour, hour);
       if(!locale.equals(Locale.JAPAN)) summary += " ";
     }
     if(minute != 0) {
-      summary += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+      summary += getResources().getQuantityString(R.plurals.minute, minute, minute);
       if(!locale.equals(Locale.JAPAN)) summary += " ";
     }
-    summary += activity.getString(R.string.snooze);
+    summary += getString(R.string.snooze);
     label.setSummary(summary);
 
     return view;

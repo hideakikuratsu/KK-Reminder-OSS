@@ -777,7 +777,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     else if(menuItem.getItemId() == R.id.share) {
       String title = getString(R.string.app_promotion);
-      String content = "URL"; //TODO: "URL"の部分には、公開したアプリのURLを入れる
+      String content = getString(R.string.app_url);
 
       Intent intent = new Intent()
           .setAction(Intent.ACTION_SEND)

@@ -147,7 +147,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         DayRepeatEditFragment.custom.setChecked(false);
         MainEditFragment.dayRepeat.setSetted(1);
         MainEditFragment.dayRepeat.setWhich_template(1);
-        MainEditFragment.dayRepeat.setLabel(activity.getResources().getString(R.string.everyday));
+        MainEditFragment.dayRepeat.setLabel(getString(R.string.everyday));
         DayRepeatEditFragment.label.setSummary(R.string.everyday);
       }
       else if(DayRepeatCustomPickerPreference.week) {
@@ -168,7 +168,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
           DayRepeatEditFragment.custom.setChecked(false);
           MainEditFragment.dayRepeat.setSetted(1 << 1);
           MainEditFragment.dayRepeat.setWhich_template(1 << 1);
-          MainEditFragment.dayRepeat.setLabel(activity.getResources().getString(R.string.everyweekday));
+          MainEditFragment.dayRepeat.setLabel(getString(R.string.everyweekday));
           DayRepeatEditFragment.label.setSummary(R.string.everyweekday);
         }
       }
@@ -214,10 +214,10 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
       if(DayRepeatCustomPickerPreference.day) {
         MainEditFragment.dayRepeat.setSetted(1);
         if(locale.equals(Locale.JAPAN)) {
-          label = activity.getString(R.string.per_day, MainEditFragment.dayRepeat.getInterval() - 1);
+          label = getString(R.string.per_day, MainEditFragment.dayRepeat.getInterval() - 1);
         }
         else {
-          label = activity.getString(R.string.per_day, MainEditFragment.dayRepeat.getInterval());
+          label = getString(R.string.per_day, MainEditFragment.dayRepeat.getInterval());
         }
       }
       else if(DayRepeatCustomPickerPreference.week) {
@@ -225,11 +225,11 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         if(interval == 1 && locale.equals(Locale.JAPAN)) label = "毎週";
         else {
           if(locale.equals(Locale.JAPAN)) {
-            label = activity.getResources().getQuantityString(R.plurals.per_week,
+            label = getResources().getQuantityString(R.plurals.per_week,
                 interval - 1, interval - 1);
           }
           else {
-            label = activity.getResources().getQuantityString(R.plurals.per_week, interval, interval) + " on ";
+            label = getResources().getQuantityString(R.plurals.per_week, interval, interval) + " on ";
           }
         }
 
@@ -252,11 +252,11 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         if(interval == 1 && locale.equals(Locale.JAPAN)) label = "毎月";
         else {
           if(locale.equals(Locale.JAPAN)) {
-            label = activity.getResources().getQuantityString(R.plurals.per_month,
+            label = getResources().getQuantityString(R.plurals.per_month,
                 interval - 1, interval - 1);
           }
           else {
-            label = activity.getResources().getQuantityString(R.plurals.per_month, interval, interval) + " on the ";
+            label = getResources().getQuantityString(R.plurals.per_month, interval, interval) + " on the ";
           }
         }
 
@@ -323,11 +323,11 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         if(interval == 1 && locale.equals(Locale.JAPAN)) label = "毎年";
         else {
           if(locale.equals(Locale.JAPAN)) {
-            label = activity.getResources().getQuantityString(R.plurals.per_year,
+            label = getResources().getQuantityString(R.plurals.per_year,
                 interval - 1, interval - 1);
           }
           else {
-            label = activity.getResources().getQuantityString(R.plurals.per_year, interval, interval) + " on the ";
+            label = getResources().getQuantityString(R.plurals.per_year, interval, interval) + " on the ";
             int day_of_month = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
             label += day_of_month + "";
             if(day_of_month == 1) label += "st";

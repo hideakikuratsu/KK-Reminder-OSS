@@ -89,9 +89,9 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
       getPreferenceScreen().removePreference(upgradeCategory);
     }
     else {
-      primaryColor.setSummary(activity.getString(R.string.premium_account_promotion));
-      secondaryColor.setSummary(activity.getString(R.string.premium_account_promotion));
-      backup.setSummary(activity.getString(R.string.premium_account_promotion));
+      primaryColor.setSummary(getString(R.string.premium_account_promotion));
+      secondaryColor.setSummary(getString(R.string.premium_account_promotion));
+      backup.setSummary(getString(R.string.premium_account_promotion));
     }
   }
 

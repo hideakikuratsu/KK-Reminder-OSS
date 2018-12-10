@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="version_value">2.0.2.0.13</string>
     <string name="app_id">******************</string>
     <string name="ad_unit_id">******************</string>
     <string name="app_name">KK リマインダー</string>
     <string name="app_promotion">KK リマインダー  -  タスクや予定を整理してわかりやすく管理</string>
+    <string name="app_url">https://play.google.com/store/apps/details?id=com.hideaki.kk_reminder</string>
     <string name="past">過去</string>
     <string name="today">今日</string>
     <string name="tomorrow">明日</string>
@@ -121,7 +123,6 @@
     <string name="backup_and_restore_note">復元ポイントが上手く同期されない場合は、一度ログアウトした上で復元操作を何回か試してみてください。</string>
     <string name="about">概要</string>
     <string name="version">バージョン</string>
-    <string name="version_value">2.0.2.0.12</string>
     <string name="about_this_app">このアプリについて</string>
     <string name="times">回</string>
     <string name="none">なし</string>

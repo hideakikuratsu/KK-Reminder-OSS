@@ -269,7 +269,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     pickAlarm = findPreference("pick_alarm");
     pickAlarm.setOnPreferenceClickListener(this);
     if(!activity.is_premium) {
-      pickAlarm.setTitle(pickAlarm.getTitle() + " (" + activity.getString(R.string.premium_account_promotion) + ")");
+      pickAlarm.setTitle(pickAlarm.getTitle() + " (" + getString(R.string.premium_account_promotion) + ")");
     }
 
     PreferenceCategory notes_category = (PreferenceCategory)findPreference("notes_category");
@@ -364,7 +364,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     //Tagのラベルの初期化
     if(order == 0 || order == 1 || order == 4 || is_moving_task) {
       if(item.getWhich_tag_belongs() == 0) {
-        tag.setSummary(activity.getString(R.string.none));
+        tag.setSummary(getString(R.string.none));
       }
       else {
         tag.setSummary(activity.generalSettings.getTagById(item.getWhich_tag_belongs()).getName());
@@ -372,7 +372,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     }
     else if(order == 3) {
       if(list.getWhich_tag_belongs() == 0) {
-        tag.setSummary(activity.getString(R.string.none));
+        tag.setSummary(getString(R.string.none));
       }
       else {
         tag.setSummary(activity.generalSettings.getTagById(list.getWhich_tag_belongs()).getName());
@@ -591,7 +591,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
         Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
         if(uri == null) {
           item.setSoundUri(null);
-          pickAlarm.setSummary(activity.getString(R.string.none));
+          pickAlarm.setSummary(getString(R.string.none));
         }
         else {
           item.setSoundUri(uri.toString());
@@ -642,7 +642,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
         if(activity.is_premium) {
           Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, activity.getString(R.string.pick_alarm));
+          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.pick_alarm));
           intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL);
           intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
           intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
@@ -703,7 +703,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     if(order == 0 || order == 1 || order == 4 || is_moving_task) {
 
       if(detail_str == null || detail_str.equals("")) {
-        detail_str = activity.getString(R.string.default_detail);
+        detail_str = getString(R.string.default_detail);
       }
       item.setDetail(detail_str);
 
@@ -810,7 +810,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     else if(order == 3) {
 
       if(detail_str == null || detail_str.equals("")) {
-        detail_str = activity.getString(R.string.default_list);
+        detail_str = getString(R.string.default_list);
       }
       list.setTitle(detail_str);
 

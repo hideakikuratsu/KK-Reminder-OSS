@@ -188,7 +188,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
 
     //ラベルの初期化
     String label_str = MainEditFragment.notifyInterval.getLabel();
-    if(label_str == null || label_str.equals(activity.getString(R.string.none))) {
+    if(label_str == null || label_str.equals(getString(R.string.none))) {
       label.setSummary(R.string.non_notify);
     }
     else {
@@ -234,7 +234,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
         if(which_setted != 0) {
           label.setSummary(R.string.non_notify);
 
-          MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.none));
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.none));
           MainEditFragment.notifyInterval.setWhich_setted(0);
           MainEditFragment.notifyInterval.setHour(0);
           MainEditFragment.notifyInterval.setMinute(0);
@@ -250,7 +250,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
         if(which_setted != 1) {
           NotifyInterval notifyInterval = activity.generalSettings.getItem().getNotify_interval();
           String label_str = notifyInterval.getLabel();
-          if(label_str == null || label_str.equals(activity.getString(R.string.none))) {
+          if(label_str == null || label_str.equals(getString(R.string.none))) {
             label.setSummary(R.string.non_notify);
           }
           else label.setSummary(label_str);
@@ -267,7 +267,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
         if(which_setted != 1 << 1) {
           label.setSummary(R.string.every_minute_summary);
 
-          MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.every_minute_summary));
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_minute_summary));
           MainEditFragment.notifyInterval.setWhich_setted(1 << 1);
           MainEditFragment.notifyInterval.setHour(0);
           MainEditFragment.notifyInterval.setMinute(1);
@@ -283,7 +283,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
         if(which_setted != 1 << 2) {
           label.setSummary(R.string.every_five_minutes_summary);
 
-          MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.every_five_minutes_summary));
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_five_minutes_summary));
           MainEditFragment.notifyInterval.setWhich_setted(1 << 2);
           MainEditFragment.notifyInterval.setHour(0);
           MainEditFragment.notifyInterval.setMinute(5);
@@ -299,7 +299,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
         if(which_setted != 1 << 3) {
           label.setSummary(R.string.every_fifteen_minutes_summary);
 
-          MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.every_fifteen_minutes_summary));
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_fifteen_minutes_summary));
           MainEditFragment.notifyInterval.setWhich_setted(1 << 3);
           MainEditFragment.notifyInterval.setHour(0);
           MainEditFragment.notifyInterval.setMinute(15);
@@ -315,7 +315,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
         if(which_setted != 1 << 4) {
           label.setSummary(R.string.every_thirty_minutes_summary);
 
-          MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.every_thirty_minutes_summary));
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_thirty_minutes_summary));
           MainEditFragment.notifyInterval.setWhich_setted(1 << 4);
           MainEditFragment.notifyInterval.setHour(0);
           MainEditFragment.notifyInterval.setMinute(30);
@@ -331,7 +331,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
         if(which_setted != 1 << 5) {
           label.setSummary(R.string.every_hour_summary);
 
-          MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.every_hour_summary));
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_hour_summary));
           MainEditFragment.notifyInterval.setWhich_setted(1 << 5);
           MainEditFragment.notifyInterval.setHour(1);
           MainEditFragment.notifyInterval.setMinute(0);
@@ -347,7 +347,7 @@ public class NotifyIntervalEditFragment extends PreferenceFragment implements Pr
         if(which_setted != 1 << 6) {
           label.setSummary(R.string.every_day_summary);
 
-          MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.every_day_summary));
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_day_summary));
           MainEditFragment.notifyInterval.setWhich_setted(1 << 6);
           MainEditFragment.notifyInterval.setHour(24);
           MainEditFragment.notifyInterval.setMinute(0);

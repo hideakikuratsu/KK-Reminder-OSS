@@ -108,17 +108,19 @@ public class HelpAndFeedbackFragment extends PreferenceFragment implements Prefe
             .setType("text/plain")
             .setData(Uri.parse("mailto:bisigness100@gmail.com"));
         if(preference.getKey().equals("contact")) {
-          intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.contact));
+          intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.contact));
         }
         else {
-          intent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.request));
+          intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.request));
         }
-        activity.startActivity(intent);
+        startActivity(intent);
         return true;
       }
       case "feedback": {
 
-        //TODO: 公開したアプリの評価画面に飛ぶ
+        Intent googlePlayIntent = new Intent(Intent.ACTION_VIEW);
+        googlePlayIntent.setData(Uri.parse("market://details?id=com.hideaki.kk_reminder"));
+        startActivity(googlePlayIntent);
         return true;
       }
     }

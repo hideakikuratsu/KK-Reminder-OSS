@@ -290,7 +290,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
 
             String name = editText.getText().toString();
             if(name.equals("")) {
-              name = activity.getString(R.string.default_tag);
+              name = getString(R.string.default_tag);
             }
             Tag tag = new Tag();
             tag.setName(name);

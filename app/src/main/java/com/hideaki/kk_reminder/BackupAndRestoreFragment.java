@@ -238,7 +238,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
 
             if(count == 0) {
               Toast.makeText(activity,
-                  activity.getString(R.string.backup_not_exists), Toast.LENGTH_LONG
+                  getString(R.string.backup_not_exists), Toast.LENGTH_LONG
               ).show();
             }
             else {
@@ -257,7 +257,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
                       final int size = metadata.getCount();
                       if(size == 0) {
                         Toast.makeText(activity,
-                            activity.getString(R.string.backup_not_exists), Toast.LENGTH_LONG
+                            getString(R.string.backup_not_exists), Toast.LENGTH_LONG
                         ).show();
 
                         metadata.release();
@@ -301,7 +301,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
                     public void onFailure(@NonNull Exception e) {
 
                       Toast.makeText(activity,
-                          activity.getString(R.string.fail_to_query), Toast.LENGTH_LONG
+                          getString(R.string.fail_to_query), Toast.LENGTH_LONG
                       ).show();
                     }
                   });
@@ -315,7 +315,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public void onFailure(@NonNull Exception e) {
 
             Toast.makeText(activity,
-                activity.getString(R.string.fail_to_query), Toast.LENGTH_LONG
+                getString(R.string.fail_to_query), Toast.LENGTH_LONG
             ).show();
           }
         });
@@ -325,7 +325,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
 
     if(itemList.size() == 0) {
       Toast.makeText(activity,
-          activity.getString(R.string.backup_not_exists), Toast.LENGTH_LONG
+          getString(R.string.backup_not_exists), Toast.LENGTH_LONG
       ).show();
 
       metadata.release();
@@ -355,7 +355,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
             public void onClick(DialogInterface dialog, int which) {
 
               Toast.makeText(activity,
-                  activity.getString(R.string.canceled), Toast.LENGTH_LONG
+                  getString(R.string.canceled), Toast.LENGTH_LONG
               ).show();
 
               metadata.release();
@@ -366,7 +366,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
             public void onCancel(DialogInterface dialog) {
 
               Toast.makeText(activity,
-                  activity.getString(R.string.canceled), Toast.LENGTH_LONG
+                  getString(R.string.canceled), Toast.LENGTH_LONG
               ).show();
 
               metadata.release();
@@ -410,7 +410,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public void onSuccess(Void aVoid) {
 
             Toast.makeText(activity,
-                activity.getString(R.string.success_to_restore), Toast.LENGTH_LONG
+                getString(R.string.success_to_restore), Toast.LENGTH_LONG
             ).show();
 
             activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
@@ -424,7 +424,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public void onFailure(@NonNull Exception e) {
 
             Toast.makeText(activity,
-                activity.getString(R.string.fail_to_restore), Toast.LENGTH_LONG
+                getString(R.string.fail_to_restore), Toast.LENGTH_LONG
             ).show();
           }
         });
@@ -481,7 +481,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
                     public void onFailure(@NonNull Exception e) {
 
                       Toast.makeText(activity,
-                          activity.getString(R.string.fail_to_make_backup_folder), Toast.LENGTH_LONG
+                          getString(R.string.fail_to_make_backup_folder), Toast.LENGTH_LONG
                       ).show();
                     }
                   });
@@ -499,7 +499,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public void onFailure(@NonNull Exception e) {
 
             Toast.makeText(activity,
-                activity.getString(R.string.fail_to_query), Toast.LENGTH_LONG
+                getString(R.string.fail_to_query), Toast.LENGTH_LONG
             ).show();
           }
         });
@@ -545,7 +545,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public void onSuccess(DriveFile file) {
 
             Toast.makeText(activity,
-                activity.getString(R.string.create_new_backup), Toast.LENGTH_LONG
+                getString(R.string.create_new_backup), Toast.LENGTH_LONG
             ).show();
           }
         })
@@ -554,7 +554,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public void onFailure(@NonNull Exception e) {
 
             Toast.makeText(activity,
-                activity.getString(R.string.fail_to_create_new_backup), Toast.LENGTH_LONG
+                getString(R.string.fail_to_create_new_backup), Toast.LENGTH_LONG
             ).show();
           }
         });
@@ -598,7 +598,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public void onSuccess(Void aVoid) {
 
             Toast.makeText(activity,
-                activity.getString(R.string.update_backup), Toast.LENGTH_LONG
+                getString(R.string.update_backup), Toast.LENGTH_LONG
             ).show();
           }
         })
@@ -607,7 +607,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
           public void onFailure(@NonNull Exception e) {
 
             Toast.makeText(activity,
-                activity.getString(R.string.fail_to_update_backup), Toast.LENGTH_LONG
+                getString(R.string.fail_to_update_backup), Toast.LENGTH_LONG
             ).show();
           }
         });
@@ -636,7 +636,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
               signInClient = null;
               driveResourceClient = null;
               Toast.makeText(activity,
-                  activity.getString(R.string.logout_done), Toast.LENGTH_LONG
+                  getString(R.string.logout_done), Toast.LENGTH_LONG
               ).show();
             }
           })
@@ -645,7 +645,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
             public void onFailure(@NonNull Exception e) {
 
               Toast.makeText(activity,
-                  activity.getString(R.string.fail_to_logout), Toast.LENGTH_LONG
+                  getString(R.string.fail_to_logout), Toast.LENGTH_LONG
               ).show();
             }
           });
@@ -680,7 +680,7 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
               public void onFailure(@NonNull Exception e) {
 
                 Toast.makeText(activity,
-                    activity.getString(R.string.error), Toast.LENGTH_LONG
+                    getString(R.string.error), Toast.LENGTH_LONG
                 ).show();
               }
             });

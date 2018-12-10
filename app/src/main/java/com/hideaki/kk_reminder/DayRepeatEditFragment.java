@@ -117,7 +117,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.repeat_day_unit);
 
-    label_str_everyweek = activity.getResources().getString(R.string.everyweek);
+    label_str_everyweek = getString(R.string.everyweek);
     if(locale.equals(Locale.JAPAN)) {
       label_str_everyweek += DateFormat.format("E曜日", MainEditFragment.final_cal);
     }
@@ -126,7 +126,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
     }
     everyweek.setTitle(label_str_everyweek);
 
-    label_str_everymonth = activity.getResources().getString(R.string.everymonth);
+    label_str_everymonth = getString(R.string.everymonth);
     if(locale.equals(Locale.JAPAN)) {
       label_str_everymonth += MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH) + "日";
     }
@@ -140,7 +140,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
     }
     everymonth.setTitle(label_str_everymonth);
 
-    label_str_everyyear = activity.getResources().getString(R.string.everyyear);
+    label_str_everyyear = getString(R.string.everyyear);
     if(locale.equals(Locale.JAPAN)) {
       label_str_everyyear += DateFormat.format("M月d日", MainEditFragment.final_cal);
     }
@@ -212,7 +212,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
 
     //ラベルの初期化
     String label_str = MainEditFragment.dayRepeat.getLabel();
-    if(label_str == null || label_str.equals(activity.getString(R.string.none))) {
+    if(label_str == null || label_str.equals(getString(R.string.none))) {
       label.setSummary(R.string.non_repeat);
     }
     else {
@@ -257,7 +257,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           never.setChecked(true);
           label.setSummary(R.string.non_repeat);
 
-          MainEditFragment.dayRepeat.setLabel(activity.getResources().getString(R.string.none));
+          MainEditFragment.dayRepeat.setLabel(getString(R.string.none));
           MainEditFragment.dayRepeat.setSetted(0);
           MainEditFragment.dayRepeat.setWhich_template(0);
 
@@ -267,7 +267,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           everyday.setChecked(true);
           label.setSummary(R.string.everyday);
 
-          MainEditFragment.dayRepeat.setLabel(activity.getResources().getString(R.string.everyday));
+          MainEditFragment.dayRepeat.setLabel(getString(R.string.everyday));
           MainEditFragment.dayRepeat.setSetted(1);
           MainEditFragment.dayRepeat.setWhich_template(1);
           MainEditFragment.dayRepeat.setInterval(1);
@@ -279,7 +279,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
           everyweekday.setChecked(true);
           label.setSummary(R.string.everyweekday);
 
-          MainEditFragment.dayRepeat.setLabel(activity.getResources().getString(R.string.everyweekday));
+          MainEditFragment.dayRepeat.setLabel(getString(R.string.everyweekday));
           MainEditFragment.dayRepeat.setSetted(1 << 1);
           MainEditFragment.dayRepeat.setWhich_template(1 << 1);
           MainEditFragment.dayRepeat.setInterval(1);
