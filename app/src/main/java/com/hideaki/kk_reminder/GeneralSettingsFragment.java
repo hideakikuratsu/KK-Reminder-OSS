@@ -125,7 +125,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
 
       case "new_task": {
 
-        activity.showMainEditFragment(activity.generalSettings.getItem(), TAG);
+        activity.showMainEditFragment(activity.generalSettings.getItem());
         return true;
       }
       case "manually_snooze": {
@@ -147,7 +147,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
 
         if(activity.is_premium) {
           ColorPickerListAdapter.is_general_settings = true;
-          activity.showColorPickerListViewFragment(TAG);
+          activity.showColorPickerListViewFragment();
         }
         else activity.promotionDialog.show();
         return true;
@@ -157,7 +157,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         if(activity.is_premium) {
           ColorPickerListAdapter.is_general_settings = true;
           activity.generalSettings.getTheme().setColor_primary(false);
-          activity.showColorPickerListViewFragment(TAG);
+          activity.showColorPickerListViewFragment();
         }
         else activity.promotionDialog.show();
         return true;
@@ -173,7 +173,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
       }
       case "this_app": {
 
-        activity.showAboutThisAppFragment(TAG);
+        activity.showAboutThisAppFragment();
         return true;
       }
 

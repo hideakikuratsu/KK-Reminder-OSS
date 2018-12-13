@@ -133,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   String detail;
   private int which_list;
   private boolean is_in_on_create;
-  private static String BASE_FRAGMENT_TAG;
   private static Locale locale = Locale.getDefault();
   private int try_count;
   private BillingClient billingClient;
@@ -514,19 +513,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     if(order == 0) {
       if(is_expandable_todo) {
-        showExpandableListViewFragment(BASE_FRAGMENT_TAG);
+        showExpandableListViewFragment();
       }
-      else showDoneListViewFragment(BASE_FRAGMENT_TAG);
+      else showDoneListViewFragment();
     }
     else if(order == 1) {
       if(generalSettings.getNonScheduledLists().get(which_menu_open - 1).isTodo()) {
-        showListViewFragment(BASE_FRAGMENT_TAG);
+        showListViewFragment();
       }
-      else showDoneListViewFragment(BASE_FRAGMENT_TAG);
+      else showDoneListViewFragment();
     }
-    else if(order == 3) showManageListViewFragment(BASE_FRAGMENT_TAG);
-    else if(order == 4) showGeneralSettingsFragment(BASE_FRAGMENT_TAG);
-    else if(order == 5) showHelpAndFeedbackFragment(BASE_FRAGMENT_TAG);
+    else if(order == 3) showManageListViewFragment();
+    else if(order == 4) showGeneralSettingsFragment();
+    else if(order == 5) showHelpAndFeedbackFragment();
   }
 
   @Override
@@ -659,28 +658,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch(order) {
           case 0: {
             if(is_expandable_todo) {
-              showExpandableListViewFragment(BASE_FRAGMENT_TAG);
+              showExpandableListViewFragment();
             }
-            else showDoneListViewFragment(BASE_FRAGMENT_TAG);
+            else showDoneListViewFragment();
             break;
           }
           case 1: {
             if(generalSettings.getNonScheduledLists().get(which_menu_open - 1).isTodo()) {
-              showListViewFragment(BASE_FRAGMENT_TAG);
+              showListViewFragment();
             }
-            else showDoneListViewFragment(BASE_FRAGMENT_TAG);
+            else showDoneListViewFragment();
             break;
           }
           case 3: {
-            showManageListViewFragment(BASE_FRAGMENT_TAG);
+            showManageListViewFragment();
             break;
           }
           case 4: {
-            showGeneralSettingsFragment(BASE_FRAGMENT_TAG);
+            showGeneralSettingsFragment();
             break;
           }
           case 5: {
-            showHelpAndFeedbackFragment(BASE_FRAGMENT_TAG);
+            showHelpAndFeedbackFragment();
             break;
           }
         }
@@ -1432,146 +1431,83 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
   }
 
-  public void showDoneListViewFragment(String TAG) {
+  public void showDoneListViewFragment() {
 
     actionBarFragment = ActionBarFragment.newInstance();
-
-    if(getFragmentManager().findFragmentByTag(TAG) == null) {
-      showFragment(null, null, DoneListViewFragment.TAG, DoneListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
-        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
-      showFragment(TAG, ActionBarFragment.TAG, DoneListViewFragment.TAG, DoneListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-    else {
-      showFragment(TAG, null, DoneListViewFragment.TAG, DoneListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-
-    BASE_FRAGMENT_TAG = DoneListViewFragment.TAG;
+    showFragment(DoneListViewFragment.TAG, DoneListViewFragment.newInstance(),
+        ActionBarFragment.TAG, actionBarFragment, false);
   }
 
-  public void showTagEditListViewFragment(String TAG) {
+  public void showTagEditListViewFragment() {
 
-    showFragment(TAG, null, TagEditListViewFragment.TAG, TagEditListViewFragment.newInstance(),
+    showFragment(TagEditListViewFragment.TAG, TagEditListViewFragment.newInstance(),
         null, null, true);
   }
 
-  public void showColorPickerListViewFragment(String TAG) {
+  public void showColorPickerListViewFragment() {
 
-    showFragment(TAG, null, ColorPickerListViewFragment.TAG, ColorPickerListViewFragment.newInstance(),
+    showFragment(ColorPickerListViewFragment.TAG, ColorPickerListViewFragment.newInstance(),
         null, null, true);
   }
 
-  public void showManageListViewFragment(String TAG) {
+  public void showManageListViewFragment() {
 
     actionBarFragment = ActionBarFragment.newInstance();
-
-    if(getFragmentManager().findFragmentByTag(TAG) == null) {
-      showFragment(null, null, ManageListViewFragment.TAG, ManageListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
-        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
-      showFragment(TAG, ActionBarFragment.TAG, ManageListViewFragment.TAG, ManageListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-    else {
-      showFragment(TAG, null, ManageListViewFragment.TAG, ManageListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-
-    BASE_FRAGMENT_TAG = ManageListViewFragment.TAG;
+    showFragment(ManageListViewFragment.TAG, ManageListViewFragment.newInstance(),
+        ActionBarFragment.TAG, actionBarFragment, false);
   }
 
-  public void showListViewFragment(String TAG) {
+  public void showListViewFragment() {
 
     actionBarFragment = ActionBarFragment.newInstance();
-
-    if(getFragmentManager().findFragmentByTag(TAG) == null) {
-      showFragment(null, null, ListViewFragment.TAG, ListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
-        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
-      showFragment(TAG, ActionBarFragment.TAG, ListViewFragment.TAG, ListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-    else {
-      showFragment(TAG, null, ListViewFragment.TAG, ListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-
-    BASE_FRAGMENT_TAG = ListViewFragment.TAG;
+    showFragment(ListViewFragment.TAG, ListViewFragment.newInstance(),
+        ActionBarFragment.TAG, actionBarFragment, false);
   }
 
-  public void showExpandableListViewFragment(String TAG) {
+  public void showExpandableListViewFragment() {
 
     actionBarFragment = ActionBarFragment.newInstance();
-
-    if(getFragmentManager().findFragmentByTag(TAG) == null) {
-      showFragment(null, null, ExpandableListViewFragment.TAG, ExpandableListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
-        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
-      showFragment(TAG, ActionBarFragment.TAG, ExpandableListViewFragment.TAG, ExpandableListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-    else {
-      showFragment(TAG, null, ExpandableListViewFragment.TAG, ExpandableListViewFragment.newInstance(),
-          ActionBarFragment.TAG, actionBarFragment, false);
-    }
-
-    BASE_FRAGMENT_TAG = ExpandableListViewFragment.TAG;
+    showFragment(ExpandableListViewFragment.TAG, ExpandableListViewFragment.newInstance(),
+        ActionBarFragment.TAG, actionBarFragment, false);
   }
 
   //編集画面を表示(引数にitemを渡すとそのitemの情報が入力された状態で表示)
-  public void showMainEditFragment(String TAG) {
+  public void showMainEditFragment() {
 
     MainEditFragment.is_main_popping = false;
-    showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstance(),
+    showFragment(MainEditFragment.TAG, MainEditFragment.newInstance(),
         null, null, true);
   }
 
-  public void showMainEditFragment(String detail, String TAG) {
+  public void showMainEditFragment(String detail) {
 
     MainEditFragment.is_main_popping = false;
-    showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstance(detail),
+    showFragment(MainEditFragment.TAG, MainEditFragment.newInstance(detail),
         null, null, true);
   }
 
-  public void showMainEditFragment(Item item, String TAG) {
+  public void showMainEditFragment(Item item) {
 
     MainEditFragment.is_main_popping = false;
-    if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
-        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
-      showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstance(item.clone()),
-          null, null, true);
-    }
-    else {
-      showFragment(TAG, null, MainEditFragment.TAG, MainEditFragment.newInstance(item.clone()),
-          null, null, true);
-    }
-  }
-
-  public void showMainEditFragmentForList(String TAG) {
-
-    MainEditFragment.is_main_popping = false;
-    showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstanceForList(),
+    showFragment(MainEditFragment.TAG, MainEditFragment.newInstance(item.clone()),
         null, null, true);
   }
 
-  public void showMainEditFragmentForList(NonScheduledList list, String TAG) {
+  public void showMainEditFragmentForList() {
 
     MainEditFragment.is_main_popping = false;
-    showFragment(TAG, ActionBarFragment.TAG, MainEditFragment.TAG, MainEditFragment.newInstanceForList(list.clone()),
+    showFragment(MainEditFragment.TAG, MainEditFragment.newInstanceForList(),
         null, null, true);
   }
 
-  public void showNotesFragment(Item item, String TAG) {
+  public void showMainEditFragmentForList(NonScheduledList list) {
+
+    MainEditFragment.is_main_popping = false;
+    showFragment(MainEditFragment.TAG, MainEditFragment.newInstanceForList(list.clone()),
+        null, null, true);
+  }
+
+  public void showNotesFragment(Item item) {
 
     Fragment nextFragment;
     String nextFragmentTAG;
@@ -1585,76 +1521,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     MainEditFragment.is_notes_popping = false;
-    if(TAG.equals(MainEditFragment.TAG)) {
-      showFragment(TAG, null, nextFragmentTAG, nextFragment, null, null,
-          true);
-    }
-    else if(TAG.equals(NotesEditModeFragment.TAG) || TAG.equals(NotesChecklistModeFragment.TAG)) {
-      showFragment(TAG, null, nextFragmentTAG, nextFragment, null, null,
-          true);
-    }
-    else {
-      showFragment(TAG, ActionBarFragment.TAG, nextFragmentTAG, nextFragment, null, null,
-          true);
-    }
+    showFragment(nextFragmentTAG, nextFragment, null, null, true);
   }
 
-  public void showGeneralSettingsFragment(String TAG) {
+  public void showGeneralSettingsFragment() {
 
     generalSettingsFragment = GeneralSettingsFragment.newInstance();
-    if(getFragmentManager().findFragmentByTag(TAG) == null) {
-      showFragment(null, null, GeneralSettingsFragment.TAG,
-          generalSettingsFragment, null, null, false);
-    }
-    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
-        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
-      showFragment(TAG, ActionBarFragment.TAG, GeneralSettingsFragment.TAG,
-          generalSettingsFragment, null, null, false);
-    }
-    else {
-      showFragment(TAG, null, GeneralSettingsFragment.TAG, generalSettingsFragment,
-          null, null, false);
-    }
-
-    BASE_FRAGMENT_TAG = GeneralSettingsFragment.TAG;
+    showFragment(GeneralSettingsFragment.TAG, generalSettingsFragment,
+        null, null, false);
   }
 
-  public void showHelpAndFeedbackFragment(String TAG) {
+  public void showHelpAndFeedbackFragment() {
 
-    if(getFragmentManager().findFragmentByTag(TAG) == null) {
-      showFragment(null, null, HelpAndFeedbackFragment.TAG,
-          HelpAndFeedbackFragment.newInstance(), null, null, false);
-    }
-    else if(TAG.equals(ExpandableListViewFragment.TAG) || TAG.equals(ListViewFragment.TAG)
-        || TAG.equals(ManageListViewFragment.TAG) || TAG.equals(DoneListViewFragment.TAG)) {
-      showFragment(TAG, ActionBarFragment.TAG, HelpAndFeedbackFragment.TAG,
-          HelpAndFeedbackFragment.newInstance(), null, null, false);
-    }
-    else {
-      showFragment(TAG, null, HelpAndFeedbackFragment.TAG, HelpAndFeedbackFragment.newInstance(),
-          null, null, false);
-    }
-
-    BASE_FRAGMENT_TAG = HelpAndFeedbackFragment.TAG;
+    showFragment(HelpAndFeedbackFragment.TAG, HelpAndFeedbackFragment.newInstance(),
+        null, null, false);
   }
 
-  public void showAboutThisAppFragment(String TAG) {
+  public void showAboutThisAppFragment() {
 
-    showFragment(TAG, null, AboutThisAppFragment.TAG, AboutThisAppFragment.newInstance(),
+    showFragment(AboutThisAppFragment.TAG, AboutThisAppFragment.newInstance(),
         null, null, true);
   }
 
-  private void showFragment(String remove1, String remove2, String add1, Fragment addFragment1,
+  private void commitFragment(Fragment remove1, Fragment remove2, String add1, Fragment addFragment1,
       String add2, Fragment addFragment2, boolean back_stack) {
 
     FragmentManager manager = getFragmentManager();
 
     FragmentTransaction transaction = manager.beginTransaction();
     if(remove1 != null) {
-      transaction.remove(manager.findFragmentByTag(remove1));
+      transaction.remove(remove1);
     }
     if(remove2 != null) {
-      transaction.remove(manager.findFragmentByTag(remove2));
+      transaction.remove(remove2);
     }
     if(add1 != null) {
       transaction.add(R.id.content, addFragment1, add1);
@@ -1666,5 +1565,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       transaction.addToBackStack(null);
     }
     transaction.commit();
+  }
+
+  private void showFragment(String add1, Fragment addFragment1, String add2, Fragment addFragment2, boolean back_stack) {
+
+    FragmentManager manager = getFragmentManager();
+    Fragment rmFragment = manager.findFragmentById(R.id.content);
+
+    if(rmFragment == null) {
+      commitFragment(null, null, add1, addFragment1, add2, addFragment2, back_stack);
+    }
+    else if(rmFragment instanceof ActionBarFragment) {
+
+      String[] mainTAGs = {ExpandableListViewFragment.TAG, ListViewFragment.TAG,
+          ManageListViewFragment.TAG, DoneListViewFragment.TAG};
+      boolean is_found_match_fragment = false;
+      for(String mainTAG : mainTAGs) {
+        Fragment mainFragment = manager.findFragmentByTag(mainTAG);
+        if(mainFragment != null && mainFragment.isVisible()) {
+          is_found_match_fragment = true;
+          commitFragment(mainFragment, rmFragment, add1, addFragment1, add2, addFragment2, back_stack);
+          break;
+        }
+      }
+      if(!is_found_match_fragment) {
+        throw new IllegalStateException("No Fragment matched!");
+      }
+    }
+    else if(rmFragment instanceof ExpandableListViewFragment || rmFragment instanceof ListViewFragment
+        || rmFragment instanceof ManageListViewFragment || rmFragment instanceof DoneListViewFragment) {
+
+      commitFragment(rmFragment, manager.findFragmentByTag(ActionBarFragment.TAG),
+          add1, addFragment1, add2, addFragment2, back_stack);
+    }
+    else {
+      commitFragment(rmFragment, null, add1, addFragment1, add2, addFragment2, back_stack);
+    }
   }
 }

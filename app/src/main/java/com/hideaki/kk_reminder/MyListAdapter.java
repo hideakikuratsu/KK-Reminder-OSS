@@ -118,14 +118,14 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         }
         case R.id.edit: {
           activity.listView.clearTextFilter();
-          activity.showMainEditFragment(item, ListViewFragment.TAG);
+          activity.showMainEditFragment(item);
           has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
         }
         case R.id.notes: {
           activity.listView.clearTextFilter();
-          activity.showNotesFragment(item, ListViewFragment.TAG);
+          activity.showNotesFragment(item);
           break;
         }
       }
@@ -323,7 +323,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                     MainEditFragment.checked_item_num = checked_item_num;
                     MainEditFragment.itemListToMove = new ArrayList<>(itemListToMove);
                     activity.showMainEditFragment(
-                        itemListToMove.get(itemListToMove.size() - 1), ListViewFragment.TAG
+                        itemListToMove.get(itemListToMove.size() - 1)
                     );
                   }
                   else {
@@ -392,7 +392,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                   MainEditFragment.is_cloning_task = true;
                   itemListToMove.get(itemListToMove.size() - 1).setSelected(false);
                   activity.showMainEditFragment(
-                      itemListToMove.get(itemListToMove.size() - 1).copy(), ListViewFragment.TAG
+                      itemListToMove.get(itemListToMove.size() - 1).copy()
                   );
 
                   actionMode.finish();

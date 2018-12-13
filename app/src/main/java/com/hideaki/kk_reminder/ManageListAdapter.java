@@ -76,7 +76,7 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
         }
         case R.id.edit: {
           activity.listView.clearTextFilter();
-          activity.showMainEditFragmentForList(list, ManageListViewFragment.TAG);
+          activity.showMainEditFragmentForList(list);
           has_panel = 0;
           viewHolder.edit.setVisibility(View.GONE);
           break;

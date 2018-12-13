@@ -244,7 +244,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
         case R.id.edit: {
           activity.expandableListView.clearTextFilter();
-          activity.showMainEditFragment(item, ExpandableListViewFragment.TAG);
+          activity.showMainEditFragment(item);
           has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
           break;
@@ -317,7 +317,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
         case R.id.notes: {
           activity.expandableListView.clearTextFilter();
-          activity.showNotesFragment(item, ExpandableListViewFragment.TAG);
+          activity.showNotesFragment(item);
           break;
         }
       }
@@ -1498,7 +1498,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   MainEditFragment.is_cloning_task = true;
                   itemListToMove.get(itemListToMove.size() - 1).setSelected(false);
                   activity.showMainEditFragment(
-                      itemListToMove.get(itemListToMove.size() - 1).copy(), ExpandableListViewFragment.TAG
+                      itemListToMove.get(itemListToMove.size() - 1).copy()
                   );
 
                   actionMode.finish();

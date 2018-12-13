@@ -319,7 +319,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
           next_edit_exists = false;
           if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
-            activity.showMainEditFragment(nextItem.clone(), TAG);
+            activity.showMainEditFragment(nextItem.clone());
             next_edit_exists = true;
           }
           else if(is_cloning_task) {
@@ -562,7 +562,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
         next_edit_exists = false;
         if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
-          activity.showMainEditFragment(nextItem.clone(), TAG);
+          activity.showMainEditFragment(nextItem.clone());
           next_edit_exists = true;
         }
         else if(is_cloning_task) {
@@ -608,19 +608,19 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     switch(preference.getKey()) {
 
       case "primary_color": {
-        activity.showColorPickerListViewFragment(TAG);
+        activity.showColorPickerListViewFragment();
         return true;
       }
       case "secondary_color": {
 
         list.setColor_primary(false);
-        activity.showColorPickerListViewFragment(TAG);
+        activity.showColorPickerListViewFragment();
         return true;
       }
       case "tag": {
 
         if(order == 3) ColorPickerListAdapter.from_list_tag_edit = true;
-        activity.showTagEditListViewFragment(TAG);
+        activity.showTagEditListViewFragment();
         return true;
       }
       case "interval": {
@@ -658,7 +658,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
       }
       case "notes": {
 
-        activity.showNotesFragment(item, TAG);
+        activity.showNotesFragment(item);
         return true;
       }
     }
@@ -861,7 +861,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     next_edit_exists = false;
     if((is_moving_task || is_cloning_task) && checked_item_num > 0) {
-      activity.showMainEditFragment(nextItem.clone(), TAG);
+      activity.showMainEditFragment(nextItem.clone());
       next_edit_exists = true;
     }
     else if(is_cloning_task) {

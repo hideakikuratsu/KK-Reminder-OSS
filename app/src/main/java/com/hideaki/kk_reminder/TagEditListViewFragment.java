@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -206,11 +207,13 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
 
         TagEditListAdapter.is_editing = !TagEditListAdapter.is_editing;
         if(TagEditListAdapter.is_editing) {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
           actionBar.setDisplayHomeAsUpEnabled(false);
           sortItem.setVisible(false);
           activity.listView.removeFooterView(footer);
         }
         else {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
           actionBar.setDisplayHomeAsUpEnabled(true);
           sortItem.setVisible(true);
           if(activity.listView.getFooterViewsCount() == 0) {
@@ -224,11 +227,13 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
 
         TagEditListAdapter.is_sorting = !TagEditListAdapter.is_sorting;
         if(TagEditListAdapter.is_sorting) {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
           actionBar.setDisplayHomeAsUpEnabled(false);
           editItem.setVisible(false);
           activity.listView.removeFooterView(footer);
         }
         else {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
           actionBar.setDisplayHomeAsUpEnabled(true);
           editItem.setVisible(true);
           if(activity.listView.getFooterViewsCount() == 0) {

@@ -141,7 +141,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                     }
                     else if(which_list == 1) {
                       activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
-                      activity.showMainEditFragment(item, DoneListViewFragment.TAG);
+                      activity.showMainEditFragment(item);
                     }
                   }
                 })

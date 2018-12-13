@@ -59,7 +59,7 @@ public class ExpandableListViewFragment extends Fragment {
     activity = (MainActivity)context;
     activity.drawerLayout.closeDrawer(GravityCompat.START);
     if(activity.detail != null) {
-      activity.showMainEditFragment(activity.detail, TAG);
+      activity.showMainEditFragment(activity.detail);
       activity.detail = null;
     }
 

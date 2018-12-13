@@ -332,9 +332,9 @@ public class ActionBarFragment extends Fragment {
       }
       case R.id.add_item: {
 
-        if(order == 0) activity.showMainEditFragment(ExpandableListViewFragment.TAG);
-        else if(order == 1) activity.showMainEditFragment(ListViewFragment.TAG);
-        else if(order == 3) activity.showMainEditFragmentForList(ManageListViewFragment.TAG);
+        if(order == 0) activity.showMainEditFragment();
+        else if(order == 1) activity.showMainEditFragment();
+        else if(order == 3) activity.showMainEditFragmentForList();
         return true;
       }
       case R.id.sort: {
@@ -465,7 +465,7 @@ public class ActionBarFragment extends Fragment {
           if(!activity.is_expandable_todo) {
             addItem.setVisible(true);
             activity.setBooleanGeneralInSharedPreferences(IS_EXPANDABLE_TODO, true);
-            activity.showExpandableListViewFragment(DoneListViewFragment.TAG);
+            activity.showExpandableListViewFragment();
 
             setTodoPushedColor();
           }
@@ -476,7 +476,7 @@ public class ActionBarFragment extends Fragment {
             sortItem.setVisible(true);
             activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).setTodo(true);
             activity.updateSettingsDB();
-            activity.showListViewFragment(DoneListViewFragment.TAG);
+            activity.showListViewFragment();
 
             setTodoPushedColor();
           }
@@ -492,7 +492,7 @@ public class ActionBarFragment extends Fragment {
           if(activity.is_expandable_todo) {
             addItem.setVisible(false);
             activity.setBooleanGeneralInSharedPreferences(IS_EXPANDABLE_TODO, false);
-            activity.showDoneListViewFragment(ExpandableListViewFragment.TAG);
+            activity.showDoneListViewFragment();
 
             setDonePushedColor();
           }
@@ -503,7 +503,7 @@ public class ActionBarFragment extends Fragment {
             sortItem.setVisible(false);
             activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).setTodo(false);
             activity.updateSettingsDB();
-            activity.showDoneListViewFragment(ListViewFragment.TAG);
+            activity.showDoneListViewFragment();
 
             setDonePushedColor();
           }

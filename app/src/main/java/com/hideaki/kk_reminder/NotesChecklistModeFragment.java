@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -365,13 +366,14 @@ public class NotesChecklistModeFragment extends Fragment {
 
         NotesChecklistModeFragment.item.setChecklist_mode(false);
         activity.updateDB(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE);
-        activity.showNotesFragment(NotesChecklistModeFragment.item, TAG);
+        activity.showNotesFragment(NotesChecklistModeFragment.item);
         return true;
       }
       case R.id.sort: {
 
         NotesTodoListAdapter.is_sorting = !NotesTodoListAdapter.is_sorting;
         if(NotesTodoListAdapter.is_sorting) {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
           actionBar.setDisplayHomeAsUpEnabled(false);
           editModeItem.setVisible(false);
           deleteItem.setVisible(false);
@@ -382,6 +384,7 @@ public class NotesChecklistModeFragment extends Fragment {
           listView.setVisibility(View.GONE);
         }
         else {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
           actionBar.setDisplayHomeAsUpEnabled(true);
           editModeItem.setVisible(true);
           if(NotesDoneListAdapter.notesList.size() != 0) {
