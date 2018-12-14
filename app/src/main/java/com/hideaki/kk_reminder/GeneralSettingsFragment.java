@@ -68,7 +68,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
 
     PreferenceScreen defaultNewTask = (PreferenceScreen)findPreference("new_task");
     PreferenceScreen manuallySnooze = (PreferenceScreen)findPreference("manually_snooze");
-    PreferenceScreen defaultQuickPicker = (PreferenceScreen)findPreference("quick_picker");
     PreferenceCategory upgradeCategory = (PreferenceCategory)findPreference("upgrade_category");
     PreferenceScreen upgrade = (PreferenceScreen)findPreference("upgrade");
     PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
@@ -78,7 +77,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
 
     defaultNewTask.setOnPreferenceClickListener(this);
     manuallySnooze.setOnPreferenceClickListener(this);
-    defaultQuickPicker.setOnPreferenceClickListener(this);
     upgrade.setOnPreferenceClickListener(this);
     primaryColor.setOnPreferenceClickListener(this);
     secondaryColor.setOnPreferenceClickListener(this);
@@ -131,11 +129,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
       case "manually_snooze": {
 
         transitionFragment(DefaultManuallySnoozeFragment.newInstance());
-        return true;
-      }
-      case "quick_picker": {
-
-        transitionFragment(DefaultQuickPickerFragment.newInstance());
         return true;
       }
       case "upgrade": {

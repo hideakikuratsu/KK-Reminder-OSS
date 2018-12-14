@@ -13,7 +13,12 @@
         android:title="@string/schedule_task"
         android:key="schedule">
 
-        <com.hideaki.kk_reminder.DatePickerPreference/>
+        <PreferenceScreen
+            android:key="date_picker"/>
+
+        <PreferenceScreen
+            android:key="time_picker"/>
+
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory

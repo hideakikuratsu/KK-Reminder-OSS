@@ -29,6 +29,7 @@ import static com.hideaki.kk_reminder.UtilClass.DESTROYED;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID;
 import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
@@ -54,11 +55,10 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
   int custom_hour;
   int custom_minute;
   String summary;
-  private static Locale locale = Locale.getDefault();
 
   static {
 
-    if(locale.equals(Locale.JAPAN)) {
+    if(LOCALE.equals(Locale.JAPAN)) {
       for(int i = 0; i < 24; i++) {
         hour_list.add(i + "時間");
       }
@@ -127,11 +127,11 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     summary = "";
     if(custom_hour != 0) {
       summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
-      if(!locale.equals(Locale.JAPAN)) summary += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
     }
     if(custom_minute != 0) {
       summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
-      if(!locale.equals(Locale.JAPAN)) summary += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
     }
     summary += getString(R.string.snooze);
     title.setText(summary);
@@ -273,11 +273,11 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
               summary = "";
               if(custom_hour != 0) {
                 summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               if(custom_minute != 0) {
                 summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               summary += getString(R.string.snooze);
               title.setText(summary);
@@ -314,11 +314,11 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
               summary = "";
               if(custom_hour != 0) {
                 summary += getResources().getQuantityString(R.plurals.hour, custom_hour, custom_hour);
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               if(custom_minute != 0) {
                 summary += getResources().getQuantityString(R.plurals.minute, custom_minute, custom_minute);
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               summary += getString(R.string.snooze);
               title.setText(summary);

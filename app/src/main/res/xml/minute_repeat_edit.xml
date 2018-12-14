@@ -5,7 +5,9 @@
         android:key="label"
         android:summary="@string/non_repeat"/>
 
-    <com.hideaki.kk_reminder.MinuteRepeatIntervalPickerPreference/>
+    <PreferenceScreen
+        android:key="interval"
+        android:summary="@string/repeat_minute_interval"/>
 
     <com.hideaki.kk_reminder.MyCheckBoxPreference
         android:key="never"
@@ -21,6 +23,8 @@
 
     <com.hideaki.kk_reminder.MinuteRepeatCountPickerPreference android:key="count_picker"/>
 
-    <com.hideaki.kk_reminder.MinuteRepeatDurationPickerPreference android:key="duration_picker"/>
+    <PreferenceScreen
+        android:key="duration_picker"
+        android:summary="@string/repeat_minute_duration"/>
 
 </PreferenceScreen>

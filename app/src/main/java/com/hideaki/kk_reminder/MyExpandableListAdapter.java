@@ -47,6 +47,7 @@ import static com.hideaki.kk_reminder.UtilClass.CHANGE_GRADE;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
@@ -67,7 +68,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private List<List<Item>> filteredList;
   ColorStateList colorStateList;
   private ColorStateList defaultColorStateList;
-  private static Locale locale = Locale.getDefault();
 
   MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
 
@@ -80,7 +80,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
     CharSequence today;
     CharSequence tomorrow;
-    if(locale.equals(Locale.JAPAN)) {
+    if(LOCALE.equals(Locale.JAPAN)) {
       today = DateFormat.format(" - yyyy年M月d日(E)", now);
       tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
     }
@@ -1890,7 +1890,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     Calendar now = Calendar.getInstance();
     String set_time;
     if(now.get(Calendar.YEAR) == item.getDate().get(Calendar.YEAR)) {
-      if(locale.equals(Locale.JAPAN)) {
+      if(LOCALE.equals(Locale.JAPAN)) {
         set_time = (String)DateFormat.format("M月d日(E) k:mm", item.getDate());
       }
       else {
@@ -1898,7 +1898,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       }
     }
     else {
-      if(locale.equals(Locale.JAPAN)) {
+      if(LOCALE.equals(Locale.JAPAN)) {
         set_time = (String)DateFormat.format("yyyy年M月d日(E) k:mm", item.getDate());
       }
       else {
@@ -1974,56 +1974,56 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     Resources res = activity.getResources();
     String display_date = set_time + " (";
-    if(!locale.equals(Locale.JAPAN)) display_date += " ";
+    if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
     if(how_far_years != 0) {
       display_date += res.getQuantityString(R.plurals.year, how_far_years, how_far_years);
-      if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
       if(how_far_months != 0) {
         display_date += res.getQuantityString(R.plurals.month, how_far_months, how_far_months);
-        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+        if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
       }
       if(how_far_weeks != 0) {
         display_date += res.getQuantityString(R.plurals.week, how_far_weeks, how_far_weeks);
-        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+        if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
       }
     }
     else if(how_far_months != 0) {
       display_date += res.getQuantityString(R.plurals.month, how_far_months, how_far_months);
-      if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
       if(how_far_weeks != 0) {
         display_date += res.getQuantityString(R.plurals.week, how_far_weeks, how_far_weeks);
-        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+        if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
       }
     }
     else if(how_far_weeks != 0) {
       display_date += res.getQuantityString(R.plurals.week, how_far_weeks, how_far_weeks);
-      if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
       how_far_days -= 7 * how_far_weeks;
       if(how_far_days != 0) {
         display_date += res.getQuantityString(R.plurals.day, how_far_days, how_far_days);
-        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+        if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
       }
     }
     else if(how_far_days != 0) {
       display_date += res.getQuantityString(R.plurals.day, how_far_days, how_far_days);
-      if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
     }
     else if(how_far_hours != 0) {
       display_date += res.getQuantityString(R.plurals.hour, how_far_hours, how_far_hours);
-      if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
       how_far_minutes -= 60 * how_far_hours;
       if(how_far_minutes != 0) {
         display_date += res.getQuantityString(R.plurals.minute, how_far_minutes, how_far_minutes);
-        if(!locale.equals(Locale.JAPAN)) display_date += " ";
+        if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
       }
     }
     else if(how_far_minutes != 0) {
       display_date += res.getQuantityString(R.plurals.minute, how_far_minutes, how_far_minutes);
-      if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
     }
     else {
       display_date += activity.getString(R.string.within_one_minute);
-      if(!locale.equals(Locale.JAPAN)) display_date += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) display_date += " ";
     }
     display_date += ")";
 
@@ -2044,16 +2044,16 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     String repeat_str = "";
     String tmp = item.getDayRepeat().getLabel();
     if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
-      if(!locale.equals(Locale.JAPAN)) repeat_str += "Repeat ";
+      if(!LOCALE.equals(Locale.JAPAN)) repeat_str += "Repeat ";
       repeat_str += tmp;
-      if(!activity.getString(R.string.everyday).equals(tmp) && locale.equals(Locale.JAPAN)) {
+      if(!activity.getString(R.string.everyday).equals(tmp) && LOCALE.equals(Locale.JAPAN)) {
         repeat_str += "に";
       }
     }
 
     tmp = item.getMinuteRepeat().getLabel();
     if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
-      if(!locale.equals(Locale.JAPAN) && !"".equals(repeat_str)) {
+      if(!LOCALE.equals(Locale.JAPAN) && !"".equals(repeat_str)) {
         repeat_str += " and ";
       }
       repeat_str += tmp;
@@ -2061,7 +2061,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     String day = item.getDayRepeat().getLabel();
     String minute = item.getMinuteRepeat().getLabel();
-    if(locale.equals(Locale.JAPAN) && day != null && !"".equals(day) && !activity.getString(R.string.none).equals(day)
+    if(LOCALE.equals(Locale.JAPAN) && day != null && !"".equals(day) && !activity.getString(R.string.none).equals(day)
         && (minute == null || "".equals(minute) || activity.getString(R.string.none).equals(minute))) {
       repeat_str += "繰り返す";
     }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class UtilClass {
@@ -57,16 +58,12 @@ class UtilClass {
   static final String BOOLEAN_GENERAL = "BOOLEAN_GENERAL";
   static final String IS_EXPANDABLE_TODO = "IS_EXPANDABLE_TODO";
   static final String IS_PREMIUM = "IS_PREMIUM";
-  static final String STRING_GENERAL = "STRING_GENERAL";
-  static final String DEFAULT_QUICK_PICKER1 = "DEFAULT_QUICK_PICKER1";
-  static final String DEFAULT_QUICK_PICKER2 = "DEFAULT_QUICK_PICKER2";
-  static final String DEFAULT_QUICK_PICKER3 = "DEFAULT_QUICK_PICKER3";
-  static final String DEFAULT_QUICK_PICKER4 = "DEFAULT_QUICK_PICKER4";
   static final String LINE_SEPARATOR = System.getProperty("line.separator");
   static final String PRODUCT_ID_PREMIUM = "com.hideaki.premium";
   static final int RC_SIGN_IN = 1;
   static long MINUTE = 60 * 1000;
   static long HOUR = 60 * 60 * 1000;
+  static Locale LOCALE = Locale.getDefault();
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   private static Bitmap getBitmap(VectorDrawable vectorDrawable) {

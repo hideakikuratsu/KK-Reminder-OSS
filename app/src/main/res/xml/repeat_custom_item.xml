@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.hideaki.kk_reminder.DayRepeatCustomPickerPreference android:key="picker"/>
+    <PreferenceScreen
+        android:key="picker"/>
 
     <com.hideaki.kk_reminder.DayRepeatCustomWeekPickerPreference android:key="week"/>
 
@@ -15,7 +16,9 @@
 
     <com.hideaki.kk_reminder.DayRepeatCustomDaysOfMonthPickerPreference android:key="days_of_month_picker"/>
 
-    <com.hideaki.kk_reminder.DayRepeatCustomOnTheMonthPickerPreference android:key="on_the_month_picker"/>
+    <PreferenceScreen
+        android:key="on_the_month_picker"
+        android:summary="@string/on_the_month"/>
 
     <com.hideaki.kk_reminder.DayRepeatCustomYearPickerPreference android:key="year"/>
 

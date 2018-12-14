@@ -6,23 +6,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.view.View;
+import android.text.format.DateFormat;
 import android.widget.DatePicker;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
 public class DatePickerDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-
-  private DatePickerPreference datePickerPreference;
-  private View view;
-
-  public void setInstance(DatePickerPreference datePickerPreference, View view) {
-
-    this.datePickerPreference = datePickerPreference;
-    this.view = view;
-  }
 
   @NonNull
   @Override
@@ -44,6 +37,11 @@ public class DatePickerDialogFragment extends DialogFragment implements DatePick
     MainEditFragment.final_cal.set(Calendar.YEAR, year);
     MainEditFragment.final_cal.set(Calendar.MONTH, month);
     MainEditFragment.final_cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-    datePickerPreference.onBindView(this.view);
+    if(LOCALE.equals(Locale.JAPAN)) {
+      MainEditFragment.datePicker.setTitle(DateFormat.format("yyyy年M月d日(E)", MainEditFragment.final_cal));
+    }
+    else {
+      MainEditFragment.datePicker.setTitle(DateFormat.format("yyyy/M/d (E)", MainEditFragment.final_cal));
+    }
   }
 }

@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
 public class DayRepeatEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
@@ -42,7 +43,6 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
   static String label_str_custom;
   private int mask_num;
   MainActivity activity;
-  private static Locale locale = Locale.getDefault();
 
   public static DayRepeatEditFragment newInstance() {
 
@@ -118,7 +118,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
     actionBar.setTitle(R.string.repeat_day_unit);
 
     label_str_everyweek = getString(R.string.everyweek);
-    if(locale.equals(Locale.JAPAN)) {
+    if(LOCALE.equals(Locale.JAPAN)) {
       label_str_everyweek += DateFormat.format("E曜日", MainEditFragment.final_cal);
     }
     else {
@@ -127,7 +127,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
     everyweek.setTitle(label_str_everyweek);
 
     label_str_everymonth = getString(R.string.everymonth);
-    if(locale.equals(Locale.JAPAN)) {
+    if(LOCALE.equals(Locale.JAPAN)) {
       label_str_everymonth += MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH) + "日";
     }
     else {
@@ -141,7 +141,7 @@ public class DayRepeatEditFragment extends PreferenceFragment implements Prefere
     everymonth.setTitle(label_str_everymonth);
 
     label_str_everyyear = getString(R.string.everyyear);
-    if(locale.equals(Locale.JAPAN)) {
+    if(LOCALE.equals(Locale.JAPAN)) {
       label_str_everyyear += DateFormat.format("M月d日", MainEditFragment.final_cal);
     }
     else {

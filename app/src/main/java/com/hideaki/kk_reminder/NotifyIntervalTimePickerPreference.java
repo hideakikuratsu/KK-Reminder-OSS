@@ -14,12 +14,13 @@ import android.widget.ImageView;
 
 import java.util.Locale;
 
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
+
 public class NotifyIntervalTimePickerPreference extends Preference implements TextWatcher {
 
   private MainActivity activity;
   private EditText time;
   private String oldString = "";
-  private static Locale locale = Locale.getDefault();
 
   public NotifyIntervalTimePickerPreference(Context context, AttributeSet attrs) {
 
@@ -63,7 +64,7 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
           if(interval.getOrg_time() != 0) {
             Resources res = activity.getResources();
             String summary;
-            if(locale.equals(Locale.JAPAN)) {
+            if(LOCALE.equals(Locale.JAPAN)) {
               summary = activity.getString(R.string.unless_complete_task);
               if(interval.getHour() != 0) {
                 summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
@@ -84,11 +85,11 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
               summary = "Notify every ";
               if(interval.getHour() != 0) {
                 summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               if(interval.getMinute() != 0) {
                 summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               if(interval.getOrg_time() != -1) {
                 summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
@@ -127,7 +128,7 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
             if(interval.getOrg_time() != 0) {
               Resources res = activity.getResources();
               String summary;
-              if(locale.equals(Locale.JAPAN)) {
+              if(LOCALE.equals(Locale.JAPAN)) {
                 summary = activity.getString(R.string.unless_complete_task);
                 if(interval.getHour() != 0) {
                   summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
@@ -148,11 +149,11 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
                 summary = "Notify every ";
                 if(interval.getHour() != 0) {
                   summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
-                  if(!locale.equals(Locale.JAPAN)) summary += " ";
+                  if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
                 }
                 if(interval.getMinute() != 0) {
                   summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
-                  if(!locale.equals(Locale.JAPAN)) summary += " ";
+                  if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
                 }
                 if(interval.getOrg_time() != -1) {
                   summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
@@ -196,7 +197,7 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
         if(interval.getOrg_time() != 0) {
           Resources res = activity.getResources();
           String summary;
-          if(locale.equals(Locale.JAPAN)) {
+          if(LOCALE.equals(Locale.JAPAN)) {
             summary = activity.getString(R.string.unless_complete_task);
             if(interval.getHour() != 0) {
               summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
@@ -217,11 +218,11 @@ public class NotifyIntervalTimePickerPreference extends Preference implements Te
             summary = "Notify every ";
             if(interval.getHour() != 0) {
               summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
-              if(!locale.equals(Locale.JAPAN)) summary += " ";
+              if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
             }
             if(interval.getMinute() != 0) {
               summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
-              if(!locale.equals(Locale.JAPAN)) summary += " ";
+              if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
             }
             if(interval.getOrg_time() != -1) {
               summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),

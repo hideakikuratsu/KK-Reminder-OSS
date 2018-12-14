@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
 public class DoneListAdapter extends BaseAdapter implements Filterable {
 
@@ -45,7 +46,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
   private List<Item> filteredItem;
   static int order;
   ColorStateList colorStateList;
-  private static Locale locale = Locale.getDefault();
 
   DoneListAdapter(MainActivity activity) {
 
@@ -99,7 +99,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
               if(tmp.before(now)) {
                 tmp.add(Calendar.DAY_OF_MONTH, 1);
               }
-              if(locale.equals(Locale.JAPAN)) {
+              if(LOCALE.equals(Locale.JAPAN)) {
                 items[0] = DateFormat.format("yyyy年M月d日(E) k時m分", tmp).toString() +
                     "に" + activity.getString(R.string.recycle_task);
               }
@@ -572,7 +572,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
       Calendar now = Calendar.getInstance();
       String set_time;
       if(now.get(Calendar.YEAR) == item.getDate().get(Calendar.YEAR)) {
-        if(locale.equals(Locale.JAPAN)) {
+        if(LOCALE.equals(Locale.JAPAN)) {
           set_time = (String)DateFormat.format("M月d日(E) k:mm", item.getDate());
         }
         else {
@@ -580,7 +580,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
         }
       }
       else {
-        if(locale.equals(Locale.JAPAN)) {
+        if(LOCALE.equals(Locale.JAPAN)) {
           set_time = (String)DateFormat.format("yyyy年M月d日(E) k:mm", item.getDate());
         }
         else {

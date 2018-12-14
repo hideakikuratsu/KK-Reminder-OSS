@@ -13,12 +13,13 @@ import android.widget.ImageView;
 
 import java.util.Locale;
 
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
+
 public class MinuteRepeatCountPickerPreference extends Preference implements TextWatcher {
 
   private MainActivity activity;
   private EditText count;
   private String oldString = "";
-  private static Locale locale = Locale.getDefault();
 
   public MinuteRepeatCountPickerPreference(Context context, AttributeSet attrs) {
 
@@ -62,12 +63,12 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
           int hour = MainEditFragment.minuteRepeat.getHour();
           if(hour != 0) {
             interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-            if(!locale.equals(Locale.JAPAN)) interval += " ";
+            if(!LOCALE.equals(Locale.JAPAN)) interval += " ";
           }
           int minute = MainEditFragment.minuteRepeat.getMinute();
           if(minute != 0) {
             interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-            if(!locale.equals(Locale.JAPAN)) interval += " ";
+            if(!LOCALE.equals(Locale.JAPAN)) interval += " ";
           }
           int count = MainEditFragment.minuteRepeat.getOrg_count();
           String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
@@ -97,12 +98,12 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
             int hour = MainEditFragment.minuteRepeat.getHour();
             if(hour != 0) {
               interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-              if(!locale.equals(Locale.JAPAN)) interval += " ";
+              if(!LOCALE.equals(Locale.JAPAN)) interval += " ";
             }
             int minute = MainEditFragment.minuteRepeat.getMinute();
             if(minute != 0) {
               interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-              if(!locale.equals(Locale.JAPAN)) interval += " ";
+              if(!LOCALE.equals(Locale.JAPAN)) interval += " ";
             }
             int count = MainEditFragment.minuteRepeat.getOrg_count();
             String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
@@ -135,12 +136,12 @@ public class MinuteRepeatCountPickerPreference extends Preference implements Tex
         int hour = MainEditFragment.minuteRepeat.getHour();
         if(hour != 0) {
           interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-          if(!locale.equals(Locale.JAPAN)) interval += " ";
+          if(!LOCALE.equals(Locale.JAPAN)) interval += " ";
         }
         int minute = MainEditFragment.minuteRepeat.getMinute();
         if(minute != 0) {
           interval += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-          if(!locale.equals(Locale.JAPAN)) interval += " ";
+          if(!LOCALE.equals(Locale.JAPAN)) interval += " ";
         }
         int count = MainEditFragment.minuteRepeat.getOrg_count();
         String label = activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,

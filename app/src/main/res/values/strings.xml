@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="version_value">2.0.2.0.14</string>
+    <string name="version_value">3.0.0.0</string>
     <string name="app_id">******************</string>
     <string name="ad_unit_id">******************</string>
     <string name="app_name">KK Reminder</string>
@@ -38,7 +38,14 @@
     <string name="interval">Notification repeat and frequency</string>
     <string name="repeat_option">Repeat options</string>
     <string name="repeat_day_unit">Repeat (per day)</string>
-    <string name="per_day">Every %1$d days</string>
+    <string name="day">Day</string>
+    <string name="week">Week</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <plurals name="per_day">
+        <item quantity="one">Every day</item>
+        <item quantity="other">Every %1$d days</item>
+    </plurals>
     <plurals name="per_week">
         <item quantity="one">Every week</item>
         <item quantity="other">Every %1$d weeks</item>
@@ -51,7 +58,9 @@
         <item quantity="one">Every year</item>
         <item quantity="other">Every %1$d years</item>
     </plurals>
+    <string name="selection">Selection</string>
     <string name="repeat_minute_unit">Repeat (per minute)</string>
+    <string name="repeat_minute_interval">Repeat Interval</string>
     <string name="repeat_minute_count">Repeat count</string>
     <plurals name="repeat_minute_count_format">
         <item quantity="one">Repeat every %1$sx 1 time since you finish this task</item>
@@ -99,8 +108,6 @@
     <string name="default_new_task">New task</string>
     <string name="default_new_task_summary">You can set default settings of new task previously</string>
     <string name="default_manually_snooze">Manual snooze time</string>
-    <string name="default_quick_picker">Quick Picker</string>
-    <string name="about_quick_picker">Quick Picker is a time picker. You can set time previously and pick the time with it when you add a new task to Scheduled Reminder</string>
     <string name="theme">Theme</string>
     <string name="after_theme_set_message">After you set theme, this app reboots automatically</string>
     <string name="backup">Backup</string>
@@ -201,6 +208,7 @@
     </plurals>
     <string name="infinite_times_notify">infinite_times_notify</string>
     <string name="num_of_notification">How many times</string>
+    <string name="notification_interval">Notification Interval</string>
     <string name="description_for_notify_custom">If you set -1 time, System notifies forever, or if you set 0 time, System notifies only one time. If you set both hour and minute to 0, System regards it as 24 hours</string>
     <string name="everyday">Every day</string>
     <string name="everyweekday">Every weekday (Mon - Fri)</string>
@@ -236,6 +244,7 @@
     <string name="complete">Finished task</string>
     <string name="undo">Undo</string>
     <string name="repeat_conflict_dialog_message">Scheduled date was changed with Repeat Function set.\nIs this change temporary one?</string>
+    <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>

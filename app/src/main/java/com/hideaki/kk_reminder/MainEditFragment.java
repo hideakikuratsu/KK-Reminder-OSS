@@ -24,6 +24,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +37,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -43,6 +45,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LIST;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.REQUEST_CODE_RINGTONE_PICKER;
 
 public class MainEditFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
@@ -51,6 +54,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
   static final String TAG = MainEditFragment.class.getSimpleName();
 
   private EditTextPreference detail;
+  static PreferenceScreen datePicker;
+  static PreferenceScreen timePicker;
   private PreferenceScreen tag;
   private PreferenceScreen intervalItem;
   private PreferenceScreen dayRepeatItem;
@@ -88,6 +93,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     dayRepeat = new DayRepeat();
     minuteRepeat = new MinuteRepeat();
     final_cal = Calendar.getInstance();
+    final_cal.set(Calendar.SECOND, 0);
+    final_cal.set(Calendar.MILLISECOND, 0);
     Bundle args = new Bundle();
     args.putSerializable(ITEM, item);
     fragment.setArguments(args);
@@ -106,6 +113,8 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     dayRepeat = new DayRepeat();
     minuteRepeat = new MinuteRepeat();
     final_cal = Calendar.getInstance();
+    final_cal.set(Calendar.SECOND, 0);
+    final_cal.set(Calendar.MILLISECOND, 0);
     Bundle args = new Bundle();
     args.putSerializable(ITEM, item);
     fragment.setArguments(args);
@@ -247,6 +256,10 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     detail.setOnPreferenceChangeListener(this);
 
     PreferenceCategory schedule = (PreferenceCategory)findPreference("schedule");
+    datePicker = (PreferenceScreen)findPreference("date_picker");
+    timePicker = (PreferenceScreen)findPreference("time_picker");
+    datePicker.setOnPreferenceClickListener(this);
+    timePicker.setOnPreferenceClickListener(this);
 
     PreferenceCategory colorCategory = (PreferenceCategory)findPreference("color");
     PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
@@ -352,6 +365,17 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
     //設定項目間の区切り線の非表示
     ListView listView = view.findViewById(android.R.id.list);
     listView.setDivider(null);
+
+    //タスクの期限のラベルの初期化
+    if(order == 0) {
+      if(LOCALE.equals(Locale.JAPAN)) {
+        datePicker.setTitle(DateFormat.format("yyyy年M月d日(E)", final_cal));
+      }
+      else {
+        datePicker.setTitle(DateFormat.format("yyyy/M/d (E)", final_cal));
+      }
+      timePicker.setTitle(DateFormat.format("kk:mm", final_cal));
+    }
 
     //メモのラベルの初期化
     if(order == 0 || order == 1 || is_moving_task) {
@@ -607,7 +631,20 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
     switch(preference.getKey()) {
 
+      case "date_picker": {
+
+        DatePickerDialogFragment dialog = new DatePickerDialogFragment();
+        dialog.show(activity.getSupportFragmentManager(), "date_picker");
+        return true;
+      }
+      case "time_picker": {
+
+        TimePickerDialogFragment dialog = new TimePickerDialogFragment();
+        dialog.show(activity.getSupportFragmentManager(), "time_picker");
+        return true;
+      }
       case "primary_color": {
+
         activity.showColorPickerListViewFragment();
         return true;
       }

@@ -19,12 +19,12 @@ import android.view.ViewGroup;
 import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
 public class DefaultManuallySnoozeFragment extends PreferenceFragment {
 
   private MainActivity activity;
   static PreferenceScreen label;
-  private static Locale locale = Locale.getDefault();
 
   public static DefaultManuallySnoozeFragment newInstance() {
 
@@ -90,11 +90,11 @@ public class DefaultManuallySnoozeFragment extends PreferenceFragment {
     String summary = "";
     if(hour != 0) {
       summary += getResources().getQuantityString(R.plurals.hour, hour, hour);
-      if(!locale.equals(Locale.JAPAN)) summary += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
     }
     if(minute != 0) {
       summary += getResources().getQuantityString(R.plurals.minute, minute, minute);
-      if(!locale.equals(Locale.JAPAN)) summary += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
     }
     summary += getString(R.string.snooze);
     label.setSummary(summary);

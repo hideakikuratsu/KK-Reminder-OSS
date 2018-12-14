@@ -62,30 +62,26 @@ import java.util.TimerTask;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.ATTACHED;
 import static com.hideaki.kk_reminder.UtilClass.BOOLEAN_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
-import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER1;
-import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER2;
-import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER3;
-import static com.hideaki.kk_reminder.UtilClass.DEFAULT_QUICK_PICKER4;
-import static com.hideaki.kk_reminder.UtilClass.DETACHED;
-import static com.hideaki.kk_reminder.UtilClass.HOUR;
-import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_URI_SOUND;
+import static com.hideaki.kk_reminder.UtilClass.DETACHED;
 import static com.hideaki.kk_reminder.UtilClass.DONE_ITEM_COMPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.IDLE;
+import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
 import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.PRODUCT_ID_PREMIUM;
-import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
-import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
@@ -102,10 +98,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   int which_submenu_open;
   boolean is_expandable_todo;
   boolean is_premium;
-  String defaultQuickPicker1;
-  String defaultQuickPicker2;
-  String defaultQuickPicker3;
-  String defaultQuickPicker4;
   ExpandableListView expandableListView;
   MyExpandableListAdapter expandableListAdapter;
   SortableListView listView;
@@ -133,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   String detail;
   private int which_list;
   private boolean is_in_on_create;
-  private static Locale locale = Locale.getDefault();
   private int try_count;
   private BillingClient billingClient;
   public AlertDialog promotionDialog;
@@ -171,13 +162,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences booleanPreferences = getSharedPreferences(BOOLEAN_GENERAL, MODE_PRIVATE);
     is_expandable_todo = booleanPreferences.getBoolean(IS_EXPANDABLE_TODO, true);
     is_premium = booleanPreferences.getBoolean(IS_PREMIUM, false);
-
-    //SharedPreferencesの内、Stringを読み出す
-    SharedPreferences stringPreferences = getSharedPreferences(STRING_GENERAL, MODE_PRIVATE);
-    defaultQuickPicker1 = stringPreferences.getString(DEFAULT_QUICK_PICKER1, getString(R.string.above_picker1_default));
-    defaultQuickPicker2 = stringPreferences.getString(DEFAULT_QUICK_PICKER2, getString(R.string.above_picker2_default));
-    defaultQuickPicker3 = stringPreferences.getString(DEFAULT_QUICK_PICKER3, getString(R.string.above_picker3_default));
-    defaultQuickPicker4 = stringPreferences.getString(DEFAULT_QUICK_PICKER4, getString(R.string.above_picker4_default));
 
     //広告読み出し機能のセットアップ
     MobileAds.initialize(this, getString(R.string.app_id));
@@ -866,7 +850,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
             CharSequence today;
             CharSequence tomorrow;
-            if(locale.equals(Locale.JAPAN)) {
+            if(LOCALE.equals(Locale.JAPAN)) {
               today = DateFormat.format(" - yyyy年M月d日(E)", now);
               tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
             }
@@ -1117,7 +1101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     if(notifyInterval.getOrg_time() != 0) {
       String summary;
-      if(locale.equals(Locale.JAPAN)) {
+      if(LOCALE.equals(Locale.JAPAN)) {
         summary = getString(R.string.unless_complete_task);
         if(notifyInterval.getHour() != 0) {
           summary += getResources().getQuantityString(R.plurals.hour, notifyInterval.getHour(), notifyInterval.getHour());
@@ -1138,11 +1122,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         summary = "Notify every ";
         if(notifyInterval.getHour() != 0) {
           summary += getResources().getQuantityString(R.plurals.hour, notifyInterval.getHour(), notifyInterval.getHour());
-          if(!locale.equals(Locale.JAPAN)) summary += " ";
+          if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
         }
         if(notifyInterval.getMinute() != 0) {
           summary += getResources().getQuantityString(R.plurals.minute, notifyInterval.getMinute(), notifyInterval.getMinute());
-          if(!locale.equals(Locale.JAPAN)) summary += " ";
+          if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
         }
         if(notifyInterval.getOrg_time() != -1) {
           summary += getResources().getQuantityString(R.plurals.times_notify, notifyInterval.getOrg_time(),
@@ -1164,12 +1148,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //手動スヌーズ時間のデフォルト設定
     setIntGeneralInSharedPreferences(SNOOZE_DEFAULT_HOUR, 0);
     setIntGeneralInSharedPreferences(SNOOZE_DEFAULT_MINUTE, 15);
-
-    //クイックピッカーのデフォルト設定
-    setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER1, getString(R.string.above_picker1_default));
-    setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER2, getString(R.string.above_picker2_default));
-    setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER3, getString(R.string.above_picker3_default));
-    setStringGeneralInSharedPreferences(DEFAULT_QUICK_PICKER4, getString(R.string.above_picker4_default));
 
     insertSettingsDB();
   }
@@ -1263,31 +1241,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     getSharedPreferences(BOOLEAN_GENERAL, Context.MODE_PRIVATE)
         .edit()
         .putBoolean(TAG, value)
-        .apply();
-  }
-
-  public void setStringGeneralInSharedPreferences(String TAG, String value) {
-
-    switch(TAG) {
-      case DEFAULT_QUICK_PICKER1:
-        defaultQuickPicker1 = value;
-        break;
-      case DEFAULT_QUICK_PICKER2:
-        defaultQuickPicker2 = value;
-        break;
-      case DEFAULT_QUICK_PICKER3:
-        defaultQuickPicker3 = value;
-        break;
-      case DEFAULT_QUICK_PICKER4:
-        defaultQuickPicker4 = value;
-        break;
-      default:
-        throw new IllegalArgumentException(TAG);
-    }
-
-    getSharedPreferences(STRING_GENERAL, Context.MODE_PRIVATE)
-        .edit()
-        .putString(TAG, value)
         .apply();
   }
 

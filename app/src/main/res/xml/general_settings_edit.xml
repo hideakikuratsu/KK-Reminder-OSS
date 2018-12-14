@@ -14,11 +14,6 @@
         <PreferenceScreen
             android:title="@string/default_manually_snooze"
             android:key="manually_snooze"/>
-
-        <PreferenceScreen
-            android:title="@string/default_quick_picker"
-            android:key="quick_picker"
-            android:summary="@string/about_quick_picker"/>
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory

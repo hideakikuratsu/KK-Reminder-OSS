@@ -19,12 +19,12 @@ import android.webkit.WebView;
 import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
 public class AboutThisAppFragment extends Fragment {
 
   static final String TAG = AboutThisAppFragment.class.getSimpleName();
   private MainActivity activity;
-  private static Locale locale = Locale.getDefault();
   private WebView webView;
 
   public static AboutThisAppFragment newInstance() {
@@ -71,7 +71,7 @@ public class AboutThisAppFragment extends Fragment {
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
 
     webView = view.findViewById(R.id.webView);
-    if(locale.equals(Locale.JAPAN)) {
+    if(LOCALE.equals(Locale.JAPAN)) {
       webView.loadUrl("file:///android_asset/about_this_app_ja.html");
     }
     else {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_value">2.0.2.0.14</string>
+    <string name="version_value">3.0.0.0</string>
     <string name="app_id">******************</string>
     <string name="ad_unit_id">******************</string>
     <string name="app_name">KK リマインダー</string>
@@ -39,7 +39,13 @@
     <string name="interval">通知の繰り返しと頻度</string>
     <string name="repeat_option">繰り返し設定</string>
     <string name="repeat_day_unit">繰り返し(日単位)</string>
-    <string name="per_day">%1$d日おき</string>
+    <string name="day">日</string>
+    <string name="week">週</string>
+    <string name="month">月</string>
+    <string name="year">年</string>
+    <plurals name="per_day">
+        <item quantity="other">%1$d日おき</item>
+    </plurals>
     <plurals name="per_week">
         <item quantity="other">%1$d週間おきの</item>
     </plurals>
@@ -49,7 +55,9 @@
     <plurals name="per_year">
         <item quantity="other">%1$d年おきの</item>
     </plurals>
+    <string name="selection">選択</string>
     <string name="repeat_minute_unit">繰り返し(分単位)</string>
+    <string name="repeat_minute_interval">繰り返し間隔</string>
     <string name="repeat_minute_count">繰り返す回数</string>
     <plurals name="repeat_minute_count_format">
         <item quantity="other">タスク完了から%1$s間隔で%2$d回繰り返す</item>
@@ -96,8 +104,6 @@
     <string name="default_new_task">新しく追加するタスク</string>
     <string name="default_new_task_summary">新しく追加するタスクの初期状態を決めておくことができます。</string>
     <string name="default_manually_snooze">手動スヌーズの延長時間</string>
-    <string name="default_quick_picker">クイックピッカー</string>
-    <string name="about_quick_picker">クイックピッカーとは、あらかじめ好きな時間を登録しておくことで、期限付きリマインダーにタスクを追加する際にその時間にすばやくセットすることのできる機能です。</string>
     <string name="theme">テーマ</string>
     <string name="after_theme_set_message">テーマ設定後は自動的にアプリを再起動します</string>
     <string name="backup">バックアップ</string>
@@ -190,6 +196,7 @@
         <item quantity="other">最大%1$d回通知する</item>
     </plurals>
     <string name="infinite_times_notify">通知し続ける</string>
+    <string name="notification_interval">通知間隔</string>
     <string name="num_of_notification">通知回数</string>
     <string name="description_for_notify_custom">通知回数を-1回に設定すると無限に通知し、0回に設定すると通知は一度しか行われません。また、時間と分を両方0に合わせると、24時間として設定されます。</string>
     <string name="everyday">毎日</string>
@@ -226,6 +233,7 @@
     <string name="complete">タスクを完了しました。</string>
     <string name="undo">元に戻す</string>
     <string name="repeat_conflict_dialog_message">リピートが設定された状態で予定日時が変更されました。\nこの変更は一時的なものですか？</string>
+    <string name="ok">OK</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
     <string name="cancel">キャンセル</string>

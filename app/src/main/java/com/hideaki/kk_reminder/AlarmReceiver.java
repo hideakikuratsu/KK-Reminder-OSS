@@ -23,6 +23,7 @@ import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
@@ -34,7 +35,6 @@ import static com.hideaki.kk_reminder.UtilClass.serialize;
 public class AlarmReceiver extends BroadcastReceiver {
 
   DBAccessor accessor = null;
-  private static Locale locale = Locale.getDefault();
 
   @Override
   public void onReceive(Context context, Intent intent) {
@@ -81,11 +81,11 @@ public class AlarmReceiver extends BroadcastReceiver {
     String summary = "";
     if(hour != 0) {
       summary += context.getResources().getQuantityString(R.plurals.hour, hour, hour);
-      if(!locale.equals(Locale.JAPAN)) summary += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
     }
     if(minute != 0) {
       summary += context.getResources().getQuantityString(R.plurals.minute, minute, minute);
-      if(!locale.equals(Locale.JAPAN)) summary += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
     }
     summary += context.getString(R.string.snooze);
 

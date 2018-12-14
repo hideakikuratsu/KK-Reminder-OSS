@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
+
 public class ManuallySnoozeListAdapter extends BaseAdapter {
 
   private final List<String> snoozeList;
@@ -20,7 +22,6 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
   private static boolean manually_checked;
   static int checked_position;
   private String defaultSnoozeTime;
-  private static Locale locale = Locale.getDefault();
 
 
   ManuallySnoozeListAdapter(ManuallySnoozeActivity activity) {
@@ -32,14 +33,14 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
     int default_hour = activity.snooze_default_hour;
     if(default_hour != 0) {
       defaultSnoozeTime += activity.getResources().getQuantityString(R.plurals.hour, default_hour, default_hour);
-      if(!locale.equals(Locale.JAPAN)) defaultSnoozeTime += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) defaultSnoozeTime += " ";
     }
     int default_minute = activity.snooze_default_minute;
     if(default_minute != 0) {
       defaultSnoozeTime += activity.getResources().getQuantityString(R.plurals.minute, default_minute, default_minute);
-      if(!locale.equals(Locale.JAPAN)) defaultSnoozeTime += " ";
+      if(!LOCALE.equals(Locale.JAPAN)) defaultSnoozeTime += " ";
     }
-    if(locale.equals(Locale.JAPAN)) {
+    if(LOCALE.equals(Locale.JAPAN)) {
       snoozeList.add(0, activity.getString(R.string.default_snooze) + " (" + defaultSnoozeTime + ")");
     }
     else {
@@ -106,11 +107,11 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
             title = "";
             if(activity.custom_hour != 0) {
               title += activity.getResources().getQuantityString(R.plurals.hour, activity.custom_hour, activity.custom_hour);
-              if(!locale.equals(Locale.JAPAN)) title += " ";
+              if(!LOCALE.equals(Locale.JAPAN)) title += " ";
             }
             if(activity.custom_minute != 0) {
               title += activity.getResources().getQuantityString(R.plurals.minute, activity.custom_minute, activity.custom_minute);
-              if(!locale.equals(Locale.JAPAN)) title += " ";
+              if(!LOCALE.equals(Locale.JAPAN)) title += " ";
             }
             title += snooze;
           }

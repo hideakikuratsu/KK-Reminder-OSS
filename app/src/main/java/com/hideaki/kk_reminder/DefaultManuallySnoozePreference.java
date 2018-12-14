@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
 
@@ -27,11 +28,10 @@ public class DefaultManuallySnoozePreference extends Preference {
   private int hour;
   private int minute;
   private String summary;
-  private static Locale locale = Locale.getDefault();
 
   static {
 
-    if(locale.equals(Locale.JAPAN)) {
+    if(LOCALE.equals(Locale.JAPAN)) {
       for(int i = 0; i < 24; i++) {
         hour_list.add(i + "時");
       }
@@ -100,11 +100,11 @@ public class DefaultManuallySnoozePreference extends Preference {
               summary = "";
               if(hour != 0) {
                 summary += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               if(minute != 0) {
                 summary += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               summary += activity.getString(R.string.snooze);
               DefaultManuallySnoozeFragment.label.setSummary(summary);
@@ -143,11 +143,11 @@ public class DefaultManuallySnoozePreference extends Preference {
               summary = "";
               if(hour != 0) {
                 summary += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               if(minute != 0) {
                 summary += activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-                if(!locale.equals(Locale.JAPAN)) summary += " ";
+                if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
               }
               summary += activity.getString(R.string.snooze);
               DefaultManuallySnoozeFragment.label.setSummary(summary);
