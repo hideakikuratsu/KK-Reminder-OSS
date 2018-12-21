@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   Drawable upArrow;
   Menu menu;
   MenuItem menuItem;
-  MenuItem oldMenuItem;
   GeneralSettings generalSettings;
   ActionBarFragment actionBarFragment;
   Toolbar toolbar;
@@ -417,6 +416,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       if(BOOT_FROM_NOTIFICATION.equals(intent.getAction())) {
         setIntGeneralInSharedPreferences(MENU_POSITION, 0);
         setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
+        int size = menu.size();
+        for(int i = 1; i < size; i++) {
+          MenuItem menuItem = menu.getItem(i);
+          if(menuItem.hasSubMenu()) {
+            SubMenu subMenu = menuItem.getSubMenu();
+            int sub_size = subMenu.size();
+            for(int j = 0; j < sub_size; j++) {
+              MenuItem subMenuItem = subMenu.getItem(j);
+              subMenuItem.setChecked(false);
+            }
+          }
+          menuItem.setChecked(false);
+        }
       }
 
       showList();
@@ -475,19 +487,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private void showList() {
 
     //前回開いていたNavigationDrawer上のメニューをリストアする
-    if(menuItem == null) {
-      menuItem = menu.getItem(which_menu_open);
-      if(menuItem.hasSubMenu()) {
-        menuItem = menuItem.getSubMenu().getItem(which_submenu_open);
-      }
-      oldMenuItem = menuItem;
-    }
-    else {
-      oldMenuItem = menuItem;
-      menuItem = menu.getItem(which_menu_open);
-      if(menuItem.hasSubMenu()) {
-        menuItem = menuItem.getSubMenu().getItem(which_submenu_open);
-      }
+    menuItem = menu.getItem(which_menu_open);
+    if(menuItem.hasSubMenu()) {
+      menuItem = menuItem.getSubMenu().getItem(which_submenu_open);
     }
 
     //選択状態のリストア
@@ -629,14 +631,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
               subMenu.getItem(j).setChecked(false);
             }
           }
-          else {
-            menu.getItem(i).setChecked(false);
-          }
+          else menu.getItem(i).setChecked(false);
         }
         menuItem.setChecked(true);
 
         //選択されたmenuItemに対応するフラグメントを表示
-        oldMenuItem = this.menuItem;
         this.menuItem = menuItem;
         createAndSetFragmentColor();
         switch(order) {
@@ -864,8 +863,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             for(List<Item> itemList : MyExpandableListAdapter.children) {
               Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
             }
+
+            expandableListAdapter.notifyDataSetChanged();
           }
-          expandableListAdapter.notifyDataSetChanged();
+          else if(!MyExpandableListAdapter.block_notify_change) {
+            expandableListAdapter.notifyDataSetChanged();
+          }
         }
       });
     }
@@ -1300,72 +1303,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     order = menuItem.getOrder();
     if(order == 1) {
       NonScheduledList list = generalSettings.getNonScheduledLists().get(which_menu_open - 1);
-      if(list.getColor() != 0) {
+      if(list.getColor() == 0) setDefaultColor();
+      else {
         menu_item_color = list.getTextColor();
         menu_background_color = list.getColor();
         status_bar_color = list.getDarkColor();
         list.setColor_primary(false);
-        if(list.getColor() != 0) {
+        if(list.getColor() == 0) {
+          accent_color = ContextCompat.getColor(this, R.color.colorAccent);
+          secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
+        }
+        else {
           accent_color = list.getColor();
           secondary_text_color = list.getTextColor();
         }
-        else {
-          accent_color = ContextCompat.getColor(this, R.color.colorAccent);
-          secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
-        }
         list.setColor_primary(true);
       }
-      else {
-        MyTheme theme = generalSettings.getTheme();
-        if(theme.getColor() == 0) {
-          menu_item_color = Color.WHITE;
-          menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
-          status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
-          accent_color = ContextCompat.getColor(this, R.color.colorAccent);
-          secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
-        }
-        else {
-          menu_item_color = theme.getTextColor();
-          menu_background_color = theme.getColor();
-          status_bar_color = theme.getDarkColor();
-          theme.setColor_primary(false);
-          if(theme.getColor() == 0) {
-            accent_color = ContextCompat.getColor(this, R.color.colorAccent);
-            secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
-          }
-          else {
-            accent_color = theme.getColor();
-            secondary_text_color = theme.getTextColor();
-          }
-          theme.setColor_primary(true);
-        }
-      }
     }
-    else {
-      MyTheme theme = generalSettings.getTheme();
-      if(theme.getColor() == 0) {
-        menu_item_color = Color.WHITE;
-        menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
-        status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
-        accent_color = ContextCompat.getColor(this, R.color.colorAccent);
-        secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
-      }
-      else {
-        menu_item_color = theme.getTextColor();
-        menu_background_color = theme.getColor();
-        status_bar_color = theme.getDarkColor();
-        theme.setColor_primary(false);
-        if(theme.getColor() == 0) {
-          accent_color = ContextCompat.getColor(this, R.color.colorAccent);
-          secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
-        }
-        else {
-          accent_color = theme.getColor();
-          secondary_text_color = theme.getTextColor();
-        }
-        theme.setColor_primary(true);
-      }
-    }
+    else setDefaultColor();
 
     //ハンバーガーアイコンの色を指定
     drawerToggle.getDrawerArrowDrawable().setColor(menu_item_color);
@@ -1381,6 +1336,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
       window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
       window.setStatusBarColor(status_bar_color);
+    }
+  }
+
+  private void setDefaultColor() {
+
+    MyTheme theme = generalSettings.getTheme();
+    if(theme.getColor() == 0) {
+      menu_item_color = Color.WHITE;
+      menu_background_color = ContextCompat.getColor(this, R.color.colorPrimary);
+      status_bar_color = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+      theme.setColor_primary(false);
+      if(theme.getColor() == 0) {
+        accent_color = ContextCompat.getColor(this, R.color.colorAccent);
+        secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
+      }
+      else {
+        accent_color = theme.getColor();
+        secondary_text_color = theme.getTextColor();
+      }
+      theme.setColor_primary(true);
+    }
+    else {
+      menu_item_color = theme.getTextColor();
+      menu_background_color = theme.getColor();
+      status_bar_color = theme.getDarkColor();
+      theme.setColor_primary(false);
+      if(theme.getColor() == 0) {
+        accent_color = ContextCompat.getColor(this, R.color.colorAccent);
+        secondary_text_color = ContextCompat.getColor(this, android.R.color.black);
+      }
+      else {
+        accent_color = theme.getColor();
+        secondary_text_color = theme.getTextColor();
+      }
+      theme.setColor_primary(true);
     }
   }
 

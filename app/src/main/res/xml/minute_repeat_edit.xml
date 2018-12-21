@@ -21,7 +21,9 @@
         android:key="duration"
         android:title="@string/repeat_minute_duration"/>
 
-    <com.hideaki.kk_reminder.MinuteRepeatCountPickerPreference android:key="count_picker"/>
+    <PreferenceScreen
+        android:key="count_picker"
+        android:summary="@string/repeat_minute_count"/>
 
     <PreferenceScreen
         android:key="duration_picker"

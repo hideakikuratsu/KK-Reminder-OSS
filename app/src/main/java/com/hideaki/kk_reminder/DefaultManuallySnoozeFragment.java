@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
@@ -64,6 +65,15 @@ public class DefaultManuallySnoozeFragment extends PreferenceFragment {
     setHasOptionsMenu(true);
 
     label = (PreferenceScreen)findPreference("label");
+    label.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+
+        DefaultManuallySnoozePickerDialogFragment dialog = new DefaultManuallySnoozePickerDialogFragment();
+        dialog.show(activity.getSupportFragmentManager(), "default_manually_snooze_picker");
+        return true;
+      }
+    });
   }
 
   @Override
@@ -96,8 +106,7 @@ public class DefaultManuallySnoozeFragment extends PreferenceFragment {
       summary += getResources().getQuantityString(R.plurals.minute, minute, minute);
       if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
     }
-    summary += getString(R.string.snooze);
-    label.setSummary(summary);
+    label.setTitle(summary);
 
     return view;
   }

@@ -21,9 +21,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
+import static com.hideaki.kk_reminder.UtilClass.CHILD_NOTIFICATION_ID;
 import static com.hideaki.kk_reminder.UtilClass.CREATED;
 import static com.hideaki.kk_reminder.UtilClass.DESTROYED;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
@@ -31,10 +35,11 @@ import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
-import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID;
-import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
+import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID_TABLE;
+import static com.hideaki.kk_reminder.UtilClass.PARENT_NOTIFICATION_ID;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
+import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
@@ -101,10 +106,21 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     snooze_default_minute = intPreferences.getInt(SNOOZE_DEFAULT_MINUTE, 15);
 
     //通知を既読する
-    int notification_id = intent.getIntExtra(NOTIFICATION_ID, -1);
+    SharedPreferences stringPreferences = getSharedPreferences(STRING_GENERAL, MODE_PRIVATE);
+    Set<String> id_table = stringPreferences.getStringSet(NOTIFICATION_ID_TABLE, new TreeSet<String>());
+    int parent_id = intent.getIntExtra(PARENT_NOTIFICATION_ID, 0);
+    int child_id = intent.getIntExtra(CHILD_NOTIFICATION_ID, 0);
     NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
     checkNotNull(manager);
-    manager.cancel(notification_id);
+
+    for(int i = 1; i <= child_id; i++) {
+      manager.cancel(parent_id + i);
+    }
+    id_table.remove(Integer.toBinaryString(parent_id));
+    stringPreferences
+        .edit()
+        .putStringSet(NOTIFICATION_ID_TABLE, id_table)
+        .apply();
 
     //ListViewの設定
     ManuallySnoozeListAdapter manuallySnoozeListAdapter = new ManuallySnoozeListAdapter(this);

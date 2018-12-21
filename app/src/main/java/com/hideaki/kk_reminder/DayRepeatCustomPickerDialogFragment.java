@@ -73,9 +73,6 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
                 if(LOCALE.equals(Locale.JAPAN) && interval_val == 1) {
                   intervalLabel = getString(R.string.everyday);
                 }
-                else if(LOCALE.equals(Locale.JAPAN) && interval_val > 1) {
-                  intervalLabel = res.getQuantityString(R.plurals.per_day, interval_val - 1, interval_val - 1);
-                }
                 else {
                   intervalLabel = res.getQuantityString(R.plurals.per_day, interval_val, interval_val);
                 }
@@ -88,9 +85,6 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
 
                 if(LOCALE.equals(Locale.JAPAN) && interval_val == 1) {
                   intervalLabel = getString(R.string.everyweek);
-                }
-                else if(LOCALE.equals(Locale.JAPAN) && interval_val > 1) {
-                  intervalLabel = res.getQuantityString(R.plurals.per_week, interval_val - 1, interval_val - 1);
                 }
                 else {
                   intervalLabel = res.getQuantityString(R.plurals.per_week, interval_val, interval_val);
@@ -111,9 +105,6 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
 
                 if(LOCALE.equals(Locale.JAPAN) && interval_val == 1) {
                   intervalLabel = getString(R.string.everymonth);
-                }
-                else if(LOCALE.equals(Locale.JAPAN) && interval_val > 1) {
-                  intervalLabel = res.getQuantityString(R.plurals.per_month, interval_val - 1, interval_val - 1);
                 }
                 else {
                   intervalLabel = res.getQuantityString(R.plurals.per_month, interval_val, interval_val);
@@ -171,9 +162,6 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
 
                 if(LOCALE.equals(Locale.JAPAN) && interval_val == 1) {
                   intervalLabel = getString(R.string.everyyear);
-                }
-                else if(LOCALE.equals(Locale.JAPAN) && interval_val > 1) {
-                  intervalLabel = res.getQuantityString(R.plurals.per_year, interval_val - 1, interval_val - 1);
                 }
                 else {
                   intervalLabel = res.getQuantityString(R.plurals.per_year, interval_val, interval_val);

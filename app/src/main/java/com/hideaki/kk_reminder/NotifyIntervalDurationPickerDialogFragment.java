@@ -16,8 +16,6 @@ import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
 public class NotifyIntervalDurationPickerDialogFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
-  private MainActivity activity;
-
   @NonNull
   @Override
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -25,7 +23,7 @@ public class NotifyIntervalDurationPickerDialogFragment extends DialogFragment i
     int hour = MainEditFragment.notifyInterval.getHour();
     int minute = MainEditFragment.notifyInterval.getMinute();
 
-    activity = (MainActivity)getActivity();
+    MainActivity activity = (MainActivity)getActivity();
     checkNotNull(activity);
 
     return new TimePickerDialog(activity, this, hour, minute, true);
@@ -41,59 +39,60 @@ public class NotifyIntervalDurationPickerDialogFragment extends DialogFragment i
     MainEditFragment.notifyInterval.setMinute(minute);
 
     NotifyInterval interval = MainEditFragment.notifyInterval;
-    if(interval.getOrg_time() != 0) {
-      Resources res = activity.getResources();
-      String summary;
-      String title = "";
-      if(LOCALE.equals(Locale.JAPAN)) {
-        summary = activity.getString(R.string.unless_complete_task);
-        if(interval.getHour() != 0) {
-          String tmp = res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
-          summary += tmp;
-          title += tmp;
-        }
-        if(interval.getMinute() != 0) {
-          String tmp = res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
-          summary += tmp;
-          title += tmp;
-        }
-        summary += activity.getString(R.string.per);
-        if(interval.getOrg_time() == -1) {
-          summary += activity.getString(R.string.infinite_times_notify);
-        }
-        else {
-          summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
-              interval.getOrg_time());
-        }
+    Resources res = getResources();
+    String summary;
+    String title = "";
+    if(LOCALE.equals(Locale.JAPAN)) {
+      summary = getString(R.string.unless_complete_task);
+      if(interval.getHour() != 0) {
+        String tmp = res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
+        summary += tmp;
+        title += tmp;
+      }
+      if(interval.getMinute() != 0) {
+        String tmp = res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
+        summary += tmp;
+        title += tmp;
+      }
+      summary += getString(R.string.per);
+      if(interval.getOrg_time() == -1) {
+        summary += getString(R.string.infinite_times_notify);
       }
       else {
-        summary = "Notify every ";
-        if(interval.getHour() != 0) {
-          String tmp = res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour()) + " ";
-          summary += tmp;
-          title += tmp;
-        }
-        if(interval.getMinute() != 0) {
-          String tmp = res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute()) + " ";
-          summary += tmp;
-          title += tmp;
-        }
-        if(interval.getOrg_time() != -1) {
-          summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
-              interval.getOrg_time()) + " ";
-        }
-        summary += activity.getString(R.string.unless_complete_task);
+        summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
+            interval.getOrg_time());
       }
-
-      NotifyIntervalEditFragment.label.setSummary(summary);
-      NotifyIntervalEditFragment.duration.setTitle(title);
-
-      MainEditFragment.notifyInterval.setLabel(summary);
     }
     else {
-      NotifyIntervalEditFragment.label.setSummary(activity.getString(R.string.non_notify));
+      summary = "Notify every ";
+      if(interval.getHour() != 0) {
+        String tmp = res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour()) + " ";
+        summary += tmp;
+        title += tmp;
+      }
+      if(interval.getMinute() != 0) {
+        String tmp = res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute()) + " ";
+        summary += tmp;
+        title += tmp;
+      }
+      if(interval.getOrg_time() != -1) {
+        summary += res.getQuantityString(R.plurals.times_notify, interval.getOrg_time(),
+            interval.getOrg_time()) + " ";
+      }
+      summary += getString(R.string.unless_complete_task);
+    }
 
-      MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.none));
+    NotifyIntervalEditFragment.duration.setTitle(title);
+
+    if(interval.getOrg_time() == 0) {
+      NotifyIntervalEditFragment.label.setSummary(getString(R.string.non_notify));
+
+      MainEditFragment.notifyInterval.setLabel(getString(R.string.none));
+    }
+    else {
+      NotifyIntervalEditFragment.label.setSummary(summary);
+
+      MainEditFragment.notifyInterval.setLabel(summary);
     }
   }
 }

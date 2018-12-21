@@ -16,18 +16,23 @@ import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
+import static com.hideaki.kk_reminder.UtilClass.CHILD_NOTIFICATION_ID;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
-import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID;
+import static com.hideaki.kk_reminder.UtilClass.PARENT_NOTIFICATION_ID;
+import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID_TABLE;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
+import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
@@ -43,10 +48,31 @@ public class AlarmReceiver extends BroadcastReceiver {
     Item item = (Item)deserialize(intent.getByteArrayExtra(ITEM));
 
     int time = item.getNotify_interval().getTime();
-    int id;
-    if(time > 0) id = (int)item.getId() * (time + 2);
-    else if(time < 0) id = (int)(-(item.getId() * (time - 2)));
-    else id = (int)item.getId();
+
+    //Notification IDの生成
+    SharedPreferences stringPreferences = context.getSharedPreferences(STRING_GENERAL, MODE_PRIVATE);
+    Set<String> id_table = stringPreferences.getStringSet(NOTIFICATION_ID_TABLE, new TreeSet<String>());
+    int parent_id = intent.getIntExtra(PARENT_NOTIFICATION_ID, 0);
+    if(parent_id == 0) {
+      int parent_plus_unit = 1 << 10;
+      parent_id += parent_plus_unit;
+      while(true) {
+        String binaryId = Integer.toBinaryString(parent_id);
+        if(!id_table.contains(binaryId)) {
+          id_table.add(binaryId);
+          stringPreferences
+              .edit()
+              .putStringSet(NOTIFICATION_ID_TABLE, id_table)
+              .apply();
+
+          break;
+        }
+        parent_id += parent_plus_unit;
+      }
+    }
+
+    int child_id = intent.getIntExtra(CHILD_NOTIFICATION_ID, 0);
+    child_id++;
 
     Intent open_activity = new Intent(context, MainActivity.class);
     open_activity.setAction(BOOT_FROM_NOTIFICATION);
@@ -74,6 +100,16 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     //手動スヌーズ用のIntentの設定
 
+    //完了
+    Intent doneIntent = new Intent(context, DoneReceiver.class);
+    doneIntent.putExtra(ITEM, serialize(item));
+    doneIntent.putExtra(PARENT_NOTIFICATION_ID, parent_id);
+    doneIntent.putExtra(CHILD_NOTIFICATION_ID, child_id);
+    PendingIntent doneSender = PendingIntent.getBroadcast(
+        context, (int)item.getId(), doneIntent, PendingIntent.FLAG_UPDATE_CURRENT
+    );
+    builder.addAction(R.mipmap.done, context.getString(R.string.done), doneSender);
+
     //デフォルトスヌーズ
     SharedPreferences intPreferences = context.getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
     int hour = intPreferences.getInt(SNOOZE_DEFAULT_HOUR, 0);
@@ -89,19 +125,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
     summary += context.getString(R.string.snooze);
 
-    //完了
-    Intent doneIntent = new Intent(context, DoneReceiver.class);
-    doneIntent.putExtra(ITEM, serialize(item));
-    doneIntent.putExtra(NOTIFICATION_ID, id);
-    PendingIntent doneSender = PendingIntent.getBroadcast(
-        context, (int)item.getId(), doneIntent, PendingIntent.FLAG_UPDATE_CURRENT
-    );
-    builder.addAction(R.mipmap.done, context.getString(R.string.done), doneSender);
-
-    //デフォルトスヌーズ
     Intent defaultSnoozeIntent = new Intent(context, DefaultManuallySnoozeReceiver.class);
     defaultSnoozeIntent.putExtra(ITEM, serialize(item));
-    defaultSnoozeIntent.putExtra(NOTIFICATION_ID, id);
+    defaultSnoozeIntent.putExtra(PARENT_NOTIFICATION_ID, parent_id);
+    defaultSnoozeIntent.putExtra(CHILD_NOTIFICATION_ID, child_id);
     PendingIntent defaultSnoozeSender = PendingIntent.getBroadcast(
         context, (int)item.getId(), defaultSnoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
     );
@@ -110,7 +137,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     //細かいスヌーズ
     Intent advancedSnoozeIntent = new Intent(context, ManuallySnoozeActivity.class);
     advancedSnoozeIntent.putExtra(ITEM, serialize(item));
-    advancedSnoozeIntent.putExtra(NOTIFICATION_ID, id);
+    advancedSnoozeIntent.putExtra(PARENT_NOTIFICATION_ID, parent_id);
+    advancedSnoozeIntent.putExtra(CHILD_NOTIFICATION_ID, child_id);
     PendingIntent snoozeSender = PendingIntent.getActivity(
         context, (int)item.getId(), advancedSnoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
     );
@@ -119,7 +147,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     //通知を発行
     NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     checkNotNull(manager);
-    manager.notify(id, builder.build());
+    manager.notify(parent_id + child_id, builder.build());
 
     //ロックされている場合、画面を点ける
     PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
@@ -144,6 +172,8 @@ public class AlarmReceiver extends BroadcastReceiver {
       item.getNotify_interval().setTime(time - 1);
       Intent recursive_alarm = new Intent(context, AlarmReceiver.class);
       recursive_alarm.putExtra(ITEM, serialize(item));
+      recursive_alarm.putExtra(PARENT_NOTIFICATION_ID, parent_id);
+      recursive_alarm.putExtra(CHILD_NOTIFICATION_ID, child_id);
       PendingIntent recursive_sender = PendingIntent.getBroadcast(
           context, (int)item.getId(), recursive_alarm, PendingIntent.FLAG_UPDATE_CURRENT);
 

@@ -136,12 +136,7 @@
                 android:id="@+id/control_panel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_margin="8dp"
                 android:stretchColumns="0,1,2,3"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -151,39 +146,51 @@
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="20dp">
+                    android:layout_height="match_parent">
 
                     <TextView
                         android:id="@+id/m5m"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
                         android:focusable="false"
                         android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="@string/minus5m" />
 
                     <TextView
                         android:id="@+id/m1h"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
                         android:focusable="false"
                         android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="@string/minus1h" />
 
                     <TextView
                         android:id="@+id/m1d"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
                         android:focusable="false"
                         android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="@string/minus1d" />
 
                     <TextView
                         android:id="@+id/edit"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
                         android:focusable="false"
                         android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="@string/edit" />
                 </TableRow>
 
@@ -195,32 +202,45 @@
                         android:id="@+id/p5m"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
                         android:focusable="false"
                         android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="@string/plus5m" />
 
                     <TextView
                         android:id="@+id/p1h"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
                         android:focusable="false"
                         android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="@string/plus1h" />
 
                     <TextView
                         android:id="@+id/p1d"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
                         android:focusable="false"
                         android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="@string/plus1d" />
 
                     <TextView
                         android:id="@+id/notes"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
                         android:focusable="false"
                         android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
                         android:text="@string/notes" />
                 </TableRow>
 

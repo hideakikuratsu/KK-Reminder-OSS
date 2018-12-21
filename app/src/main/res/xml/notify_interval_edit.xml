@@ -44,8 +44,9 @@
         android:key="duration"
         android:summary="@string/notification_interval"/>
 
-    <com.hideaki.kk_reminder.NotifyIntervalTimePickerPreference
-        android:key="time"/>
+    <PreferenceScreen
+        android:key="time"
+        android:summary="@string/num_of_notification"/>
 
     <PreferenceScreen
         android:key="custom_description"

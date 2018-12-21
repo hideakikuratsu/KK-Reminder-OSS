@@ -2,8 +2,10 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceScreen
-        android:key="label"/>
+        android:key="label"
+        android:summary="@string/snooze_time"/>
 
-    <com.hideaki.kk_reminder.DefaultManuallySnoozePreference/>
+    <PreferenceScreen
+        android:summary="@string/manually_snooze_description"/>
 
 </PreferenceScreen>

@@ -3,6 +3,7 @@ package com.hideaki.kk_reminder;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -41,10 +42,13 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.CHANGE_GRADE;
+import static com.hideaki.kk_reminder.UtilClass.COLLAPSE_GROUP;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
+import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
@@ -68,6 +72,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private List<List<Item>> filteredList;
   ColorStateList colorStateList;
   private ColorStateList defaultColorStateList;
+  static boolean block_notify_change = false;
+  private Runnable runnable;
+  private int collapse_group;
+  private boolean is_manual_expand_or_collapse = true;
 
   MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
 
@@ -95,6 +103,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     groups.add(activity.getString(R.string.future));
 
     this.activity = activity;
+    SharedPreferences intPreferences = activity.getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
+    collapse_group = intPreferences.getInt(COLLAPSE_GROUP, 0);
   }
 
   private static class ChildViewHolder {
@@ -133,6 +143,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     @Override
     public void onClick(View v) {
+
+      //すべての通知を既読する
+      NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
+      checkNotNull(manager);
+      manager.cancelAll();
 
       activity.actionBarFragment.searchView.clearFocus();
       switch(v.getId()) {
@@ -202,6 +217,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
+            sortItemInGroup(group_position);
             displayDate(viewHolder, item);
           }
           break;
@@ -220,6 +236,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
+            sortItemInGroup(group_position);
             displayDate(viewHolder, item);
           }
           break;
@@ -238,6 +255,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
+            sortItemInGroup(group_position);
             displayDate(viewHolder, item);
           }
           break;
@@ -268,6 +286,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
+          sortItemInGroup(group_position);
           displayDate(viewHolder, item);
           break;
         }
@@ -290,6 +309,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
+          sortItemInGroup(group_position);
           displayDate(viewHolder, item);
           break;
         }
@@ -312,6 +332,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
+          sortItemInGroup(group_position);
           displayDate(viewHolder, item);
           break;
         }
@@ -326,12 +347,17 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+      //すべての通知を既読する
+      NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
+      checkNotNull(manager);
+      manager.cancelAll();
+
       if(isChecked && actionMode == null && manually_checked) {
 
-        //すべての通知を既読する
-        NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
-        checkNotNull(manager);
-        manager.cancelAll();
+        if(viewHolder.control_panel.getVisibility() == View.VISIBLE) {
+          has_panel = 0;
+          viewHolder.control_panel.setVisibility(View.GONE);
+        }
 
         viewHolder.checkBox.jumpDrawablesToCurrentState();
         activity.actionBarFragment.searchView.clearFocus();
@@ -1292,6 +1318,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     @Override
     public boolean onLongClick(View v) {
 
+      //すべての通知を既読する
+      NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
+      checkNotNull(manager);
+      manager.cancelAll();
+
       if(actionMode != null) {
 
         if(viewHolder.checkBox.isChecked()) {
@@ -1359,11 +1390,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                  //すべての通知を既読する
-                  NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
-                  checkNotNull(manager);
-                  manager.cancelAll();
-
                   for(List<Item> itemList : children) {
                     for(Item item : itemList) {
                       if(item.isSelected()) {
@@ -1417,11 +1443,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
-                  //すべての通知を既読する
-                  NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
-                  checkNotNull(manager);
-                  manager.cancelAll();
 
                   long list_id = activity.generalSettings.getNonScheduledLists().get(which_list).getId();
                   MyListAdapter.itemList = new ArrayList<>();
@@ -1487,11 +1508,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
-                  //すべての通知を既読する
-                  NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
-                  checkNotNull(manager);
-                  manager.cancelAll();
 
                   MainEditFragment.checked_item_num = checked_item_num;
                   MainEditFragment.itemListToMove = new ArrayList<>(itemListToMove);
@@ -1766,8 +1782,75 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     if(convertView == null) {
       convertView = View.inflate(viewGroup.getContext(), R.layout.parent_layout, null);
+    }
 
-      ((ExpandableListView)viewGroup).expandGroup(i);
+    //グループの開閉状態の保持
+    ((ExpandableListView)viewGroup).setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+      @Override
+      public void onGroupCollapse(int groupPosition) {
+
+        if(is_manual_expand_or_collapse) {
+          int count = 0;
+          int size = groups.size();
+          for(int j = 0; j < size; j++) {
+            if(display_groups[j]) {
+              if(count == groupPosition) {
+                collapse_group |= 1 << j;
+
+                activity.getSharedPreferences(INT_GENERAL, MODE_PRIVATE)
+                    .edit()
+                    .putInt(COLLAPSE_GROUP, collapse_group)
+                    .apply();
+
+                break;
+              }
+              count++;
+            }
+          }
+        }
+
+        is_manual_expand_or_collapse = true;
+      }
+    });
+    ((ExpandableListView)viewGroup).setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+      @Override
+      public void onGroupExpand(int groupPosition) {
+
+        if(is_manual_expand_or_collapse) {
+          int count = 0;
+          int size = groups.size();
+          for(int j = 0; j < size; j++) {
+            if(display_groups[j]) {
+              if(count == groupPosition) {
+                collapse_group &= ~(1 << j);
+
+                activity.getSharedPreferences(INT_GENERAL, MODE_PRIVATE)
+                    .edit()
+                    .putInt(COLLAPSE_GROUP, collapse_group)
+                    .apply();
+
+                break;
+              }
+              count++;
+            }
+          }
+        }
+
+        is_manual_expand_or_collapse = true;
+      }
+    });
+
+    int size = groups.size();
+    int count = 0;
+    for(int j = 0; j < size; j++) {
+      if(display_groups[j]) {
+        is_manual_expand_or_collapse = false;
+        if((collapse_group & 1 << j) != 0) {
+          ((ExpandableListView)viewGroup).collapseGroup(count);
+        }
+        else ((ExpandableListView)viewGroup).expandGroup(count);
+        count++;
+      }
     }
 
     ((TextView)convertView.findViewById(R.id.day)).setText(getGroup(i).toString());
@@ -1882,6 +1965,34 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     manually_checked = true;
 
     return convertView;
+  }
+
+  private void sortItemInGroup(int group_pos) {
+
+    long previous_date = 0;
+    List<Item> itemList = children.get(group_pos);
+    for(Item item : itemList) {
+      long now_date = item.getDate().getTimeInMillis();
+      if(previous_date > now_date) {
+        block_notify_change = true;
+        Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+
+        final Handler handler = new Handler();
+        if(runnable != null) handler.removeCallbacks(runnable);
+        runnable = new Runnable() {
+          @Override
+          public void run() {
+
+            block_notify_change = false;
+            runnable = null;
+          }
+        };
+        handler.postDelayed(runnable, 1000);
+
+        break;
+      }
+      previous_date = now_date;
+    }
   }
 
   //時間を表示する処理
@@ -2046,7 +2157,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
       if(!LOCALE.equals(Locale.JAPAN)) repeat_str += "Repeat ";
       repeat_str += tmp;
-      if(!activity.getString(R.string.everyday).equals(tmp) && LOCALE.equals(Locale.JAPAN)) {
+      if(item.getDayRepeat().getScale() > 1 && LOCALE.equals(Locale.JAPAN)) {
         repeat_str += "に";
       }
     }
@@ -2066,7 +2177,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       repeat_str += "繰り返す";
     }
 
-    if(repeat_str.equals("")) {
+    if("".equals(repeat_str)) {
       viewHolder.repeat.setText(R.string.non_repeat);
     }
     else {

@@ -34,7 +34,6 @@ class UtilClass {
   static final DoneItemComparator DONE_ITEM_COMPARATOR = new DoneItemComparator();
   static final NotesComparator NOTES_COMPARATOR = new NotesComparator();
   static final Uri DEFAULT_URI_SOUND = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-  static final String NOTIFICATION_ID = "NOTIFICATION_ID";
   static final String ACTION_IN_NOTIFICATION = "ACTION_IN_NOTIFICATION";
   static final String BOOT_FROM_NOTIFICATION = "BOOT_FROM_NOTIFICATION";
   static final int REQUEST_CODE_RINGTONE_PICKER = 0;
@@ -51,6 +50,7 @@ class UtilClass {
   static final String DETACHED = "DETACHED";
   static final String IDLE = "IDLE";
   static final String CHANGE_GRADE = "I am sceoppa100 developer";
+  static final String COLLAPSE_GROUP = "COLLAPSE_GROUP";
 //  static final String RESUMED = "RESUMED";
 //  static final String PAUSED = "PAUSED";
 //  static final String STARTED = "STARTED";
@@ -58,6 +58,10 @@ class UtilClass {
   static final String BOOLEAN_GENERAL = "BOOLEAN_GENERAL";
   static final String IS_EXPANDABLE_TODO = "IS_EXPANDABLE_TODO";
   static final String IS_PREMIUM = "IS_PREMIUM";
+  static final String STRING_GENERAL = "STRING_GENERAL";
+  static final String NOTIFICATION_ID_TABLE = "NOTIFICATION_ID_TABLE";
+  static final String PARENT_NOTIFICATION_ID = "PARENT_NOTIFICATION_ID";
+  static final String CHILD_NOTIFICATION_ID = "CHILD_NOTIFICATION_ID";
   static final String LINE_SEPARATOR = System.getProperty("line.separator");
   static final String PRODUCT_ID_PREMIUM = "com.hideaki.premium";
   static final int RC_SIGN_IN = 1;

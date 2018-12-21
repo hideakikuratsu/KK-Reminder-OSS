@@ -3,7 +3,6 @@ package com.hideaki.kk_reminder;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,7 +39,6 @@ import java.util.List;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
@@ -507,11 +505,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
                 if(order == 0) {
 
-                  //すべての通知を既読する
-                  NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
-                  checkNotNull(manager);
-                  manager.cancelAll();
-
                   activity.deleteDB(MainEditFragment.item, MyDatabaseHelper.TODO_TABLE);
                   MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
                   activity.deleteAlarm(MainEditFragment.item);
@@ -791,11 +784,6 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
 
         if(order != 4) {
           if(is_edit && !is_cloning_task) {
-
-            //すべての通知を既読する
-            NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
-            checkNotNull(manager);
-            manager.cancelAll();
 
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
             if(is_moving_task) {

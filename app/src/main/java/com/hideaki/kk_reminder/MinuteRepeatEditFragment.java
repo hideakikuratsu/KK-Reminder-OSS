@@ -35,7 +35,7 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
   static CheckBoxPreference never;
   static CheckBoxPreference count;
   static CheckBoxPreference duration;
-  private Preference count_picker;
+  static PreferenceScreen count_picker;
   static PreferenceScreen durationPicker;
   private MainActivity activity;
 
@@ -86,7 +86,8 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
     count.setOnPreferenceClickListener(this);
     duration = (CheckBoxPreference)findPreference("duration");
     duration.setOnPreferenceClickListener(this);
-    count_picker = findPreference("count_picker");
+    count_picker = (PreferenceScreen)findPreference("count_picker");
+    count_picker.setOnPreferenceClickListener(this);
     durationPicker = (PreferenceScreen)findPreference("duration_picker");
     durationPicker.setOnPreferenceClickListener(this);
   }
@@ -146,19 +147,27 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
     count.setChecked(false);
     duration.setChecked(false);
     switch(MainEditFragment.minuteRepeat.getWhich_setted()) {
+
       case 0: {
+
         never.setChecked(true);
         rootPreferenceScreen.removePreference(count_picker);
         rootPreferenceScreen.removePreference(durationPicker);
         break;
       }
       case 1: {
+
         count.setChecked(true);
         rootPreferenceScreen.addPreference(count_picker);
         rootPreferenceScreen.removePreference(durationPicker);
+
+        //項目のタイトル部に現在の設定値を表示
+        int org_count = MainEditFragment.minuteRepeat.getOrg_count();
+        count_picker.setTitle(getResources().getQuantityString(R.plurals.times, org_count, org_count));
         break;
       }
       case 1 << 1: {
+
         duration.setChecked(true);
         rootPreferenceScreen.removePreference(count_picker);
         rootPreferenceScreen.addPreference(durationPicker);
@@ -257,6 +266,9 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
               count, interval, count);
           label.setSummary(label_str);
 
+          //項目のタイトル部に現在の設定値を表示
+          count_picker.setTitle(getResources().getQuantityString(R.plurals.times, count, count));
+
           MainEditFragment.minuteRepeat.setLabel(label_str);
           MainEditFragment.minuteRepeat.setWhich_setted(1);
 
@@ -312,6 +324,12 @@ public class MinuteRepeatEditFragment extends PreferenceFragment implements Pref
           rootPreferenceScreen.addPreference(durationPicker);
         }
         else duration.setChecked(true);
+        return true;
+      }
+      case "count_picker": {
+
+        MinuteRepeatCountPickerDialogFragment dialog = new MinuteRepeatCountPickerDialogFragment();
+        dialog.show(activity.getSupportFragmentManager(), "minute_repeat_count_picker");
         return true;
       }
       case "duration_picker": {

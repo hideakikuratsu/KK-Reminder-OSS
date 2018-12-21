@@ -166,9 +166,6 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         if(LOCALE.equals(Locale.JAPAN) && interval == 1) {
           intervalLabel = getString(R.string.everyday);
         }
-        else if(LOCALE.equals(Locale.JAPAN) && interval > 1) {
-          intervalLabel = res.getQuantityString(R.plurals.per_day, interval - 1, interval - 1);
-        }
         else {
           intervalLabel = res.getQuantityString(R.plurals.per_day, interval, interval);
         }
@@ -181,9 +178,6 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
 
         if(LOCALE.equals(Locale.JAPAN) && interval == 1) {
           intervalLabel = getString(R.string.everyweek);
-        }
-        else if(LOCALE.equals(Locale.JAPAN) && interval > 1) {
-          intervalLabel = res.getQuantityString(R.plurals.per_week, interval - 1, interval - 1);
         }
         else {
           intervalLabel = res.getQuantityString(R.plurals.per_week, interval, interval);
@@ -202,9 +196,6 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
 
         if(LOCALE.equals(Locale.JAPAN) && interval == 1) {
           intervalLabel = getString(R.string.everymonth);
-        }
-        else if(LOCALE.equals(Locale.JAPAN) && interval > 1) {
-          intervalLabel = res.getQuantityString(R.plurals.per_month, interval - 1, interval - 1);
         }
         else {
           intervalLabel = res.getQuantityString(R.plurals.per_month, interval, interval);
@@ -260,9 +251,6 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
 
         if(LOCALE.equals(Locale.JAPAN) && interval == 1) {
           intervalLabel = getString(R.string.everyyear);
-        }
-        else if(LOCALE.equals(Locale.JAPAN) && interval > 1) {
-          intervalLabel = res.getQuantityString(R.plurals.per_year, interval - 1, interval - 1);
         }
         else {
           intervalLabel = res.getQuantityString(R.plurals.per_year, interval, interval);
@@ -386,10 +374,7 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
         case 1: {
 
           MainEditFragment.dayRepeat.setSetted(1);
-          if(LOCALE.equals(Locale.JAPAN)) {
-            label = res.getQuantityString(R.plurals.per_day, interval - 1, interval - 1);
-          }
-          else label = res.getQuantityString(R.plurals.per_day, interval, interval);
+          label = res.getQuantityString(R.plurals.per_day, interval, interval);
 
           break;
         }
@@ -398,13 +383,9 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
           MainEditFragment.dayRepeat.setSetted(1 << 1);
           if(interval == 1 && LOCALE.equals(Locale.JAPAN)) label = "毎週";
           else {
-            if(LOCALE.equals(Locale.JAPAN)) {
-              label = res.getQuantityString(R.plurals.per_week,
-                  interval - 1, interval - 1);
-            }
-            else {
-              label = res.getQuantityString(R.plurals.per_week, interval, interval) + " on ";
-            }
+            label = res.getQuantityString(R.plurals.per_week, interval, interval);
+            if(LOCALE.equals(Locale.JAPAN)) label += "、";
+            else label += " on ";
           }
 
           stringBuilder = new StringBuilder(tmp);
@@ -428,13 +409,9 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
           MainEditFragment.dayRepeat.setSetted(1 << 2);
           if(interval == 1 && LOCALE.equals(Locale.JAPAN)) label = "毎月";
           else {
-            if(LOCALE.equals(Locale.JAPAN)) {
-              label = res.getQuantityString(R.plurals.per_month,
-                  interval - 1, interval - 1);
-            }
-            else {
-              label = res.getQuantityString(R.plurals.per_month, interval, interval) + " on the ";
-            }
+            label = res.getQuantityString(R.plurals.per_month, interval, interval);
+            if(LOCALE.equals(Locale.JAPAN)) label += "、";
+            else label += " on the ";
           }
 
           if(MainEditFragment.dayRepeat.isDays_of_month_setted()) {
@@ -502,12 +479,10 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
           MainEditFragment.dayRepeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
           if(interval == 1 && LOCALE.equals(Locale.JAPAN)) label = "毎年";
           else {
-            if(LOCALE.equals(Locale.JAPAN)) {
-              label = res.getQuantityString(R.plurals.per_year,
-                  interval - 1, interval - 1);
-            }
+            label = res.getQuantityString(R.plurals.per_year, interval, interval);
+            if(LOCALE.equals(Locale.JAPAN)) label += "、";
             else {
-              label = res.getQuantityString(R.plurals.per_year, interval, interval) + " on the ";
+              label += " on the ";
               int day_of_month = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
               label += day_of_month + "";
               if(day_of_month == 1) label += "st";
