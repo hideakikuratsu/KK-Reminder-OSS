@@ -755,9 +755,7 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
           }
           else if(dayRepeat.getSetted() == (1 << 3)) dayRepeat.yearClear();
         }
-        else {
-          dayRepeat.clear();
-        }
+        else dayRepeat.clear();
         item.setDayRepeat(dayRepeat.clone());
 
         //minuteRepeatの登録
@@ -771,16 +769,12 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
             minuteRepeat.durationClear();
           }
         }
-        else {
-          minuteRepeat.clear();
-        }
+        else minuteRepeat.clear();
         item.setMinuteRepeat(minuteRepeat.clone());
 
         item.setAlarm_stopped(false);
 
-        if(is_moving_task) {
-          item.setWhich_list_belongs(0);
-        }
+        if(is_moving_task) item.setWhich_list_belongs(0);
 
         if(order != 4) {
           if(is_edit && !is_cloning_task) {
@@ -793,9 +787,9 @@ public class MainEditFragment extends PreferenceFragment implements Preference.O
             }
             activity.expandableListAdapter.notifyDataSetChanged();
           }
-          else {
-            activity.addChildren(item, MyDatabaseHelper.TODO_TABLE);
-          }
+          else activity.addChildren(item, MyDatabaseHelper.TODO_TABLE);
+
+          activity.setUpdatedItemPosition(item.getId());
 
           activity.deleteAlarm(item);
           activity.setAlarm(item);

@@ -50,6 +50,8 @@ import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.diegocarloslima.fgelv.lib.FloatingGroupExpandableListView;
+import com.diegocarloslima.fgelv.lib.WrapperExpandableListAdapter;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
@@ -98,8 +100,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   int which_submenu_open;
   boolean is_expandable_todo;
   boolean is_premium;
-  ExpandableListView expandableListView;
+  FloatingGroupExpandableListView expandableListView;
   MyExpandableListAdapter expandableListAdapter;
+  WrapperExpandableListAdapter wrapperAdapter;
   SortableListView listView;
   MyListAdapter listAdapter;
   ManageListAdapter manageListAdapter;
@@ -234,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //Adapterの初期化
     expandableListAdapter = new MyExpandableListAdapter(getChildren(MyDatabaseHelper.TODO_TABLE), this);
+    wrapperAdapter = new WrapperExpandableListAdapter(expandableListAdapter);
     listAdapter = new MyListAdapter(this);
     manageListAdapter = new ManageListAdapter(new ArrayList<>(generalSettings.getNonScheduledLists()), this);
     colorPickerListAdapter = new ColorPickerListAdapter(this);
@@ -558,11 +562,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   protected void onPause() {
 
     super.onPause();
-
-    //すべての通知を既読する
-    NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-    checkNotNull(manager);
-    manager.cancelAll();
 
     //データベースを端末暗号化ストレージへコピーする
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -1012,6 +1011,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     expandableListAdapter.notifyDataSetChanged();
     insertDB(item, table);
+  }
+
+  public void setUpdatedItemPosition(long id) {
+
+    List<List<Item>> children = getChildren(MyDatabaseHelper.TODO_TABLE);
+    int count = 0;
+    int i_size = MyExpandableListAdapter.groups.size();
+    for(int i = 0; i < i_size && id != 0; i++) {
+      if(MyExpandableListAdapter.display_groups[i]) {
+        List<Item> itemList = children.get(i);
+        int j_size = itemList.size();
+        for(int j = 0; j < j_size; j++) {
+          Item item = itemList.get(j);
+          if(item.getId() == id) {
+            try {
+              ExpandableListViewFragment.position =
+                  expandableListView.getFlatListPosition(ExpandableListView.getPackedPositionForChild(count, j));
+              ExpandableListViewFragment.offset = ExpandableListViewFragment.group_height;
+            }
+            catch(NullPointerException e) {
+              ExpandableListViewFragment.position = 0;
+              ExpandableListViewFragment.offset = 0;
+            }
+            id = 0;
+            break;
+          }
+        }
+
+        count++;
+      }
+    }
   }
 
   public List<Item> getNonScheduledItem(String table) {

@@ -60,11 +60,11 @@ import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
 public class MyExpandableListAdapter extends BaseExpandableListAdapter implements Filterable {
 
   private static Calendar tmp;
-  private static boolean[] display_groups = new boolean[5];
+  static boolean[] display_groups = new boolean[5];
   static List<String> groups = new ArrayList<>();
   static List<List<Item>> children;
   static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
-  private boolean is_control_panel_locked;
+  private static long panel_lock_id;
   private MainActivity activity;
   ActionMode actionMode = null;
   static int checked_item_num;
@@ -155,7 +155,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
           if(actionMode == null) {
             if(viewHolder.control_panel.getVisibility() == View.GONE) {
-              if(!is_control_panel_locked) {
+              if(item.getId() != panel_lock_id) {
                 has_panel = item.getId();
                 viewHolder.control_panel.setVisibility(View.VISIBLE);
                 notifyDataSetChanged();
@@ -347,13 +347,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-      //すべての通知を既読する
-      NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
-      checkNotNull(manager);
-      manager.cancelAll();
-
       if(isChecked && actionMode == null && manually_checked) {
 
+        //すべての通知を既読する
+        NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
+        checkNotNull(manager);
+        manager.cancelAll();
+
+        panel_lock_id = item.getId();
         if(viewHolder.control_panel.getVisibility() == View.VISIBLE) {
           has_panel = 0;
           viewHolder.control_panel.setVisibility(View.GONE);
@@ -1230,12 +1231,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
         }
 
+        block_notify_change = true;
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
           @Override
           public void run() {
 
             notifyDataSetChanged();
+            block_notify_change = false;
           }
         }, 400);
 
@@ -1245,18 +1248,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               public void onShown(Snackbar sb) {
 
                 super.onShown(sb);
-                is_control_panel_locked = true;
-                if(viewHolder.control_panel.getVisibility() == View.VISIBLE) {
-                  viewHolder.control_panel.setVisibility(View.GONE);
-                }
               }
 
               @Override
               public void onDismissed(Snackbar transientBottomBar, int event) {
 
                 super.onDismissed(transientBottomBar, event);
-                is_control_panel_locked = false;
-                notifyDataSetChanged();
+                panel_lock_id = 0;
               }
             })
             .setAction(R.string.undo, new View.OnClickListener() {
@@ -1881,9 +1879,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
       convertView.setTag(viewHolder);
     }
-    else {
-      viewHolder = (ChildViewHolder)convertView.getTag();
-    }
+    else viewHolder = (ChildViewHolder)convertView.getTag();
 
     //現在のビュー位置でのitemの取得とリスナーの初期化
     Item item = (Item)getChild(i, i1);
@@ -1946,8 +1942,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         && (item.getId() != has_panel || actionMode != null)) {
       viewHolder.control_panel.setVisibility(View.GONE);
     }
-    else if(viewHolder.control_panel.getVisibility() == View.GONE && item.getId() == has_panel
-        && !is_control_panel_locked && actionMode == null) {
+    else if(viewHolder.control_panel.getVisibility() == View.GONE && item.getId() == has_panel && actionMode == null) {
       viewHolder.control_panel.setVisibility(View.VISIBLE);
     }
 
@@ -2157,7 +2152,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
       if(!LOCALE.equals(Locale.JAPAN)) repeat_str += "Repeat ";
       repeat_str += tmp;
-      if(item.getDayRepeat().getScale() > 1 && LOCALE.equals(Locale.JAPAN)) {
+      if((item.getDayRepeat().getScale() > 1 || item.getDayRepeat().getWhich_template() > 1) && LOCALE.equals(Locale.JAPAN)) {
         repeat_str += "に";
       }
     }
@@ -2177,12 +2172,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       repeat_str += "繰り返す";
     }
 
-    if("".equals(repeat_str)) {
-      viewHolder.repeat.setText(R.string.non_repeat);
-    }
-    else {
-      viewHolder.repeat.setText(repeat_str);
-    }
+    if("".equals(repeat_str)) viewHolder.repeat.setText(R.string.non_repeat);
+    else viewHolder.repeat.setText(repeat_str);
   }
 
   @Override

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -26,6 +27,9 @@ public class ManageListViewFragment extends Fragment {
 
   static final String TAG = ManageListViewFragment.class.getSimpleName();
   private MainActivity activity;
+  private ListView oldListView;
+  static int position;
+  static int offset;
 
   public static ManageListViewFragment newInstance() {
 
@@ -58,6 +62,15 @@ public class ManageListViewFragment extends Fragment {
     activity.drawerLayout.closeDrawer(GravityCompat.START);
   }
 
+  @Override
+  public void onDestroyView() {
+
+    super.onDestroyView();
+    position = oldListView.getFirstVisiblePosition();
+    View child = oldListView.getChildAt(0);
+    if(child != null) offset = child.getTop();
+  }
+
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -87,6 +100,7 @@ public class ManageListViewFragment extends Fragment {
     });
 
     activity.listView = view.findViewById(R.id.listView);
+    oldListView = activity.listView;
     LinearLayout linearLayout = new LinearLayout(activity);
     linearLayout.setOrientation(LinearLayout.VERTICAL);
     LinearLayout.LayoutParams layoutParams =
@@ -101,6 +115,13 @@ public class ManageListViewFragment extends Fragment {
     activity.listView.setEmptyView(linearLayout);
     activity.listView.setDragListener(activity.manageListAdapter.dragListener);
     activity.listView.setSortable(true);
+    activity.listView.post(new Runnable() {
+      @Override
+      public void run() {
+
+        activity.listView.setSelectionFromTop(position, offset);
+      }
+    });
     activity.listView.setAdapter(activity.manageListAdapter);
     activity.listView.setTextFilterEnabled(true);
 

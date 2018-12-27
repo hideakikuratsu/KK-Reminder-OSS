@@ -1,5 +1,6 @@
 package com.hideaki.kk_reminder;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
@@ -17,12 +18,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
@@ -32,6 +36,15 @@ public class DoneListViewFragment extends Fragment {
 
   static final String TAG = DoneListViewFragment.class.getSimpleName();
   private MainActivity activity;
+  static int expandable_list_position;
+  static int expandable_list_offset;
+  @SuppressLint("UseSparseArrays")
+  static Map<Long, Integer> listPosition = new HashMap<>();
+  @SuppressLint("UseSparseArrays")
+  static Map<Long, Integer> listOffset = new HashMap<>();
+  private ListView oldListView;
+  private int order;
+  private long id;
 
   public static DoneListViewFragment newInstance() {
 
@@ -79,9 +92,37 @@ public class DoneListViewFragment extends Fragment {
     );
   }
 
+  @Override
+  public void onDestroyView() {
+
+    super.onDestroyView();
+    switch(order) {
+
+      case 0: {
+
+        expandable_list_position = oldListView.getFirstVisiblePosition();
+        View child = oldListView.getChildAt(0);
+        if(child != null) expandable_list_offset = child.getTop();
+        break;
+      }
+      case 1: {
+
+        listPosition.put(id, oldListView.getFirstVisiblePosition());
+        View child = oldListView.getChildAt(0);
+        if(child != null) listOffset.put(id, child.getTop());
+        break;
+      }
+    }
+  }
+
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+    order = activity.order;
+    if(order == 1) {
+      id = activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).getId();
+    }
 
     View view = inflater.inflate(R.layout.listview, container, false);
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
@@ -119,19 +160,18 @@ public class DoneListViewFragment extends Fragment {
         activity.startService(intent);
       }
     }
-    else {
-      DoneListAdapter.itemList = itemList;
-    }
+    else DoneListAdapter.itemList = itemList;
     DoneListAdapter.checked_item_num = 0;
-    DoneListAdapter.order = activity.order;
+    DoneListAdapter.order = order;
     activity.listView = view.findViewById(R.id.listView);
+    oldListView = activity.listView;
     LinearLayout linearLayout = new LinearLayout(activity);
     linearLayout.setOrientation(LinearLayout.VERTICAL);
     LinearLayout.LayoutParams layoutParams =
         new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     layoutParams.gravity = Gravity.CENTER;
     View emptyView;
-    if(activity.order == 0) {
+    if(order == 0) {
       emptyView = View.inflate(activity, R.layout.expandable_list_empty_layout, null);
     }
     else {
@@ -143,6 +183,29 @@ public class DoneListViewFragment extends Fragment {
     linearLayout.setPadding(0, 0, 0, paddingPx);
     ((ViewGroup)activity.listView.getParent()).addView(linearLayout, layoutParams);
     activity.listView.setEmptyView(linearLayout);
+    activity.listView.post(new Runnable() {
+      @Override
+      public void run() {
+
+        switch(order) {
+
+          case 0: {
+
+            activity.listView.setSelectionFromTop(expandable_list_position, expandable_list_offset);
+            break;
+          }
+          case 1: {
+
+            Integer list_position = listPosition.get(id);
+            Integer list_offset = listOffset.get(id);
+            if(list_position == null) list_position = 0;
+            if(list_offset == null) list_offset = 0;
+            activity.listView.setSelectionFromTop(list_position, list_offset);
+            break;
+          }
+        }
+      }
+    });
     activity.listView.setAdapter(activity.doneListAdapter);
     activity.listView.setTextFilterEnabled(true);
 

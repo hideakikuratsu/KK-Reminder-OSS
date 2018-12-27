@@ -3,6 +3,7 @@ package com.hideaki.kk_reminder;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Build;
@@ -17,9 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.diegocarloslima.fgelv.lib.FloatingGroupExpandableListView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.ATTACHED;
 import static com.hideaki.kk_reminder.UtilClass.DETACHED;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
@@ -28,6 +32,10 @@ public class ExpandableListViewFragment extends Fragment {
 
   static final String TAG = ExpandableListViewFragment.class.getSimpleName();
   private MainActivity activity;
+  private FloatingGroupExpandableListView oldExpandableListView;
+  static int position;
+  static int offset;
+  static int group_height;
 
   public static ExpandableListViewFragment newInstance() {
 
@@ -84,9 +92,23 @@ public class ExpandableListViewFragment extends Fragment {
     activity.saveCountAndSetUpdateListTimer(DETACHED);
   }
 
+  @Override
+  public void onDestroyView() {
+
+    super.onDestroyView();
+    position = oldExpandableListView.getFirstVisiblePosition();
+    View child = oldExpandableListView.getChildAt(0);
+    if(child != null) offset = child.getTop();
+  }
+
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+    //すべての通知を既読する
+    NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
+    checkNotNull(manager);
+    manager.cancelAll();
 
     View view = inflater.inflate(R.layout.expandable_listview, container, false);
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
@@ -109,6 +131,7 @@ public class ExpandableListViewFragment extends Fragment {
     MyExpandableListAdapter.checked_item_num = 0;
     MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
     activity.expandableListView = view.findViewById(R.id.expandable_list);
+    oldExpandableListView = activity.expandableListView;
     LinearLayout linearLayout = new LinearLayout(activity);
     linearLayout.setOrientation(LinearLayout.VERTICAL);
     LinearLayout.LayoutParams layoutParams =
@@ -121,7 +144,18 @@ public class ExpandableListViewFragment extends Fragment {
     linearLayout.setPadding(0, 0, 0, paddingPx);
     ((ViewGroup)activity.expandableListView.getParent()).addView(linearLayout, layoutParams);
     activity.expandableListView.setEmptyView(linearLayout);
-    activity.expandableListView.setAdapter(activity.expandableListAdapter);
+    activity.expandableListView.post(new Runnable() {
+      @Override
+      public void run() {
+
+        activity.expandableListView.setSelectionFromTop(position, offset);
+        if(position == 0 && offset == 0 && group_height == 0) {
+          View child = activity.expandableListView.getChildAt(0);
+          if(child != null) group_height = child.getHeight();
+        }
+      }
+    });
+    activity.expandableListView.setAdapter(activity.wrapperAdapter);
     activity.expandableListView.setTextFilterEnabled(true);
 
     AdView adView = view.findViewById(R.id.adView);

@@ -624,9 +624,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
       convertView.setTag(viewHolder);
     }
-    else {
-      viewHolder = (ViewHolder)convertView.getTag();
-    }
+    else viewHolder = (ViewHolder)convertView.getTag();
 
     //現在のビュー位置でのitemの取得とリスナーの初期化
     Item item = (Item)getItem(position);

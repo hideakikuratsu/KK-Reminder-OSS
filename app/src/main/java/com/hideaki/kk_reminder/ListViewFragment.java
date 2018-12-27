@@ -1,5 +1,6 @@
 package com.hideaki.kk_reminder;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
@@ -17,9 +18,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 
@@ -27,6 +32,12 @@ public class ListViewFragment extends Fragment {
 
   static final String TAG = ListViewFragment.class.getSimpleName();
   private MainActivity activity;
+  @SuppressLint("UseSparseArrays")
+  static Map<Long, Integer> listPosition = new HashMap<>();
+  @SuppressLint("UseSparseArrays")
+  static Map<Long, Integer> listOffset = new HashMap<>();
+  private ListView oldListView;
+  private long id;
 
   public static ListViewFragment newInstance() {
 
@@ -74,9 +85,20 @@ public class ListViewFragment extends Fragment {
     );
   }
 
+  @Override
+  public void onDestroyView() {
+
+    super.onDestroyView();
+    listPosition.put(id, oldListView.getFirstVisiblePosition());
+    View child = oldListView.getChildAt(0);
+    if(child != null) listOffset.put(id, child.getTop());
+  }
+
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+    id = activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).getId();
 
     View view = inflater.inflate(R.layout.listview, container, false);
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
@@ -111,6 +133,7 @@ public class ListViewFragment extends Fragment {
     MyListAdapter.is_sorting = false;
     MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
     activity.listView = view.findViewById(R.id.listView);
+    oldListView = activity.listView;
     LinearLayout linearLayout = new LinearLayout(activity);
     linearLayout.setOrientation(LinearLayout.VERTICAL);
     LinearLayout.LayoutParams layoutParams =
@@ -125,6 +148,17 @@ public class ListViewFragment extends Fragment {
     activity.listView.setEmptyView(linearLayout);
     activity.listView.setDragListener(activity.listAdapter.dragListener);
     activity.listView.setSortable(true);
+    activity.listView.post(new Runnable() {
+      @Override
+      public void run() {
+
+        Integer list_position = listPosition.get(id);
+        Integer list_offset = listOffset.get(id);
+        if(list_position == null) list_position = 0;
+        if(list_offset == null) list_offset = 0;
+        activity.listView.setSelectionFromTop(list_position, list_offset);
+      }
+    });
     activity.listView.setAdapter(activity.listAdapter);
     activity.listView.setTextFilterEnabled(true);
 

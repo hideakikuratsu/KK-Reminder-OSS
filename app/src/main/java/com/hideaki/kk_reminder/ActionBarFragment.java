@@ -231,7 +231,8 @@ public class ActionBarFragment extends Fragment {
                         activity.expandableListAdapter.notifyDataSetChanged();
 
                         if(filteredText != null) {
-                          activity.expandableListView.setFilterText(filteredText);
+//                          activity.expandableListView.setFilterText(filteredText);
+                          activity.expandableListAdapter.getFilter().filter(filteredText);
                         }
                       }
                       else {
@@ -653,6 +654,7 @@ public class ActionBarFragment extends Fragment {
         if(text == null || text.equals("")) {
           if(order == 0 && activity.is_expandable_todo) {
             activity.expandableListView.clearTextFilter();
+            activity.expandableListAdapter.getFilter().filter("");
           }
           else activity.listView.clearTextFilter();
 
@@ -661,7 +663,8 @@ public class ActionBarFragment extends Fragment {
         }
         else {
           if(order == 0 && activity.is_expandable_todo) {
-            activity.expandableListView.setFilterText(text);
+//            activity.expandableListView.setFilterText(text);
+            activity.expandableListAdapter.getFilter().filter(text);
           }
           else activity.listView.setFilterText(text);
 
