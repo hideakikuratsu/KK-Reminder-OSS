@@ -1217,6 +1217,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             if(item.getTime_altered() != 0) item.setTime_altered(0);
           }
           item.setDate((Calendar)tmp.clone());
+          sortItemInGroup(group_position);
 
           activity.deleteAlarm(item);
           activity.setAlarm(item);
@@ -1270,12 +1271,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrg_duration2());
                   }
                   item.getDate().setTimeInMillis(item.getOrg_date().getTimeInMillis() + item.getTime_altered());
+                  sortItemInGroup(group_position);
                   notifyDataSetChanged();
 
                   activity.deleteAlarm(item);
-                  if(!item.isAlarm_stopped()) {
-                    activity.setAlarm(item);
-                  }
+                  if(!item.isAlarm_stopped()) activity.setAlarm(item);
                   activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
                 }
                 else {
@@ -1286,9 +1286,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   }
                   notifyDataSetChanged();
 
-                  if(!item.isAlarm_stopped()) {
-                    activity.setAlarm(item);
-                  }
+                  if(!item.isAlarm_stopped()) activity.setAlarm(item);
                   activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
                   activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
                 }
