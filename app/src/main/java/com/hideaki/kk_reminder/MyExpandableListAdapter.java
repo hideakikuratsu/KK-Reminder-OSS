@@ -2150,8 +2150,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
       if(!LOCALE.equals(Locale.JAPAN)) repeat_str += "Repeat ";
       repeat_str += tmp;
-      if((item.getDayRepeat().getScale() > 1 || item.getDayRepeat().getWhich_template() > 1) && LOCALE.equals(Locale.JAPAN)) {
-        repeat_str += "に";
+      int scale = item.getDayRepeat().getScale();
+      int template = item.getDayRepeat().getWhich_template();
+      if(LOCALE.equals(Locale.JAPAN)) {
+        if(template > 0 && template < 1 << 5) {
+          if(template > 1) repeat_str += "に";
+        }
+        else if(scale > 1) repeat_str += "に";
       }
     }
 
