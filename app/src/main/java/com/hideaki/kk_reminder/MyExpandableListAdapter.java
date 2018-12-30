@@ -73,6 +73,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   ColorStateList colorStateList;
   private ColorStateList defaultColorStateList;
   static boolean block_notify_change = false;
+  private final Handler handler = new Handler();
   private Runnable runnable;
   private int collapse_group;
   private boolean is_manual_expand_or_collapse = true;
@@ -188,6 +189,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             }
             else if(item.getTime_altered() != 0) {
               item.setDate((Calendar)item.getOrg_date().clone());
+              Collections.sort(children.get(group_position), SCHEDULED_ITEM_COMPARATOR);
+              notifyDataSetChanged();
               item.setTime_altered(0);
               activity.deleteAlarm(item);
               activity.setAlarm(item);
@@ -217,7 +220,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-            sortItemInGroup(group_position);
+            sortItemInGroup();
             displayDate(viewHolder, item);
           }
           break;
@@ -236,7 +239,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-            sortItemInGroup(group_position);
+            sortItemInGroup();
             displayDate(viewHolder, item);
           }
           break;
@@ -255,7 +258,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             activity.setAlarm(item);
             activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-            sortItemInGroup(group_position);
+            sortItemInGroup();
             displayDate(viewHolder, item);
           }
           break;
@@ -286,7 +289,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-          sortItemInGroup(group_position);
+          sortItemInGroup();
           displayDate(viewHolder, item);
           break;
         }
@@ -309,7 +312,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-          sortItemInGroup(group_position);
+          sortItemInGroup();
           displayDate(viewHolder, item);
           break;
         }
@@ -332,7 +335,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.setAlarm(item);
           activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
 
-          sortItemInGroup(group_position);
+          sortItemInGroup();
           displayDate(viewHolder, item);
           break;
         }
@@ -1217,7 +1220,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             if(item.getTime_altered() != 0) item.setTime_altered(0);
           }
           item.setDate((Calendar)tmp.clone());
-          sortItemInGroup(group_position);
+          Collections.sort(children.get(group_position), SCHEDULED_ITEM_COMPARATOR);
 
           activity.deleteAlarm(item);
           activity.setAlarm(item);
@@ -1271,7 +1274,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                     item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrg_duration2());
                   }
                   item.getDate().setTimeInMillis(item.getOrg_date().getTimeInMillis() + item.getTime_altered());
-                  sortItemInGroup(group_position);
+                  Collections.sort(children.get(group_position), SCHEDULED_ITEM_COMPARATOR);
                   notifyDataSetChanged();
 
                   activity.deleteAlarm(item);
@@ -1960,32 +1963,25 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     return convertView;
   }
 
-  private void sortItemInGroup(int group_pos) {
+  private void sortItemInGroup() {
 
-    long previous_date = 0;
-    List<Item> itemList = children.get(group_pos);
-    for(Item item : itemList) {
-      long now_date = item.getDate().getTimeInMillis();
-      if(previous_date > now_date) {
-        block_notify_change = true;
-        Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+    block_notify_change = true;
 
-        final Handler handler = new Handler();
-        if(runnable != null) handler.removeCallbacks(runnable);
-        runnable = new Runnable() {
-          @Override
-          public void run() {
+    if(runnable != null) handler.removeCallbacks(runnable);
+    else {
+      runnable = new Runnable() {
+        @Override
+        public void run() {
 
-            block_notify_change = false;
-            runnable = null;
+          for(List<Item> itemList : children) {
+            Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
           }
-        };
-        handler.postDelayed(runnable, 1000);
-
-        break;
-      }
-      previous_date = now_date;
+          block_notify_change = false;
+          runnable = null;
+        }
+      };
     }
+    handler.postDelayed(runnable, 1000);
   }
 
   //時間を表示する処理

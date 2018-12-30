@@ -45,6 +45,7 @@ public class ActionBarFragment extends Fragment {
   SearchView searchView;
   private int order;
   private ActionBar actionBar;
+  private MenuItem alignTop;
   private MenuItem addItem;
   MenuItem searchItem;
   private MenuItem tagSearchItem;
@@ -121,6 +122,10 @@ public class ActionBarFragment extends Fragment {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.reminder_menu, menu);
 
+    //リストの先頭までジャンプするメニューボタンの実装
+    alignTop = menu.findItem(R.id.align_top);
+    initAlignTopItem();
+
     //未完了と完了済みを切り替えるタグルボタンの実装
     toggleItem = menu.findItem(R.id.todo_done_toggle);
     initToggleItem();
@@ -143,6 +148,7 @@ public class ActionBarFragment extends Fragment {
     initSearchItem();
 
     //各アイテムの表示処理
+    alignTop.setVisible(false);
     searchItem.setVisible(false);
     toggleItem.setVisible(false);
     tagSearchItem.setVisible(false);
@@ -151,20 +157,19 @@ public class ActionBarFragment extends Fragment {
 
     if(order == 0) {
       toggleItem.setVisible(true);
+      searchItem.setVisible(true);
       if(activity.is_expandable_todo) {
-        searchItem.setVisible(true);
+        alignTop.setVisible(true);
         addItem.setVisible(true);
       }
-      else searchItem.setVisible(true);
     }
     else if(order == 1) {
       toggleItem.setVisible(true);
+      searchItem.setVisible(true);
       if(activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).isTodo()) {
         addItem.setVisible(true);
-        searchItem.setVisible(true);
         sortItem.setVisible(true);
       }
-      else searchItem.setVisible(true);
     }
     else if(order == 3) {
       addItem.setVisible(true);
@@ -178,6 +183,11 @@ public class ActionBarFragment extends Fragment {
   public boolean onOptionsItemSelected(MenuItem item) {
 
     switch(item.getItemId()) {
+      case R.id.align_top: {
+
+        activity.expandableListView.smoothScrollToPosition(0);
+        return true;
+      }
       case R.id.tag_search: {
 
         View tagSearchView = activity.findViewById(R.id.tag_search);
@@ -464,6 +474,7 @@ public class ActionBarFragment extends Fragment {
 
         if(order == 0) {
           if(!activity.is_expandable_todo) {
+            alignTop.setVisible(true);
             addItem.setVisible(true);
             activity.setBooleanGeneralInSharedPreferences(IS_EXPANDABLE_TODO, true);
             activity.showExpandableListViewFragment();
@@ -491,6 +502,7 @@ public class ActionBarFragment extends Fragment {
 
         if(order == 0) {
           if(activity.is_expandable_todo) {
+            alignTop.setVisible(false);
             addItem.setVisible(false);
             activity.setBooleanGeneralInSharedPreferences(IS_EXPANDABLE_TODO, false);
             activity.showDoneListViewFragment();
@@ -560,6 +572,15 @@ public class ActionBarFragment extends Fragment {
     addItem.setIcon(drawable);
   }
 
+  private void initAlignTopItem() {
+
+    Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_vertical_align_top_24dp);
+    checkNotNull(drawable);
+    drawable = drawable.mutate();
+    drawable.setColorFilter(activity.menu_item_color, PorterDuff.Mode.SRC_IN);
+    alignTop.setIcon(drawable);
+  }
+
   private void initSearchItem() {
 
     Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_search_white_24dp);
@@ -577,6 +598,7 @@ public class ActionBarFragment extends Fragment {
       @Override
       public void onClick(View v) {
 
+        alignTop.setVisible(false);
         toggleItem.setVisible(false);
         sortItem.setVisible(false);
         addItem.setVisible(false);
@@ -595,6 +617,7 @@ public class ActionBarFragment extends Fragment {
         if(order == 0) {
           toggleItem.setVisible(true);
           if(activity.is_expandable_todo) {
+            alignTop.setVisible(true);
             addItem.setVisible(true);
           }
         }

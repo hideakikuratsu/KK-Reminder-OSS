@@ -4,6 +4,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/align_top"
+        android:icon="@drawable/ic_vertical_align_top_24dp"
+        android:title="@string/align_top"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/tag_search"
         android:icon="@drawable/ic_pallet_24dp"
         android:title="@string/tag_search"

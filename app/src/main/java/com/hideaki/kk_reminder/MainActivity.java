@@ -862,10 +862,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             for(List<Item> itemList : MyExpandableListAdapter.children) {
               Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
             }
-
-            expandableListAdapter.notifyDataSetChanged();
           }
-          else if(!MyExpandableListAdapter.block_notify_change) {
+
+          if(!MyExpandableListAdapter.block_notify_change) {
             expandableListAdapter.notifyDataSetChanged();
           }
         }

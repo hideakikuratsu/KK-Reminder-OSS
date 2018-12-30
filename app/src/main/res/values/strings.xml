@@ -1,11 +1,12 @@
 <resources>
 
-    <string name="version_value">3.2.0.2</string>
+    <string name="version_value">3.2.1.0</string>
     <string name="app_id">******************</string>
     <string name="ad_unit_id">******************</string>
     <string name="app_name">KK Reminder</string>
     <string name="app_promotion">KK Reminder  -  Manage Tasks and Schedules easily</string>
     <string name="app_url">https://play.google.com/store/apps/details?id=com.hideaki.kk_reminder</string>
+    <string name="align_top">Go to top of the list</string>
     <string name="past">Past</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>

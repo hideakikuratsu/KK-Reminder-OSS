@@ -136,13 +136,7 @@ public class ColorPickerListViewFragment extends Fragment {
     actionBar.setTitle(R.string.pick_color);
 
     AdView adView = view.findViewById(R.id.adView);
-    if(activity.is_premium) {
-      adView.setVisibility(View.GONE);
-    }
-    else {
-      AdRequest adRequest = new AdRequest.Builder().build();
-      adView.loadAd(adRequest);
-    }
+    adView.setVisibility(View.GONE);
 
     return view;
   }
