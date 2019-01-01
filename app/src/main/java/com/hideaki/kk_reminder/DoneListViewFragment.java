@@ -170,6 +170,8 @@ public class DoneListViewFragment extends Fragment {
     LinearLayout.LayoutParams layoutParams =
         new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     layoutParams.gravity = Gravity.CENTER;
+    layoutParams.weight = 1;
+    layoutParams.height = 0;
     View emptyView;
     if(order == 0) {
       emptyView = View.inflate(activity, R.layout.expandable_list_empty_layout, null);
@@ -181,7 +183,7 @@ public class DoneListViewFragment extends Fragment {
     linearLayout.addView(emptyView);
     int paddingPx = getPxFromDp(activity, 75);
     linearLayout.setPadding(0, 0, 0, paddingPx);
-    ((ViewGroup)activity.listView.getParent()).addView(linearLayout, layoutParams);
+    ((ViewGroup)activity.listView.getParent()).addView(linearLayout, 0, layoutParams);
     activity.listView.setEmptyView(linearLayout);
     activity.listView.post(new Runnable() {
       @Override

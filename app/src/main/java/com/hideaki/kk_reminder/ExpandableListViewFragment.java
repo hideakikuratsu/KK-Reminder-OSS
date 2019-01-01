@@ -137,17 +137,24 @@ public class ExpandableListViewFragment extends Fragment {
     LinearLayout.LayoutParams layoutParams =
         new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     layoutParams.gravity = Gravity.CENTER;
+    layoutParams.weight = 1;
+    layoutParams.height = 0;
     View emptyView = View.inflate(activity, R.layout.expandable_list_empty_layout, null);
     emptyView.setLayoutParams(layoutParams);
     linearLayout.addView(emptyView);
     int paddingPx = getPxFromDp(activity, 75);
     linearLayout.setPadding(0, 0, 0, paddingPx);
-    ((ViewGroup)activity.expandableListView.getParent()).addView(linearLayout, layoutParams);
+    ((ViewGroup)activity.expandableListView.getParent()).addView(linearLayout, 0, layoutParams);
     activity.expandableListView.setEmptyView(linearLayout);
     activity.expandableListView.post(new Runnable() {
       @Override
       public void run() {
 
+        if(activity.is_boot_from_notification) {
+          position = 0;
+          offset = 0;
+          activity.is_boot_from_notification = false;
+        }
         activity.expandableListView.setSelectionFromTop(position, offset);
         if(position == 0 && offset == 0 && group_height == 0) {
           View child = activity.expandableListView.getChildAt(0);

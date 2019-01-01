@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   String detail;
   private int which_list;
   private boolean is_in_on_create;
+  boolean is_boot_from_notification;
   private int try_count;
   private BillingClient billingClient;
   public AlertDialog promotionDialog;
@@ -418,6 +419,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     if(detail == null) {
       if(BOOT_FROM_NOTIFICATION.equals(intent.getAction())) {
+
+        is_boot_from_notification = true;
         setIntGeneralInSharedPreferences(MENU_POSITION, 0);
         setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
         int size = menu.size();

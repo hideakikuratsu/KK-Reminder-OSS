@@ -5,6 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.hideaki.kk_reminder.SortableListView
+        android:id="@+id/listView"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
@@ -12,10 +18,5 @@
         android:layout_height="wrap_content"
         ads:adSize="SMART_BANNER"
         ads:adUnitId="@string/ad_unit_id"/>
-
-    <com.hideaki.kk_reminder.SortableListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </LinearLayout>
