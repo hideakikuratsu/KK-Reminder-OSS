@@ -74,22 +74,30 @@ public class DoneListViewFragment extends Fragment {
   protected void onAttachToContext(Context context) {
 
     activity = (MainActivity)context;
-    activity.drawerLayout.closeDrawer(GravityCompat.START);
-    if(activity.detail != null) {
-      activity.showMainEditFragment(activity.detail);
-      activity.detail = null;
-    }
+    if(activity.drawerLayout != null) {
+      activity.drawerLayout.closeDrawer(GravityCompat.START);
+      if(activity.detail != null) {
+        activity.showMainEditFragment(activity.detail);
+        activity.detail = null;
+      }
 
-    activity.doneListAdapter.colorStateList = new ColorStateList(
-        new int[][] {
-            new int[]{-android.R.attr.state_checked}, // unchecked
-            new int[]{android.R.attr.state_checked} // checked
-        },
-        new int[] {
-            ContextCompat.getColor(activity, R.color.icon_gray),
-            activity.accent_color
-        }
-    );
+      activity.doneListAdapter.colorStateList = new ColorStateList(
+          new int[][]{
+              new int[]{-android.R.attr.state_checked}, // unchecked
+              new int[]{android.R.attr.state_checked} // checked
+          },
+          new int[]{
+              ContextCompat.getColor(activity, R.color.icon_gray),
+              activity.accent_color
+          }
+      );
+    }
+    else {
+      getFragmentManager()
+          .beginTransaction()
+          .remove(this)
+          .commit();
+    }
   }
 
   @Override

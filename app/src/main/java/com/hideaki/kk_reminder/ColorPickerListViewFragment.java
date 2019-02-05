@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -58,32 +57,40 @@ public class ColorPickerListViewFragment extends Fragment {
   protected void onAttachToContext(Context context) {
 
     activity = (MainActivity)context;
-    order = activity.order;
-    ColorPickerListAdapter.order = order;
-    if(!ColorPickerListAdapter.is_general_settings) {
-      activity.colorPickerListAdapter.adapterTag = TagEditListAdapter.tagList.get(tag_position);
-      activity.colorPickerListAdapter.orgTag = activity.generalSettings.getTagList().get(tag_position);
-      if(order == 0 || order == 1 || order == 4 || ColorPickerListAdapter.from_list_tag_edit) {
-        ColorPickerListAdapter.checked_position = activity.colorPickerListAdapter.adapterTag.getColor_order_group();
+    if(activity.generalSettings != null) {
+      order = activity.order;
+      ColorPickerListAdapter.order = order;
+      if(!ColorPickerListAdapter.is_general_settings) {
+        activity.colorPickerListAdapter.adapterTag = TagEditListAdapter.tagList.get(tag_position);
+        activity.colorPickerListAdapter.orgTag = activity.generalSettings.getTagList().get(tag_position);
+        if(order == 0 || order == 1 || order == 4 || ColorPickerListAdapter.from_list_tag_edit) {
+          ColorPickerListAdapter.checked_position = activity.colorPickerListAdapter.adapterTag.getColor_order_group();
+        }
+        else if(order == 3) {
+          ColorPickerListAdapter.checked_position = MainEditFragment.list.getColorGroup();
+        }
       }
-      else if(order == 3) {
-        ColorPickerListAdapter.checked_position = MainEditFragment.list.getColorGroup();
+      else {
+        ColorPickerListAdapter.checked_position = activity.generalSettings.getTheme().getColorGroup();
       }
+
+      activity.colorPickerListAdapter.colorStateList = new ColorStateList(
+          new int[][]{
+              new int[]{-android.R.attr.state_checked}, // unchecked
+              new int[]{android.R.attr.state_checked} // checked
+          },
+          new int[]{
+              ContextCompat.getColor(activity, R.color.icon_gray),
+              activity.accent_color
+          }
+      );
     }
     else {
-      ColorPickerListAdapter.checked_position = activity.generalSettings.getTheme().getColorGroup();
+      getFragmentManager()
+          .beginTransaction()
+          .remove(this)
+          .commit();
     }
-
-    activity.colorPickerListAdapter.colorStateList = new ColorStateList(
-        new int[][] {
-            new int[]{-android.R.attr.state_checked}, // unchecked
-            new int[]{android.R.attr.state_checked} // checked
-        },
-        new int[] {
-            ContextCompat.getColor(activity, R.color.icon_gray),
-            activity.accent_color
-        }
-    );
   }
 
   @Override

@@ -29,7 +29,6 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
@@ -74,24 +73,32 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
   protected void onAttachToContext(Context context) {
 
     activity = (MainActivity)context;
-    int order = activity.order;
-    TagEditListAdapter.order = order;
-    if(order == 0 || order == 1 || order == 4) {
-      TagEditListAdapter.checked_item_id = MainEditFragment.item.getWhich_tag_belongs();
+    if(activity.generalSettings != null) {
+      int order = activity.order;
+      TagEditListAdapter.order = order;
+      if(order == 0 || order == 1 || order == 4) {
+        TagEditListAdapter.checked_item_id = MainEditFragment.item.getWhich_tag_belongs();
+      }
+      else if(order == 3) {
+        TagEditListAdapter.checked_item_id = MainEditFragment.list.getWhich_tag_belongs();
+      }
+      activity.tagEditListAdapter.colorStateList = new ColorStateList(
+          new int[][]{
+              new int[]{-android.R.attr.state_checked}, // unchecked
+              new int[]{android.R.attr.state_checked} // checked
+          },
+          new int[]{
+              ContextCompat.getColor(activity, R.color.icon_gray),
+              activity.accent_color
+          }
+      );
     }
-    else if(order == 3) {
-      TagEditListAdapter.checked_item_id = MainEditFragment.list.getWhich_tag_belongs();
+    else {
+      getFragmentManager()
+          .beginTransaction()
+          .remove(this)
+          .commit();
     }
-    activity.tagEditListAdapter.colorStateList = new ColorStateList(
-        new int[][] {
-            new int[]{-android.R.attr.state_checked}, // unchecked
-            new int[]{android.R.attr.state_checked} // checked
-        },
-        new int[] {
-            ContextCompat.getColor(activity, R.color.icon_gray),
-            activity.accent_color
-        }
-    );
   }
 
   @Override

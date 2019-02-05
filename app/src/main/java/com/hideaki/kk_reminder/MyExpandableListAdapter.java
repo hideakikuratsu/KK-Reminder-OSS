@@ -9,7 +9,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AlertDialog;
@@ -64,7 +63,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   static List<String> groups = new ArrayList<>();
   static List<List<Item>> children;
   static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
-  private static long panel_lock_id;
+  static long panel_lock_id;
   private MainActivity activity;
   ActionMode actionMode = null;
   static int checked_item_num;
@@ -73,6 +72,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   ColorStateList colorStateList;
   private ColorStateList defaultColorStateList;
   static boolean block_notify_change = false;
+  static boolean lock_block_notify_change = false;
   private final Handler handler = new Handler();
   private Runnable runnable;
   private int collapse_group;
@@ -188,10 +188,16 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               activity.setAlarm(item);
             }
             else if(item.getTime_altered() != 0) {
+
+              lock_block_notify_change = true;
+              block_notify_change = true;
+
               item.setDate((Calendar)item.getOrg_date().clone());
-              Collections.sort(children.get(group_position), SCHEDULED_ITEM_COMPARATOR);
-              notifyDataSetChanged();
               item.setTime_altered(0);
+              Collections.sort(children.get(group_position), SCHEDULED_ITEM_COMPARATOR);
+
+              activity.updateListTask(null, -1, true);
+
               activity.deleteAlarm(item);
               activity.setAlarm(item);
             }
@@ -208,6 +214,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
         case R.id.m5m: {
           if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 5 * MINUTE) {
+
+            lock_block_notify_change = true;
+            block_notify_change = true;
+
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
             }
@@ -227,6 +237,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
         case R.id.m1h: {
           if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + HOUR) {
+
+            lock_block_notify_change = true;
+            block_notify_change = true;
+
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
             }
@@ -246,6 +260,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
         case R.id.m1d: {
           if(item.getDate().getTimeInMillis() > System.currentTimeMillis() + 24 * HOUR) {
+
+            lock_block_notify_change = true;
+            block_notify_change = true;
+
             if(item.getTime_altered() == 0) {
               item.setOrg_date((Calendar)item.getDate().clone());
             }
@@ -271,6 +289,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           break;
         }
         case R.id.p5m: {
+
+          lock_block_notify_change = true;
+          block_notify_change = true;
+
           if(item.getTime_altered() == 0) {
             item.setOrg_date((Calendar)item.getDate().clone());
           }
@@ -294,6 +316,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           break;
         }
         case R.id.p1h: {
+
+          lock_block_notify_change = true;
+          block_notify_change = true;
+
           if(item.getTime_altered() == 0) {
             item.setOrg_date((Calendar)item.getDate().clone());
           }
@@ -317,6 +343,10 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           break;
         }
         case R.id.p1d: {
+
+          lock_block_notify_change = true;
+          block_notify_change = true;
+
           if(item.getTime_altered() == 0) {
             item.setOrg_date((Calendar)item.getDate().clone());
           }
@@ -352,6 +382,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
       if(isChecked && actionMode == null && manually_checked) {
 
+        lock_block_notify_change = true;
+        block_notify_change = true;
+
         //すべての通知を既読する
         NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);
         checkNotNull(manager);
@@ -368,9 +401,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         if(item.getTime_altered() == 0) {
           item.setOrg_date((Calendar)item.getDate().clone());
         }
-        else {
-          item.setDate((Calendar)item.getOrg_date().clone());
-        }
+        else item.setDate((Calendar)item.getOrg_date().clone());
 
         if((item.getMinuteRepeat().getWhich_setted() & 1) != 0
             && item.getMinuteRepeat().getCount() == 0) {
@@ -1235,67 +1266,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
         }
 
-        block_notify_change = true;
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
           @Override
           public void run() {
 
-            notifyDataSetChanged();
-            block_notify_change = false;
+            activity.updateListTask(item, group_position, true);
           }
         }, 400);
-
-        Snackbar.make(convertView, activity.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
-            .addCallback(new Snackbar.Callback() {
-              @Override
-              public void onShown(Snackbar sb) {
-
-                super.onShown(sb);
-              }
-
-              @Override
-              public void onDismissed(Snackbar transientBottomBar, int event) {
-
-                super.onDismissed(transientBottomBar, event);
-                panel_lock_id = 0;
-              }
-            })
-            .setAction(R.string.undo, new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                if(item.getDayRepeat().getSetted() != 0 || item.getMinuteRepeat().getWhich_setted() != 0) {
-                  item.setAlarm_stopped(item.isOrg_alarm_stopped());
-                  item.setTime_altered(item.getOrg_time_altered());
-                  if((item.getMinuteRepeat().getWhich_setted() & 1) != 0) {
-                    item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrg_count2());
-                  }
-                  else if((item.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0) {
-                    item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrg_duration2());
-                  }
-                  item.getDate().setTimeInMillis(item.getOrg_date().getTimeInMillis() + item.getTime_altered());
-                  Collections.sort(children.get(group_position), SCHEDULED_ITEM_COMPARATOR);
-                  notifyDataSetChanged();
-
-                  activity.deleteAlarm(item);
-                  if(!item.isAlarm_stopped()) activity.setAlarm(item);
-                  activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-                }
-                else {
-                  item.getDate().setTimeInMillis(item.getOrg_date().getTimeInMillis() + item.getTime_altered());
-                  children.get(group_position).add(item);
-                  for(List<Item> itemList : children) {
-                    Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
-                  }
-                  notifyDataSetChanged();
-
-                  if(!item.isAlarm_stopped()) activity.setAlarm(item);
-                  activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
-                  activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
-                }
-              }
-            })
-            .show();
       }
       else if(isChecked && manually_checked) {
         viewHolder.checkBox.jumpDrawablesToCurrentState();
@@ -1313,6 +1291,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         if(checked_item_num == 0) actionMode.finish();
       }
     }
+
 
     @Override
     public boolean onLongClick(View v) {
@@ -1455,10 +1434,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   for(Item item : itemListToMove) {
 
                     item.setSelected(false);
-                    item.setDate(Calendar.getInstance());
-                    item.setNotify_interval(new NotifyInterval());
-                    item.setDayRepeat(new DayRepeat());
-                    item.setMinuteRepeat(new MinuteRepeat());
 
                     //リストのIDをitemに登録する
                     item.setWhich_list_belongs(list_id);
@@ -1965,8 +1940,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
   private void sortItemInGroup() {
 
-    block_notify_change = true;
-
     if(runnable != null) handler.removeCallbacks(runnable);
     else {
       runnable = new Runnable() {
@@ -1976,7 +1949,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           for(List<Item> itemList : children) {
             Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
           }
-          block_notify_change = false;
+          activity.updateListTask(null, -1, true);
           runnable = null;
         }
       };

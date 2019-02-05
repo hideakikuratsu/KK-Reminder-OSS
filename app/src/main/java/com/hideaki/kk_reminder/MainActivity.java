@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -65,14 +66,11 @@ import java.util.TimerTask;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
-import static com.hideaki.kk_reminder.UtilClass.ATTACHED;
 import static com.hideaki.kk_reminder.UtilClass.BOOLEAN_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_URI_SOUND;
-import static com.hideaki.kk_reminder.UtilClass.DETACHED;
 import static com.hideaki.kk_reminder.UtilClass.DONE_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
-import static com.hideaki.kk_reminder.UtilClass.IDLE;
 import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
 import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
@@ -545,7 +543,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.SETTINGS_TABLE);
     }
 
-    saveCountAndSetUpdateListTimer(IDLE);
+    Fragment mainFragment = getFragmentManager().findFragmentByTag(ExpandableListViewFragment.TAG);
+    if(mainFragment != null && mainFragment.isVisible()) {
+      setUpdateListTimerTask(true);
+    }
   }
 
   @Override
@@ -775,6 +776,158 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     return false;
   }
 
+  public void updateListTask(final Item snackBarItem, final int group_position, boolean unlock_notify) {
+
+    boolean is_updated = false;
+    int groups_size = MyExpandableListAdapter.groups.size();
+    for(int group_count = 0; group_count < groups_size; group_count++) {
+
+      int group_changed = 0;
+      List<Item> itemList = MyExpandableListAdapter.children.get(group_count);
+
+      int children_size = itemList.size();
+      for(int child_count = 0; child_count < children_size; child_count++) {
+
+        Item item = itemList.get(child_count);
+        Calendar now = Calendar.getInstance();
+        Calendar tomorrow = (Calendar)now.clone();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+
+        int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
+        long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
+        long sub_day = sub_time / (24 * HOUR);
+
+        if(sub_time < 0) {
+          if(group_count != 0) {
+            MyExpandableListAdapter.children.get(0).add(item);
+            group_changed |= (1 << child_count);
+          }
+        }
+        else if(sub_day < 1 && spec_day == now.get(Calendar.DAY_OF_MONTH)) {
+          if(group_count != 1) {
+            MyExpandableListAdapter.children.get(1).add(item);
+            group_changed |= (1 << child_count);
+          }
+        }
+        else if(sub_day < 2 && spec_day == tomorrow.get(Calendar.DAY_OF_MONTH)) {
+          if(group_count != 2) {
+            MyExpandableListAdapter.children.get(2).add(item);
+            group_changed |= (1 << child_count);
+          }
+        }
+        else if(sub_day < 8) {
+          if(group_count != 3) {
+            MyExpandableListAdapter.children.get(3).add(item);
+            group_changed |= (1 << child_count);
+          }
+        }
+        else {
+          if(group_count != 4) {
+            MyExpandableListAdapter.children.get(4).add(item);
+            group_changed |= (1 << child_count);
+          }
+        }
+      }
+
+      int remove_count = 0;
+      int binary_length = Integer.toBinaryString(group_changed).length();
+      for(int i = 0; i < binary_length; i++) {
+        if((group_changed & (1 << i)) != 0) {
+          MyExpandableListAdapter.children.get(group_count).remove(i - remove_count);
+          remove_count++;
+          is_updated = true;
+        }
+      }
+    }
+
+    if(is_updated) {
+      Calendar now = Calendar.getInstance();
+      Calendar tomorrow_cal = (Calendar)now.clone();
+      tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
+      CharSequence today;
+      CharSequence tomorrow;
+      if(LOCALE.equals(Locale.JAPAN)) {
+        today = DateFormat.format(" - yyyy年M月d日(E)", now);
+        tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
+      }
+      else {
+        today = DateFormat.format(" - yyyy/M/d (E)", now);
+        tomorrow = DateFormat.format(" - yyyy/M/d (E)", tomorrow_cal);
+      }
+      MyExpandableListAdapter.groups.set(1, getString(R.string.today) + today);
+      MyExpandableListAdapter.groups.set(2, getString(R.string.tomorrow) + tomorrow);
+
+      for(List<Item> itemList : MyExpandableListAdapter.children) {
+        Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+      }
+    }
+
+    if(!MyExpandableListAdapter.lock_block_notify_change || unlock_notify) {
+      expandableListAdapter.notifyDataSetChanged();
+      MyExpandableListAdapter.block_notify_change = false;
+      MyExpandableListAdapter.lock_block_notify_change = false;
+    }
+
+    if(snackBarItem != null) {
+      Snackbar.make(findViewById(R.id.content), getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
+          .addCallback(new Snackbar.Callback() {
+            @Override
+            public void onShown(Snackbar sb) {
+
+              super.onShown(sb);
+            }
+
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+
+              super.onDismissed(transientBottomBar, event);
+              MyExpandableListAdapter.panel_lock_id = 0;
+            }
+          })
+          .setAction(R.string.undo, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+              MyExpandableListAdapter.lock_block_notify_change = true;
+              MyExpandableListAdapter.block_notify_change = true;
+
+              if(snackBarItem.getDayRepeat().getSetted() != 0 || snackBarItem.getMinuteRepeat().getWhich_setted() != 0) {
+                snackBarItem.setAlarm_stopped(snackBarItem.isOrg_alarm_stopped());
+                snackBarItem.setTime_altered(snackBarItem.getOrg_time_altered());
+                if((snackBarItem.getMinuteRepeat().getWhich_setted() & 1) != 0) {
+                  snackBarItem.getMinuteRepeat().setCount(snackBarItem.getMinuteRepeat().getOrg_count2());
+                }
+                else if((snackBarItem.getMinuteRepeat().getWhich_setted() & (1 << 1)) != 0) {
+                  snackBarItem.getMinuteRepeat().setDuration(snackBarItem.getMinuteRepeat().getOrg_duration2());
+                }
+                snackBarItem.getDate().setTimeInMillis(snackBarItem.getOrg_date().getTimeInMillis() + snackBarItem.getTime_altered());
+                Collections.sort(MyExpandableListAdapter.children.get(group_position), SCHEDULED_ITEM_COMPARATOR);
+                expandableListAdapter.notifyDataSetChanged();
+
+                deleteAlarm(snackBarItem);
+                if(!snackBarItem.isAlarm_stopped()) setAlarm(snackBarItem);
+                updateDB(snackBarItem, MyDatabaseHelper.TODO_TABLE);
+              }
+              else {
+                snackBarItem.getDate().setTimeInMillis(snackBarItem.getOrg_date().getTimeInMillis() + snackBarItem.getTime_altered());
+                MyExpandableListAdapter.children.get(group_position).add(snackBarItem);
+                for(List<Item> itemList : MyExpandableListAdapter.children) {
+                  Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+                }
+                expandableListAdapter.notifyDataSetChanged();
+
+                if(!snackBarItem.isAlarm_stopped()) setAlarm(snackBarItem);
+                insertDB(snackBarItem, MyDatabaseHelper.TODO_TABLE);
+                deleteDB(snackBarItem, MyDatabaseHelper.DONE_TABLE);
+              }
+
+              updateListTask(null, -1, true);
+            }
+          })
+          .show();
+    }
+  }
+
   private class UpdateListTimerTask extends TimerTask {
 
     @Override
@@ -783,92 +936,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void run() {
 
-          boolean is_updated = false;
-          int groups_size = MyExpandableListAdapter.groups.size();
-          for(int group_count = 0; group_count < groups_size; group_count++) {
-
-            int group_changed = 0;
-            List<Item> itemList = MyExpandableListAdapter.children.get(group_count);
-
-            int children_size = itemList.size();
-            for(int child_count = 0; child_count < children_size; child_count++) {
-
-              Item item = itemList.get(child_count);
-              Calendar now = Calendar.getInstance();
-              Calendar tomorrow = (Calendar)now.clone();
-              tomorrow.add(Calendar.DAY_OF_MONTH, 1);
-
-              int spec_day = item.getDate().get(Calendar.DAY_OF_MONTH);
-              long sub_time = item.getDate().getTimeInMillis() - now.getTimeInMillis();
-              long sub_day = sub_time / (24 * HOUR);
-
-              if(sub_time < 0) {
-                if(group_count != 0) {
-                  MyExpandableListAdapter.children.get(0).add(item);
-                  group_changed |= (1 << child_count);
-                }
-              }
-              else if(sub_day < 1 && spec_day == now.get(Calendar.DAY_OF_MONTH)) {
-                if(group_count != 1) {
-                  MyExpandableListAdapter.children.get(1).add(item);
-                  group_changed |= (1 << child_count);
-                }
-              }
-              else if(sub_day < 2 && spec_day == tomorrow.get(Calendar.DAY_OF_MONTH)) {
-                if(group_count != 2) {
-                  MyExpandableListAdapter.children.get(2).add(item);
-                  group_changed |= (1 << child_count);
-                }
-              }
-              else if(sub_day < 8) {
-                if(group_count != 3) {
-                  MyExpandableListAdapter.children.get(3).add(item);
-                  group_changed |= (1 << child_count);
-                }
-              }
-              else {
-                if(group_count != 4) {
-                  MyExpandableListAdapter.children.get(4).add(item);
-                  group_changed |= (1 << child_count);
-                }
-              }
-            }
-
-            int remove_count = 0;
-            int binary_length = Integer.toBinaryString(group_changed).length();
-            for(int i = 0; i < binary_length; i++) {
-              if((group_changed & (1 << i)) != 0) {
-                MyExpandableListAdapter.children.get(group_count).remove(i - remove_count);
-                remove_count++;
-                is_updated = true;
-              }
-            }
-          }
-
-          if(is_updated) {
-            Calendar now = Calendar.getInstance();
-            Calendar tomorrow_cal = (Calendar)now.clone();
-            tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
-            CharSequence today;
-            CharSequence tomorrow;
-            if(LOCALE.equals(Locale.JAPAN)) {
-              today = DateFormat.format(" - yyyy年M月d日(E)", now);
-              tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
-            }
-            else {
-              today = DateFormat.format(" - yyyy/M/d (E)", now);
-              tomorrow = DateFormat.format(" - yyyy/M/d (E)", tomorrow_cal);
-            }
-            MyExpandableListAdapter.groups.set(1, getString(R.string.today) + today);
-            MyExpandableListAdapter.groups.set(2, getString(R.string.tomorrow) + tomorrow);
-
-            for(List<Item> itemList : MyExpandableListAdapter.children) {
-              Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
-            }
-          }
-
           if(!MyExpandableListAdapter.block_notify_change) {
-            expandableListAdapter.notifyDataSetChanged();
+            updateListTask(null, -1, false);
           }
         }
       });
@@ -885,43 +954,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       timer = new Timer();
       TimerTask timerTask = new UpdateListTimerTask();
       timer.schedule(timerTask, 0, 1000);
-    }
-  }
-
-  public void saveCountAndSetUpdateListTimer(String TAG) {
-
-    SharedPreferences intSharedPreferences = getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
-    int attached = intSharedPreferences.getInt(ATTACHED, 0);
-    int detached = intSharedPreferences.getInt(DETACHED, 0);
-    boolean is_idle = false;
-
-    switch(TAG) {
-      case ATTACHED:
-        attached++;
-        break;
-      case DETACHED:
-        detached++;
-        break;
-      case IDLE:
-        is_idle = true;
-        break;
-      default:
-        throw new IllegalArgumentException(TAG);
-    }
-
-    if(attached > detached) setUpdateListTimerTask(true);
-    else if(attached == detached) {
-      attached = 0;
-      detached = 0;
-      setUpdateListTimerTask(false);
-    }
-
-    if(!is_idle) {
-      getSharedPreferences(INT_GENERAL, MODE_PRIVATE)
-          .edit()
-          .putInt(ATTACHED, attached)
-          .putInt(DETACHED, detached)
-          .apply();
     }
   }
 
@@ -1048,16 +1080,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public List<Item> getNonScheduledItem(String table) {
 
-    long list_id = generalSettings.getNonScheduledLists().get(which_menu_open - 1).getId();
-    List<Item> itemList = new ArrayList<>();
-    for(Item item : queryAllDB(table)) {
-      if(item.getWhich_list_belongs() == list_id) {
-        itemList.add(item);
+    if(which_menu_open > 0) {
+      long list_id = generalSettings.getNonScheduledLists().get(which_menu_open - 1).getId();
+      List<Item> itemList = new ArrayList<>();
+      for(Item item : queryAllDB(table)) {
+        if(item.getWhich_list_belongs() == list_id) {
+          itemList.add(item);
+        }
       }
-    }
-    Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
+      Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
 
-    return itemList;
+      return itemList;
+    }
+    else return new ArrayList<>();
   }
 
   public List<Item> getDoneItem() {
@@ -1564,7 +1599,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
       }
       if(!is_found_match_fragment) {
-        throw new IllegalStateException("No Fragment matched!");
+        commitFragment(rmFragment, null, add1, addFragment1, add2, addFragment2, back_stack);
       }
     }
     else if(rmFragment instanceof ExpandableListViewFragment || rmFragment instanceof ListViewFragment

@@ -59,7 +59,15 @@ public class ManageListViewFragment extends Fragment {
   protected void onAttachToContext(Context context) {
 
     activity = (MainActivity)context;
-    activity.drawerLayout.closeDrawer(GravityCompat.START);
+    if(activity.drawerLayout != null) {
+      activity.drawerLayout.closeDrawer(GravityCompat.START);
+    }
+    else {
+      getFragmentManager()
+          .beginTransaction()
+          .remove(this)
+          .commit();
+    }
   }
 
   @Override

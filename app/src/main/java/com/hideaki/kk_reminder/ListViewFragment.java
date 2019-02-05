@@ -67,22 +67,30 @@ public class ListViewFragment extends Fragment {
   protected void onAttachToContext(Context context) {
 
     activity = (MainActivity)context;
-    activity.drawerLayout.closeDrawer(GravityCompat.START);
-    if(activity.detail != null) {
-      activity.showMainEditFragment(activity.detail);
-      activity.detail = null;
-    }
+    if(activity.drawerLayout != null) {
+      activity.drawerLayout.closeDrawer(GravityCompat.START);
+      if(activity.detail != null) {
+        activity.showMainEditFragment(activity.detail);
+        activity.detail = null;
+      }
 
-    activity.listAdapter.colorStateList = new ColorStateList(
-        new int[][] {
-            new int[]{-android.R.attr.state_checked}, // unchecked
-            new int[]{android.R.attr.state_checked} // checked
-        },
-        new int[] {
-            ContextCompat.getColor(activity, R.color.icon_gray),
-            activity.accent_color
-        }
-    );
+      activity.listAdapter.colorStateList = new ColorStateList(
+          new int[][]{
+              new int[]{-android.R.attr.state_checked}, // unchecked
+              new int[]{android.R.attr.state_checked} // checked
+          },
+          new int[]{
+              ContextCompat.getColor(activity, R.color.icon_gray),
+              activity.accent_color
+          }
+      );
+    }
+    else {
+      getFragmentManager()
+          .beginTransaction()
+          .remove(this)
+          .commit();
+    }
   }
 
   @Override
@@ -98,7 +106,10 @@ public class ListViewFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-    id = activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).getId();
+    if(activity.which_menu_open > 0) {
+      id = activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).getId();
+    }
+    else id = 0;
 
     View view = inflater.inflate(R.layout.listview, container, false);
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));

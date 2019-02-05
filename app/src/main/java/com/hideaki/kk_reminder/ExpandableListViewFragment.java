@@ -24,8 +24,6 @@ import com.google.android.gms.ads.AdView;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.hideaki.kk_reminder.UtilClass.ATTACHED;
-import static com.hideaki.kk_reminder.UtilClass.DETACHED;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 
 public class ExpandableListViewFragment extends Fragment {
@@ -65,31 +63,39 @@ public class ExpandableListViewFragment extends Fragment {
   protected void onAttachToContext(Context context) {
 
     activity = (MainActivity)context;
-    activity.drawerLayout.closeDrawer(GravityCompat.START);
-    if(activity.detail != null) {
-      activity.showMainEditFragment(activity.detail);
-      activity.detail = null;
+    if(activity.drawerLayout != null) {
+      activity.drawerLayout.closeDrawer(GravityCompat.START);
+      if(activity.detail != null) {
+        activity.showMainEditFragment(activity.detail);
+        activity.detail = null;
+      }
+
+      activity.expandableListAdapter.colorStateList = new ColorStateList(
+          new int[][]{
+              new int[]{-android.R.attr.state_checked}, // unchecked
+              new int[]{android.R.attr.state_checked} // checked
+          },
+          new int[]{
+              ContextCompat.getColor(activity, R.color.icon_gray),
+              activity.accent_color
+          }
+      );
+
+      activity.setUpdateListTimerTask(true);
     }
-
-    activity.expandableListAdapter.colorStateList = new ColorStateList(
-        new int[][] {
-            new int[]{-android.R.attr.state_checked}, // unchecked
-            new int[]{android.R.attr.state_checked} // checked
-        },
-        new int[] {
-            ContextCompat.getColor(activity, R.color.icon_gray),
-            activity.accent_color
-        }
-    );
-
-    activity.saveCountAndSetUpdateListTimer(ATTACHED);
+    else {
+      getFragmentManager()
+          .beginTransaction()
+          .remove(this)
+          .commit();
+    }
   }
 
   @Override
   public void onDetach() {
 
     super.onDetach();
-    activity.saveCountAndSetUpdateListTimer(DETACHED);
+    activity.setUpdateListTimerTask(false);
   }
 
   @Override
