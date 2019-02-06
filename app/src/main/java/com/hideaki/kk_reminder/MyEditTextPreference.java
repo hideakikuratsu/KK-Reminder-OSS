@@ -1,10 +1,11 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.preference.EditTextPreference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.EditText;
+
+import com.takisoft.fix.support.v7.preference.EditTextPreference;
 
 public class MyEditTextPreference extends EditTextPreference {
 
@@ -21,13 +22,15 @@ public class MyEditTextPreference extends EditTextPreference {
   }
 
   @Override
-  protected void onBindDialogView(View view) {
+  public void onBindViewHolder(PreferenceViewHolder holder) {
 
-    super.onBindDialogView(view);
+    super.onBindViewHolder(holder);
 
-    EditText editText = view.findViewById(android.R.id.edit);
-    editText.setHint(R.string.detail_hint);
-    editText.requestFocus();
-    editText.setSelection(editText.getText().length());
+    EditText editText = getEditText();
+    if(editText != null) {
+      editText.setHint(R.string.detail_hint);
+      editText.requestFocus();
+      editText.setSelection(editText.getText().length());
+    }
   }
 }

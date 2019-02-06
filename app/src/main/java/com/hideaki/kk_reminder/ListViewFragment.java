@@ -3,12 +3,14 @@ package com.hideaki.kk_reminder;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +28,7 @@ import com.google.android.gms.ads.AdView;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 
 public class ListViewFragment extends Fragment {
@@ -86,7 +89,9 @@ public class ListViewFragment extends Fragment {
       );
     }
     else {
-      getFragmentManager()
+      FragmentManager manager = getFragmentManager();
+      checkNotNull(manager);
+      manager
           .beginTransaction()
           .remove(this)
           .commit();
@@ -104,7 +109,7 @@ public class ListViewFragment extends Fragment {
 
   @Nullable
   @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
     if(activity.which_menu_open > 0) {
       id = activity.generalSettings.getNonScheduledLists().get(activity.which_menu_open - 1).getId();

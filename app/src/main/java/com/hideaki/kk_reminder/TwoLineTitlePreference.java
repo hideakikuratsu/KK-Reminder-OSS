@@ -1,9 +1,9 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TextView;
 
 public class TwoLineTitlePreference extends Preference {
@@ -21,10 +21,10 @@ public class TwoLineTitlePreference extends Preference {
   }
 
   @Override
-  protected void onBindView(View view) {
+  public void onBindViewHolder(PreferenceViewHolder holder) {
 
-    super.onBindView(view);
-    TextView textView = view.findViewById(android.R.id.title);
+    super.onBindViewHolder(holder);
+    TextView textView = (TextView)holder.findViewById(android.R.id.title);
     if(textView != null) textView.setSingleLine(false);
   }
 }

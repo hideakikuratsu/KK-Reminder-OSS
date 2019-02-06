@@ -5,12 +5,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -22,7 +22,7 @@ import java.util.Locale;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
-public class DefaultManuallySnoozeFragment extends PreferenceFragment {
+public class DefaultManuallySnoozeFragment extends BasePreferenceFragmentCompat {
 
   private MainActivity activity;
   static PreferenceScreen label;
@@ -58,9 +58,8 @@ public class DefaultManuallySnoozeFragment extends PreferenceFragment {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
 
-    super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.default_manually_snooze);
     setHasOptionsMenu(true);
 
@@ -114,7 +113,9 @@ public class DefaultManuallySnoozeFragment extends PreferenceFragment {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    getFragmentManager().popBackStack();
+    FragmentManager manager = getFragmentManager();
+    checkNotNull(manager);
+    manager.popBackStack();
     return super.onOptionsItemSelected(item);
   }
 }

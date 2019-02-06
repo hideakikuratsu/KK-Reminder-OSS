@@ -6,13 +6,13 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.preference.CheckBoxPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,7 +26,7 @@ import java.util.Locale;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
-public class DayRepeatCustomPickerFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
 
   static final String[] DAY_OF_WEEK_LIST_JA = {"月", "火", "水", "木", "金", "土", "日"};
   static final String[] DAY_OF_WEEK_LIST_EN = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
@@ -74,9 +74,8 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
 
-    super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.repeat_custom_item);
     setHasOptionsMenu(true);
 
@@ -271,7 +270,9 @@ public class DayRepeatCustomPickerFragment extends PreferenceFragment implements
 
     registerCustomRepeat();
 
-    getFragmentManager().popBackStack();
+    FragmentManager manager = getFragmentManager();
+    checkNotNull(manager);
+    manager.popBackStack();
     return super.onOptionsItemSelected(item);
   }
 

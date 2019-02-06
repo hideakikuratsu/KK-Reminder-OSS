@@ -2,13 +2,15 @@ package com.hideaki.kk_reminder;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.view.Gravity;
@@ -84,7 +86,9 @@ public class ExpandableListViewFragment extends Fragment {
       activity.setUpdateListTimerTask(true);
     }
     else {
-      getFragmentManager()
+      FragmentManager manager = getFragmentManager();
+      checkNotNull(manager);
+      manager
           .beginTransaction()
           .remove(this)
           .commit();
@@ -109,7 +113,7 @@ public class ExpandableListViewFragment extends Fragment {
 
   @Nullable
   @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
     //すべての通知を既読する
     NotificationManager manager = (NotificationManager)activity.getSystemService(NOTIFICATION_SERVICE);

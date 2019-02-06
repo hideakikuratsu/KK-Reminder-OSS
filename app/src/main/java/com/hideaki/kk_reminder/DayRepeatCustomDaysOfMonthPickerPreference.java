@@ -1,11 +1,12 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.preference.Preference;
+import android.content.ContextWrapper;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
@@ -22,24 +23,18 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
   public DayRepeatCustomDaysOfMonthPickerPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
-    activity = (MainActivity)context;
+    setLayoutResource(R.layout.repeat_custom_days_of_month_picker);
+    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
   }
 
   @Override
-  protected View onCreateView(ViewGroup parent) {
+  public void onBindViewHolder(PreferenceViewHolder holder) {
 
-    super.onCreateView(parent);
-    return View.inflate(getContext(), R.layout.repeat_custom_days_of_month_picker, null);
-  }
-
-  @Override
-  protected void onBindView(View view) {
-
-    super.onBindView(view);
+    super.onBindViewHolder(holder);
 
     //その月の最大日数に応じた日にちの表示処理
     days_of_month = MainEditFragment.dayRepeat.getDays_of_month();
-    TableRow last_table_row = view.findViewById(R.id.last_table_row);
+    TableRow last_table_row = (TableRow)holder.findViewById(R.id.last_table_row);
     max_days_of_month = MainEditFragment.final_cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
     last_table_row.setVisibility(View.VISIBLE);
@@ -56,7 +51,7 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference imple
       }
     }
 
-    TableLayout calendar_table = view.findViewById(R.id.calendar_table);
+    TableLayout calendar_table = (TableLayout)holder.findViewById(R.id.calendar_table);
     if(days_of_month == 0) {
       mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
       days_of_month |= (1 << (mask_num - 1));

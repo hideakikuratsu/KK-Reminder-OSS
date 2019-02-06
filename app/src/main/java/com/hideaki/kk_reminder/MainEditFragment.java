@@ -5,13 +5,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -46,10 +49,10 @@ import static com.hideaki.kk_reminder.UtilClass.LIST;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.REQUEST_CODE_RINGTONE_PICKER;
 
-public class MainEditFragmentCompat extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener,
+public class MainEditFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener,
     Preference.OnPreferenceChangeListener {
 
-  static final String TAG = MainEditFragmentCompat.class.getSimpleName();
+  static final String TAG = MainEditFragment.class.getSimpleName();
 
   private EditTextPreference detail;
   static PreferenceScreen datePicker;
@@ -81,9 +84,9 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
   private boolean next_edit_exists;
   private boolean is_destroyed;
 
-  public static MainEditFragmentCompat newInstance() {
+  public static MainEditFragment newInstance() {
 
-    MainEditFragmentCompat fragment = new MainEditFragmentCompat();
+    MainEditFragment fragment = new MainEditFragment();
 
     Item item = new Item();
     is_edit = false;
@@ -101,9 +104,9 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
     return fragment;
   }
 
-  public static MainEditFragmentCompat newInstance(String detail) {
+  public static MainEditFragment newInstance(String detail) {
 
-    MainEditFragmentCompat fragment = new MainEditFragmentCompat();
+    MainEditFragment fragment = new MainEditFragment();
 
     Item item = new Item();
     is_edit = false;
@@ -121,9 +124,9 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
     return fragment;
   }
 
-  public static MainEditFragmentCompat newInstance(Item item) {
+  public static MainEditFragment newInstance(Item item) {
 
-    MainEditFragmentCompat fragment = new MainEditFragmentCompat();
+    MainEditFragment fragment = new MainEditFragment();
 
     is_edit = true;
     detail_str = item.getDetail();
@@ -138,9 +141,9 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
     return fragment;
   }
 
-  public static MainEditFragmentCompat newInstanceForList() {
+  public static MainEditFragment newInstanceForList() {
 
-    MainEditFragmentCompat fragment = new MainEditFragmentCompat();
+    MainEditFragment fragment = new MainEditFragment();
 
     NonScheduledList list = new NonScheduledList();
     is_edit = false;
@@ -152,9 +155,9 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
     return fragment;
   }
   
-  public static MainEditFragmentCompat newInstanceForList(NonScheduledList list) {
+  public static MainEditFragment newInstanceForList(NonScheduledList list) {
 
-    MainEditFragmentCompat fragment = new MainEditFragmentCompat();
+    MainEditFragment fragment = new MainEditFragment();
 
     is_edit = true;
     detail_str = list.getTitle();
@@ -324,10 +327,20 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
   }
 
   @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+    super.onViewCreated(view, savedInstanceState);
+
+    //設定項目間の区切り線の非表示
+    setDivider(new ColorDrawable(Color.TRANSPARENT));
+    setDividerHeight(0);
+  }
+
+  @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
     if(!is_destroyed) {
-      if(MainEditFragmentCompat.is_main_popping) {
+      if(MainEditFragment.is_main_popping) {
         FragmentManager manager = getFragmentManager();
         checkNotNull(manager);
         manager.popBackStack();
@@ -375,10 +388,6 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
       if(detail_str == null || detail_str.equals("")) {
         detail.setSummary(R.string.detail_hint);
       }
-
-      //設定項目間の区切り線の非表示
-//      ListView listView = view.findViewById(android.R.id.list);
-//      listView.setDivider(null);
 
       //タスクの期限のラベルの初期化
       if(order == 0) {
@@ -474,8 +483,8 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
     switch(item.getItemId()) {
       case R.id.done: {
         if((order == 0 || is_moving_task) && is_edit
-            && MainEditFragmentCompat.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()
-            && (MainEditFragmentCompat.dayRepeat.getSetted() != 0 || MainEditFragmentCompat.minuteRepeat.getWhich_setted() != 0)) {
+            && MainEditFragment.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()
+            && (MainEditFragment.dayRepeat.getSetted() != 0 || MainEditFragment.minuteRepeat.getWhich_setted() != 0)) {
 
           new AlertDialog.Builder(activity)
               .setMessage(R.string.repeat_conflict_dialog_message)
@@ -483,11 +492,11 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                  if(MainEditFragmentCompat.item.getTime_altered() == 0) {
-                    MainEditFragmentCompat.item.setOrg_date((Calendar)MainEditFragmentCompat.item.getDate().clone());
+                  if(MainEditFragment.item.getTime_altered() == 0) {
+                    MainEditFragment.item.setOrg_date((Calendar)MainEditFragment.item.getDate().clone());
                   }
-                  long altered_time = final_cal.getTimeInMillis() - MainEditFragmentCompat.item.getDate().getTimeInMillis();
-                  MainEditFragmentCompat.item.addTime_altered(altered_time);
+                  long altered_time = final_cal.getTimeInMillis() - MainEditFragment.item.getDate().getTimeInMillis();
+                  MainEditFragment.item.addTime_altered(altered_time);
 
                   registerItem();
                 }
@@ -496,8 +505,8 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                  MainEditFragmentCompat.item.setOrg_date((Calendar)final_cal.clone());
-                  MainEditFragmentCompat.item.setTime_altered(0);
+                  MainEditFragment.item.setOrg_date((Calendar)final_cal.clone());
+                  MainEditFragment.item.setTime_altered(0);
 
                   registerItem();
                 }
@@ -523,13 +532,13 @@ public class MainEditFragmentCompat extends BasePreferenceFragmentCompat impleme
 
                 if(order == 0) {
 
-                  activity.deleteDB(MainEditFragmentCompat.item, MyDatabaseHelper.TODO_TABLE);
+                  activity.deleteDB(MainEditFragment.item, MyDatabaseHelper.TODO_TABLE);
                   MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
-                  activity.deleteAlarm(MainEditFragmentCompat.item);
+                  activity.deleteAlarm(MainEditFragment.item);
                   activity.expandableListAdapter.notifyDataSetChanged();
                 }
                 else if(order == 1) {
-                  activity.deleteDB(MainEditFragmentCompat.item, MyDatabaseHelper.TODO_TABLE);
+                  activity.deleteDB(MainEditFragment.item, MyDatabaseHelper.TODO_TABLE);
                   MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
                   activity.listAdapter.notifyDataSetChanged();
                 }

@@ -1,9 +1,9 @@
 package com.hideaki.kk_reminder;
 
 import android.app.AlarmManager;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -543,7 +543,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       direct_boot_context.moveDatabaseFrom(this, MyDatabaseHelper.SETTINGS_TABLE);
     }
 
-    Fragment mainFragment = getFragmentManager().findFragmentByTag(ExpandableListViewFragment.TAG);
+    Fragment mainFragment = getSupportFragmentManager().findFragmentByTag(ExpandableListViewFragment.TAG);
     if(mainFragment != null && mainFragment.isVisible()) {
       setUpdateListTimerTask(true);
     }
@@ -1556,7 +1556,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private void commitFragment(Fragment remove1, Fragment remove2, String add1, Fragment addFragment1,
       String add2, Fragment addFragment2, boolean back_stack) {
 
-    FragmentManager manager = getFragmentManager();
+    FragmentManager manager = getSupportFragmentManager();
 
     FragmentTransaction transaction = manager.beginTransaction();
     if(remove1 != null) {
@@ -1579,7 +1579,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   private void showFragment(String add1, Fragment addFragment1, String add2, Fragment addFragment2, boolean back_stack) {
 
-    FragmentManager manager = getFragmentManager();
+    FragmentManager manager = getSupportFragmentManager();
     Fragment rmFragment = manager.findFragmentById(R.id.content);
 
     if(rmFragment == null) {

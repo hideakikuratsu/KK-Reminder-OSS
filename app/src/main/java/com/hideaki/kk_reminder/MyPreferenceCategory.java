@@ -1,10 +1,12 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.preference.PreferenceCategory;
+import android.content.ContextWrapper;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TextView;
+
+import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 
 public class MyPreferenceCategory extends PreferenceCategory {
 
@@ -13,26 +15,26 @@ public class MyPreferenceCategory extends PreferenceCategory {
   public MyPreferenceCategory(Context context, AttributeSet attrs, int defStyleAttr) {
 
     super(context, attrs, defStyleAttr);
-    activity = (MainActivity)context;
+    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
   }
 
   public MyPreferenceCategory(Context context, AttributeSet attrs) {
 
     super(context, attrs);
-    activity = (MainActivity)context;
+    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
   }
 
   public MyPreferenceCategory(Context context) {
 
     super(context);
-    activity = (MainActivity)context;
+    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
   }
 
   @Override
-  protected void onBindView(View view) {
+  public void onBindViewHolder(PreferenceViewHolder holder) {
 
-    super.onBindView(view);
-    TextView titleView = view.findViewById(android.R.id.title);
-    titleView.setTextColor(activity.accent_color);
+    super.onBindViewHolder(holder);
+    TextView titleView = (TextView)holder.findViewById(android.R.id.title);
+    if(titleView != null) titleView.setTextColor(activity.accent_color);
   }
 }

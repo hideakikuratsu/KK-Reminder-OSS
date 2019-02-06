@@ -1,13 +1,13 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.ColorStateList;
-import android.preference.Preference;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CompoundButtonCompat;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TableLayout;
@@ -25,7 +25,8 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
   public DayRepeatCustomYearPickerPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
-    MainActivity activity = (MainActivity)context;
+    setLayoutResource(R.layout.repeat_custom_year_picker);
+    MainActivity activity = (MainActivity)((ContextWrapper)context).getBaseContext();
     colorStateList = new ColorStateList(
         new int[][] {
             new int[]{-android.R.attr.state_checked}, // unchecked
@@ -39,20 +40,13 @@ public class DayRepeatCustomYearPickerPreference extends Preference implements C
   }
 
   @Override
-  protected View onCreateView(ViewGroup parent) {
+  public void onBindViewHolder(PreferenceViewHolder holder) {
 
-    super.onCreateView(parent);
-    return View.inflate(getContext(), R.layout.repeat_custom_year_picker, null);
-  }
-
-  @Override
-  protected void onBindView(View view) {
-
-    super.onBindView(view);
+    super.onBindViewHolder(holder);
 
     year = MainEditFragment.dayRepeat.getYear();
 
-    TableLayout year_table = view.findViewById(R.id.year_table);
+    TableLayout year_table = (TableLayout)holder.findViewById(R.id.year_table);
     if(year == 0) {
       mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
       year |= (1 << mask_num);

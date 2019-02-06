@@ -4,25 +4,27 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class HelpAndFeedbackFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+public class HelpAndFeedbackFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
 
   static final String TAG = HelpAndFeedbackFragment.class.getSimpleName();
   private MainActivity activity;
@@ -59,7 +61,9 @@ public class HelpAndFeedbackFragment extends PreferenceFragment implements Prefe
       activity.drawerLayout.closeDrawer(GravityCompat.START);
     }
     else {
-      getFragmentManager()
+      FragmentManager manager = getFragmentManager();
+      checkNotNull(manager);
+      manager
           .beginTransaction()
           .remove(this)
           .commit();
@@ -67,9 +71,8 @@ public class HelpAndFeedbackFragment extends PreferenceFragment implements Prefe
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
 
-    super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.help_and_feedback);
 
     PreferenceScreen contact = (PreferenceScreen)findPreference("contact");
@@ -79,6 +82,16 @@ public class HelpAndFeedbackFragment extends PreferenceFragment implements Prefe
     contact.setOnPreferenceClickListener(this);
     feedback.setOnPreferenceClickListener(this);
     request.setOnPreferenceClickListener(this);
+  }
+
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+    super.onViewCreated(view, savedInstanceState);
+
+    //設定項目間の区切り線の非表示
+    setDivider(new ColorDrawable(Color.TRANSPARENT));
+    setDividerHeight(0);
   }
 
   @Override
@@ -96,10 +109,6 @@ public class HelpAndFeedbackFragment extends PreferenceFragment implements Prefe
 
     activity.drawerToggle.setDrawerIndicatorEnabled(true);
     actionBar.setTitle(R.string.nav_help_and_feedback);
-
-    //設定項目間の区切り線の非表示
-    ListView listView = view.findViewById(android.R.id.list);
-    listView.setDivider(null);
 
     return view;
   }

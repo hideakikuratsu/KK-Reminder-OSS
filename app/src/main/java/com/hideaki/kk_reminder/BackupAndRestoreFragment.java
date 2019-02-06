@@ -6,24 +6,24 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -46,6 +46,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +63,7 @@ import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.RC_SIGN_IN;
 import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 
-public class BackupAndRestoreFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
 
   @SuppressLint("SdCardPath")
   private static final String DATABASE_PATH = "/data/data/com.hideaki.kk_reminder/databases/";
@@ -111,9 +112,8 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
 
-    super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.backup_and_restore);
     setHasOptionsMenu(true);
 
@@ -125,6 +125,16 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
     backup.setOnPreferenceClickListener(this);
     restore.setOnPreferenceClickListener(this);
     logout.setOnPreferenceClickListener(this);
+  }
+
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+    super.onViewCreated(view, savedInstanceState);
+
+    //設定項目間の区切り線の非表示
+    setDivider(new ColorDrawable(Color.TRANSPARENT));
+    setDividerHeight(0);
   }
 
   @Override
@@ -145,10 +155,6 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.backup_and_restore);
 
-    //設定項目間の区切り線の非表示
-    ListView listView = view.findViewById(android.R.id.list);
-    listView.setDivider(null);
-
     //ログイン状態の初期化
     signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
 
@@ -164,7 +170,9 @@ public class BackupAndRestoreFragment extends PreferenceFragment implements Pref
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    getFragmentManager().popBackStack();
+    FragmentManager manager = getFragmentManager();
+    checkNotNull(manager);
+    manager.popBackStack();
     return super.onOptionsItemSelected(item);
   }
 

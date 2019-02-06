@@ -118,7 +118,9 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
           activity.title.setText(title);
         }
         else {
-          title = getItem(position) + snooze;
+          title = getItem(position).toString();
+          if(!LOCALE.equals(Locale.JAPAN)) title += " ";
+          title += snooze;
           activity.title.setText(title);
         }
 

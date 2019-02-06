@@ -2,7 +2,6 @@ package com.hideaki.kk_reminder;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
@@ -10,6 +9,9 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -98,6 +100,7 @@ public class NotesChecklistModeFragment extends Fragment {
     this.setHasOptionsMenu(true);
 
     Bundle args = getArguments();
+    checkNotNull(args);
     item = (Item)args.getSerializable(ITEM);
 
     notesTodoListAdapter = new NotesTodoListAdapter(activity, this);
@@ -127,10 +130,12 @@ public class NotesChecklistModeFragment extends Fragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
     if(MainEditFragment.is_notes_popping) {
-      getFragmentManager().popBackStack();
+      FragmentManager manager = getFragmentManager();
+      checkNotNull(manager);
+      manager.popBackStack();
     }
     View view = inflater.inflate(R.layout.notes_checklist_layout, container, false);
     view.setBackgroundColor(ContextCompat.getColor(activity, android.R.color.background_light));
@@ -448,7 +453,9 @@ public class NotesChecklistModeFragment extends Fragment {
       case android.R.id.home: {
 
         MainEditFragment.is_notes_popping = true;
-        getFragmentManager().popBackStack();
+        FragmentManager manager = getFragmentManager();
+        checkNotNull(manager);
+        manager.popBackStack();
 
         return true;
       }
