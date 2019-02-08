@@ -1,5 +1,7 @@
 package com.hideaki.kk_reminder;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -7,7 +9,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
@@ -17,9 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -42,7 +43,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
   static List<Item> itemList;
   static long has_panel; //コントロールパネルがvisibleであるItemのid値を保持する
-  private boolean is_control_panel_locked;
+  private static long panel_lock_id;
   private MainActivity activity;
   ActionMode actionMode = null;
   static int checked_item_num;
@@ -51,8 +52,11 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
   private int draggingPosition = -1;
   static boolean is_sorting;
   private List<Item> filteredItem;
-  ColorStateList colorStateList;
   private ColorStateList defaultColorStateList;
+  private final Handler handler = new Handler();
+  static boolean is_scrolling;
+  static boolean is_in_transition;
+  static int handle_count;
 
   MyListAdapter(MainActivity activity) {
 
@@ -66,14 +70,14 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     CardView item_card;
     ImageView order_icon;
     TextView detail;
-    CheckBox checkBox;
+    AnimCheckBox checkBox;
     ImageView tagPallet;
     TableLayout control_panel;
     TextView notes;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
-      View.OnLongClickListener, ActionMode.Callback {
+  private class MyOnClickListener implements View.OnClickListener, View.OnLongClickListener,
+      ActionMode.Callback, AnimCheckBox.OnCheckedChangeListener {
 
     private int position;
     private Item item;
@@ -99,15 +103,66 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
           if(actionMode == null) {
             if(viewHolder.control_panel.getVisibility() == View.GONE) {
-              if(!is_control_panel_locked) {
+              if(item.getId() != panel_lock_id) {
                 has_panel = item.getId();
-                viewHolder.control_panel.setVisibility(View.VISIBLE);
-                notifyDataSetChanged();
+                View cardView = (View)viewHolder.control_panel.getParent().getParent();
+                cardView.setTranslationY(-30.0f);
+                cardView.setAlpha(0.0f);
+                cardView
+                    .animate()
+                    .translationY(0.0f)
+                    .alpha(1.0f)
+                    .setDuration(150)
+                    .setListener(new AnimatorListenerAdapter() {
+
+                      @Override
+                      public void onAnimationStart(Animator animation) {
+
+                        super.onAnimationStart(animation);
+
+                        //他タスクのコントロールパネルを閉じる
+                        int visible_count = activity.listView.getChildCount();
+                        for(int i = 0; i < visible_count; i++) {
+                          View visibleView = activity.listView.getChildAt(i);
+                          final TableLayout panel = visibleView.findViewById(R.id.control_panel);
+                          if(panel != null && panel.getVisibility() == View.VISIBLE) {
+                            ((View)panel.getParent().getParent())
+                                .animate()
+                                .translationY(-30.0f)
+                                .alpha(0.0f)
+                                .setDuration(150)
+                                .setListener(new AnimatorListenerAdapter() {
+                                  @Override
+                                  public void onAnimationEnd(Animator animation) {
+
+                                    super.onAnimationEnd(animation);
+                                    panel.setVisibility(View.GONE);
+                                  }
+                                });
+                            break;
+                          }
+                        }
+
+                        viewHolder.control_panel.setVisibility(View.VISIBLE);
+                      }
+                    });
               }
             }
             else {
               has_panel = 0;
-              viewHolder.control_panel.setVisibility(View.GONE);
+              ((View)viewHolder.control_panel.getParent().getParent())
+                  .animate()
+                  .translationY(-30.0f)
+                  .alpha(0.0f)
+                  .setDuration(150)
+                  .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                      super.onAnimationEnd(animation);
+                      viewHolder.control_panel.setVisibility(View.GONE);
+                    }
+                  });
             }
           }
           else if(viewHolder.checkBox.isChecked()) {
@@ -132,11 +187,27 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onChange(AnimCheckBox view, boolean checked) {
 
-      if(isChecked && actionMode == null && manually_checked) {
+      if(checked && actionMode == null && manually_checked) {
 
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
+        panel_lock_id = item.getId();
+        if(viewHolder.control_panel.getVisibility() == View.VISIBLE) {
+          ((View)viewHolder.control_panel.getParent().getParent())
+              .animate()
+              .translationY(-30.0f)
+              .alpha(0.0f)
+              .setDuration(150)
+              .setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+
+                  super.onAnimationEnd(animation);
+                  viewHolder.control_panel.setVisibility(View.GONE);
+                }
+              });
+        }
+
         activity.actionBarFragment.searchView.clearFocus();
         itemList.remove(position);
         item.setDoneDate(Calendar.getInstance());
@@ -149,51 +220,44 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
           public void run() {
 
             notifyDataSetChanged();
+
+            Snackbar.make(convertView, activity.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
+                .addCallback(new Snackbar.Callback() {
+                  @Override
+                  public void onShown(Snackbar sb) {
+
+                    super.onShown(sb);
+                  }
+
+                  @Override
+                  public void onDismissed(Snackbar transientBottomBar, int event) {
+
+                    super.onDismissed(transientBottomBar, event);
+                    MyListAdapter.panel_lock_id = 0;
+                  }
+                })
+                .setAction(R.string.undo, new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                    itemList.add(item);
+                    Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
+                    notifyDataSetChanged();
+
+                    activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                    activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
+                  }
+                })
+                .show();
           }
         }, 400);
-
-        Snackbar.make(convertView, activity.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
-            .addCallback(new Snackbar.Callback() {
-              @Override
-              public void onShown(Snackbar sb) {
-
-                super.onShown(sb);
-                is_control_panel_locked = true;
-                if(viewHolder.control_panel.getVisibility() == View.VISIBLE) {
-                  viewHolder.control_panel.setVisibility(View.GONE);
-                }
-              }
-
-              @Override
-              public void onDismissed(Snackbar transientBottomBar, int event) {
-
-                super.onDismissed(transientBottomBar, event);
-                is_control_panel_locked = false;
-                notifyDataSetChanged();
-              }
-            })
-            .setAction(R.string.undo, new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                itemList.add(item);
-                Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
-                notifyDataSetChanged();
-
-                activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
-                activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
-              }
-            })
-            .show();
       }
-      else if(isChecked && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
+      else if(checked && manually_checked) {
         item.setSelected(true);
         notifyDataSetChanged();
         checked_item_num++;
         actionMode.setTitle(Integer.toString(checked_item_num));
       }
       else if(actionMode != null && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
         item.setSelected(false);
         notifyDataSetChanged();
         checked_item_num--;
@@ -616,7 +680,6 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       viewHolder.order_icon = convertView.findViewById(R.id.order_icon);
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
-      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
       viewHolder.notes = convertView.findViewById(R.id.notes);
@@ -671,23 +734,47 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
     if(viewHolder.control_panel.getVisibility() == View.VISIBLE
         && (item.getId() != has_panel || actionMode != null)) {
-      viewHolder.control_panel.setVisibility(View.GONE);
+      ((View)viewHolder.control_panel.getParent().getParent())
+          .animate()
+          .translationY(-30.0f)
+          .alpha(0.0f)
+          .setDuration(150)
+          .setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+              super.onAnimationEnd(animation);
+              viewHolder.control_panel.setVisibility(View.GONE);
+            }
+          });
     }
-    else if(viewHolder.control_panel.getVisibility() == View.GONE && item.getId() == has_panel
-        && !is_control_panel_locked && actionMode == null) {
-      viewHolder.control_panel.setVisibility(View.VISIBLE);
+    else if(viewHolder.control_panel.getVisibility() == View.GONE && item.getId() == has_panel && actionMode == null) {
+      View cardView = (View)viewHolder.control_panel.getParent().getParent();
+      cardView.setTranslationY(-30.0f);
+      cardView.setAlpha(0.0f);
+      cardView
+          .animate()
+          .translationY(0.0f)
+          .alpha(1.0f)
+          .setDuration(150)
+          .setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+              super.onAnimationEnd(animation);
+              viewHolder.control_panel.setVisibility(View.VISIBLE);
+            }
+          });
     }
 
     //チェックが入っている場合、チェックを外す
     if(viewHolder.checkBox.isChecked() && !item.isSelected()) {
       manually_checked = false;
       viewHolder.checkBox.setChecked(false);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     else if(!viewHolder.checkBox.isChecked() && item.isSelected()) {
       manually_checked = false;
       viewHolder.checkBox.setChecked(true);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     manually_checked = true;
 
@@ -696,6 +783,22 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
     //並び替え中にドラッグしているアイテムが二重に表示されないようにする
     convertView.setVisibility(position == draggingPosition ? View.INVISIBLE : View.VISIBLE);
+
+    //CardViewが横から流れてくるアニメーション
+    if(is_in_transition || is_scrolling) {
+      Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
+      convertView.startAnimation(animation);
+      if(is_in_transition && handle_count == 0) {
+        handle_count++;
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            is_in_transition = false;
+          }
+        }, 100);
+      }
+    }
 
     return convertView;
   }

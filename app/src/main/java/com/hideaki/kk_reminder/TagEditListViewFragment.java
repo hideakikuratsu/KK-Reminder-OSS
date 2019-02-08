@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -84,16 +83,6 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
       else if(order == 3) {
         TagEditListAdapter.checked_item_id = MainEditFragment.list.getWhich_tag_belongs();
       }
-      activity.tagEditListAdapter.colorStateList = new ColorStateList(
-          new int[][]{
-              new int[]{-android.R.attr.state_checked}, // unchecked
-              new int[]{android.R.attr.state_checked} // checked
-          },
-          new int[]{
-              ContextCompat.getColor(activity, R.color.icon_gray),
-              activity.accent_color
-          }
-      );
     }
     else {
       FragmentManager manager = getFragmentManager();

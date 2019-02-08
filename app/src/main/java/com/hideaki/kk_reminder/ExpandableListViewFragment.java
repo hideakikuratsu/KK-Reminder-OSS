@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
 
 import com.diegocarloslima.fgelv.lib.FloatingGroupExpandableListView;
@@ -71,17 +71,6 @@ public class ExpandableListViewFragment extends Fragment {
         activity.showMainEditFragment(activity.detail);
         activity.detail = null;
       }
-
-      activity.expandableListAdapter.colorStateList = new ColorStateList(
-          new int[][]{
-              new int[]{-android.R.attr.state_checked}, // unchecked
-              new int[]{android.R.attr.state_checked} // checked
-          },
-          new int[]{
-              ContextCompat.getColor(activity, R.color.icon_gray),
-              activity.accent_color
-          }
-      );
 
       activity.setUpdateListTimerTask(true);
     }
@@ -137,6 +126,8 @@ public class ExpandableListViewFragment extends Fragment {
       }
     });
 
+    MyExpandableListAdapter.handle_count = 0;
+    MyExpandableListAdapter.is_in_transition = true;
     MyExpandableListAdapter.has_panel = 0;
     MyExpandableListAdapter.checked_item_num = 0;
     MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
@@ -174,11 +165,32 @@ public class ExpandableListViewFragment extends Fragment {
     });
     activity.expandableListView.setAdapter(activity.wrapperAdapter);
     activity.expandableListView.setTextFilterEnabled(true);
+    activity.expandableListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        switch(scrollState) {
+
+          case SCROLL_STATE_IDLE: {
+
+            MyExpandableListAdapter.is_scrolling = false;
+            break;
+          }
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL: {
+
+            MyExpandableListAdapter.is_scrolling = true;
+            break;
+          }
+        }
+      }
+
+      @Override
+      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+    });
 
     AdView adView = view.findViewById(R.id.adView);
-    if(activity.is_premium) {
-      adView.setVisibility(View.GONE);
-    }
+    if(activity.is_premium) adView.setVisibility(View.GONE);
     else {
       AdRequest adRequest = new AdRequest.Builder().build();
       adView.loadAd(adRequest);

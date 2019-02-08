@@ -253,42 +253,51 @@ public class MainEditFragment extends BasePreferenceFragmentCompat implements Pr
       //各プリファレンスの初期化
       PreferenceScreen rootPreferenceScreen = getPreferenceScreen();
 
+      //titleセクション
       PreferenceCategory title = (PreferenceCategory)findPreference("title");
+
+      //detailセクション
       detail = (EditTextPreference)findPreference("detail");
       detail.setText(detail_str);
       detail.setTitle(detail_str);
       detail.setOnPreferenceChangeListener(this);
 
+      //scheduleセクション
       PreferenceCategory schedule = (PreferenceCategory)findPreference("schedule");
       datePicker = (PreferenceScreen)findPreference("date_picker");
-      timePicker = (PreferenceScreen)findPreference("time_picker");
       datePicker.setOnPreferenceClickListener(this);
+      timePicker = (PreferenceScreen)findPreference("time_picker");
       timePicker.setOnPreferenceClickListener(this);
 
+      //colorセクション
       PreferenceCategory colorCategory = (PreferenceCategory)findPreference("color");
       PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
       primaryColor.setOnPreferenceClickListener(this);
       PreferenceScreen secondaryColor = (PreferenceScreen)findPreference("secondary_color");
       secondaryColor.setOnPreferenceClickListener(this);
 
+      //tagセクション
       PreferenceCategory tagCategory = (PreferenceCategory)findPreference("tag_category");
       tag = (PreferenceScreen)findPreference("tag");
       tag.setOnPreferenceClickListener(this);
 
+      //notificationセクション
+      PreferenceCategory notificationCategory = (PreferenceCategory)findPreference("notification_category");
       intervalItem = (PreferenceScreen)findPreference("interval");
       intervalItem.setOnPreferenceClickListener(this);
+      pickAlarm = findPreference("pick_alarm");
+      pickAlarm.setOnPreferenceClickListener(this);
+      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        notificationCategory.removePreference(pickAlarm);
+      }
 
+      //repeatセクション
       dayRepeatItem = (PreferenceScreen)findPreference("repeat_day_unit");
       dayRepeatItem.setOnPreferenceClickListener(this);
       minuteRepeatItem = (PreferenceScreen)findPreference("repeat_minute_unit");
       minuteRepeatItem.setOnPreferenceClickListener(this);
 
-      pickAlarm = findPreference("pick_alarm");
-      pickAlarm.setOnPreferenceClickListener(this);
-      if(!activity.is_premium) {
-        pickAlarm.setTitle(pickAlarm.getTitle() + " (" + getString(R.string.premium_account_promotion) + ")");
-      }
-
+      //notesセクション
       PreferenceCategory notes_category = (PreferenceCategory)findPreference("notes_category");
       notes = (PreferenceScreen)findPreference("notes");
       notes.setOnPreferenceClickListener(this);
@@ -701,20 +710,18 @@ public class MainEditFragment extends BasePreferenceFragmentCompat implements Pr
       }
       case "pick_alarm": {
 
-        if(activity.is_premium) {
-          Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.pick_alarm));
-          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL);
-          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
-          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
-          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(activity.generalSettings.getItem().getSoundUri()));
-          String uriString = item.getSoundUri();
-          if(uriString != null) {
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(uriString));
-          }
-          startActivityForResult(intent, REQUEST_CODE_RINGTONE_PICKER);
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.pick_alarm));
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALL);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(activity.generalSettings.getItem().getSoundUri()));
+        String uriString = item.getSoundUri();
+        if(uriString != null) {
+          intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(uriString));
         }
-        else activity.promotionDialog.show();
+        startActivityForResult(intent, REQUEST_CODE_RINGTONE_PICKER);
+
         return true;
       }
       case "notes": {

@@ -80,8 +80,8 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
 
     PreferenceScreen defaultNewTask = (PreferenceScreen)findPreference("new_task");
     PreferenceScreen manuallySnooze = (PreferenceScreen)findPreference("manually_snooze");
-    PreferenceCategory upgradeCategory = (PreferenceCategory)findPreference("upgrade_category");
-    PreferenceScreen upgrade = (PreferenceScreen)findPreference("upgrade");
+    PreferenceCategory adsCategory = (PreferenceCategory)findPreference("ads_category");
+    PreferenceScreen disableAds = (PreferenceScreen)findPreference("disable_ads");
     PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
     PreferenceScreen secondaryColor = (PreferenceScreen)findPreference("secondary_color");
     PreferenceScreen backup = (PreferenceScreen)findPreference("backup");
@@ -89,20 +89,13 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
 
     defaultNewTask.setOnPreferenceClickListener(this);
     manuallySnooze.setOnPreferenceClickListener(this);
-    upgrade.setOnPreferenceClickListener(this);
+    disableAds.setOnPreferenceClickListener(this);
     primaryColor.setOnPreferenceClickListener(this);
     secondaryColor.setOnPreferenceClickListener(this);
     backup.setOnPreferenceClickListener(this);
     about.setOnPreferenceClickListener(this);
 
-    if(activity.is_premium) {
-      getPreferenceScreen().removePreference(upgradeCategory);
-    }
-    else {
-      primaryColor.setSummary(getString(R.string.premium_account_promotion));
-      secondaryColor.setSummary(getString(R.string.premium_account_promotion));
-      backup.setSummary(getString(R.string.premium_account_promotion));
-    }
+    if(activity.is_premium) getPreferenceScreen().removePreference(adsCategory);
   }
 
   @Override
@@ -149,37 +142,28 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
         transitionFragment(DefaultManuallySnoozeFragment.newInstance());
         return true;
       }
-      case "upgrade": {
+      case "disable_ads": {
 
         activity.promotionDialog.show();
         return true;
       }
       case "primary_color": {
 
-        if(activity.is_premium) {
-          ColorPickerListAdapter.is_general_settings = true;
-          activity.showColorPickerListViewFragment();
-        }
-        else activity.promotionDialog.show();
+        ColorPickerListAdapter.is_general_settings = true;
+        activity.showColorPickerListViewFragment();
         return true;
       }
       case "secondary_color": {
 
-        if(activity.is_premium) {
-          ColorPickerListAdapter.is_general_settings = true;
-          activity.generalSettings.getTheme().setColor_primary(false);
-          activity.showColorPickerListViewFragment();
-        }
-        else activity.promotionDialog.show();
+        ColorPickerListAdapter.is_general_settings = true;
+        activity.generalSettings.getTheme().setColor_primary(false);
+        activity.showColorPickerListViewFragment();
         return true;
       }
       case "backup": {
 
-        if(activity.is_premium) {
-          backupAndRestoreFragment = BackupAndRestoreFragment.newInstance();
-          transitionFragment(backupAndRestoreFragment);
-        }
-        else activity.promotionDialog.show();
+        backupAndRestoreFragment = BackupAndRestoreFragment.newInstance();
+        transitionFragment(backupAndRestoreFragment);
         return true;
       }
       case "this_app": {

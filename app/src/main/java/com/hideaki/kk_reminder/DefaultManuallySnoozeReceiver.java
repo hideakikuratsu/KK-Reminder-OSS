@@ -103,9 +103,6 @@ public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
       else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
       }
-      else {
-        alarmManager.set(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-      }
     }
   }
 

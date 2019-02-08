@@ -44,6 +44,7 @@
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
+        android:key="notification_category"
         android:title="@string/notify_option">
         <PreferenceScreen
             android:key="interval"

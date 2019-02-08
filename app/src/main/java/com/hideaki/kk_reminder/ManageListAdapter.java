@@ -1,9 +1,14 @@
 package com.hideaki.kk_reminder;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -25,6 +30,10 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
   private int draggingPosition = -1;
   static boolean is_sorting;
   private List<NonScheduledList> filteredLists;
+  private final Handler handler = new Handler();
+  static boolean is_scrolling;
+  static boolean is_in_transition;
+  static int handle_count;
 
   ManageListAdapter(List<NonScheduledList> nonScheduledLists, MainActivity activity) {
 
@@ -65,12 +74,63 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
         case R.id.list_card: {
           if(viewHolder.edit.getVisibility() == View.GONE) {
             has_panel = list.getId();
-            viewHolder.edit.setVisibility(View.VISIBLE);
-            notifyDataSetChanged();
+            View cardView = (View)viewHolder.edit.getParent().getParent();
+            cardView.setTranslationY(-30.0f);
+            cardView.setAlpha(0.0f);
+            cardView
+                .animate()
+                .translationY(0.0f)
+                .alpha(1.0f)
+                .setDuration(150)
+                .setListener(new AnimatorListenerAdapter() {
+
+                  @Override
+                  public void onAnimationStart(Animator animation) {
+
+                    super.onAnimationStart(animation);
+
+                    //他タスクのコントロールパネルを閉じる
+                    int visible_count = activity.listView.getChildCount();
+                    for(int i = 0; i < visible_count; i++) {
+                      View visibleView = activity.listView.getChildAt(i);
+                      final TextView panel = visibleView.findViewById(R.id.edit);
+                      if(panel != null && panel.getVisibility() == View.VISIBLE) {
+                        ((View)panel.getParent().getParent())
+                            .animate()
+                            .translationY(-30.0f)
+                            .alpha(0.0f)
+                            .setDuration(150)
+                            .setListener(new AnimatorListenerAdapter() {
+                              @Override
+                              public void onAnimationEnd(Animator animation) {
+
+                                super.onAnimationEnd(animation);
+                                panel.setVisibility(View.GONE);
+                              }
+                            });
+                        break;
+                      }
+                    }
+
+                    viewHolder.edit.setVisibility(View.VISIBLE);
+                  }
+                });
           }
           else {
             has_panel = 0;
-            viewHolder.edit.setVisibility(View.GONE);
+            ((View)viewHolder.edit.getParent().getParent())
+                .animate()
+                .translationY(-30.0f)
+                .alpha(0.0f)
+                .setDuration(150)
+                .setListener(new AnimatorListenerAdapter() {
+                  @Override
+                  public void onAnimationEnd(Animator animation) {
+
+                    super.onAnimationEnd(animation);
+                    viewHolder.edit.setVisibility(View.GONE);
+                  }
+                });
           }
           break;
         }
@@ -268,6 +328,22 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 
     //並び替え中にドラッグしているアイテムが二重に表示されないようにする
     convertView.setVisibility(position == draggingPosition ? View.INVISIBLE : View.VISIBLE);
+
+    //CardViewが横から流れてくるアニメーション
+    if(is_in_transition || is_scrolling) {
+      Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
+      convertView.startAnimation(animation);
+      if(is_in_transition && handle_count == 0) {
+        handle_count++;
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            is_in_transition = false;
+          }
+        }, 100);
+      }
+    }
 
     return convertView;
   }

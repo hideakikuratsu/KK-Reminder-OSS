@@ -1,16 +1,10 @@
 package com.hideaki.kk_reminder;
 
-import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.CompoundButtonCompat;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.hideaki.kk_reminder.UtilClass.NOTES_COMPARATOR;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class NotesTodoListAdapter extends BaseAdapter {
 
@@ -28,7 +21,6 @@ public class NotesTodoListAdapter extends BaseAdapter {
   DragListener dragListener;
   private int draggingPosition = -1;
   static boolean is_sorting;
-  ColorStateList colorStateList;
 
   NotesTodoListAdapter(MainActivity activity, NotesChecklistModeFragment fragment) {
 
@@ -41,11 +33,12 @@ public class NotesTodoListAdapter extends BaseAdapter {
   private static class ViewHolder {
 
     ConstraintLayout notesItem;
-    CheckBox checkBox;
+    ImageView hamburger_icon;
+    AnimCheckBox checkBox;
     TextView string;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+  private class MyOnClickListener implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener {
 
     private int position;
     private Notes notes;
@@ -61,14 +54,13 @@ public class NotesTodoListAdapter extends BaseAdapter {
     @Override
     public void onClick(View v) {
 
-      viewHolder.checkBox.setChecked(true);
+      viewHolder.checkBox.setChecked(true, false);
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onChange(AnimCheckBox view, boolean checked) {
 
-      if(isChecked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
+      if(checked) {
         notes.setChecked(true);
         NotesDoneListAdapter.notesList.add(notes);
         Collections.sort(NotesDoneListAdapter.notesList, NOTES_COMPARATOR);
@@ -174,8 +166,8 @@ public class NotesTodoListAdapter extends BaseAdapter {
 
       viewHolder = new ViewHolder();
       viewHolder.notesItem = convertView.findViewById(R.id.notes_item);
+      viewHolder.hamburger_icon = convertView.findViewById(R.id.hamburger_icon);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
-      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.string = convertView.findViewById(R.id.string);
 
       convertView.setTag(viewHolder);
@@ -193,23 +185,19 @@ public class NotesTodoListAdapter extends BaseAdapter {
     viewHolder.checkBox.setOnCheckedChangeListener(listener);
 
     //チェック状態の初期化
-    viewHolder.checkBox.setChecked(false);
-    viewHolder.checkBox.jumpDrawablesToCurrentState();
+    viewHolder.checkBox.setChecked(false, false);
 
     //各種表示処理
     viewHolder.string.setText(notes.getString());
 
     //タグの左にあるアイコンの表示設定
     if(is_sorting) {
-      Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_hamburger_icon_24dp);
-      checkNotNull(drawable);
-      drawable = drawable.mutate();
-      viewHolder.checkBox.setButtonDrawable(drawable);
+      viewHolder.hamburger_icon.setVisibility(View.VISIBLE);
+      viewHolder.checkBox.setVisibility(View.GONE);
     }
     else {
-      TypedValue value = new TypedValue();
-      activity.getTheme().resolveAttribute(android.R.attr.listChoiceIndicatorMultiple, value, true);
-      viewHolder.checkBox.setButtonDrawable(value.resourceId);
+      viewHolder.hamburger_icon.setVisibility(View.GONE);
+      viewHolder.checkBox.setVisibility(View.VISIBLE);
     }
 
     //並び替え中にドラッグしているアイテムが二重に表示されないようにする

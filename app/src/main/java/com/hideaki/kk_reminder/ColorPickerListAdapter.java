@@ -1,16 +1,15 @@
 package com.hideaki.kk_reminder;
 
 import android.annotation.SuppressLint;
-import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.support.v4.widget.CompoundButtonCompat;
+import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,8 +35,11 @@ public class ColorPickerListAdapter extends BaseAdapter {
   Tag adapterTag;
   Tag orgTag;
   static boolean is_general_settings;
-  ColorStateList colorStateList;
   static boolean from_list_tag_edit;
+  private final Handler handler = new Handler();
+  static boolean is_scrolling;
+  static boolean is_in_transition;
+  static int handle_count;
 
   ColorPickerListAdapter(MainActivity activity) {
 
@@ -48,12 +50,12 @@ public class ColorPickerListAdapter extends BaseAdapter {
   private static class ViewHolder {
 
     CardView color_list_card;
-    CheckBox checkBox;
+    AnimCheckBox checkBox;
     TextView color_name;
     ImageView pallet;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+  private class MyOnClickListener implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener {
 
     private int position;
     private ViewHolder viewHolder;
@@ -77,11 +79,10 @@ public class ColorPickerListAdapter extends BaseAdapter {
 
     @SuppressLint("ResourceType")
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onChange(AnimCheckBox view, boolean checked) {
 
-      if(isChecked && manually_checked) {
+      if(checked && manually_checked) {
 
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
         checked_position = position;
 
         //チェックしたときにダイアログに表示する色を配列で指定
@@ -234,7 +235,6 @@ public class ColorPickerListAdapter extends BaseAdapter {
             .show();
       }
       else if(position == checked_position && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
         if(!is_general_settings) {
           if(order == 0 || order == 1 || order == 4 || from_list_tag_edit) {
             adapterTag.setPrimary_color(0);
@@ -289,7 +289,6 @@ public class ColorPickerListAdapter extends BaseAdapter {
       viewHolder = new ViewHolder();
       viewHolder.color_list_card = convertView.findViewById(R.id.color_list_card);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
-      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.color_name = convertView.findViewById(R.id.color_name);
       viewHolder.pallet = convertView.findViewById(R.id.tag_pallet);
 
@@ -313,13 +312,11 @@ public class ColorPickerListAdapter extends BaseAdapter {
     //チェック状態の初期化
     if(position != checked_position) {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(false);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
+      viewHolder.checkBox.setChecked(false, false);
     }
     else {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(true);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
+      viewHolder.checkBox.setChecked(true, false);
     }
     manually_checked = true;
 
@@ -358,6 +355,22 @@ public class ColorPickerListAdapter extends BaseAdapter {
     colorVariationArray.recycle();
     typedArray.recycle();
     typedArraysOfArray.recycle();
+
+    //CardViewが横から流れてくるアニメーション
+    if(is_in_transition || is_scrolling) {
+      Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
+      convertView.startAnimation(animation);
+      if(is_in_transition && handle_count == 0) {
+        handle_count++;
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            is_in_transition = false;
+          }
+        }, 100);
+      }
+    }
 
     return convertView;
   }

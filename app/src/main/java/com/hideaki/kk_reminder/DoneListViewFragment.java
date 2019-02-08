@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -84,16 +84,6 @@ public class DoneListViewFragment extends Fragment {
         activity.detail = null;
       }
 
-      activity.doneListAdapter.colorStateList = new ColorStateList(
-          new int[][]{
-              new int[]{-android.R.attr.state_checked}, // unchecked
-              new int[]{android.R.attr.state_checked} // checked
-          },
-          new int[]{
-              ContextCompat.getColor(activity, R.color.icon_gray),
-              activity.accent_color
-          }
-      );
     }
     else {
       FragmentManager manager = getFragmentManager();
@@ -156,6 +146,8 @@ public class DoneListViewFragment extends Fragment {
       }
     });
 
+    DoneListAdapter.handle_count = 0;
+    DoneListAdapter.is_in_transition = true;
     List<Item> itemList = activity.getDoneItem();
     int size = itemList.size();
     if(size > 100) {
@@ -223,11 +215,32 @@ public class DoneListViewFragment extends Fragment {
     });
     activity.listView.setAdapter(activity.doneListAdapter);
     activity.listView.setTextFilterEnabled(true);
+    activity.listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        switch(scrollState) {
+
+          case SCROLL_STATE_IDLE: {
+
+            DoneListAdapter.is_scrolling = false;
+            break;
+          }
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL: {
+
+            DoneListAdapter.is_scrolling = true;
+            break;
+          }
+        }
+      }
+
+      @Override
+      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+    });
 
     AdView adView = view.findViewById(R.id.adView);
-    if(activity.is_premium) {
-      adView.setVisibility(View.GONE);
-    }
+    if(activity.is_premium) adView.setVisibility(View.GONE);
     else {
       AdRequest adRequest = new AdRequest.Builder().build();
       adView.loadAd(adRequest);

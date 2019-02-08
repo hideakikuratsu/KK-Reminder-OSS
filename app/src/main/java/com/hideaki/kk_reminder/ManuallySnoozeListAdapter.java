@@ -4,8 +4,6 @@ import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -54,11 +52,11 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
   private static class ViewHolder {
 
     ConstraintLayout snoozeItem;
-    CheckBox checkBox;
+    AnimCheckBox checkBox;
     TextView howLong;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+  private class MyOnClickListener implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener {
 
     private int position;
     private ViewHolder viewHolder;
@@ -81,10 +79,9 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onChange(AnimCheckBox view, boolean checked) {
 
-      if(isChecked && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
+      if(checked && manually_checked) {
         checked_position = position;
         if(position == snoozeList.size() - 1 && activity.listView.getFooterViewsCount() == 0) {
           activity.listView.addFooterView(activity.footer);
@@ -127,7 +124,6 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
         notifyDataSetChanged();
       }
       else if(position == checked_position && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
         checked_position = 0;
 
         String title = defaultSnoozeTime + activity.getString(R.string.snooze);
@@ -190,12 +186,10 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
     if(position != checked_position) {
       manually_checked = false;
       viewHolder.checkBox.setChecked(false);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     else {
       manually_checked = false;
       viewHolder.checkBox.setChecked(true);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     manually_checked = true;
 

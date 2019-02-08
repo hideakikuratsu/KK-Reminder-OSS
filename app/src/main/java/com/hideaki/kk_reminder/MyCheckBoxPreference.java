@@ -1,67 +1,31 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.res.ColorStateList;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.TextView;
 
 public class MyCheckBoxPreference extends CheckBoxPreference {
 
-  private MainActivity activity;
-  private ColorStateList colorStateList;
+  private AnimCheckBox animCheckBox;
 
   MyCheckBoxPreference(Context context) {
 
     super(context);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
-    colorStateList = new ColorStateList(
-        new int[][] {
-            new int[]{-android.R.attr.state_checked}, // unchecked
-            new int[]{android.R.attr.state_checked} // checked
-        },
-        new int[] {
-            ContextCompat.getColor(activity, R.color.icon_gray),
-            activity.accent_color
-        }
-    );
+    setLayoutResource(R.layout.my_checkbox_preference_layout);
   }
 
   public MyCheckBoxPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
-    colorStateList = new ColorStateList(
-        new int[][] {
-            new int[]{-android.R.attr.state_checked}, // unchecked
-            new int[]{android.R.attr.state_checked} // checked
-        },
-        new int[] {
-            ContextCompat.getColor(activity, R.color.icon_gray),
-            activity.accent_color
-        }
-    );
+    setLayoutResource(R.layout.my_checkbox_preference_layout);
   }
 
   public MyCheckBoxPreference(Context context, AttributeSet attrs, int defStyleAttr) {
 
     super(context, attrs, defStyleAttr);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
-    colorStateList = new ColorStateList(
-        new int[][] {
-            new int[]{-android.R.attr.state_checked}, // unchecked
-            new int[]{android.R.attr.state_checked} // checked
-        },
-        new int[] {
-            ContextCompat.getColor(activity, R.color.icon_gray),
-            activity.accent_color
-        }
-    );
+    setLayoutResource(R.layout.my_checkbox_preference_layout);
   }
 
   @Override
@@ -69,16 +33,16 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
 
     super.onBindViewHolder(holder);
 
-    CheckBox checkBox = (CheckBox)holder.findViewById(android.R.id.checkbox);
-    if(checkBox != null) {
-      CompoundButtonCompat.setButtonTintList(checkBox, colorStateList);
-      checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    TextView title = (TextView)holder.findViewById(R.id.item_name);
+    animCheckBox = (AnimCheckBox)holder.findViewById(R.id.checkBox);
+    animCheckBox.setChecked(isChecked(), false);
+    title.setText(getTitle());
+  }
 
-          buttonView.jumpDrawablesToCurrentState();
-        }
-      });
-    }
+  @Override
+  public void setChecked(boolean checked) {
+
+    super.setChecked(checked);
+    if(animCheckBox != null) animCheckBox.setChecked(checked);
   }
 }

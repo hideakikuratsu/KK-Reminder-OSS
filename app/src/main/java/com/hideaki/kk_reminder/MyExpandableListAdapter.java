@@ -1,5 +1,7 @@
 package com.hideaki.kk_reminder;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +12,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
@@ -21,9 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -69,7 +70,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   static int checked_item_num;
   private static boolean manually_checked;
   private List<List<Item>> filteredList;
-  ColorStateList colorStateList;
   private ColorStateList defaultColorStateList;
   static boolean block_notify_change = false;
   static boolean lock_block_notify_change = false;
@@ -77,6 +77,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private Runnable runnable;
   private int collapse_group;
   private boolean is_manual_expand_or_collapse = true;
+  static boolean is_scrolling;
+  static boolean is_in_transition;
+  static int handle_count;
 
   MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
 
@@ -115,14 +118,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     TextView time;
     TextView detail;
     TextView repeat;
-    CheckBox checkBox;
+    AnimCheckBox checkBox;
     ImageView tagPallet;
     TableLayout control_panel;
     TextView notes;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
-      View.OnLongClickListener, ActionMode.Callback {
+  private class MyOnClickListener implements View.OnClickListener, View.OnLongClickListener,
+      ActionMode.Callback, AnimCheckBox.OnCheckedChangeListener {
 
     private int group_position;
     private int child_position;
@@ -158,13 +161,64 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             if(viewHolder.control_panel.getVisibility() == View.GONE) {
               if(item.getId() != panel_lock_id) {
                 has_panel = item.getId();
-                viewHolder.control_panel.setVisibility(View.VISIBLE);
-                notifyDataSetChanged();
+                View cardView = (View)viewHolder.control_panel.getParent().getParent();
+                cardView.setTranslationY(-30.0f);
+                cardView.setAlpha(0.0f);
+                cardView
+                    .animate()
+                    .translationY(0.0f)
+                    .alpha(1.0f)
+                    .setDuration(150)
+                    .setListener(new AnimatorListenerAdapter() {
+
+                      @Override
+                      public void onAnimationStart(Animator animation) {
+
+                        super.onAnimationStart(animation);
+
+                        //他タスクのコントロールパネルを閉じる
+                        int visible_count = activity.expandableListView.getChildCount();
+                        for(int i = 0; i < visible_count; i++) {
+                          View visibleView = activity.expandableListView.getChildAt(i);
+                          final TableLayout panel = visibleView.findViewById(R.id.control_panel);
+                          if(panel != null && panel.getVisibility() == View.VISIBLE) {
+                            ((View)panel.getParent().getParent())
+                                .animate()
+                                .translationY(-30.0f)
+                                .alpha(0.0f)
+                                .setDuration(150)
+                                .setListener(new AnimatorListenerAdapter() {
+                                  @Override
+                                  public void onAnimationEnd(Animator animation) {
+
+                                    super.onAnimationEnd(animation);
+                                    panel.setVisibility(View.GONE);
+                                  }
+                                });
+                            break;
+                          }
+                        }
+
+                        viewHolder.control_panel.setVisibility(View.VISIBLE);
+                      }
+                    });
               }
             }
             else {
               has_panel = 0;
-              viewHolder.control_panel.setVisibility(View.GONE);
+              ((View)viewHolder.control_panel.getParent().getParent())
+                  .animate()
+                  .translationY(-30.0f)
+                  .alpha(0.0f)
+                  .setDuration(150)
+                  .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                      super.onAnimationEnd(animation);
+                      viewHolder.control_panel.setVisibility(View.GONE);
+                    }
+                  });
             }
           }
           else if(viewHolder.checkBox.isChecked()) {
@@ -378,9 +432,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onChange(AnimCheckBox animCheckBox, boolean checked) {
 
-      if(isChecked && actionMode == null && manually_checked) {
+      if(checked && actionMode == null && manually_checked) {
 
         lock_block_notify_change = true;
         block_notify_change = true;
@@ -392,11 +446,21 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
         panel_lock_id = item.getId();
         if(viewHolder.control_panel.getVisibility() == View.VISIBLE) {
-          has_panel = 0;
-          viewHolder.control_panel.setVisibility(View.GONE);
+          ((View)viewHolder.control_panel.getParent().getParent())
+              .animate()
+              .translationY(-30.0f)
+              .alpha(0.0f)
+              .setDuration(150)
+              .setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+
+                  super.onAnimationEnd(animation);
+                  viewHolder.control_panel.setVisibility(View.GONE);
+                }
+              });
         }
 
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
         activity.actionBarFragment.searchView.clearFocus();
         if(item.getTime_altered() == 0) {
           item.setOrg_date((Calendar)item.getDate().clone());
@@ -522,7 +586,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           now.set(Calendar.SECOND, 0);
           now.set(Calendar.MILLISECOND, 0);
           int day_of_week_last;
-          
+
           if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
             tmp = (Calendar)item.getDate().clone();
             day_of_week = item.getDate().get(Calendar.DAY_OF_WEEK) < 2 ?
@@ -621,7 +685,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             //DaysOfMonthリピート設定時
             int day_of_month;
             int day_of_month_last;
-            
+
             if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
               tmp = (Calendar)item.getDate().clone();
               day_of_month = item.getDate().get(Calendar.DAY_OF_MONTH);
@@ -1032,7 +1096,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               }
               else if(day_of_week == 9) {
                 boolean sunday_match = false;
-                
+
                 if(tmp.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY && tmp.after(now)) {
                   tmp2 = (Calendar)tmp.clone();
                   tmp2.add(Calendar.DAY_OF_MONTH, -1);
@@ -1127,7 +1191,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           now.set(Calendar.SECOND, 0);
           now.set(Calendar.MILLISECOND, 0);
           int month_last;
-          
+
           if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
             tmp = (Calendar)item.getDate().clone();
             month = item.getDate().get(Calendar.MONTH);
@@ -1275,15 +1339,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           }
         }, 400);
       }
-      else if(isChecked && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
+      else if(checked && manually_checked) {
         item.setSelected(true);
         notifyDataSetChanged();
         checked_item_num++;
         actionMode.setTitle(Integer.toString(checked_item_num));
       }
       else if(actionMode != null && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
         item.setSelected(false);
         notifyDataSetChanged();
         checked_item_num--;
@@ -1291,7 +1353,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         if(checked_item_num == 0) actionMode.finish();
       }
     }
-
 
     @Override
     public boolean onLongClick(View v) {
@@ -1847,7 +1908,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.repeat = convertView.findViewById(R.id.repeat);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
-      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
       viewHolder.control_panel = convertView.findViewById(R.id.control_panel);
       viewHolder.notes = convertView.findViewById(R.id.notes);
@@ -1916,24 +1976,65 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //ある子ビューでコントロールパネルを出したとき、他の子ビューのコントロールパネルを閉じる
     if(viewHolder.control_panel.getVisibility() == View.VISIBLE
         && (item.getId() != has_panel || actionMode != null)) {
-      viewHolder.control_panel.setVisibility(View.GONE);
+      ((View)viewHolder.control_panel.getParent().getParent())
+          .animate()
+          .translationY(-30.0f)
+          .alpha(0.0f)
+          .setDuration(150)
+          .setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+              super.onAnimationEnd(animation);
+              viewHolder.control_panel.setVisibility(View.GONE);
+            }
+          });
     }
     else if(viewHolder.control_panel.getVisibility() == View.GONE && item.getId() == has_panel && actionMode == null) {
-      viewHolder.control_panel.setVisibility(View.VISIBLE);
+      View cardView = (View)viewHolder.control_panel.getParent().getParent();
+      cardView.setTranslationY(-30.0f);
+      cardView.setAlpha(0.0f);
+      cardView
+          .animate()
+          .translationY(0.0f)
+          .alpha(1.0f)
+          .setDuration(150)
+          .setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+              super.onAnimationEnd(animation);
+              viewHolder.control_panel.setVisibility(View.VISIBLE);
+            }
+          });
     }
 
     //チェックが入っている場合、チェックを外す
     if(viewHolder.checkBox.isChecked() && !item.isSelected()) {
       manually_checked = false;
       viewHolder.checkBox.setChecked(false);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     else if(!viewHolder.checkBox.isChecked() && item.isSelected()) {
       manually_checked = false;
       viewHolder.checkBox.setChecked(true);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     manually_checked = true;
+
+    //CardViewが横から流れてくるアニメーション
+    if(is_in_transition || is_scrolling) {
+      Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
+      convertView.startAnimation(animation);
+      if(is_in_transition && handle_count == 0) {
+        handle_count++;
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            is_in_transition = false;
+          }
+        }, 100);
+      }
+    }
 
     return convertView;
   }
@@ -1954,7 +2055,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         }
       };
     }
-    handler.postDelayed(runnable, 1000);
+    handler.postDelayed(runnable, 2000);
   }
 
   //時間を表示する処理

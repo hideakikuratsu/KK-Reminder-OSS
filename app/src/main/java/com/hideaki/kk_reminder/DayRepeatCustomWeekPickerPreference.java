@@ -1,42 +1,26 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.res.ColorStateList;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.CompoundButtonCompat;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import java.util.Calendar;
 
-public class DayRepeatCustomWeekPickerPreference extends Preference implements CompoundButton.OnCheckedChangeListener {
+public class DayRepeatCustomWeekPickerPreference extends Preference implements AnimCheckBox.OnCheckedChangeListener, View.OnClickListener {
 
-  private CheckBox checkBox;
+  private AnimCheckBox checkBox;
   private int mask_num;
   static int week;
-  private final ColorStateList colorStateList;
 
   public DayRepeatCustomWeekPickerPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
     setLayoutResource(R.layout.repeat_custom_week_picker);
-    MainActivity activity = (MainActivity)((ContextWrapper)context).getBaseContext();
-    colorStateList = new ColorStateList(
-        new int[][] {
-            new int[]{-android.R.attr.state_checked}, // unchecked
-            new int[]{android.R.attr.state_checked} // checked
-        },
-        new int[] {
-            ContextCompat.getColor(activity, R.color.icon_gray),
-            activity.accent_color
-        }
-    );
   }
 
   @Override
@@ -58,19 +42,19 @@ public class DayRepeatCustomWeekPickerPreference extends Preference implements C
       TableRow tableRow = (TableRow)week_table.getChildAt(i);
       int table_row_size = tableRow.getChildCount();
       for(int j = 0; j < table_row_size; j++) {
-        checkBox = (CheckBox)tableRow.getChildAt(j);
-        CompoundButtonCompat.setButtonTintList(checkBox, colorStateList);
-        if((week & (1 << (i * 5 + j))) != 0) checkBox.setChecked(true);
+        ConstraintLayout constraintLayout = (ConstraintLayout)tableRow.getChildAt(j);
+        checkBox = (AnimCheckBox)constraintLayout.getChildAt(0);
+        if((week & (1 << (i * 5 + j))) != 0) checkBox.setChecked(true, false);
+        constraintLayout.setOnClickListener(this);
         checkBox.setOnCheckedChangeListener(this);
       }
     }
   }
 
   @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+  public void onChange(AnimCheckBox view, boolean checked) {
 
-    checkBox = (CheckBox)buttonView;
-    checkBox.jumpDrawablesToCurrentState();
+    checkBox = view;
     mask_num = Integer.parseInt(checkBox.getTag().toString());
 
     if(checkBox.isChecked()) week |= (1 << mask_num);
@@ -79,10 +63,16 @@ public class DayRepeatCustomWeekPickerPreference extends Preference implements C
       if(week == 0) {
         week |= (1 << mask_num);
         checkBox.setChecked(true);
-        checkBox.jumpDrawablesToCurrentState();
       }
     }
 
     MainEditFragment.dayRepeat.setWeek(week);
+  }
+
+  @Override
+  public void onClick(View v) {
+
+    checkBox = (AnimCheckBox)((ConstraintLayout)v).getChildAt(0);
+    checkBox.setChecked(!checkBox.isChecked());
   }
 }

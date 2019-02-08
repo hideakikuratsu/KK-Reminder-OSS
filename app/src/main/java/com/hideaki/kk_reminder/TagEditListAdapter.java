@@ -1,18 +1,14 @@
 package com.hideaki.kk_reminder;
 
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,8 +17,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 
 public class TagEditListAdapter extends BaseAdapter {
 
@@ -35,7 +31,6 @@ public class TagEditListAdapter extends BaseAdapter {
   private static boolean manually_checked;
   static long checked_item_id; //チェックの入っているItemのid値を保持する
   static boolean is_editing;
-  ColorStateList colorStateList;
 
   TagEditListAdapter(List<Tag> tagList, MainActivity activity) {
 
@@ -51,12 +46,12 @@ public class TagEditListAdapter extends BaseAdapter {
     ConstraintLayout tagItem;
     ImageView orderIcon;
     ImageView delete;
-    CheckBox checkBox;
+    AnimCheckBox checkBox;
     TextView tagName;
     ImageView pallet;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+  private class MyOnClickListener implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener {
 
     private int position;
     private Tag tag;
@@ -185,10 +180,9 @@ public class TagEditListAdapter extends BaseAdapter {
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onChange(AnimCheckBox view, boolean checked) {
 
-      if(isChecked && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
+      if(checked && manually_checked) {
         if(order == 0 || order == 1 || order == 4) {
           MainEditFragment.item.setWhich_tag_belongs(tag.getId());
         }
@@ -198,8 +192,7 @@ public class TagEditListAdapter extends BaseAdapter {
         checked_item_id = tag.getId();
         notifyDataSetChanged();
       }
-      else if(!isChecked && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
+      else if(!checked && manually_checked) {
         if(order == 0 || order == 1 || order == 4) {
           MainEditFragment.item.setWhich_tag_belongs(0);
         }
@@ -279,7 +272,6 @@ public class TagEditListAdapter extends BaseAdapter {
       viewHolder.orderIcon = convertView.findViewById(R.id.order_icon);
       viewHolder.delete = convertView.findViewById(R.id.delete);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
-      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagName = convertView.findViewById(R.id.tag_name);
       viewHolder.pallet = convertView.findViewById(R.id.tag_pallet);
 
@@ -302,13 +294,11 @@ public class TagEditListAdapter extends BaseAdapter {
     //チェック状態の初期化
     if(tag.getId() != checked_item_id) {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(false);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
+      viewHolder.checkBox.setChecked(false, false);
     }
     else {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(true);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
+      viewHolder.checkBox.setChecked(true, false);
     }
     manually_checked = true;
 

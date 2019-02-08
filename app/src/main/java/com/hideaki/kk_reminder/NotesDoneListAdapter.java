@@ -1,13 +1,9 @@
 package com.hideaki.kk_reminder;
 
-import android.content.res.ColorStateList;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -21,7 +17,6 @@ public class NotesDoneListAdapter extends BaseAdapter {
   static List<Notes> notesList;
   private MainActivity activity;
   private NotesChecklistModeFragment fragment;
-  ColorStateList colorStateList;
 
   NotesDoneListAdapter(MainActivity activity, NotesChecklistModeFragment fragment) {
 
@@ -32,11 +27,11 @@ public class NotesDoneListAdapter extends BaseAdapter {
   private static class ViewHolder {
 
     ConstraintLayout notesItem;
-    CheckBox checkBox;
+    AnimCheckBox checkBox;
     TextView string;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+  private class MyOnClickListener implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener {
 
     private int position;
     private Notes notes;
@@ -52,14 +47,13 @@ public class NotesDoneListAdapter extends BaseAdapter {
     @Override
     public void onClick(View v) {
 
-      viewHolder.checkBox.setChecked(false);
+      viewHolder.checkBox.setChecked(false, false);
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onChange(AnimCheckBox view, boolean checked) {
 
-      if(!isChecked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
+      if(!checked) {
         notes.setChecked(false);
         NotesTodoListAdapter.notesList.add(notes);
         Collections.sort(NotesTodoListAdapter.notesList, NOTES_COMPARATOR);
@@ -128,7 +122,6 @@ public class NotesDoneListAdapter extends BaseAdapter {
       viewHolder = new ViewHolder();
       viewHolder.notesItem = convertView.findViewById(R.id.notes_item);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
-      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.string = convertView.findViewById(R.id.string);
 
       convertView.setTag(viewHolder);
@@ -146,8 +139,7 @@ public class NotesDoneListAdapter extends BaseAdapter {
     viewHolder.checkBox.setOnCheckedChangeListener(listener);
 
     //チェック状態の初期化
-    viewHolder.checkBox.setChecked(true);
-    viewHolder.checkBox.jumpDrawablesToCurrentState();
+    viewHolder.checkBox.setChecked(true, false);
 
     //各種表示処理
     viewHolder.string.setText(notes.getString());

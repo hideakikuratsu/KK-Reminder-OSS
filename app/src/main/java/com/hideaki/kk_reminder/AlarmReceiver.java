@@ -90,7 +90,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_MAX)
         .setLights(Color.GREEN, 2000, 1000)
-        .setVibrate(new long[]{0, 500});
+        .setVibrate(new long[]{0, 500})
+        .setColor(Color.parseColor("#FF9b0000"))
+        .setColorized(true);
 
     //通知音の設定
     String uriString = item.getSoundUri();
@@ -190,9 +192,6 @@ public class AlarmReceiver extends BroadcastReceiver {
       }
       else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, reset_schedule, recursive_sender);
-      }
-      else {
-        alarmManager.set(AlarmManager.RTC_WAKEUP, reset_schedule, recursive_sender);
       }
 
       updateDB(item, MyDatabaseHelper.TODO_TABLE);

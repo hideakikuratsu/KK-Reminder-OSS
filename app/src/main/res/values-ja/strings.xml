@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_value">3.2.1.2</string>
+    <string name="version_value">3.3.1.2</string>
     <string name="app_id">******************</string>
     <string name="ad_unit_id">******************</string>
     <string name="app_name">KK リマインダー</string>
@@ -298,26 +298,13 @@
     <string name="task_not_pushed_yet">タスクがありません</string>
     <string name="list_not_pushed_yet">リストがありません</string>
     <string name="notes_not_pushed_yet">メモがありません</string>
-    <string name="upgrade">アップグレード</string>
-    <string name="premium_account_promotion">プレミアムアカウント限定の機能</string>
-    <string name="upgrade_to_premium_account">プレミアムアカウントにアップグレード</string>
-    <string name="premium_upgrade_message">プレミアムアカウントにアップグレードすると、以下のような機能を利用することができます</string>
+    <string name="ads">広告</string>
+    <string name="disable_ads">広告を消す</string>
+    <string name="disable_ads_promotion">広告を消すには、プレミアムアカウントにアップグレードする必要があります。\n広告を消去しますか？</string>
     <string name="fail_to_setup_billing">ビリングサービスのセットアップに失敗しました</string>
     <string name="succeed_to_upgrade">プレミアムアカウントにアップグレードしました</string>
     <string name="cancel_to_buy">購入がキャンセルされました</string>
     <string name="error_occurred">エラーが発生しました。</string>
-    <string name="feature_one">1. 広告の非表示</string>
-    <string name="feature_two">2. 通知音の変更</string>
-    <string name="feature_three">3. アプリのテーマカラーの変更</string>
-    <string name="feature_four">4. Googleドライブを利用したデータのバックアップと復元</string>
-
-    <string-array name="feature_list">
-        <item>@string/premium_upgrade_message</item>
-        <item>@string/feature_one</item>
-        <item>@string/feature_two</item>
-        <item>@string/feature_three</item>
-        <item>@string/feature_four</item>
-    </string-array>
 
     <string name="red">赤色</string>
     <string name="pink">ピンク色</string>

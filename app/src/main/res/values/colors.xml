@@ -2220,7 +2220,7 @@
 
     <!--amberColors-->
 
-    <color name="amber0PrimaryColor">#fff8e1</color>
+    <color name="amber0PrimaryColor">#FFF8E1</color>
     <color name="amber0PrimaryLightColor">#ffffff</color>
     <color name="amber0PrimaryDarkColor">#ccc5af</color>
     <color name="amber0PrimaryTextColor">#000000</color>
@@ -2864,7 +2864,7 @@
         <item>@color/grey0PrimaryTextColor</item>
     </array>
 
-    <color name="grey1PrimaryColor">#f5f5f5</color>
+    <color name="grey1PrimaryColor">#F5F5F5</color>
     <color name="grey1PrimaryLightColor">#ffffff</color>
     <color name="grey1PrimaryDarkColor">#c2c2c2</color>
     <color name="grey1PrimaryTextColor">#000000</color>
@@ -2876,7 +2876,7 @@
         <item>@color/grey1PrimaryTextColor</item>
     </array>
 
-    <color name="grey2PrimaryColor">#eeeeee</color>
+    <color name="grey2PrimaryColor">#EEEEEE</color>
     <color name="grey2PrimaryLightColor">#ffffff</color>
     <color name="grey2PrimaryDarkColor">#bcbcbc</color>
     <color name="grey2PrimaryTextColor">#000000</color>
@@ -2888,7 +2888,7 @@
         <item>@color/grey2PrimaryTextColor</item>
     </array>
 
-    <color name="grey3PrimaryColor">#e0e0e0</color>
+    <color name="grey3PrimaryColor">#E0E0E0</color>
     <color name="grey3PrimaryLightColor">#ffffff</color>
     <color name="grey3PrimaryDarkColor">#aeaeae</color>
     <color name="grey3PrimaryTextColor">#000000</color>

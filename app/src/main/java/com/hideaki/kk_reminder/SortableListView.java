@@ -166,7 +166,7 @@ public class SortableListView extends ListView {
     drawable.setCornerRadius(8.0f);
     dragImageView.setBackground(drawable);
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      dragImageView.setElevation(10f);
+      dragImageView.setElevation(10.0f);
     }
     dragImageView.setImageBitmap(dragBitmap);
     windowManager.addView(dragImageView, layoutParams);

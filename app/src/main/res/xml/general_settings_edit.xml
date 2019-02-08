@@ -15,12 +15,12 @@
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
-        android:key="upgrade_category"
-        android:title="@string/upgrade">
+        android:key="ads_category"
+        android:title="@string/ads">
 
         <PreferenceScreen
-            android:key="upgrade"
-            android:title="@string/upgrade_to_premium_account"/>
+            android:key="disable_ads"
+            android:title="@string/disable_ads"/>
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory

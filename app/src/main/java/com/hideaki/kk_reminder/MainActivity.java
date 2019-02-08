@@ -1,9 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.app.AlarmManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -26,6 +23,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.transition.Fade;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -77,6 +78,7 @@ import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
+import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.PRODUCT_ID_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   private Timer timer;
   private Handler handler = new Handler();
+  private Runnable runnable;
   private DBAccessor accessor = null;
   int snooze_default_hour;
   int snooze_default_minute;
@@ -251,10 +254,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
       checkNotNull(notificationManager);
-      NotificationChannel notificationChannel = new NotificationChannel("kk_reminder_01",
+      NotificationChannel channel = new NotificationChannel("kk_reminder_01",
           getString(R.string.notification_channel_name), NotificationManager.IMPORTANCE_HIGH);
+      channel.setShowBadge(true);
 
-      notificationManager.createNotificationChannel(notificationChannel);
+      notificationManager.createNotificationChannel(channel);
     }
 
     //画面がフォアグラウンドの状態におけるDefaultManuallySnoozeReceiverからのインテントを待ち受ける
@@ -287,9 +291,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           }
           else {
             try_count++;
-            if(try_count == 3) {
-              Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
-            }
+//            if(try_count == 3) {
+//              Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
+//            }
             if(try_count < 3) billingClient.startConnection(this);
           }
 //          Toast.makeText(MainActivity.this, "セットアップ完了", Toast.LENGTH_LONG).show();
@@ -323,9 +327,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void onBillingServiceDisconnected() {
 
           try_count++;
-          if(try_count == 3) {
-            Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
-          }
+//          if(try_count == 3) {
+//            Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
+//          }
           if(try_count < 3) billingClient.startConnection(this);
         }
       });
@@ -372,12 +376,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   private void createPromotionDialog() {
 
-    String[] items = getResources().getStringArray(R.array.feature_list);
-
     promotionDialog = new AlertDialog.Builder(this)
-        .setTitle(R.string.upgrade_to_premium_account)
-        .setItems(items, null)
-        .setPositiveButton(R.string.upgrade, new DialogInterface.OnClickListener() {
+        .setTitle(R.string.disable_ads)
+        .setMessage(R.string.disable_ads_promotion)
+        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
 
@@ -555,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     super.onStop();
 
     //バックアップアカウントにログインしている場合はここでログアウトする
-    if(is_premium && generalSettingsFragment != null) {
+    if(generalSettingsFragment != null) {
       if(generalSettingsFragment.backupAndRestoreFragment != null) {
         generalSettingsFragment.backupAndRestoreFragment.signOut();
       }
@@ -866,6 +868,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       expandableListAdapter.notifyDataSetChanged();
       MyExpandableListAdapter.block_notify_change = false;
       MyExpandableListAdapter.lock_block_notify_change = false;
+
+      if(timer != null) {
+        if(runnable != null) handler.removeCallbacks(runnable);
+        else {
+          runnable = new Runnable() {
+            @Override
+            public void run() {
+
+              updateListTask(null, -1, false);
+              runnable = null;
+            }
+          };
+        }
+        handler.postDelayed(runnable, 2 * MINUTE);
+      }
     }
 
     if(snackBarItem != null) {
@@ -936,7 +953,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void run() {
 
-          if(!MyExpandableListAdapter.block_notify_change) {
+          int second = Calendar.getInstance().get(Calendar.SECOND);
+          if(!MyExpandableListAdapter.block_notify_change && second == 0) {
             updateListTask(null, -1, false);
           }
         }
@@ -1334,9 +1352,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
       }
-      else {
-        alarmManager.set(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-      }
     }
   }
 
@@ -1581,6 +1596,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     FragmentManager manager = getSupportFragmentManager();
     Fragment rmFragment = manager.findFragmentById(R.id.content);
+    Fade fade = new Fade();
+    addFragment1.setEnterTransition(fade);
 
     if(rmFragment == null) {
       commitFragment(null, null, add1, addFragment1, add2, addFragment2, back_stack);
@@ -1594,6 +1611,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Fragment mainFragment = manager.findFragmentByTag(mainTAG);
         if(mainFragment != null && mainFragment.isVisible()) {
           is_found_match_fragment = true;
+          mainFragment.setExitTransition(fade);
           commitFragment(mainFragment, rmFragment, add1, addFragment1, add2, addFragment2, back_stack);
           break;
         }
@@ -1605,10 +1623,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     else if(rmFragment instanceof ExpandableListViewFragment || rmFragment instanceof ListViewFragment
         || rmFragment instanceof ManageListViewFragment || rmFragment instanceof DoneListViewFragment) {
 
+      rmFragment.setExitTransition(fade);
       commitFragment(rmFragment, manager.findFragmentByTag(ActionBarFragment.TAG),
           add1, addFragment1, add2, addFragment2, back_stack);
     }
     else {
+      rmFragment.setExitTransition(fade);
       commitFragment(rmFragment, null, add1, addFragment1, add2, addFragment2, back_stack);
     }
   }

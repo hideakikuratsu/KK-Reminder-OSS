@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 
 import com.google.android.gms.ads.AdView;
 
@@ -76,16 +76,6 @@ public class ColorPickerListViewFragment extends Fragment {
         ColorPickerListAdapter.checked_position = activity.generalSettings.getTheme().getColorGroup();
       }
 
-      activity.colorPickerListAdapter.colorStateList = new ColorStateList(
-          new int[][]{
-              new int[]{-android.R.attr.state_checked}, // unchecked
-              new int[]{android.R.attr.state_checked} // checked
-          },
-          new int[]{
-              ContextCompat.getColor(activity, R.color.icon_gray),
-              activity.accent_color
-          }
-      );
     }
     else {
       FragmentManager manager = getFragmentManager();
@@ -133,8 +123,33 @@ public class ColorPickerListViewFragment extends Fragment {
       }
     });
 
+    ColorPickerListAdapter.handle_count = 0;
+    ColorPickerListAdapter.is_in_transition = true;
     activity.listView = view.findViewById(R.id.listView);
     activity.listView.setAdapter(activity.colorPickerListAdapter);
+    activity.listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        switch(scrollState) {
+
+          case SCROLL_STATE_IDLE: {
+
+            ColorPickerListAdapter.is_scrolling = false;
+            break;
+          }
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL: {
+
+            ColorPickerListAdapter.is_scrolling = true;
+            break;
+          }
+        }
+      }
+
+      @Override
+      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+    });
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);

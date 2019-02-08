@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -112,6 +113,8 @@ public class ManageListViewFragment extends Fragment {
       }
     });
 
+    ManageListAdapter.handle_count = 0;
+    ManageListAdapter.is_in_transition = true;
     activity.listView = view.findViewById(R.id.listView);
     oldListView = activity.listView;
     LinearLayout linearLayout = new LinearLayout(activity);
@@ -139,11 +142,32 @@ public class ManageListViewFragment extends Fragment {
     });
     activity.listView.setAdapter(activity.manageListAdapter);
     activity.listView.setTextFilterEnabled(true);
+    activity.listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        switch(scrollState) {
+
+          case SCROLL_STATE_IDLE: {
+
+            ManageListAdapter.is_scrolling = false;
+            break;
+          }
+          case SCROLL_STATE_FLING:
+          case SCROLL_STATE_TOUCH_SCROLL: {
+
+            ManageListAdapter.is_scrolling = true;
+            break;
+          }
+        }
+      }
+
+      @Override
+      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+    });
 
     AdView adView = view.findViewById(R.id.adView);
-    if(activity.is_premium) {
-      adView.setVisibility(View.GONE);
-    }
+    if(activity.is_premium) adView.setVisibility(View.GONE);
     else {
       AdRequest adRequest = new AdRequest.Builder().build();
       adView.loadAd(adRequest);

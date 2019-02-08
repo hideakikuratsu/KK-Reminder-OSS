@@ -2,11 +2,10 @@ package com.hideaki.kk_reminder;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
@@ -17,9 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -32,8 +31,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
 public class DoneListAdapter extends BaseAdapter implements Filterable {
@@ -45,7 +44,10 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
   private static boolean manually_checked;
   private List<Item> filteredItem;
   static int order;
-  ColorStateList colorStateList;
+  private final Handler handler = new Handler();
+  static boolean is_scrolling;
+  static boolean is_in_transition;
+  static int handle_count;
 
   DoneListAdapter(MainActivity activity) {
 
@@ -60,11 +62,11 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     TextView time;
     TextView detail;
     TextView repeat;
-    CheckBox checkBox;
+    AnimCheckBox checkBox;
     ImageView tagPallet;
   }
 
-  private class MyOnClickListener implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
+  private class MyOnClickListener implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener,
       View.OnLongClickListener, ActionMode.Callback {
 
     private int position;
@@ -162,17 +164,15 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onChange(AnimCheckBox view, boolean checked) {
 
-      if(isChecked && actionMode != null && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
+      if(checked && actionMode != null && manually_checked) {
         item.setSelected(true);
         notifyDataSetChanged();
         checked_item_num++;
         actionMode.setTitle(Integer.toString(checked_item_num));
       }
       else if(actionMode != null && manually_checked) {
-        viewHolder.checkBox.jumpDrawablesToCurrentState();
         item.setSelected(false);
         notifyDataSetChanged();
         checked_item_num--;
@@ -513,7 +513,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
       }
       viewHolder.detail = convertView.findViewById(R.id.detail);
       viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
-      CompoundButtonCompat.setButtonTintList(viewHolder.checkBox, colorStateList);
       viewHolder.tagPallet = convertView.findViewById(R.id.tag_pallet);
 
       convertView.setTag(viewHolder);
@@ -552,12 +551,10 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     if(viewHolder.checkBox.isChecked() && !item.isSelected()) {
       manually_checked = false;
       viewHolder.checkBox.setChecked(false);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     else if(!viewHolder.checkBox.isChecked() && item.isSelected()) {
       manually_checked = false;
       viewHolder.checkBox.setChecked(true);
-      viewHolder.checkBox.jumpDrawablesToCurrentState();
     }
     manually_checked = true;
 
@@ -595,6 +592,22 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     }
     else if(order == 1) {
       viewHolder.order_icon.setVisibility(View.GONE);
+    }
+
+    //CardViewが横から流れてくるアニメーション
+    if(is_in_transition || is_scrolling) {
+      Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
+      convertView.startAnimation(animation);
+      if(is_in_transition && handle_count == 0) {
+        handle_count++;
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+
+            is_in_transition = false;
+          }
+        }, 100);
+      }
     }
 
     return convertView;
