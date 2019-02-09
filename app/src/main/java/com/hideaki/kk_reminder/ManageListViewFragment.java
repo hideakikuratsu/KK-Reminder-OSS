@@ -113,8 +113,6 @@ public class ManageListViewFragment extends Fragment {
       }
     });
 
-    ManageListAdapter.handle_count = 0;
-    ManageListAdapter.is_in_transition = true;
     activity.listView = view.findViewById(R.id.listView);
     oldListView = activity.listView;
     LinearLayout linearLayout = new LinearLayout(activity);

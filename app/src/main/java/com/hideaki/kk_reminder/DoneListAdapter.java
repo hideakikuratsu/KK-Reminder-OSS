@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
@@ -44,10 +43,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
   private static boolean manually_checked;
   private List<Item> filteredItem;
   static int order;
-  private final Handler handler = new Handler();
   static boolean is_scrolling;
-  static boolean is_in_transition;
-  static int handle_count;
 
   DoneListAdapter(MainActivity activity) {
 
@@ -595,19 +591,9 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     }
 
     //CardViewが横から流れてくるアニメーション
-    if(is_in_transition || is_scrolling) {
+    if(is_scrolling) {
       Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
       convertView.startAnimation(animation);
-      if(is_in_transition && handle_count == 0) {
-        handle_count++;
-        handler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-
-            is_in_transition = false;
-          }
-        }, 100);
-      }
     }
 
     return convertView;

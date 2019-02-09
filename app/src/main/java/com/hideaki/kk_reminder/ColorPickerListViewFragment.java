@@ -123,8 +123,6 @@ public class ColorPickerListViewFragment extends Fragment {
       }
     });
 
-    ColorPickerListAdapter.handle_count = 0;
-    ColorPickerListAdapter.is_in_transition = true;
     activity.listView = view.findViewById(R.id.listView);
     activity.listView.setAdapter(activity.colorPickerListAdapter);
     activity.listView.setOnScrollListener(new AbsListView.OnScrollListener() {

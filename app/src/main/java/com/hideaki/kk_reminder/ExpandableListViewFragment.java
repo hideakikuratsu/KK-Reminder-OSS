@@ -126,8 +126,6 @@ public class ExpandableListViewFragment extends Fragment {
       }
     });
 
-    MyExpandableListAdapter.handle_count = 0;
-    MyExpandableListAdapter.is_in_transition = true;
     MyExpandableListAdapter.has_panel = 0;
     MyExpandableListAdapter.checked_item_num = 0;
     MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);

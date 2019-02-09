@@ -78,8 +78,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private int collapse_group;
   private boolean is_manual_expand_or_collapse = true;
   static boolean is_scrolling;
-  static boolean is_in_transition;
-  static int handle_count;
 
   MyExpandableListAdapter(List<List<Item>> children, MainActivity activity) {
 
@@ -2021,19 +2019,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     manually_checked = true;
 
     //CardViewが横から流れてくるアニメーション
-    if(is_in_transition || is_scrolling) {
+    if(is_scrolling) {
       Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
       convertView.startAnimation(animation);
-      if(is_in_transition && handle_count == 0) {
-        handle_count++;
-        handler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-
-            is_in_transition = false;
-          }
-        }, 100);
-      }
     }
 
     return convertView;

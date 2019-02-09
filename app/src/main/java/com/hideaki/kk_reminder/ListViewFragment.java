@@ -134,8 +134,6 @@ public class ListViewFragment extends Fragment {
       }
     });
 
-    MyListAdapter.handle_count = 0;
-    MyListAdapter.is_in_transition = true;
     MyListAdapter.checked_item_num = 0;
     MyListAdapter.has_panel = 0;
     MyListAdapter.is_sorting = false;

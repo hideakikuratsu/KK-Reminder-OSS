@@ -146,8 +146,6 @@ public class DoneListViewFragment extends Fragment {
       }
     });
 
-    DoneListAdapter.handle_count = 0;
-    DoneListAdapter.is_in_transition = true;
     List<Item> itemList = activity.getDoneItem();
     int size = itemList.size();
     if(size > 100) {
