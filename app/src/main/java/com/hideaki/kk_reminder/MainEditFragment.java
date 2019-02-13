@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.transition.Fade;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -760,6 +761,9 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
   private void transitionFragment(PreferenceFragmentCompat next) {
 
+    Fade fade = new Fade();
+    this.setExitTransition(fade);
+    next.setEnterTransition(fade);
     FragmentManager manager = getFragmentManager();
     checkNotNull(manager);
     manager

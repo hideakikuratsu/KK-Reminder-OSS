@@ -585,7 +585,7 @@ public class ActionBarFragment extends Fragment {
 
     EditText searchTextView = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
     //カーソルの色
-    setCursorDrawableColor(searchTextView, search_color);
+    setCursorDrawableColor(searchTextView);
     //検索中文字の色
     searchTextView.setTextColor(activity.menu_item_color);
     //閉じるボタンの色

@@ -121,7 +121,7 @@ public class NotesEditModeFragment extends Fragment {
     actionBar.setTitle(R.string.notes);
 
     memo = view.findViewById(R.id.notes);
-    setCursorDrawableColor(memo, activity.accent_color);
+    setCursorDrawableColor(memo);
     memo.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
     memo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
       @Override

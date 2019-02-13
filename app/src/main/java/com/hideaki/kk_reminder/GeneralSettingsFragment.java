@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.transition.Fade;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -157,6 +158,9 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
 
   private void transitionFragment(PreferenceFragmentCompat next) {
 
+    Fade fade = new Fade();
+    this.setExitTransition(fade);
+    next.setEnterTransition(fade);
     FragmentManager manager = getFragmentManager();
     checkNotNull(manager);
     manager

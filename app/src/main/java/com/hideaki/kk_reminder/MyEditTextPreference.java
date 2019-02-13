@@ -40,7 +40,7 @@ public class MyEditTextPreference extends EditTextPreference {
 
     EditText editText = getEditText();
     if(editText != null) {
-      setCursorDrawableColor(editText, activity.accent_color);
+      setCursorDrawableColor(editText);
       editText.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
       editText.setHint(R.string.detail_hint);
       editText.requestFocus();

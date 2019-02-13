@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -33,9 +35,8 @@ public class NotifyIntervalTimePickerDialogFragment extends DialogFragment {
     checkNotNull(activity);
 
     time = view.findViewById(R.id.time);
-    setCursorDrawableColor(time, activity.accent_color);
+    setCursorDrawableColor(time);
     time.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
-    time.requestFocus();
     time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrg_time()));
     time.setSelection(time.getText().length());
 
@@ -164,6 +165,20 @@ public class NotifyIntervalTimePickerDialogFragment extends DialogFragment {
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
       }
     });
+
+    //ダイアログ表示時にソフトキーボードを自動で表示
+    time.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+        if(hasFocus) {
+          Window dialogWindow = dialog.getWindow();
+          checkNotNull(dialogWindow);
+
+          dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+      }
+    });
+    time.requestFocus();
 
     return dialog;
   }

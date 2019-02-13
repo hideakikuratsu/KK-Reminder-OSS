@@ -10,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -32,9 +34,8 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
     checkNotNull(activity);
 
     count = view.findViewById(R.id.count);
-    setCursorDrawableColor(count, activity.accent_color);
+    setCursorDrawableColor(count);
     count.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
-    count.requestFocus();
     count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrg_count()));
     count.setSelection(count.getText().length());
 
@@ -132,6 +133,20 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
       }
     });
+
+    //ダイアログ表示時にソフトキーボードを自動で表示
+    count.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+        if(hasFocus) {
+          Window dialogWindow = dialog.getWindow();
+          checkNotNull(dialogWindow);
+
+          dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+      }
+    });
+    count.requestFocus();
 
     return dialog;
   }

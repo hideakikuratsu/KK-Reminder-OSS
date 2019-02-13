@@ -126,7 +126,6 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
         notifyDataSetChanged();
       }
       else if(position == checked_position && manually_checked) {
-        System.out.println("hello");
         is_first = false;
         notifyDataSetChanged();
       }
@@ -186,12 +185,10 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
     }
     else {
       manually_checked = false;
-      System.out.println("is_first: " + is_first);
       if(is_first) {
         viewHolder.checkBox.setChecked(true, false);
       }
       else {
-        System.out.println("hi");
         viewHolder.checkBox.setChecked(true);
       }
     }

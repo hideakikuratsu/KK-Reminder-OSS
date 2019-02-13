@@ -254,7 +254,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     LinearLayout linearLayout = new LinearLayout(activity);
     linearLayout.setOrientation(LinearLayout.VERTICAL);
     final EditText editText = new EditText(activity);
-    setCursorDrawableColor(editText, activity.accent_color);
+    setCursorDrawableColor(editText);
     editText.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
     editText.setHint(R.string.tag_hint);
     editText.setLayoutParams(new LinearLayout.LayoutParams(
@@ -318,5 +318,6 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
         }
       }
     });
+    editText.requestFocus();
   }
 }

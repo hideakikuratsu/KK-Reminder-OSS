@@ -589,6 +589,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     Fragment mainFragment = getSupportFragmentManager().findFragmentByTag(ExpandableListViewFragment.TAG);
     if(mainFragment != null && mainFragment.isVisible()) {
+      MyExpandableListAdapter.lock_block_notify_change = true;
+      MyExpandableListAdapter.block_notify_change = true;
+      updateListTask(null, -1, true);
       setUpdateListTimerTask(true);
     }
   }
@@ -721,7 +724,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       LinearLayout linearLayout = new LinearLayout(MainActivity.this);
       linearLayout.setOrientation(LinearLayout.VERTICAL);
       final EditText editText = new EditText(MainActivity.this);
-      setCursorDrawableColor(editText, accent_color);
+      setCursorDrawableColor(editText);
       editText.getBackground().mutate().setColorFilter(accent_color, PorterDuff.Mode.SRC_IN);
       editText.setHint(R.string.list_hint);
       editText.setLayoutParams(new LinearLayout.LayoutParams(
@@ -816,6 +819,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           }
         }
       });
+      editText.requestFocus();
     }
     else if(menuItem.getItemId() == R.id.share) {
       String title = getString(R.string.app_promotion);
@@ -1621,19 +1625,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private void commitFragment(Fragment remove1, Fragment remove2, String add1, Fragment addFragment1,
       String add2, Fragment addFragment2, boolean back_stack) {
 
+    Fade fade = new Fade();
     FragmentManager manager = getSupportFragmentManager();
 
     FragmentTransaction transaction = manager.beginTransaction();
     if(remove1 != null) {
+      remove1.setExitTransition(fade);
       transaction.remove(remove1);
     }
     if(remove2 != null) {
+      remove2.setExitTransition(fade);
       transaction.remove(remove2);
     }
     if(add1 != null) {
+      addFragment1.setEnterTransition(fade);
       transaction.add(R.id.content, addFragment1, add1);
     }
     if(add2 != null) {
+      addFragment2.setEnterTransition(fade);
       transaction.add(R.id.content, addFragment2, add2);
     }
     if(back_stack) {
@@ -1646,8 +1655,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     FragmentManager manager = getSupportFragmentManager();
     Fragment rmFragment = manager.findFragmentById(R.id.content);
-    Fade fade = new Fade();
-    addFragment1.setEnterTransition(fade);
 
     if(rmFragment == null) {
       commitFragment(null, null, add1, addFragment1, add2, addFragment2, back_stack);
@@ -1661,7 +1668,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Fragment mainFragment = manager.findFragmentByTag(mainTAG);
         if(mainFragment != null && mainFragment.isVisible()) {
           is_found_match_fragment = true;
-          mainFragment.setExitTransition(fade);
           commitFragment(mainFragment, rmFragment, add1, addFragment1, add2, addFragment2, back_stack);
           break;
         }
@@ -1673,12 +1679,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     else if(rmFragment instanceof ExpandableListViewFragment || rmFragment instanceof ListViewFragment
         || rmFragment instanceof ManageListViewFragment || rmFragment instanceof DoneListViewFragment) {
 
-      rmFragment.setExitTransition(fade);
       commitFragment(rmFragment, manager.findFragmentByTag(ActionBarFragment.TAG),
           add1, addFragment1, add2, addFragment2, back_stack);
     }
     else {
-      rmFragment.setExitTransition(fade);
       commitFragment(rmFragment, null, add1, addFragment1, add2, addFragment2, back_stack);
     }
   }

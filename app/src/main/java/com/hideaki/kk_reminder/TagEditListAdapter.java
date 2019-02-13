@@ -87,7 +87,7 @@ public class TagEditListAdapter extends BaseAdapter {
             LinearLayout linearLayout = new LinearLayout(activity);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             final EditText editText = new EditText(activity);
-            setCursorDrawableColor(editText, activity.accent_color);
+            setCursorDrawableColor(editText);
             editText.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
             editText.setText(tag.getName());
             editText.setHint(R.string.tag_hint);
@@ -144,6 +144,7 @@ public class TagEditListAdapter extends BaseAdapter {
                 }
               }
             });
+            editText.requestFocus();
 
             break;
           }
