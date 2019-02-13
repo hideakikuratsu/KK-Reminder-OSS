@@ -88,6 +88,7 @@ import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
+import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PurchasesUpdatedListener {
 
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       expandableListAdapter.notifyDataSetChanged();
     }
   };
+  int dialog_style_id;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +199,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
       setTheme(style_id);
     }
+
+    theme.setColor_primary(false);
+    if(theme.getColor() != 0) {
+      Resources res = getResources();
+      TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.colorDialogStylesArray);
+
+      int dialog_styles_array_id = typedArraysOfArray.getResourceId(theme.getColorGroup(), -1);
+      checkArgument(dialog_styles_array_id != -1);
+      TypedArray typedArray = res.obtainTypedArray(dialog_styles_array_id);
+
+      dialog_style_id = typedArray.getResourceId(theme.getColorChild(), -1);
+      checkArgument(dialog_style_id != -1);
+
+      typedArray.recycle();
+      typedArraysOfArray.recycle();
+    }
+    else dialog_style_id = R.style.BaseDialog_Base;
+    theme.setColor_primary(true);
+
     setContentView(R.layout.activity_main);
 
     //ToolbarをActionBarに互換を持たせて設定
@@ -392,6 +413,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           }
         })
         .create();
+
+    promotionDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialogInterface) {
+
+        promotionDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accent_color);
+        promotionDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accent_color);
+      }
+    });
   }
 
   private void onBuyButtonClicked() {
@@ -450,17 +480,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         items[i + 1] = generalSettings.getNonScheduledLists().get(i).getTitle();
       }
 
-      new AlertDialog.Builder(this)
+      final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
+      final AlertDialog dialog = new AlertDialog.Builder(this)
           .setTitle(R.string.action_send_booted_dialog_title)
-          .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+          .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-              which_list = which;
-            }
+            public void onClick(DialogInterface dialog, int which) {}
           })
           .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+              which_list = SingleChoiceItemsAdapter.checked_position;
 
               setIntGeneralInSharedPreferences(MENU_POSITION, which_list);
               setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
@@ -487,7 +518,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
               is_in_on_create = false;
             }
           })
-          .show();
+          .create();
+
+      dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        @Override
+        public void onShow(DialogInterface dialogInterface) {
+
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accent_color);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accent_color);
+        }
+      });
+
+      dialog.show();
     }
   }
 
@@ -679,6 +721,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       LinearLayout linearLayout = new LinearLayout(MainActivity.this);
       linearLayout.setOrientation(LinearLayout.VERTICAL);
       final EditText editText = new EditText(MainActivity.this);
+      setCursorDrawableColor(editText, accent_color);
+      editText.getBackground().mutate().setColorFilter(accent_color, PorterDuff.Mode.SRC_IN);
       editText.setHint(R.string.list_hint);
       editText.setLayoutParams(new LinearLayout.LayoutParams(
           LinearLayout.LayoutParams.MATCH_PARENT,
@@ -747,7 +791,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(DialogInterface dialog, int which) {
             }
           })
-          .show();
+          .create();
+
+      dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        @Override
+        public void onShow(DialogInterface dialogInterface) {
+
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accent_color);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accent_color);
+        }
+      });
+
+      dialog.show();
 
       //ダイアログ表示時にソフトキーボードを自動で表示
       editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -886,7 +941,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     if(snackBarItem != null) {
-      Snackbar.make(findViewById(R.id.content), getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
+      View parentView = findViewById(android.R.id.content);
+      checkNotNull(parentView);
+      Snackbar.make(parentView, getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
           .addCallback(new Snackbar.Callback() {
             @Override
             public void onShown(Snackbar sb) {
@@ -1345,13 +1402,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       checkNotNull(alarmManager);
 
-      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        alarmManager.setAlarmClock(
-            new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
-      }
-      else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-      }
+      alarmManager.setAlarmClock(
+          new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
     }
   }
 
@@ -1413,12 +1465,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //ツールバーとステータスバーの色を指定
     toolbar.setTitleTextColor(menu_item_color);
     toolbar.setBackgroundColor(menu_background_color);
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      Window window = getWindow();
-      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-      window.setStatusBarColor(status_bar_color);
-    }
+    Window window = getWindow();
+    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+    window.setStatusBarColor(status_bar_color);
   }
 
   private void setDefaultColor() {

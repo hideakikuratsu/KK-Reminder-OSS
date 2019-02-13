@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -165,9 +164,7 @@ public class SortableListView extends ListView {
     drawable.setStroke(3, activity.accent_color);
     drawable.setCornerRadius(8.0f);
     dragImageView.setBackground(drawable);
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      dragImageView.setElevation(10.0f);
-    }
+    dragImageView.setElevation(10.0f);
     dragImageView.setImageBitmap(dragBitmap);
     windowManager.addView(dragImageView, layoutParams);
 

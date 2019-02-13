@@ -1,10 +1,7 @@
 package com.hideaki.kk_reminder;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -26,7 +23,8 @@ import java.util.Locale;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
-public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat
+    implements Preference.OnPreferenceClickListener, MyCheckBoxPreference.MyCheckBoxPreferenceCheckedChangeListener {
 
   static final String[] DAY_OF_WEEK_LIST_JA = {"月", "火", "水", "木", "金", "土", "日"};
   static final String[] DAY_OF_WEEK_LIST_EN = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
@@ -48,28 +46,10 @@ public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat 
     return new DayRepeatCustomPickerFragment();
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
   }
 
@@ -84,10 +64,12 @@ public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat 
     picker.setOnPreferenceClickListener(this);
     week = findPreference("week");
     days_of_month = (CheckBoxPreference)findPreference("days_of_month");
+    ((MyCheckBoxPreference)days_of_month).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     days_of_month.setChecked(MainEditFragment.dayRepeat.isDays_of_month_setted());
     days_of_month.setOnPreferenceClickListener(this);
     days_of_month_picker = findPreference("days_of_month_picker");
     on_the_month = (CheckBoxPreference)findPreference("on_the_month");
+    ((MyCheckBoxPreference)on_the_month).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     on_the_month.setChecked(!MainEditFragment.dayRepeat.isDays_of_month_setted());
     on_the_month.setOnPreferenceClickListener(this);
     onTheMonthPicker = (PreferenceScreen)findPreference("on_the_month_picker");
@@ -531,6 +513,22 @@ public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat 
 
         return true;
       }
+      case "on_the_month_picker": {
+
+        DayRepeatCustomOnTheMonthPickerDialogFragment dialog = new DayRepeatCustomOnTheMonthPickerDialogFragment();
+        dialog.show(activity.getSupportFragmentManager(), "day_repeat_custom_on_the_month_picker");
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  @Override
+  public void onCheckedChange(String key, boolean checked) {
+
+    switch(key) {
       case "days_of_month": {
         if(days_of_month.isChecked()) {
           MainEditFragment.dayRepeat.setDays_of_month_setted(true);
@@ -540,7 +538,7 @@ public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat 
         }
         else days_of_month.setChecked(true);
 
-        return true;
+        break;
       }
       case "on_the_month": {
         if(on_the_month.isChecked()) {
@@ -591,17 +589,8 @@ public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat 
         }
         else on_the_month.setChecked(true);
 
-        return true;
-      }
-      case "on_the_month_picker": {
-
-        DayRepeatCustomOnTheMonthPickerDialogFragment dialog = new DayRepeatCustomOnTheMonthPickerDialogFragment();
-        dialog.show(activity.getSupportFragmentManager(), "day_repeat_custom_on_the_month_picker");
-
-        return true;
+        break;
       }
     }
-
-    return false;
   }
 }

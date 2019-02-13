@@ -29,7 +29,7 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
     View view = View.inflate(getContext(), R.layout.repeat_custom_picker, null);
-    MainActivity activity = (MainActivity)getActivity();
+    final MainActivity activity = (MainActivity)getActivity();
     checkNotNull(activity);
 
     //intervalの実装
@@ -50,7 +50,7 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
     }
     else scale.setDisplayedValues(SCALE_LIST_EN);
 
-    return new AlertDialog.Builder(activity)
+    final AlertDialog dialog = new AlertDialog.Builder(activity)
         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
@@ -177,9 +177,21 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
         })
         .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
           @Override
-          public void onClick(DialogInterface dialog, int which) {}
+          public void onClick(DialogInterface dialog, int which) {
+          }
         })
         .setView(view)
         .create();
+
+    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialogInterface) {
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+      }
+    });
+
+    return dialog;
   }
 }

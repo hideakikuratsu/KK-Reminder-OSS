@@ -3,7 +3,6 @@ package com.hideaki.kk_reminder;
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +35,8 @@ public class ColorPickerListAdapter extends BaseAdapter {
   Tag orgTag;
   static boolean is_general_settings;
   static boolean from_list_tag_edit;
-  private final Handler handler = new Handler();
   static boolean is_scrolling;
+  static boolean is_first;
 
   ColorPickerListAdapter(MainActivity activity) {
 
@@ -81,6 +80,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
 
       if(checked && manually_checked) {
 
+        is_first = false;
         checked_position = position;
 
         //チェックしたときにダイアログに表示する色を配列で指定
@@ -233,6 +233,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
             .show();
       }
       else if(position == checked_position && manually_checked) {
+        is_first = false;
         if(!is_general_settings) {
           if(order == 0 || order == 1 || order == 4 || from_list_tag_edit) {
             adapterTag.setPrimary_color(0);
@@ -310,11 +311,17 @@ public class ColorPickerListAdapter extends BaseAdapter {
     //チェック状態の初期化
     if(position != checked_position) {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(false, false);
+      if(is_first) {
+        viewHolder.checkBox.setChecked(false, false);
+      }
+      else viewHolder.checkBox.setChecked(false);
     }
     else {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(true, false);
+      if(is_first) {
+        viewHolder.checkBox.setChecked(true, false);
+      }
+      else viewHolder.checkBox.setChecked(true);
     }
     manually_checked = true;
 

@@ -3,7 +3,6 @@ package com.hideaki.kk_reminder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
@@ -112,18 +111,18 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
             items[1] = activity.getString(R.string.recycle_and_edit_task);
             items[2] = activity.getString(R.string.delete_task);
 
-            new AlertDialog.Builder(activity)
+            final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
+            final AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle(R.string.done_task_click_title)
-                .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
                   @Override
-                  public void onClick(DialogInterface dialog, int which) {
-
-                    which_list = which;
-                  }
+                  public void onClick(DialogInterface dialog, int which) {}
                 })
                 .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
+
+                    which_list = SingleChoiceItemsAdapter.checked_position;
 
                     itemList.remove(position);
                     notifyDataSetChanged();
@@ -148,7 +147,18 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                   public void onClick(DialogInterface dialog, int which) {
                   }
                 })
-                .show();
+                .create();
+
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+              @Override
+              public void onShow(DialogInterface dialogInterface) {
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+              }
+            });
+
+            dialog.show();
           }
           else if(viewHolder.checkBox.isChecked()) {
             viewHolder.checkBox.setChecked(false);
@@ -202,12 +212,10 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
       actionMode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
 
       //ActionMode時のみツールバーとステータスバーの色を設定
-      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        Window window = activity.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(activity, R.color.darker_grey));
-      }
+      Window window = activity.getWindow();
+      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+      window.setStatusBarColor(ContextCompat.getColor(activity, R.color.darker_grey));
 
       return true;
     }
@@ -236,7 +244,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
 
           String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
               itemListToMove.size(), itemListToMove.size()) + " (" + activity.getString(R.string.delete_dialog_message) + ")";
-          new AlertDialog.Builder(activity)
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_delete)
               .setMessage(message)
               .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -257,7 +265,18 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                 public void onClick(DialogInterface dialog, int which) {
                 }
               })
-              .show();
+              .create();
+
+          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+            }
+          });
+
+          dialog.show();
 
           return true;
         }
@@ -272,7 +291,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
 
           String message = activity.getResources().getQuantityString(R.plurals.cab_recycle_task_message,
               itemListToMove.size(), itemListToMove.size());
-          new AlertDialog.Builder(activity)
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_recycle_task_title)
               .setMessage(message)
               .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
@@ -317,7 +336,18 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                 public void onClick(DialogInterface dialog, int which) {
                 }
               })
-              .show();
+              .create();
+
+          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+            }
+          });
+
+          dialog.show();
 
           return true;
         }
@@ -332,7 +362,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
 
           String message = activity.getResources().getQuantityString(R.plurals.cab_share_message,
               itemListToMove.size(), itemListToMove.size());
-          new AlertDialog.Builder(activity)
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_share)
               .setMessage(message)
               .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -365,15 +395,23 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
                   actionMode.finish();
                 }
               })
-              .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {}
-              })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                }
               })
-              .show();
+              .create();
+
+          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+            }
+          });
+
+          dialog.show();
 
           return true;
         }
@@ -387,12 +425,10 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
 
-      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        Window window = activity.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(activity.status_bar_color);
-      }
+      Window window = activity.getWindow();
+      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+      window.setStatusBarColor(activity.status_bar_color);
 
       DoneListAdapter.this.actionMode = null;
       for(Item item : itemList) {

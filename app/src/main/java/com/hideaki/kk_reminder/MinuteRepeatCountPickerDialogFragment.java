@@ -2,6 +2,7 @@ package com.hideaki.kk_reminder;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
+import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
 
 public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
 
@@ -30,6 +32,8 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
     checkNotNull(activity);
 
     count = view.findViewById(R.id.count);
+    setCursorDrawableColor(count, activity.accent_color);
+    count.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
     count.requestFocus();
     count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrg_count()));
     count.setSelection(count.getText().length());
@@ -76,7 +80,7 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
       }
     });
 
-    return new AlertDialog.Builder(activity)
+    final AlertDialog dialog = new AlertDialog.Builder(activity)
         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
@@ -114,9 +118,21 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
         })
         .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
           @Override
-          public void onClick(DialogInterface dialog, int which) {}
+          public void onClick(DialogInterface dialog, int which) {
+          }
         })
         .setView(view)
         .create();
+
+    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialogInterface) {
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+      }
+    });
+
+    return dialog;
   }
 }

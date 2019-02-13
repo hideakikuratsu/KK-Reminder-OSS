@@ -1,12 +1,9 @@
 package com.hideaki.kk_reminder;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,6 +33,7 @@ import java.util.ArrayList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
+import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
 
 public class TagEditListViewFragment extends Fragment implements View.OnClickListener {
 
@@ -51,28 +49,10 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     return new TagEditListViewFragment();
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
     if(activity.generalSettings != null) {
       int order = activity.order;
@@ -137,6 +117,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
       }
     });
 
+    TagEditListAdapter.is_first = true;
     activity.listView = view.findViewById(R.id.listView);
     activity.listView.setDragListener(activity.tagEditListAdapter.dragListener);
     activity.listView.setSortable(true);
@@ -273,6 +254,8 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     LinearLayout linearLayout = new LinearLayout(activity);
     linearLayout.setOrientation(LinearLayout.VERTICAL);
     final EditText editText = new EditText(activity);
+    setCursorDrawableColor(editText, activity.accent_color);
+    editText.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
     editText.setHint(R.string.tag_hint);
     editText.setLayoutParams(new LinearLayout.LayoutParams(
         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -310,7 +293,18 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
           public void onClick(DialogInterface dialog, int which) {
           }
         })
-        .show();
+        .create();
+
+    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialogInterface) {
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+      }
+    });
+
+    dialog.show();
 
     //ダイアログ表示時にソフトキーボードを自動で表示
     editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {

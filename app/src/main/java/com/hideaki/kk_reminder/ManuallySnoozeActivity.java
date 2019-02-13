@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -170,13 +169,8 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
       AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       checkNotNull(alarmManager);
 
-      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        alarmManager.setAlarmClock(
-            new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
-      }
-      else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, item.getDate().getTimeInMillis(), sender);
-      }
+      alarmManager.setAlarmClock(
+          new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
     }
   }
 

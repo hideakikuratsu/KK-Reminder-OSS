@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
@@ -28,8 +27,8 @@ import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
-import static com.hideaki.kk_reminder.UtilClass.PARENT_NOTIFICATION_ID;
 import static com.hideaki.kk_reminder.UtilClass.NOTIFICATION_ID_TABLE;
+import static com.hideaki.kk_reminder.UtilClass.PARENT_NOTIFICATION_ID;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
@@ -158,15 +157,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         PowerManager.FULL_WAKE_LOCK |
             PowerManager.ACQUIRE_CAUSES_WAKEUP |
             PowerManager.ON_AFTER_RELEASE, "Notification");
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH) {
-      if(!powerManager.isScreenOn()) {
-        wakeLock.acquire(10000);
-      }
-    }
-    else {
-      if(!powerManager.isInteractive()) {
-        wakeLock.acquire(10000);
-      }
+    if(!powerManager.isInteractive()) {
+      wakeLock.acquire(10000);
     }
 
     //再帰通知処理
@@ -186,13 +178,8 @@ public class AlarmReceiver extends BroadcastReceiver {
       AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
       checkNotNull(alarmManager);
 
-      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        alarmManager.setAlarmClock(
-            new AlarmManager.AlarmClockInfo(reset_schedule, null), recursive_sender);
-      }
-      else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, reset_schedule, recursive_sender);
-      }
+      alarmManager.setAlarmClock(
+          new AlarmManager.AlarmClockInfo(reset_schedule, null), recursive_sender);
 
       updateDB(item, MyDatabaseHelper.TODO_TABLE);
     }

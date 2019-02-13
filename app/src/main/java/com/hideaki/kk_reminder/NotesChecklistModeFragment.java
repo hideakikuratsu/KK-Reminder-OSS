@@ -1,12 +1,9 @@
 package com.hideaki.kk_reminder;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -67,28 +64,10 @@ public class NotesChecklistModeFragment extends Fragment {
     return fragment;
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
   }
 
@@ -266,7 +245,7 @@ public class NotesChecklistModeFragment extends Fragment {
 
       case R.id.delete_checked_items: {
 
-        new AlertDialog.Builder(activity)
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setTitle(R.string.delete_checked_items)
             .setMessage(R.string.delete_checked_items_message)
             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -307,9 +286,21 @@ public class NotesChecklistModeFragment extends Fragment {
             })
             .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
               @Override
-              public void onClick(DialogInterface dialog, int which) {}
+              public void onClick(DialogInterface dialog, int which) {
+              }
             })
-            .show();
+            .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+          @Override
+          public void onShow(DialogInterface dialogInterface) {
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+          }
+        });
+
+        dialog.show();
 
         return true;
       }

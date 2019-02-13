@@ -20,7 +20,7 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
   private static boolean manually_checked;
   static int checked_position;
   private String defaultSnoozeTime;
-
+  private static boolean is_first;
 
   ManuallySnoozeListAdapter(ManuallySnoozeActivity activity) {
 
@@ -47,6 +47,7 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
 
     manually_checked = false;
     checked_position = 0;
+    is_first = true;
   }
 
   private static class ViewHolder {
@@ -82,6 +83,7 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
     public void onChange(AnimCheckBox view, boolean checked) {
 
       if(checked && manually_checked) {
+        is_first = false;
         checked_position = position;
         if(position == snoozeList.size() - 1 && activity.listView.getFooterViewsCount() == 0) {
           activity.listView.addFooterView(activity.footer);
@@ -124,14 +126,8 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
         notifyDataSetChanged();
       }
       else if(position == checked_position && manually_checked) {
-        checked_position = 0;
-
-        String title = defaultSnoozeTime + activity.getString(R.string.snooze);
-        activity.title.setText(title);
-
-        if(activity.listView.getFooterViewsCount() != 0) {
-          activity.listView.removeFooterView(activity.footer);
-        }
+        System.out.println("hello");
+        is_first = false;
         notifyDataSetChanged();
       }
     }
@@ -167,9 +163,7 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
 
       convertView.setTag(viewHolder);
     }
-    else {
-      viewHolder = (ViewHolder)convertView.getTag();
-    }
+    else viewHolder = (ViewHolder)convertView.getTag();
 
     //現在のビュー位置でのcolor_nameの取得とリスナーの初期化
     String snoozeItem = (String)getItem(position);
@@ -185,11 +179,21 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
     //チェック状態の初期化
     if(position != checked_position) {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(false);
+      if(is_first) {
+        viewHolder.checkBox.setChecked(false, false);
+      }
+      else viewHolder.checkBox.setChecked(false);
     }
     else {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(true);
+      System.out.println("is_first: " + is_first);
+      if(is_first) {
+        viewHolder.checkBox.setChecked(true, false);
+      }
+      else {
+        System.out.println("hi");
+        viewHolder.checkBox.setChecked(true);
+      }
     }
     manually_checked = true;
 

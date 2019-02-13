@@ -1,14 +1,11 @@
 package com.hideaki.kk_reminder;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -20,6 +17,7 @@ import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -29,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,6 +36,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
+import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
 
 
 public class ActionBarFragment extends Fragment {
@@ -67,28 +67,10 @@ public class ActionBarFragment extends Fragment {
     return new ActionBarFragment();
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
     order = activity.order;
   }
@@ -584,6 +566,16 @@ public class ActionBarFragment extends Fragment {
 
   private void initSearchItem() {
 
+    int search_color;
+    if(activity.menu_item_color == Color.parseColor("#000000")) {
+      search_color = Color.parseColor("#595757");
+    }
+    else if(activity.menu_item_color == Color.parseColor("#FFFFFF")) {
+      search_color = Color.parseColor("#C9CACA");
+    }
+    else search_color = activity.menu_item_color;
+
+    //アイコンの色
     Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_search_white_24dp);
     checkNotNull(drawable);
     drawable = drawable.mutate();
@@ -591,6 +583,18 @@ public class ActionBarFragment extends Fragment {
     ImageView searchIcon = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
     searchIcon.setImageDrawable(drawable);
 
+    EditText searchTextView = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+    //カーソルの色
+    setCursorDrawableColor(searchTextView, search_color);
+    //検索中文字の色
+    searchTextView.setTextColor(activity.menu_item_color);
+    //閉じるボタンの色
+    ImageView searchClose = searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+    searchClose.setColorFilter(search_color);
+    //ヒントの色
+    String strColor = String.format("#%06X", 0xFFFFFF & search_color);
+    searchView.setQueryHint(Html.fromHtml(
+        "<font color = " + strColor + ">" + getResources().getString(R.string.search_hint) + "</font>"));
     searchView.setIconifiedByDefault(true);
     searchView.setSubmitButtonEnabled(false);
 

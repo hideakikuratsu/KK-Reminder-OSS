@@ -1,14 +1,12 @@
 package com.hideaki.kk_reminder;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -86,28 +84,10 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
     return new BackupAndRestoreFragment();
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
   }
 
@@ -340,18 +320,18 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
     }
     else {
       String[] items = itemList.toArray(new String[0]);
-      new AlertDialog.Builder(activity)
+      final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
+      final AlertDialog dialog = new AlertDialog.Builder(activity)
           .setTitle(R.string.choose_backup_data_message)
-          .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+          .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-              choice = which;
-            }
+            public void onClick(DialogInterface dialog, int which) {}
           })
           .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+              choice = SingleChoiceItemsAdapter.checked_position;
 
               readDriveFile(metadata.get(choice).getDriveId().asDriveFile());
 
@@ -380,7 +360,18 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
               metadata.release();
             }
           })
-          .show();
+          .create();
+
+      dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        @Override
+        public void onShow(DialogInterface dialogInterface) {
+
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+        }
+      });
+
+      dialog.show();
     }
   }
 

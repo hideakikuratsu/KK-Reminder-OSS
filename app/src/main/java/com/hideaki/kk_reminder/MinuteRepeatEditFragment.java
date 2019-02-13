@@ -1,10 +1,7 @@
 package com.hideaki.kk_reminder;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -26,7 +23,7 @@ import java.util.Locale;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
-public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener, MyCheckBoxPreference.MyCheckBoxPreferenceCheckedChangeListener {
 
   private PreferenceScreen rootPreferenceScreen;
   static PreferenceScreen label;
@@ -44,28 +41,10 @@ public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat imple
     return new MinuteRepeatEditFragment();
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
   }
 
@@ -80,10 +59,12 @@ public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat imple
     interval = (PreferenceScreen)findPreference("interval");
     interval.setOnPreferenceClickListener(this);
     never = (CheckBoxPreference)findPreference("never");
-    never.setOnPreferenceClickListener(this);
+    ((MyCheckBoxPreference)never).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     count = (CheckBoxPreference)findPreference("count");
+    ((MyCheckBoxPreference)count).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     count.setOnPreferenceClickListener(this);
     duration = (CheckBoxPreference)findPreference("duration");
+    ((MyCheckBoxPreference)duration).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     duration.setOnPreferenceClickListener(this);
     count_picker = (PreferenceScreen)findPreference("count_picker");
     count_picker.setOnPreferenceClickListener(this);
@@ -228,6 +209,27 @@ public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat imple
 
         return true;
       }
+      case "count_picker": {
+
+        MinuteRepeatCountPickerDialogFragment dialog = new MinuteRepeatCountPickerDialogFragment();
+        dialog.show(activity.getSupportFragmentManager(), "minute_repeat_count_picker");
+        return true;
+      }
+      case "duration_picker": {
+
+        MinuteRepeatDurationPickerDialogFragment dialog = new MinuteRepeatDurationPickerDialogFragment();
+        dialog.show(activity.getSupportFragmentManager(), "minute_repeat_duration_picker");
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  @Override
+  public void onCheckedChange(String key, boolean checked) {
+
+    switch(key) {
       case "never": {
         if(never.isChecked()) {
           label.setSummary(R.string.non_repeat);
@@ -245,7 +247,8 @@ public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat imple
           }
         }
         else never.setChecked(true);
-        return true;
+
+        break;
       }
       case "count": {
         if(count.isChecked()) {
@@ -281,7 +284,8 @@ public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat imple
           rootPreferenceScreen.addPreference(count_picker);
         }
         else count.setChecked(true);
-        return true;
+
+        break;
       }
       case "duration": {
         if(duration.isChecked()) {
@@ -325,22 +329,9 @@ public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat imple
           rootPreferenceScreen.addPreference(durationPicker);
         }
         else duration.setChecked(true);
-        return true;
-      }
-      case "count_picker": {
 
-        MinuteRepeatCountPickerDialogFragment dialog = new MinuteRepeatCountPickerDialogFragment();
-        dialog.show(activity.getSupportFragmentManager(), "minute_repeat_count_picker");
-        return true;
-      }
-      case "duration_picker": {
-
-        MinuteRepeatDurationPickerDialogFragment dialog = new MinuteRepeatDurationPickerDialogFragment();
-        dialog.show(activity.getSupportFragmentManager(), "minute_repeat_duration_picker");
-        return true;
+        break;
       }
     }
-
-    return false;
   }
 }

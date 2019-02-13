@@ -1,7 +1,5 @@
 package com.hideaki.kk_reminder;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -49,8 +47,8 @@ import static com.hideaki.kk_reminder.UtilClass.LIST;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.REQUEST_CODE_RINGTONE_PICKER;
 
-public class MainEditFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener,
-    Preference.OnPreferenceChangeListener {
+public class MainEditFragment extends BasePreferenceFragmentCompat
+    implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
   static final String TAG = MainEditFragment.class.getSimpleName();
 
@@ -168,28 +166,10 @@ public class MainEditFragment extends BasePreferenceFragmentCompat implements Pr
     return fragment;
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
 
     checkArgument(checked_item_num >= 0);
@@ -399,7 +379,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat implements Pr
       }
 
       //タスクの期限のラベルの初期化
-      if(order == 0) {
+      if(order == 0 || is_moving_task) {
         if(LOCALE.equals(Locale.JAPAN)) {
           datePicker.setTitle(DateFormat.format("yyyy年M月d日(E)", final_cal));
         }
@@ -495,7 +475,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat implements Pr
             && MainEditFragment.item.getDate().getTimeInMillis() != final_cal.getTimeInMillis()
             && (MainEditFragment.dayRepeat.getSetted() != 0 || MainEditFragment.minuteRepeat.getWhich_setted() != 0)) {
 
-          new AlertDialog.Builder(activity)
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setMessage(R.string.repeat_conflict_dialog_message)
               .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
@@ -525,14 +505,26 @@ public class MainEditFragment extends BasePreferenceFragmentCompat implements Pr
                 public void onClick(DialogInterface dialog, int which) {
                 }
               })
-              .show();
+              .create();
+
+          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+              dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.accent_color);
+              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+            }
+          });
+
+          dialog.show();
         }
         else registerItem();
         return true;
       }
       case R.id.delete: {
 
-        new AlertDialog.Builder(activity)
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setTitle(R.string.delete_dialog_title)
             .setMessage(R.string.delete_dialog_message)
             .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -573,11 +565,11 @@ public class MainEditFragment extends BasePreferenceFragmentCompat implements Pr
                   //デフォルトアイテムのリストア
                   activity.menu.removeGroup(R.id.reminder_list);
                   activity.menu.add(R.id.reminder_list, R.id.scheduled_list, 0, R.string.nav_scheduled_item)
-                               .setIcon(R.drawable.ic_time)
-                               .setCheckable(true);
+                      .setIcon(R.drawable.ic_time)
+                      .setCheckable(true);
                   activity.menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
-                               .setIcon(R.drawable.ic_add_24dp)
-                               .setCheckable(false);
+                      .setIcon(R.drawable.ic_add_24dp)
+                      .setCheckable(false);
 
                   //新しく追加したリストのリストア
                   for(NonScheduledList list : activity.generalSettings.getNonScheduledLists()) {
@@ -591,8 +583,8 @@ public class MainEditFragment extends BasePreferenceFragmentCompat implements Pr
                       drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
                     }
                     activity.menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
-                                 .setIcon(drawable)
-                                 .setCheckable(true);
+                        .setIcon(drawable)
+                        .setCheckable(true);
                   }
 
                   //データベースへの反映
@@ -609,7 +601,18 @@ public class MainEditFragment extends BasePreferenceFragmentCompat implements Pr
               public void onClick(DialogInterface dialog, int which) {
               }
             })
-            .show();
+            .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+          @Override
+          public void onShow(DialogInterface dialogInterface) {
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+          }
+        });
+
+        dialog.show();
 
         return true;
       }

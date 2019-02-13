@@ -1,6 +1,7 @@
 package com.hideaki.kk_reminder;
 
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
+import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
 
 public class TagEditListAdapter extends BaseAdapter {
 
@@ -31,6 +33,7 @@ public class TagEditListAdapter extends BaseAdapter {
   private static boolean manually_checked;
   static long checked_item_id; //チェックの入っているItemのid値を保持する
   static boolean is_editing;
+  static boolean is_first;
 
   TagEditListAdapter(List<Tag> tagList, MainActivity activity) {
 
@@ -84,6 +87,8 @@ public class TagEditListAdapter extends BaseAdapter {
             LinearLayout linearLayout = new LinearLayout(activity);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             final EditText editText = new EditText(activity);
+            setCursorDrawableColor(editText, activity.accent_color);
+            editText.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
             editText.setText(tag.getName());
             editText.setHint(R.string.tag_hint);
             editText.setSelection(tag.getName().length());
@@ -114,7 +119,18 @@ public class TagEditListAdapter extends BaseAdapter {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {}
                 })
-                .show();
+                .create();
+
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+              @Override
+              public void onShow(DialogInterface dialogInterface) {
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+              }
+            });
+
+            dialog.show();
 
             //ダイアログ表示時にソフトキーボードを自動で表示
             editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -139,7 +155,7 @@ public class TagEditListAdapter extends BaseAdapter {
           }
           case R.id.delete: {
 
-            new AlertDialog.Builder(activity)
+            final AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle(R.string.delete_tag_title)
                 .setMessage(R.string.delete_tag_message)
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -169,9 +185,21 @@ public class TagEditListAdapter extends BaseAdapter {
                 })
                 .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                   @Override
-                  public void onClick(DialogInterface dialog, int which) {}
+                  public void onClick(DialogInterface dialog, int which) {
+                  }
                 })
-                .show();
+                .create();
+
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+              @Override
+              public void onShow(DialogInterface dialogInterface) {
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+              }
+            });
+
+            dialog.show();
 
             break;
           }
@@ -183,6 +211,7 @@ public class TagEditListAdapter extends BaseAdapter {
     public void onChange(AnimCheckBox view, boolean checked) {
 
       if(checked && manually_checked) {
+        is_first = false;
         if(order == 0 || order == 1 || order == 4) {
           MainEditFragment.item.setWhich_tag_belongs(tag.getId());
         }
@@ -193,13 +222,7 @@ public class TagEditListAdapter extends BaseAdapter {
         notifyDataSetChanged();
       }
       else if(!checked && manually_checked) {
-        if(order == 0 || order == 1 || order == 4) {
-          MainEditFragment.item.setWhich_tag_belongs(0);
-        }
-        else if(order == 3) {
-          MainEditFragment.list.setWhich_tag_belongs(0);
-        }
-        checked_item_id = 0;
+        is_first = false;
         notifyDataSetChanged();
       }
     }
@@ -294,11 +317,17 @@ public class TagEditListAdapter extends BaseAdapter {
     //チェック状態の初期化
     if(tag.getId() != checked_item_id) {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(false, false);
+      if(is_first) {
+        viewHolder.checkBox.setChecked(false, false);
+      }
+      else viewHolder.checkBox.setChecked(false);
     }
     else {
       manually_checked = false;
-      viewHolder.checkBox.setChecked(true, false);
+      if(is_first) {
+        viewHolder.checkBox.setChecked(true, false);
+      }
+      else viewHolder.checkBox.setChecked(true);
     }
     manually_checked = true;
 

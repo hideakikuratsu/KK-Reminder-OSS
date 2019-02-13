@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -36,6 +35,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 
@@ -218,7 +218,9 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
             notifyDataSetChanged();
 
-            Snackbar.make(convertView, activity.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
+            View parentView = activity.findViewById(android.R.id.content);
+            checkNotNull(parentView);
+            Snackbar.make(parentView, activity.getResources().getString(R.string.complete), Snackbar.LENGTH_LONG)
                 .addCallback(new Snackbar.Callback() {
                   @Override
                   public void onShown(Snackbar sb) {
@@ -288,12 +290,10 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
       actionMode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
 
       //ActionMode時のみツールバーとステータスバーの色を設定
-      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        Window window = activity.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(activity, R.color.darker_grey));
-      }
+      Window window = activity.getWindow();
+      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+      window.setStatusBarColor(ContextCompat.getColor(activity, R.color.darker_grey));
 
       return true;
     }
@@ -318,7 +318,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
           String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
               itemListToMove.size(), itemListToMove.size()) + " (" + activity.getString(R.string.delete_dialog_message) + ")";
-          new AlertDialog.Builder(activity)
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_delete)
               .setMessage(message)
               .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -338,7 +338,18 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                 public void onClick(DialogInterface dialog, int which) {
                 }
               })
-              .show();
+              .create();
+
+          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+            }
+          });
+
+          dialog.show();
 
           return true;
         }
@@ -364,20 +375,22 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
           String title = activity.getResources().getQuantityString(R.plurals.cab_selected_task_num,
               itemListToMove.size(), itemListToMove.size()) + activity.getString(R.string.cab_move_task_message);
-          new AlertDialog.Builder(activity)
+          final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setTitle(title)
-              .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+              .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                  if(which >= activity.which_menu_open) {
-                    which_list = which + 1;
-                  }
-                  else which_list = which;
-                }
+                public void onClick(DialogInterface dialog, int which) {}
               })
               .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+
+                  int position = SingleChoiceItemsAdapter.checked_position;
+                  if(position >= activity.which_menu_open) {
+                    which_list = position + 1;
+                  }
+                  else which_list = position;
 
                   if(which_list == 0) {
                     for(Item item : itemListToMove) item.setSelected(false);
@@ -426,7 +439,18 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                 public void onClick(DialogInterface dialog, int which) {
                 }
               })
-              .show();
+              .create();
+
+          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+            }
+          });
+
+          dialog.show();
 
           return true;
         }
@@ -441,7 +465,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
           String message = activity.getResources().getQuantityString(R.plurals.cab_clone_message,
               itemListToMove.size(), itemListToMove.size());
-          new AlertDialog.Builder(activity)
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_clone)
               .setMessage(message)
               .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -459,17 +483,23 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                   actionMode.finish();
                 }
               })
-              .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-              })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                 }
               })
-              .show();
+              .create();
+
+          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+            }
+          });
+
+          dialog.show();
 
           return true;
         }
@@ -484,7 +514,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
           String message = activity.getResources().getQuantityString(R.plurals.cab_share_message,
               itemListToMove.size(), itemListToMove.size());
-          new AlertDialog.Builder(activity)
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setTitle(R.string.cab_share)
               .setMessage(message)
               .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -506,17 +536,23 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                   actionMode.finish();
                 }
               })
-              .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-              })
               .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                 }
               })
-              .show();
+              .create();
+
+          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+            }
+          });
+
+          dialog.show();
 
           return true;
         }
@@ -530,12 +566,10 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
 
-      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        Window window = activity.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(activity.status_bar_color);
-      }
+      Window window = activity.getWindow();
+      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+      window.setStatusBarColor(activity.status_bar_color);
 
       MyListAdapter.this.actionMode = null;
       for(Item item : itemList) {

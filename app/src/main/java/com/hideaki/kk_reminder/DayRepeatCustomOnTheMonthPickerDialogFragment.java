@@ -32,7 +32,7 @@ public class DayRepeatCustomOnTheMonthPickerDialogFragment extends DialogFragmen
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
     View view = View.inflate(getContext(), R.layout.repeat_custom_on_the_month_picker, null);
-    MainActivity activity = (MainActivity)getActivity();
+    final MainActivity activity = (MainActivity)getActivity();
     checkNotNull(activity);
 
     //ordinal_numberの実装
@@ -57,7 +57,7 @@ public class DayRepeatCustomOnTheMonthPickerDialogFragment extends DialogFragmen
     }
     else day_of_week.setDisplayedValues(DAY_OF_WEEK_LIST_EN);
 
-    return new AlertDialog.Builder(activity)
+    final AlertDialog dialog = new AlertDialog.Builder(activity)
         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
@@ -110,9 +110,21 @@ public class DayRepeatCustomOnTheMonthPickerDialogFragment extends DialogFragmen
         })
         .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
           @Override
-          public void onClick(DialogInterface dialog, int which) {}
+          public void onClick(DialogInterface dialog, int which) {
+          }
         })
         .setView(view)
         .create();
+
+    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialogInterface) {
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+      }
+    });
+
+    return dialog;
   }
 }

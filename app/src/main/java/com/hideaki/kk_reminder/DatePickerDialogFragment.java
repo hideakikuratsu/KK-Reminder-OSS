@@ -28,7 +28,7 @@ public class DatePickerDialogFragment extends DialogFragment implements DatePick
     MainActivity activity = (MainActivity)getActivity();
     checkNotNull(activity);
 
-    return new DatePickerDialog(activity, this, year, month, day);
+    return new DatePickerDialog(activity, activity.dialog_style_id, this, year, month, day);
   }
 
   @Override

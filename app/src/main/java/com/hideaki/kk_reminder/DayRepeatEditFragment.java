@@ -1,16 +1,12 @@
 package com.hideaki.kk_reminder;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.preference.CheckBoxPreference;
-import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
@@ -27,7 +23,8 @@ import java.util.Locale;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
-public class DayRepeatEditFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
+    implements MyCheckBoxPreference.MyCheckBoxPreferenceCheckedChangeListener {
 
   private static final String[] MONTH_LIST_EN = {"Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.",
       "Aug.", "Sep.", "Oct.", "Nov.", "Dec."};
@@ -51,28 +48,10 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat implemen
     return new DayRepeatEditFragment();
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
   }
 
@@ -91,13 +70,13 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat implemen
     custom = (CheckBoxPreference)findPreference("custom");
     label = (PreferenceScreen)findPreference("label");
 
-    never.setOnPreferenceClickListener(this);
-    everyday.setOnPreferenceClickListener(this);
-    everyweekday.setOnPreferenceClickListener(this);
-    everyweek.setOnPreferenceClickListener(this);
-    everymonth.setOnPreferenceClickListener(this);
-    everyyear.setOnPreferenceClickListener(this);
-    custom.setOnPreferenceClickListener(this);
+    ((MyCheckBoxPreference)never).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyday).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyweekday).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyweek).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everymonth).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyyear).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)custom).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
   }
 
   @Override
@@ -245,106 +224,101 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat implemen
   }
 
   @Override
-  public boolean onPreferenceClick(Preference preference) {
+  public void onCheckedChange(String key, boolean checked) {
 
-    if(!preference.getKey().equals("label")) {
+    never.setChecked(false);
+    everyday.setChecked(false);
+    everyweekday.setChecked(false);
+    everyweek.setChecked(false);
+    everymonth.setChecked(false);
+    everyyear.setChecked(false);
+    custom.setChecked(false);
 
-      never.setChecked(false);
-      everyday.setChecked(false);
-      everyweekday.setChecked(false);
-      everyweek.setChecked(false);
-      everymonth.setChecked(false);
-      everyyear.setChecked(false);
-      custom.setChecked(false);
+    switch(key) {
+      case "never": {
+        never.setChecked(true);
+        label.setSummary(R.string.non_repeat);
 
-      switch(preference.getKey()) {
-        case "never": {
-          never.setChecked(true);
-          label.setSummary(R.string.non_repeat);
+        MainEditFragment.dayRepeat.setLabel(getString(R.string.none));
+        MainEditFragment.dayRepeat.setSetted(0);
+        MainEditFragment.dayRepeat.setWhich_template(0);
 
-          MainEditFragment.dayRepeat.setLabel(getString(R.string.none));
-          MainEditFragment.dayRepeat.setSetted(0);
-          MainEditFragment.dayRepeat.setWhich_template(0);
+        break;
+      }
+      case "everyday": {
+        everyday.setChecked(true);
+        label.setSummary(R.string.everyday);
 
-          return true;
+        MainEditFragment.dayRepeat.setLabel(getString(R.string.everyday));
+        MainEditFragment.dayRepeat.setSetted(1);
+        MainEditFragment.dayRepeat.setWhich_template(1);
+        MainEditFragment.dayRepeat.setInterval(1);
+        MainEditFragment.dayRepeat.setDay(true);
+
+        break;
+      }
+      case "everyweekday": {
+        everyweekday.setChecked(true);
+        label.setSummary(R.string.everyweekday);
+
+        MainEditFragment.dayRepeat.setLabel(getString(R.string.everyweekday));
+        MainEditFragment.dayRepeat.setSetted(1 << 1);
+        MainEditFragment.dayRepeat.setWhich_template(1 << 1);
+        MainEditFragment.dayRepeat.setInterval(1);
+        MainEditFragment.dayRepeat.setWeek(Integer.parseInt("11111", 2));
+
+        break;
+      }
+      case "everyweek": {
+        everyweek.setChecked(true);
+        label.setSummary(label_str_everyweek);
+
+        MainEditFragment.dayRepeat.setLabel(label_str_everyweek);
+        MainEditFragment.dayRepeat.setSetted(1 << 1);
+        MainEditFragment.dayRepeat.setWhich_template(1 << 2);
+        MainEditFragment.dayRepeat.setInterval(1);
+        mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
+        mask_num = mask_num < 2 ? mask_num + 5 : mask_num - 2;
+        MainEditFragment.dayRepeat.setWeek(1 << mask_num);
+
+        break;
+      }
+      case "everymonth": {
+        everymonth.setChecked(true);
+        label.setSummary(label_str_everymonth);
+
+        MainEditFragment.dayRepeat.setLabel(label_str_everymonth);
+        MainEditFragment.dayRepeat.setSetted(1 << 2);
+        MainEditFragment.dayRepeat.setWhich_template(1 << 3);
+        MainEditFragment.dayRepeat.setInterval(1);
+        mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
+        MainEditFragment.dayRepeat.setDays_of_month(1 << (mask_num - 1));
+        if(!MainEditFragment.dayRepeat.isDays_of_month_setted()) {
+          MainEditFragment.dayRepeat.setDays_of_month_setted(true);
         }
-        case "everyday": {
-          everyday.setChecked(true);
-          label.setSummary(R.string.everyday);
 
-          MainEditFragment.dayRepeat.setLabel(getString(R.string.everyday));
-          MainEditFragment.dayRepeat.setSetted(1);
-          MainEditFragment.dayRepeat.setWhich_template(1);
-          MainEditFragment.dayRepeat.setInterval(1);
-          MainEditFragment.dayRepeat.setDay(true);
+        break;
+      }
+      case "everyyear": {
+        everyyear.setChecked(true);
+        label.setSummary(label_str_everyyear);
 
-          return true;
-        }
-        case "everyweekday": {
-          everyweekday.setChecked(true);
-          label.setSummary(R.string.everyweekday);
+        MainEditFragment.dayRepeat.setLabel(label_str_everyyear);
+        MainEditFragment.dayRepeat.setSetted(1 << 3);
+        MainEditFragment.dayRepeat.setWhich_template(1 << 4);
+        MainEditFragment.dayRepeat.setInterval(1);
+        mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
+        MainEditFragment.dayRepeat.setYear(1 << mask_num);
+        MainEditFragment.dayRepeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
 
-          MainEditFragment.dayRepeat.setLabel(getString(R.string.everyweekday));
-          MainEditFragment.dayRepeat.setSetted(1 << 1);
-          MainEditFragment.dayRepeat.setWhich_template(1 << 1);
-          MainEditFragment.dayRepeat.setInterval(1);
-          MainEditFragment.dayRepeat.setWeek(Integer.parseInt("11111", 2));
+        break;
+      }
+      case "custom": {
+        custom.setChecked(true);
+        transitionFragment(DayRepeatCustomPickerFragment.newInstance());
 
-          return true;
-        }
-        case "everyweek": {
-          everyweek.setChecked(true);
-          label.setSummary(label_str_everyweek);
-
-          MainEditFragment.dayRepeat.setLabel(label_str_everyweek);
-          MainEditFragment.dayRepeat.setSetted(1 << 1);
-          MainEditFragment.dayRepeat.setWhich_template(1 << 2);
-          MainEditFragment.dayRepeat.setInterval(1);
-          mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_WEEK);
-          mask_num = mask_num < 2 ? mask_num + 5 : mask_num - 2;
-          MainEditFragment.dayRepeat.setWeek(1 << mask_num);
-
-          return true;
-        }
-        case "everymonth": {
-          everymonth.setChecked(true);
-          label.setSummary(label_str_everymonth);
-
-          MainEditFragment.dayRepeat.setLabel(label_str_everymonth);
-          MainEditFragment.dayRepeat.setSetted(1 << 2);
-          MainEditFragment.dayRepeat.setWhich_template(1 << 3);
-          MainEditFragment.dayRepeat.setInterval(1);
-          mask_num = MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH);
-          MainEditFragment.dayRepeat.setDays_of_month(1 << (mask_num - 1));
-          if(!MainEditFragment.dayRepeat.isDays_of_month_setted()) {
-            MainEditFragment.dayRepeat.setDays_of_month_setted(true);
-          }
-
-          return true;
-        }
-        case "everyyear": {
-          everyyear.setChecked(true);
-          label.setSummary(label_str_everyyear);
-
-          MainEditFragment.dayRepeat.setLabel(label_str_everyyear);
-          MainEditFragment.dayRepeat.setSetted(1 << 3);
-          MainEditFragment.dayRepeat.setWhich_template(1 << 4);
-          MainEditFragment.dayRepeat.setInterval(1);
-          mask_num = MainEditFragment.final_cal.get(Calendar.MONTH);
-          MainEditFragment.dayRepeat.setYear(1 << mask_num);
-          MainEditFragment.dayRepeat.setDay_of_month_of_year(MainEditFragment.final_cal.get(Calendar.DAY_OF_MONTH));
-
-          return true;
-        }
-        case "custom": {
-          custom.setChecked(true);
-          transitionFragment(DayRepeatCustomPickerFragment.newInstance());
-
-          return true;
-        }
+        break;
       }
     }
-
-    return false;
   }
 }

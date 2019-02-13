@@ -27,7 +27,7 @@ public class MinuteRepeatDurationPickerDialogFragment extends DialogFragment imp
     activity = (MainActivity)getActivity();
     checkNotNull(activity);
 
-    return new TimePickerDialog(activity, this, hour, minute, true);
+    return new TimePickerDialog(activity, activity.dialog_style_id, this, hour, minute, true);
   }
 
   @Override

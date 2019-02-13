@@ -1,12 +1,9 @@
 package com.hideaki.kk_reminder;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -34,6 +31,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
 
 public class NotesEditModeFragment extends Fragment {
 
@@ -59,28 +57,10 @@ public class NotesEditModeFragment extends Fragment {
     return fragment;
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
   }
 
@@ -141,6 +121,8 @@ public class NotesEditModeFragment extends Fragment {
     actionBar.setTitle(R.string.notes);
 
     memo = view.findViewById(R.id.notes);
+    setCursorDrawableColor(memo, activity.accent_color);
+    memo.getBackground().mutate().setColorFilter(activity.accent_color, PorterDuff.Mode.SRC_IN);
     memo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
       @Override
       public void onFocusChange(View v, boolean hasFocus) {
@@ -219,7 +201,7 @@ public class NotesEditModeFragment extends Fragment {
 
       case R.id.clear_notes: {
 
-        new AlertDialog.Builder(activity)
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setTitle(R.string.clear_notes)
             .setMessage(R.string.clear_notes_message)
             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -240,9 +222,21 @@ public class NotesEditModeFragment extends Fragment {
             })
             .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
               @Override
-              public void onClick(DialogInterface dialog, int which) {}
+              public void onClick(DialogInterface dialog, int which) {
+              }
             })
-            .show();
+            .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+          @Override
+          public void onShow(DialogInterface dialogInterface) {
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accent_color);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accent_color);
+          }
+        });
+
+        dialog.show();
 
         return true;
       }

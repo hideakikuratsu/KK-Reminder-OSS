@@ -1,10 +1,7 @@
 package com.hideaki.kk_reminder;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -24,7 +21,8 @@ import java.util.Locale;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
-public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
+    implements Preference.OnPreferenceClickListener, MyCheckBoxPreference.MyCheckBoxPreferenceCheckedChangeListener {
 
   private MainActivity activity;
   private PreferenceScreen rootPreferenceScreen;
@@ -47,28 +45,10 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat imp
     return new NotifyIntervalEditFragment();
   }
 
-  @TargetApi(23)
   @Override
   public void onAttach(Context context) {
 
     super.onAttach(context);
-    onAttachToContext(context);
-  }
-
-  //API 23(Marshmallow)未満においてはこっちのonAttachが呼ばれる
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onAttach(Activity activity) {
-
-    super.onAttach(activity);
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      onAttachToContext(activity);
-    }
-  }
-
-  //2つのonAttachの共通処理部分
-  protected void onAttachToContext(Context context) {
-
     activity = (MainActivity)context;
   }
 
@@ -93,15 +73,15 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat imp
     time = (PreferenceScreen)findPreference("time");
     label = (PreferenceScreen)findPreference("label");
 
-    none.setOnPreferenceClickListener(this);
-    defaultNotify.setOnPreferenceClickListener(this);
-    everyMinute.setOnPreferenceClickListener(this);
-    everyFiveMinutes.setOnPreferenceClickListener(this);
-    everyFifteenMinutes.setOnPreferenceClickListener(this);
-    everyThirtyMinutes.setOnPreferenceClickListener(this);
-    everyHour.setOnPreferenceClickListener(this);
-    everyDay.setOnPreferenceClickListener(this);
-    custom.setOnPreferenceClickListener(this);
+    ((MyCheckBoxPreference)none).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)defaultNotify).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyMinute).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyFiveMinutes).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyFifteenMinutes).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyThirtyMinutes).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyHour).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)everyDay).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
+    ((MyCheckBoxPreference)custom).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     duration.setOnPreferenceClickListener(this);
     time.setOnPreferenceClickListener(this);
   }
@@ -244,194 +224,197 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat imp
 
         return true;
       }
-      default:
-
-        int which_setted = MainEditFragment.notifyInterval.getWhich_setted();
-
-        none.setChecked(false);
-        defaultNotify.setChecked(false);
-        everyMinute.setChecked(false);
-        everyFiveMinutes.setChecked(false);
-        everyFifteenMinutes.setChecked(false);
-        everyThirtyMinutes.setChecked(false);
-        everyHour.setChecked(false);
-        everyDay.setChecked(false);
-        custom.setChecked(false);
-        if(which_setted == (1 << 7)) {
-          rootPreferenceScreen.removePreference(duration);
-          rootPreferenceScreen.removePreference(time);
-          rootPreferenceScreen.removePreference(custom_description);
-        }
-
-        switch(preference.getKey()) {
-
-          case "none": {
-
-            none.setChecked(true);
-
-            if(which_setted != 0) {
-              label.setSummary(R.string.non_notify);
-
-              MainEditFragment.notifyInterval.setLabel(getString(R.string.none));
-              MainEditFragment.notifyInterval.setWhich_setted(0);
-              MainEditFragment.notifyInterval.setHour(0);
-              MainEditFragment.notifyInterval.setMinute(0);
-              MainEditFragment.notifyInterval.setOrg_time(0);
-            }
-
-            return true;
-          }
-          case "default": {
-
-            defaultNotify.setChecked(true);
-
-            if(which_setted != 1) {
-              NotifyInterval notifyInterval = activity.generalSettings.getItem().getNotify_interval();
-              String label_str = notifyInterval.getLabel();
-              if(label_str == null || label_str.equals(getString(R.string.none))) {
-                label.setSummary(R.string.non_notify);
-              }
-              else label.setSummary(label_str);
-
-              MainEditFragment.notifyInterval = notifyInterval.clone();
-            }
-
-            return true;
-          }
-          case "every_minute": {
-
-            everyMinute.setChecked(true);
-
-            if(which_setted != 1 << 1) {
-              label.setSummary(R.string.every_minute_summary);
-
-              MainEditFragment.notifyInterval.setLabel(getString(R.string.every_minute_summary));
-              MainEditFragment.notifyInterval.setWhich_setted(1 << 1);
-              MainEditFragment.notifyInterval.setHour(0);
-              MainEditFragment.notifyInterval.setMinute(1);
-              MainEditFragment.notifyInterval.setOrg_time(-1);
-            }
-
-            return true;
-          }
-          case "every_five_minutes": {
-
-            everyFiveMinutes.setChecked(true);
-
-            if(which_setted != 1 << 2) {
-              label.setSummary(R.string.every_five_minutes_summary);
-
-              MainEditFragment.notifyInterval.setLabel(getString(R.string.every_five_minutes_summary));
-              MainEditFragment.notifyInterval.setWhich_setted(1 << 2);
-              MainEditFragment.notifyInterval.setHour(0);
-              MainEditFragment.notifyInterval.setMinute(5);
-              MainEditFragment.notifyInterval.setOrg_time(6);
-            }
-
-            return true;
-          }
-          case "every_fifteen_minutes": {
-
-            everyFifteenMinutes.setChecked(true);
-
-            if(which_setted != 1 << 3) {
-              label.setSummary(R.string.every_fifteen_minutes_summary);
-
-              MainEditFragment.notifyInterval.setLabel(getString(R.string.every_fifteen_minutes_summary));
-              MainEditFragment.notifyInterval.setWhich_setted(1 << 3);
-              MainEditFragment.notifyInterval.setHour(0);
-              MainEditFragment.notifyInterval.setMinute(15);
-              MainEditFragment.notifyInterval.setOrg_time(6);
-            }
-
-            return true;
-          }
-          case "every_thirty_minutes": {
-
-            everyThirtyMinutes.setChecked(true);
-
-            if(which_setted != 1 << 4) {
-              label.setSummary(R.string.every_thirty_minutes_summary);
-
-              MainEditFragment.notifyInterval.setLabel(getString(R.string.every_thirty_minutes_summary));
-              MainEditFragment.notifyInterval.setWhich_setted(1 << 4);
-              MainEditFragment.notifyInterval.setHour(0);
-              MainEditFragment.notifyInterval.setMinute(30);
-              MainEditFragment.notifyInterval.setOrg_time(6);
-            }
-
-            return true;
-          }
-          case "every_hour": {
-
-            everyHour.setChecked(true);
-
-            if(which_setted != 1 << 5) {
-              label.setSummary(R.string.every_hour_summary);
-
-              MainEditFragment.notifyInterval.setLabel(getString(R.string.every_hour_summary));
-              MainEditFragment.notifyInterval.setWhich_setted(1 << 5);
-              MainEditFragment.notifyInterval.setHour(1);
-              MainEditFragment.notifyInterval.setMinute(0);
-              MainEditFragment.notifyInterval.setOrg_time(6);
-            }
-
-            return true;
-          }
-          case "every_day": {
-
-            everyDay.setChecked(true);
-
-            if(which_setted != 1 << 6) {
-              label.setSummary(R.string.every_day_summary);
-
-              MainEditFragment.notifyInterval.setLabel(getString(R.string.every_day_summary));
-              MainEditFragment.notifyInterval.setWhich_setted(1 << 6);
-              MainEditFragment.notifyInterval.setHour(24);
-              MainEditFragment.notifyInterval.setMinute(0);
-              MainEditFragment.notifyInterval.setOrg_time(-1);
-            }
-
-            return true;
-          }
-          case "custom": {
-
-            custom.setChecked(true);
-
-            MainEditFragment.notifyInterval.setWhich_setted(1 << 7);
-            rootPreferenceScreen.addPreference(duration);
-            NotifyInterval interval = MainEditFragment.notifyInterval;
-            Resources res = activity.getResources();
-            String summary = "";
-            boolean is_empty = true;
-            if(interval.getHour() != 0) {
-              is_empty = false;
-              summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
-              if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
-            }
-            if(interval.getMinute() != 0) {
-              is_empty = false;
-              summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
-              if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
-            }
-
-            if(is_empty) {
-              interval.setMinute(5);
-              summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
-              if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
-            }
-
-            duration.setTitle(summary);
-            int org_time = interval.getOrg_time();
-            time.setTitle(res.getQuantityString(R.plurals.times, org_time, org_time));
-            rootPreferenceScreen.addPreference(time);
-            rootPreferenceScreen.addPreference(custom_description);
-
-            return true;
-          }
-        }
     }
 
     return false;
+  }
+
+  @Override
+  public void onCheckedChange(String key, boolean checked) {
+
+    int which_setted = MainEditFragment.notifyInterval.getWhich_setted();
+
+    none.setChecked(false);
+    defaultNotify.setChecked(false);
+    everyMinute.setChecked(false);
+    everyFiveMinutes.setChecked(false);
+    everyFifteenMinutes.setChecked(false);
+    everyThirtyMinutes.setChecked(false);
+    everyHour.setChecked(false);
+    everyDay.setChecked(false);
+    custom.setChecked(false);
+    if(which_setted == (1 << 7)) {
+      rootPreferenceScreen.removePreference(duration);
+      rootPreferenceScreen.removePreference(time);
+      rootPreferenceScreen.removePreference(custom_description);
+    }
+
+    switch(key) {
+
+      case "none": {
+
+        none.setChecked(true);
+
+        if(which_setted != 0) {
+          label.setSummary(R.string.non_notify);
+
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.none));
+          MainEditFragment.notifyInterval.setWhich_setted(0);
+          MainEditFragment.notifyInterval.setHour(0);
+          MainEditFragment.notifyInterval.setMinute(0);
+          MainEditFragment.notifyInterval.setOrg_time(0);
+        }
+
+        break;
+      }
+      case "default": {
+
+        defaultNotify.setChecked(true);
+
+        if(which_setted != 1) {
+          NotifyInterval notifyInterval = activity.generalSettings.getItem().getNotify_interval();
+          String label_str = notifyInterval.getLabel();
+          if(label_str == null || label_str.equals(getString(R.string.none))) {
+            label.setSummary(R.string.non_notify);
+          }
+          else label.setSummary(label_str);
+
+          MainEditFragment.notifyInterval = notifyInterval.clone();
+        }
+
+        break;
+      }
+      case "every_minute": {
+
+        everyMinute.setChecked(true);
+
+        if(which_setted != 1 << 1) {
+          label.setSummary(R.string.every_minute_summary);
+
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_minute_summary));
+          MainEditFragment.notifyInterval.setWhich_setted(1 << 1);
+          MainEditFragment.notifyInterval.setHour(0);
+          MainEditFragment.notifyInterval.setMinute(1);
+          MainEditFragment.notifyInterval.setOrg_time(-1);
+        }
+
+        break;
+      }
+      case "every_five_minutes": {
+
+        everyFiveMinutes.setChecked(true);
+
+        if(which_setted != 1 << 2) {
+          label.setSummary(R.string.every_five_minutes_summary);
+
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_five_minutes_summary));
+          MainEditFragment.notifyInterval.setWhich_setted(1 << 2);
+          MainEditFragment.notifyInterval.setHour(0);
+          MainEditFragment.notifyInterval.setMinute(5);
+          MainEditFragment.notifyInterval.setOrg_time(6);
+        }
+
+        break;
+      }
+      case "every_fifteen_minutes": {
+
+        everyFifteenMinutes.setChecked(true);
+
+        if(which_setted != 1 << 3) {
+          label.setSummary(R.string.every_fifteen_minutes_summary);
+
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_fifteen_minutes_summary));
+          MainEditFragment.notifyInterval.setWhich_setted(1 << 3);
+          MainEditFragment.notifyInterval.setHour(0);
+          MainEditFragment.notifyInterval.setMinute(15);
+          MainEditFragment.notifyInterval.setOrg_time(6);
+        }
+
+        break;
+      }
+      case "every_thirty_minutes": {
+
+        everyThirtyMinutes.setChecked(true);
+
+        if(which_setted != 1 << 4) {
+          label.setSummary(R.string.every_thirty_minutes_summary);
+
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_thirty_minutes_summary));
+          MainEditFragment.notifyInterval.setWhich_setted(1 << 4);
+          MainEditFragment.notifyInterval.setHour(0);
+          MainEditFragment.notifyInterval.setMinute(30);
+          MainEditFragment.notifyInterval.setOrg_time(6);
+        }
+
+        break;
+      }
+      case "every_hour": {
+
+        everyHour.setChecked(true);
+
+        if(which_setted != 1 << 5) {
+          label.setSummary(R.string.every_hour_summary);
+
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_hour_summary));
+          MainEditFragment.notifyInterval.setWhich_setted(1 << 5);
+          MainEditFragment.notifyInterval.setHour(1);
+          MainEditFragment.notifyInterval.setMinute(0);
+          MainEditFragment.notifyInterval.setOrg_time(6);
+        }
+
+        break;
+      }
+      case "every_day": {
+
+        everyDay.setChecked(true);
+
+        if(which_setted != 1 << 6) {
+          label.setSummary(R.string.every_day_summary);
+
+          MainEditFragment.notifyInterval.setLabel(getString(R.string.every_day_summary));
+          MainEditFragment.notifyInterval.setWhich_setted(1 << 6);
+          MainEditFragment.notifyInterval.setHour(24);
+          MainEditFragment.notifyInterval.setMinute(0);
+          MainEditFragment.notifyInterval.setOrg_time(-1);
+        }
+
+        break;
+      }
+      case "custom": {
+
+        custom.setChecked(true);
+
+        MainEditFragment.notifyInterval.setWhich_setted(1 << 7);
+        rootPreferenceScreen.addPreference(duration);
+        NotifyInterval interval = MainEditFragment.notifyInterval;
+        Resources res = activity.getResources();
+        String summary = "";
+        boolean is_empty = true;
+        if(interval.getHour() != 0) {
+          is_empty = false;
+          summary += res.getQuantityString(R.plurals.hour, interval.getHour(), interval.getHour());
+          if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
+        }
+        if(interval.getMinute() != 0) {
+          is_empty = false;
+          summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
+          if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
+        }
+
+        if(is_empty) {
+          interval.setMinute(5);
+          summary += res.getQuantityString(R.plurals.minute, interval.getMinute(), interval.getMinute());
+          if(!LOCALE.equals(Locale.JAPAN)) summary += " ";
+        }
+
+        duration.setTitle(summary);
+        int org_time = interval.getOrg_time();
+        time.setTitle(res.getQuantityString(R.plurals.times, org_time, org_time));
+        rootPreferenceScreen.addPreference(time);
+        rootPreferenceScreen.addPreference(custom_description);
+
+        break;
+      }
+    }
   }
 }
