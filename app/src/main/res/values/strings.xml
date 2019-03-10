@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="version_value">3.3.3.0</string>
+    <string name="version_value">3.4.0.0</string>
     <string name="app_id">******************</string>
     <string name="ad_unit_id">******************</string>
     <string name="app_name">KK Reminder</string>
@@ -107,9 +107,17 @@
     <string name="delete_checked_items_message">Do you really want to delete checked items? If you delete them, you cannot restore them</string>
     <string name="settings">Settings</string>
     <string name="default_settings">Default settings</string>
+    <string name="default_detail_text_size">Text size of card</string>
+    <string name="default_text_size_summary">This size will be applied to details section of card</string>
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="large">Large</string>
+    <string name="default_text_size_model_summary">Display example</string>
     <string name="default_new_task">New task</string>
     <string name="default_new_task_summary">You can set default settings of new task previously</string>
     <string name="default_manually_snooze">Manual snooze time</string>
+    <string name="play_slide_animation">Slide animation of cards</string>
+    <string name="play_slide_animation_summary">Whether playing sliding animation of cards when scrolling</string>
     <string name="theme">Theme</string>
     <string name="after_theme_set_message">After you set theme, this app reboots automatically</string>
     <string name="backup">Backup</string>
@@ -124,8 +132,6 @@
     <string name="fail_to_restore">Failed to restore backups</string>
     <string name="create_new_backup">Created a new backup</string>
     <string name="fail_to_create_new_backup">Failed to create a new backup</string>
-    <string name="update_backup">Updated backups</string>
-    <string name="fail_to_update_backup">Failed to update backups</string>
     <string name="choose_backup_data_message">Which backup data do you want to restore from?</string>
     <string name="canceled">Canceled</string>
     <string name="fail_to_make_backup_folder">Failed to make a backup folder</string>

@@ -3,6 +3,10 @@
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:title="@string/default_settings">
+        <PreferenceScreen
+            android:title="@string/default_detail_text_size"
+            android:key="text_size"
+            android:summary="@string/default_text_size_summary"/>
 
         <PreferenceScreen
             android:title="@string/default_new_task"
@@ -12,6 +16,13 @@
         <PreferenceScreen
             android:title="@string/default_manually_snooze"
             android:key="manually_snooze"/>
+
+        <com.hideaki.kk_reminder.MyCheckBoxPreference
+            android:title="@string/play_slide_animation"
+            android:key="animation"/>
+
+        <PreferenceScreen
+            android:summary="@string/play_slide_animation_summary"/>
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory

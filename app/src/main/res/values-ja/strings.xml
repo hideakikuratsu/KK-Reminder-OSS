@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_value">3.3.3.0</string>
+    <string name="version_value">3.4.0.0</string>
     <string name="app_id">******************</string>
     <string name="ad_unit_id">******************</string>
     <string name="app_name">KK リマインダー</string>
@@ -103,9 +103,17 @@
     <string name="delete_checked_items_message">チェックした項目を削除しますか？削除するともとに戻すことができません。</string>
     <string name="settings">設定</string>
     <string name="default_settings">デフォルト設定</string>
+    <string name="default_detail_text_size">カードの文字サイズ</string>
+    <string name="default_text_size_summary">このサイズはカードの詳細部分の表示に適用されます</string>
+    <string name="small">小</string>
+    <string name="medium">中</string>
+    <string name="large">大</string>
+    <string name="default_text_size_model_summary">表示例</string>
     <string name="default_new_task">新しく追加するタスク</string>
     <string name="default_new_task_summary">新しく追加するタスクの初期状態を決めておくことができます。</string>
     <string name="default_manually_snooze">手動スヌーズの延長時間</string>
+    <string name="play_slide_animation">カードのスライドアニメーション</string>
+    <string name="play_slide_animation_summary">スクロール時にカードがスライドしながら表示されるアニメーションのオンオフを設定します</string>
     <string name="theme">テーマ</string>
     <string name="after_theme_set_message">テーマ設定後は自動的にアプリを再起動します</string>
     <string name="backup">バックアップ</string>
@@ -120,8 +128,6 @@
     <string name="fail_to_restore">バックアップの復元に失敗しました。</string>
     <string name="create_new_backup">新しいバックアップを作成しました。</string>
     <string name="fail_to_create_new_backup">新しいバックアップの作成に失敗しました。</string>
-    <string name="update_backup">バックアップを更新しました。</string>
-    <string name="fail_to_update_backup">バックアップの更新に失敗しました。</string>
     <string name="choose_backup_data_message">どのバックアップデータから復元しますか？</string>
     <string name="canceled">キャンセルされました。</string>
     <string name="fail_to_make_backup_folder">バックアップフォルダの作成に失敗しました。</string>

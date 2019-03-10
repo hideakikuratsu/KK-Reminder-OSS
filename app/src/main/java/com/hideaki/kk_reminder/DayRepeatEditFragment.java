@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.transition.Fade;
+import android.support.transition.Transition;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -214,9 +215,10 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
 
   private void transitionFragment(PreferenceFragmentCompat next) {
 
-    Fade fade = new Fade();
-    this.setExitTransition(fade);
-    next.setEnterTransition(fade);
+    Transition transition = new Fade()
+        .setDuration(300);
+    this.setExitTransition(transition);
+    next.setEnterTransition(transition);
     FragmentManager manager = getFragmentManager();
     checkNotNull(manager);
     manager

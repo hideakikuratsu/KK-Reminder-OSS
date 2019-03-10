@@ -43,6 +43,7 @@ class UtilClass {
   static final String ITEM = "ITEM";
   static final String LIST = "LIST";
   static final String INT_GENERAL = "INT_GENERAL";
+  static final String DEFAULT_TEXT_SIZE = "DEFAULT_TEXT_SIZE";
   static final String SNOOZE_DEFAULT_HOUR = "SNOOZE_DEFAULT_HOUR";
   static final String SNOOZE_DEFAULT_MINUTE = "SNOOZE_DEFAULT_MINUTE";
   static final String MENU_POSITION = "MENU_POSITION";
@@ -58,6 +59,7 @@ class UtilClass {
 //  static final String STARTED = "STARTED";
 //  static final String STOPPED = "STOPPED";
   static final String BOOLEAN_GENERAL = "BOOLEAN_GENERAL";
+  static final String PLAY_SLIDE_ANIMATION = "PLAY_SLIDE_ANIMATION";
   static final String IS_EXPANDABLE_TODO = "IS_EXPANDABLE_TODO";
   static final String IS_PREMIUM = "IS_PREMIUM";
   static final String STRING_GENERAL = "STRING_GENERAL";
@@ -66,7 +68,7 @@ class UtilClass {
   static final String CHILD_NOTIFICATION_ID = "CHILD_NOTIFICATION_ID";
   static final String LINE_SEPARATOR = System.getProperty("line.separator");
   static final String PRODUCT_ID_PREMIUM = "com.hideaki.premium";
-  static final int RC_SIGN_IN = 1;
+  static final int REQUEST_CODE_SIGN_IN = 1;
   static long MINUTE = 60 * 1000;
   static long HOUR = 60 * 60 * 1000;
   static Locale LOCALE = Locale.getDefault();

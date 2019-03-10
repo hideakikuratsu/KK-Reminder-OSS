@@ -565,9 +565,8 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     viewHolder.checkBox.setOnLongClickListener(listener);
 
     //各種表示処理
-
-    //共通レイアウト
     viewHolder.detail.setText(item.getDetail());
+    viewHolder.detail.setTextSize(activity.text_size);
     viewHolder.detail.setTextColor(Color.GRAY);
     if(item.getWhich_tag_belongs() == 0) {
       viewHolder.tagPallet.setVisibility(View.GONE);
@@ -627,7 +626,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     }
 
     //CardViewが横から流れてくるアニメーション
-    if(is_scrolling) {
+    if(is_scrolling && activity.play_slide_animation) {
       Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
       convertView.startAnimation(animation);
     }

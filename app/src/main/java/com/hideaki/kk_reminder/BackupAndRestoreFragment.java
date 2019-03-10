@@ -1,5 +1,6 @@
 package com.hideaki.kk_reminder;
 
+import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -28,37 +29,29 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFile;
-import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.drive.MetadataBuffer;
-import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.drive.query.Filters;
-import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.FileContent;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
-import static com.hideaki.kk_reminder.UtilClass.RC_SIGN_IN;
+import static com.hideaki.kk_reminder.UtilClass.REQUEST_CODE_SIGN_IN;
 import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 
 public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
@@ -72,12 +65,11 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
   private MainActivity activity;
   private PreferenceCategory preferenceCategory;
   private GoogleSignInAccount signInAccount;
-  private DriveResourceClient driveResourceClient;
   private GoogleSignInClient signInClient;
   private PreferenceScreen logout;
   private boolean is_backup;
   private int choice;
-  private DriveFolder rootFolder;
+  private DriveServiceHelper driveServiceHelper;
 
   public static BackupAndRestoreFragment newInstance() {
 
@@ -138,10 +130,7 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
     //ログイン状態の初期化
     signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
 
-    if(signInAccount != null) {
-      setSignInClient();
-      preferenceCategory.addPreference(logout);
-    }
+    if(signInAccount != null) preferenceCategory.addPreference(logout);
     else preferenceCategory.removePreference(logout);
 
     return view;
@@ -164,26 +153,24 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
       case "backup": {
 
         if(signInAccount != null) {
-          driveResourceClient = Drive.getDriveResourceClient(activity, signInAccount);
+          setDriveServiceHelper();
           backupToDrive();
         }
         else {
           is_backup = true;
-          setSignInClient();
-          startActivityForResult(signInClient.getSignInIntent(), RC_SIGN_IN);
+          signIn();
         }
         return true;
       }
       case "restore": {
 
         if(signInAccount != null) {
-          driveResourceClient = Drive.getDriveResourceClient(activity, signInAccount);
+          setDriveServiceHelper();
           restoreFromDrive();
         }
         else {
           is_backup = false;
-          setSignInClient();
-          startActivityForResult(signInClient.getSignInIntent(), RC_SIGN_IN);
+          signIn();
         }
         return true;
       }
@@ -198,128 +185,79 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
 
   private void restoreFromDrive() {
 
-    driveResourceClient
-        .getRootFolder()
-        .continueWithTask(new Continuation<DriveFolder, Task<MetadataBuffer>>() {
-          @Override
-          public Task<MetadataBuffer> then(@NonNull Task<DriveFolder> task) {
+    if(driveServiceHelper != null) {
 
-            DriveFolder rootFolder = task.getResult();
-            checkNotNull(rootFolder);
+      driveServiceHelper.queryFolder(FOLDER_NAME)
+          .addOnSuccessListener(new OnSuccessListener<FileList>() {
+            @Override
+            public void onSuccess(FileList fileList) {
 
-            final Query backupFolderQuery = new Query.Builder()
-                .addFilter(Filters.and(
-                    Filters.eq(SearchableField.TITLE, FOLDER_NAME),
-                    Filters.eq(SearchableField.MIME_TYPE, DriveFolder.MIME_TYPE),
-                    Filters.eq(SearchableField.STARRED, true)
-                ))
-                .build();
+              List<File> folderList = fileList.getFiles();
+              if(folderList.size() == 0) {
+                Toast.makeText(activity, getString(R.string.backup_not_exists), Toast.LENGTH_LONG).show();
+              }
+              else {
+                driveServiceHelper.queryFiles(MIME_TYPE)
+                    .addOnSuccessListener(new OnSuccessListener<List<FileList>>() {
+                      @Override
+                      public void onSuccess(List<FileList> fileLists) {
 
-            return driveResourceClient.queryChildren(rootFolder, backupFolderQuery);
-          }
-        })
-        .addOnSuccessListener(new OnSuccessListener<MetadataBuffer>() {
-          @Override
-          public void onSuccess(MetadataBuffer metadata) {
-
-            int count = metadata.getCount();
-
-            if(count == 0) {
-              Toast.makeText(activity,
-                  getString(R.string.backup_not_exists), Toast.LENGTH_LONG
-              ).show();
-            }
-            else {
-              DriveFolder backupFolder = metadata.get(0).getDriveId().asDriveFolder();
-              final Query backupFileQuery = new Query.Builder()
-                  .addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE))
-                  .build();
-
-              driveResourceClient
-                  .queryChildren(backupFolder, backupFileQuery)
-                  .addOnSuccessListener(new OnSuccessListener<MetadataBuffer>() {
-                    @Override
-                    public void onSuccess(final MetadataBuffer metadata) {
-
-                      choice = 0;
-                      final int size = metadata.getCount();
-                      if(size == 0) {
-                        Toast.makeText(activity,
-                            getString(R.string.backup_not_exists), Toast.LENGTH_LONG
-                        ).show();
-
-                        metadata.release();
-                      }
-                      else {
-                        final List<String> itemList = new ArrayList<>();
-                        List<Task<DriveContents>> tasks = new ArrayList<>();
-                        for(int i = 0; i < size; i++) {
-
-                          final int j = i;
-                          tasks.add(driveResourceClient
-                              .openFile(metadata.get(i).getDriveId().asDriveFile(), DriveFile.MODE_READ_ONLY)
-                              .addOnSuccessListener(new OnSuccessListener<DriveContents>() {
-                                @Override
-                                public void onSuccess(DriveContents driveContents) {
-
-                                  itemList.add(metadata.get(j).getTitle());
-                                }
-                              })
-                              .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {}
-                              })
-                          );
+                        List<String> backupList = new ArrayList<>();
+                        List<String> backupIdList = new ArrayList<>();
+                        for(FileList list : fileLists) {
+                          for(File file : list.getFiles()) {
+                            backupList.add(file.getName());
+                            backupIdList.add(file.getId());
+                          }
                         }
-
-                        Tasks.whenAll(tasks)
-                            .continueWithTask(new Continuation<Void, Task<Void>>() {
-                              @Override
-                              public Task<Void> then(@NonNull Task<Void> task) {
-
-                                displayDialog(itemList, metadata);
-                                return null;
-                              }
-                            });
+                        if(backupList.size() == 0) {
+                          Toast.makeText(
+                              activity, getString(R.string.backup_not_exists), Toast.LENGTH_LONG
+                          ).show();
+                        }
+                        else displayDialog(backupList, backupIdList);
                       }
-                    }
-                  })
-                  .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
 
-                      Toast.makeText(activity,
-                          getString(R.string.fail_to_query), Toast.LENGTH_LONG
-                      ).show();
-                    }
-                  });
+                        Toast.makeText(activity, getString(R.string.fail_to_query), Toast.LENGTH_LONG).show();
+                      }
+                    });
+              }
             }
+          })
+          .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-            metadata.release();
-          }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            Toast.makeText(activity,
-                getString(R.string.fail_to_query), Toast.LENGTH_LONG
-            ).show();
-          }
-        });
+              Toast.makeText(activity, getString(R.string.fail_to_query), Toast.LENGTH_LONG).show();
+            }
+          });
+    }
   }
 
-  private void displayDialog(List<String> itemList, final MetadataBuffer metadata) {
+  private void displayDialog(List<String> backupList, final List<String> backupIdList) {
 
-    if(itemList.size() == 0) {
-      Toast.makeText(activity,
-          getString(R.string.backup_not_exists), Toast.LENGTH_LONG
-      ).show();
-
-      metadata.release();
+    int size = backupList.size();
+    if(size == 0) {
+      Toast.makeText(activity, getString(R.string.backup_not_exists), Toast.LENGTH_LONG).show();
     }
     else {
-      String[] items = itemList.toArray(new String[0]);
+      for(int i = 0; i < size; i++) {
+        StringBuilder title = new StringBuilder(backupList.get(i));
+        title.setCharAt(4, '/');
+        title.setCharAt(7, '/');
+        title.setCharAt(10, ' ');
+        title.setCharAt(13, ':');
+        title.setCharAt(16, ':');
+        title.setCharAt(19, ':');
+        backupList.set(i, title.substring(0, title.length() - 3));
+      }
+
+      choice = 0;
+      String[] items = backupList.toArray(new String[0]);
       final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
       final AlertDialog dialog = new AlertDialog.Builder(activity)
           .setTitle(R.string.choose_backup_data_message)
@@ -333,31 +271,21 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
 
               choice = SingleChoiceItemsAdapter.checked_position;
 
-              readDriveFile(metadata.get(choice).getDriveId().asDriveFile());
-
-              metadata.release();
+              readDriveFile(backupIdList.get(choice));
             }
           })
           .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-              Toast.makeText(activity,
-                  getString(R.string.canceled), Toast.LENGTH_LONG
-              ).show();
-
-              metadata.release();
+              Toast.makeText(activity, getString(R.string.canceled), Toast.LENGTH_LONG).show();
             }
           })
           .setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
 
-              Toast.makeText(activity,
-                  getString(R.string.canceled), Toast.LENGTH_LONG
-              ).show();
-
-              metadata.release();
+              Toast.makeText(activity, getString(R.string.canceled), Toast.LENGTH_LONG).show();
             }
           })
           .create();
@@ -375,279 +303,140 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
     }
   }
 
-  private void readDriveFile(DriveFile file) {
+  private void readDriveFile(String fileId) {
 
-    driveResourceClient
-        .openFile(file, DriveFile.MODE_READ_ONLY)
-        .continueWithTask(new Continuation<DriveContents, Task<Void>>() {
-          @Override
-          public Task<Void> then(@NonNull Task<DriveContents> task) {
-
-            DriveContents contents = task.getResult();
-            checkNotNull(contents);
-
-            File file = new File(DATABASE_PATH + FILE_NAME);
-            InputStream inputStream = contents.getInputStream();
-            try {
-              OutputStream outputStream = new FileOutputStream(file);
-              byte[] buf = new byte[4096];
-              int c;
-              while((c = inputStream.read(buf, 0, buf.length)) > 0) {
-                outputStream.write(buf, 0, c);
-                outputStream.flush();
-              }
-              outputStream.close();
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-
-            return driveResourceClient.discardContents(contents);
-          }
-        })
-        .addOnSuccessListener(new OnSuccessListener<Void>() {
-          @Override
-          public void onSuccess(Void aVoid) {
-
-            Toast.makeText(activity,
-                getString(R.string.success_to_restore), Toast.LENGTH_LONG
-            ).show();
-
-            activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
-            activity.setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
-            activity.finish();
-            startActivity(new Intent(activity, MainActivity.class));
-          }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            Toast.makeText(activity,
-                getString(R.string.fail_to_restore), Toast.LENGTH_LONG
-            ).show();
-          }
-        });
-  }
-
-  private void backupToDrive() {
-
-    driveResourceClient
-        .getRootFolder()
-        .continueWithTask(new Continuation<DriveFolder, Task<MetadataBuffer>>() {
-          @Override
-          public Task<MetadataBuffer> then(@NonNull Task<DriveFolder> task) {
-
-            rootFolder = task.getResult();
-            checkNotNull(rootFolder);
-
-            final Query backupFolderQuery = new Query.Builder()
-                .addFilter(Filters.and(
-                    Filters.eq(SearchableField.TITLE, FOLDER_NAME),
-                    Filters.eq(SearchableField.MIME_TYPE, DriveFolder.MIME_TYPE),
-                    Filters.eq(SearchableField.STARRED, true)
-                ))
-                .build();
-
-            return driveResourceClient.queryChildren(rootFolder, backupFolderQuery);
-          }
-        })
-        .addOnSuccessListener(new OnSuccessListener<MetadataBuffer>() {
-          @Override
-          public void onSuccess(MetadataBuffer metadata) {
-
-            int count = metadata.getCount();
-
-            if(count == 0) {
-
-              MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                  .setTitle(FOLDER_NAME)
-                  .setMimeType(DriveFolder.MIME_TYPE)
-                  .setPinned(true)
-                  .setStarred(true)
-                  .build();
-
-              driveResourceClient
-                  .createFolder(rootFolder, changeSet)
-                  .addOnSuccessListener(new OnSuccessListener<DriveFolder>() {
-                    @Override
-                    public void onSuccess(DriveFolder driveFolder) {
-
-                      createBackupFile(driveFolder);
-                    }
-                  })
-                  .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                      Toast.makeText(activity,
-                          getString(R.string.fail_to_make_backup_folder), Toast.LENGTH_LONG
-                      ).show();
-                    }
-                  });
-            }
-            else {
-              DriveFolder backupFolder = metadata.get(0).getDriveId().asDriveFolder();
-              createBackupFile(backupFolder);
-            }
-
-            metadata.release();
-          }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            Toast.makeText(activity,
-                getString(R.string.fail_to_query), Toast.LENGTH_LONG
-            ).show();
-          }
-        });
-  }
-
-  private void createBackupFile(final DriveFolder folder) {
-
-    driveResourceClient
-        .createContents()
-        .continueWithTask(new Continuation<DriveContents, Task<DriveFile>>() {
-          @Override
-          public Task<DriveFile> then(@NonNull Task<DriveContents> task) {
-
-            DriveContents contents = task.getResult();
-            checkNotNull(contents);
-
-            File file = new File(DATABASE_PATH + FILE_NAME);
-            OutputStream outputStream = contents.getOutputStream();
-            try {
-              InputStream inputStream = new FileInputStream(file);
-              byte[] buf = new byte[4096];
-              int c;
-              while((c = inputStream.read(buf, 0, buf.length)) > 0) {
-                outputStream.write(buf, 0, c);
-                outputStream.flush();
-              }
-              outputStream.close();
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-
-            MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                .setTitle(DateFormat.format("yyyy_MM_dd_kk_mm_ss", new Date()).toString() + ".db")
-                .setMimeType(MIME_TYPE)
-                .setPinned(true)
-                .build();
-
-            return driveResourceClient.createFile(folder, changeSet, contents);
-          }
-        })
-        .addOnSuccessListener(new OnSuccessListener<DriveFile>() {
-          @Override
-          public void onSuccess(DriveFile file) {
-
-            Toast.makeText(activity,
-                getString(R.string.create_new_backup), Toast.LENGTH_LONG
-            ).show();
-          }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            Toast.makeText(activity,
-                getString(R.string.fail_to_create_new_backup), Toast.LENGTH_LONG
-            ).show();
-          }
-        });
-  }
-
-  private void writeToDriveFile(DriveFile file) {
-
-    driveResourceClient
-        .openFile(file, DriveFile.MODE_WRITE_ONLY)
-        .continueWithTask(new Continuation<DriveContents, Task<Void>>() {
-          @Override
-          public Task<Void> then(@NonNull Task<DriveContents> task) {
-
-            DriveContents contents = task.getResult();
-            checkNotNull(contents);
-
-            File file = new File(DATABASE_PATH + FILE_NAME);
-            OutputStream outputStream = contents.getOutputStream();
-            try {
-              InputStream inputStream = new FileInputStream(file);
-              byte[] buf = new byte[4096];
-              int c;
-              while((c = inputStream.read(buf, 0, buf.length)) > 0) {
-                outputStream.write(buf, 0, c);
-                outputStream.flush();
-              }
-              outputStream.close();
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-
-            MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                .setLastViewedByMeDate(new Date())
-                .build();
-
-            return driveResourceClient.commitContents(contents, changeSet);
-          }
-        })
-        .addOnSuccessListener(new OnSuccessListener<Void>() {
-          @Override
-          public void onSuccess(Void aVoid) {
-
-            Toast.makeText(activity,
-                getString(R.string.update_backup), Toast.LENGTH_LONG
-            ).show();
-          }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            Toast.makeText(activity,
-                getString(R.string.fail_to_update_backup), Toast.LENGTH_LONG
-            ).show();
-          }
-        });
-  }
-
-  private void setSignInClient() {
-
-    if(signInClient == null) {
-      GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-          .requestScopes(Drive.SCOPE_FILE)
-          .build();
-      signInClient = GoogleSignIn.getClient(activity, signInOptions);
-    }
-  }
-
-  public void signOut() {
-
-    if(signInClient != null) {
-      signInClient.signOut()
-          .addOnCompleteListener(new OnCompleteListener<Void>() {
+    if(driveServiceHelper != null) {
+      java.io.File file = new java.io.File(DATABASE_PATH + FILE_NAME);
+      driveServiceHelper.downloadFile(file, fileId)
+          .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
+            public void onSuccess(Void aVoid) {
 
-              preferenceCategory.removePreference(logout);
-              signInAccount = null;
-              signInClient = null;
-              driveResourceClient = null;
-              Toast.makeText(activity,
-                  getString(R.string.logout_done), Toast.LENGTH_LONG
-              ).show();
+              Toast.makeText(activity, getString(R.string.success_to_restore), Toast.LENGTH_LONG).show();
+
+              activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
+              activity.setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
+              activity.finish();
+              startActivity(new Intent(activity, MainActivity.class));
             }
           })
           .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
 
-              Toast.makeText(activity,
-                  getString(R.string.fail_to_logout), Toast.LENGTH_LONG
-              ).show();
+              Toast.makeText(activity, getString(R.string.fail_to_restore), Toast.LENGTH_LONG).show();
             }
           });
+    }
+  }
+
+  private void backupToDrive() {
+
+    if(driveServiceHelper != null) {
+
+      driveServiceHelper.queryFolder(FOLDER_NAME)
+          .addOnSuccessListener(new OnSuccessListener<FileList>() {
+
+            @Override
+            public void onSuccess(FileList fileList) {
+
+              List<File> folderList = fileList.getFiles();
+              if(folderList.size() == 0) {
+
+                driveServiceHelper.createFolder(FOLDER_NAME, null)
+                    .addOnSuccessListener(new OnSuccessListener<File>() {
+                      @Override
+                      public void onSuccess(File file) {
+
+                        createBackupFile(file.getId());
+                      }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(
+                            activity, getString(R.string.fail_to_make_backup_folder), Toast.LENGTH_LONG
+                        ).show();
+                      }
+                    });
+              }
+              else createBackupFile(folderList.get(0).getId());
+            }
+          })
+          .addOnFailureListener(new OnFailureListener() {
+
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+              Toast.makeText(activity, getString(R.string.fail_to_query), Toast.LENGTH_LONG).show();
+            }
+          });
+    }
+  }
+
+  private void createBackupFile(String folderId) {
+
+    if(driveServiceHelper != null) {
+
+      java.io.File filePath = new java.io.File(DATABASE_PATH + FILE_NAME);
+      FileContent fileContent = new FileContent(MIME_TYPE, filePath);
+      String fileName = DateFormat.format("yyyy_MM_dd_kk_mm_ss", new Date()).toString() + ".db";
+      driveServiceHelper.createFile(fileName, fileContent, folderId)
+          .addOnSuccessListener(new OnSuccessListener<File>() {
+            @Override
+            public void onSuccess(File file) {
+
+              Toast.makeText(activity, getString(R.string.create_new_backup), Toast.LENGTH_LONG).show();
+            }
+          })
+          .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+              Toast.makeText(activity, getString(R.string.fail_to_create_new_backup), Toast.LENGTH_LONG).show();
+            }
+          });
+    }
+  }
+
+  private void signIn() {
+
+    GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestEmail()
+        .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
+        .build();
+    signInClient = GoogleSignIn.getClient(activity, signInOptions);
+    startActivityForResult(signInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+  }
+
+  private void signOut() {
+
+    if(signInClient != null) {
+
+      signInClient.signOut()
+          .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+              preferenceCategory.removePreference(logout);
+              signInAccount = null;
+              signInClient = null;
+              Toast.makeText(activity, getString(R.string.logout_done), Toast.LENGTH_LONG).show();
+            }
+          })
+          .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+              Toast.makeText(activity, getString(R.string.fail_to_logout), Toast.LENGTH_LONG).show();
+            }
+          });
+    }
+    else {
+      preferenceCategory.removePreference(logout);
+      signInAccount = null;
+      Toast.makeText(activity, getString(R.string.logout_done), Toast.LENGTH_LONG).show();
     }
   }
 
@@ -657,35 +446,50 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat imple
     super.onActivityResult(requestCode, resultCode, data);
 
     switch(requestCode) {
-      case RC_SIGN_IN: {
+
+      case REQUEST_CODE_SIGN_IN: {
 
         if(resultCode != Activity.RESULT_OK) return;
 
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 
-        task
-            .addOnSuccessListener(new OnSuccessListener<GoogleSignInAccount>() {
-              @Override
-              public void onSuccess(GoogleSignInAccount googleSignInAccount) {
+        try {
+          signInAccount = task.getResult(ApiException.class);
+          preferenceCategory.addPreference(logout);
 
-                preferenceCategory.addPreference(logout);
-                driveResourceClient = Drive.getDriveResourceClient(activity, googleSignInAccount);
-                if(is_backup) backupToDrive();
-                else restoreFromDrive();
-              }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception e) {
+          setDriveServiceHelper();
+          if(is_backup) backupToDrive();
+          else restoreFromDrive();
+        }
+        catch(ApiException e) {
 
-                Toast.makeText(activity,
-                    getString(R.string.error), Toast.LENGTH_LONG
-                ).show();
-              }
-            });
+          e.printStackTrace();
+          Toast.makeText(activity, getString(R.string.error), Toast.LENGTH_LONG).show();
+        }
 
         break;
       }
+    }
+  }
+
+  private void setDriveServiceHelper() {
+
+    if(signInAccount != null) {
+      GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
+          activity, Collections.singleton(DriveScopes.DRIVE_FILE));
+
+      Account account = signInAccount.getAccount();
+      checkNotNull(account);
+      credential.setSelectedAccount(account);
+
+      Drive googleDriveService = new Drive.Builder(
+              AndroidHttp.newCompatibleTransport(),
+              new GsonFactory(),
+              credential)
+              .setApplicationName("KK Reminder")
+              .build();
+
+      driveServiceHelper = new DriveServiceHelper(googleDriveService);
     }
   }
 }

@@ -36,6 +36,8 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
+import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
+import static com.hideaki.kk_reminder.UtilClass.generateUniqueId;
 import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
 
 
@@ -406,7 +408,7 @@ public class ActionBarFragment extends Fragment {
                 else {
                   drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
                 }
-                activity.menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
+                activity.menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
                     .setIcon(drawable)
                     .setCheckable(true);
               }

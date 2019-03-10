@@ -232,7 +232,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
   @Override
   public void onCheckedChange(String key, boolean checked) {
 
-    int which_setted = MainEditFragment.notifyInterval.getWhich_setted();
+    int which_set = MainEditFragment.notifyInterval.getWhich_setted();
 
     none.setChecked(false);
     defaultNotify.setChecked(false);
@@ -243,7 +243,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
     everyHour.setChecked(false);
     everyDay.setChecked(false);
     custom.setChecked(false);
-    if(which_setted == (1 << 7)) {
+    if(which_set == (1 << 7)) {
       rootPreferenceScreen.removePreference(duration);
       rootPreferenceScreen.removePreference(time);
       rootPreferenceScreen.removePreference(custom_description);
@@ -255,7 +255,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
 
         none.setChecked(true);
 
-        if(which_setted != 0) {
+        if(which_set != 0) {
           label.setSummary(R.string.non_notify);
 
           MainEditFragment.notifyInterval.setLabel(getString(R.string.none));
@@ -271,7 +271,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
 
         defaultNotify.setChecked(true);
 
-        if(which_setted != 1) {
+        if(which_set != 1) {
           NotifyInterval notifyInterval = activity.generalSettings.getItem().getNotify_interval();
           String label_str = notifyInterval.getLabel();
           if(label_str == null || label_str.equals(getString(R.string.none))) {
@@ -288,7 +288,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
 
         everyMinute.setChecked(true);
 
-        if(which_setted != 1 << 1) {
+        if(which_set != 1 << 1) {
           label.setSummary(R.string.every_minute_summary);
 
           MainEditFragment.notifyInterval.setLabel(getString(R.string.every_minute_summary));
@@ -304,7 +304,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
 
         everyFiveMinutes.setChecked(true);
 
-        if(which_setted != 1 << 2) {
+        if(which_set != 1 << 2) {
           label.setSummary(R.string.every_five_minutes_summary);
 
           MainEditFragment.notifyInterval.setLabel(getString(R.string.every_five_minutes_summary));
@@ -320,7 +320,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
 
         everyFifteenMinutes.setChecked(true);
 
-        if(which_setted != 1 << 3) {
+        if(which_set != 1 << 3) {
           label.setSummary(R.string.every_fifteen_minutes_summary);
 
           MainEditFragment.notifyInterval.setLabel(getString(R.string.every_fifteen_minutes_summary));
@@ -336,7 +336,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
 
         everyThirtyMinutes.setChecked(true);
 
-        if(which_setted != 1 << 4) {
+        if(which_set != 1 << 4) {
           label.setSummary(R.string.every_thirty_minutes_summary);
 
           MainEditFragment.notifyInterval.setLabel(getString(R.string.every_thirty_minutes_summary));
@@ -352,7 +352,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
 
         everyHour.setChecked(true);
 
-        if(which_setted != 1 << 5) {
+        if(which_set != 1 << 5) {
           label.setSummary(R.string.every_hour_summary);
 
           MainEditFragment.notifyInterval.setLabel(getString(R.string.every_hour_summary));
@@ -368,7 +368,7 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
 
         everyDay.setChecked(true);
 
-        if(which_setted != 1 << 6) {
+        if(which_set != 1 << 6) {
           label.setSummary(R.string.every_day_summary);
 
           MainEditFragment.notifyInterval.setLabel(getString(R.string.every_day_summary));

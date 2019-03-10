@@ -78,16 +78,14 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
     private int position;
     private Item item;
-    private View convertView;
     private ViewHolder viewHolder;
     private int which_list;
     private List<Item> itemListToMove;
 
-    MyOnClickListener(int position, Item item, View convertView, ViewHolder viewHolder) {
+    MyOnClickListener(int position, Item item, ViewHolder viewHolder) {
 
       this.position = position;
       this.item = item;
-      this.convertView = convertView;
       this.viewHolder = viewHolder;
     }
 
@@ -722,7 +720,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
     //現在のビュー位置でのitemの取得とリスナーの初期化
     Item item = (Item)getItem(position);
-    MyOnClickListener listener = new MyOnClickListener(position, item, convertView, viewHolder);
+    MyOnClickListener listener = new MyOnClickListener(position, item, viewHolder);
 
     //各リスナーの設定
     viewHolder.linearLayout.setOnClickListener(null);
@@ -744,6 +742,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
     //各種表示処理
     viewHolder.detail.setText(item.getDetail());
+    viewHolder.detail.setTextSize(activity.text_size);
     if(item.getWhich_tag_belongs() == 0) {
       viewHolder.tagPallet.setVisibility(View.GONE);
     }
@@ -816,7 +815,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     convertView.setVisibility(position == draggingPosition ? View.INVISIBLE : View.VISIBLE);
 
     //CardViewが横から流れてくるアニメーション
-    if(is_scrolling) {
+    if(is_scrolling && activity.play_slide_animation) {
       Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
       convertView.startAnimation(animation);
     }

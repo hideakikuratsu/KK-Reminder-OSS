@@ -307,6 +307,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
 
     //各種表示処理
     viewHolder.color_name.setText(color_name);
+    viewHolder.color_name.setTextSize(activity.text_size);
 
     //チェック状態の初期化
     if(position != checked_position) {
@@ -362,7 +363,7 @@ public class ColorPickerListAdapter extends BaseAdapter {
     typedArraysOfArray.recycle();
 
     //CardViewが横から流れてくるアニメーション
-    if(is_scrolling) {
+    if(is_scrolling && activity.play_slide_animation) {
       Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
       convertView.startAnimation(animation);
     }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
+        android:key="small"
+        android:title="@string/small"/>
+
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
+        android:key="medium"
+        android:title="@string/medium"/>
+
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
+        android:key="large"
+        android:title="@string/large"/>
+
+    <com.hideaki.kk_reminder.DefaultTextSizeModelPreference
+        android:key="model"/>
+
+    <PreferenceScreen
+        android:summary="@string/default_text_size_model_summary"/>
+
+</PreferenceScreen>

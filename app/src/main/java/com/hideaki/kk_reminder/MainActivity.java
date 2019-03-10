@@ -24,6 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.transition.Fade;
+import android.support.transition.Transition;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -69,6 +70,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.BOOLEAN_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_TEXT_SIZE;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_URI_SOUND;
 import static com.hideaki.kk_reminder.UtilClass.DONE_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
@@ -80,12 +82,14 @@ import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
+import static com.hideaki.kk_reminder.UtilClass.PLAY_SLIDE_ANIMATION;
 import static com.hideaki.kk_reminder.UtilClass.PRODUCT_ID_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
+import static com.hideaki.kk_reminder.UtilClass.generateUniqueId;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
 import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
@@ -133,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private int try_count;
   private BillingClient billingClient;
   public AlertDialog promotionDialog;
-  private GeneralSettingsFragment generalSettingsFragment;
   private BroadcastReceiver defaultSnoozeReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -143,6 +146,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
   };
   int dialog_style_id;
+  int text_size;
+  int which_text_size;
+  boolean play_slide_animation;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +165,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //SharedPreferencesの内、intを読み出す
     SharedPreferences intPreferences = getSharedPreferences(INT_GENERAL, MODE_PRIVATE);
+    which_text_size = intPreferences.getInt(DEFAULT_TEXT_SIZE, 0);
+    text_size = 18 + 2 * which_text_size;
     snooze_default_hour = intPreferences.getInt(SNOOZE_DEFAULT_HOUR, 0);
     snooze_default_minute = intPreferences.getInt(SNOOZE_DEFAULT_MINUTE, 15);
     which_menu_open = intPreferences.getInt(MENU_POSITION, 0);
@@ -166,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //SharedPreferencesの内、booleanを読み出す
     SharedPreferences booleanPreferences = getSharedPreferences(BOOLEAN_GENERAL, MODE_PRIVATE);
+    play_slide_animation = booleanPreferences.getBoolean(PLAY_SLIDE_ANIMATION, true);
     is_expandable_todo = booleanPreferences.getBoolean(IS_EXPANDABLE_TODO, true);
     is_premium = booleanPreferences.getBoolean(IS_PREMIUM, false);
 
@@ -253,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       else {
         drawable.setColorFilter(ContextCompat.getColor(this, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
       }
-      menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
+      menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
           .setIcon(drawable)
           .setCheckable(true);
     }
@@ -312,45 +321,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           }
           else {
             try_count++;
-//            if(try_count == 3) {
-//              Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
-//            }
             if(try_count < 3) billingClient.startConnection(this);
           }
-//          Toast.makeText(MainActivity.this, "セットアップ完了", Toast.LENGTH_LONG).show();
-//
-//          List<String> skuList = new ArrayList<>();
-//          skuList.add(PRODUCT_ID_PREMIUM);
-//          SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder()
-//              .setSkusList(skuList)
-//              .setType(BillingClient.SkuType.INAPP);
-//
-//          billingClient.querySkuDetailsAsync(params.build(), new SkuDetailsResponseListener() {
-//            @Override
-//            public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
-//
-//              if(responseCode == BillingClient.BillingResponse.OK && skuDetailsList != null) {
-//                for(SkuDetails skuDetails : skuDetailsList) {
-//                  String sku = skuDetails.getSku();
-//                  String price = skuDetails.getPrice();
-//                  if(PRODUCT_ID_PREMIUM.equals(sku)) {
-//                    Toast.makeText(MainActivity.this, "商品ID: " + PRODUCT_ID_PREMIUM, Toast.LENGTH_LONG).show();
-//                    Toast.makeText(MainActivity.this, "値段: " + price, Toast.LENGTH_LONG).show();
-//                  }
-//                }
-//              }
-//            }
-//          });
-//        }
         }
 
         @Override
         public void onBillingServiceDisconnected() {
 
           try_count++;
-//          if(try_count == 3) {
-//            Toast.makeText(MainActivity.this, getString(R.string.fail_to_setup_billing), Toast.LENGTH_LONG).show();
-//          }
           if(try_count < 3) billingClient.startConnection(this);
         }
       });
@@ -543,6 +521,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //選択状態のリストア
     menuItem.setChecked(true);
+    navigationView.setCheckedItem(menuItem);
 
     createAndSetFragmentColor();
 
@@ -593,19 +572,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       MyExpandableListAdapter.block_notify_change = true;
       updateListTask(null, -1, true);
       setUpdateListTimerTask(true);
-    }
-  }
-
-  @Override
-  protected void onStop() {
-
-    super.onStop();
-
-    //バックアップアカウントにログインしている場合はここでログアウトする
-    if(generalSettingsFragment != null) {
-      if(generalSettingsFragment.backupAndRestoreFragment != null) {
-        generalSettingsFragment.backupAndRestoreFragment.signOut();
-      }
     }
   }
 
@@ -684,6 +650,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           else menu.getItem(i).setChecked(false);
         }
         menuItem.setChecked(true);
+        navigationView.setCheckedItem(menuItem);
 
         //選択されたmenuItemに対応するフラグメントを表示
         this.menuItem = menuItem;
@@ -780,10 +747,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                       ContextCompat.getColor(MainActivity.this, R.color.icon_gray), PorterDuff.Mode.SRC_IN
                   );
                 }
-                menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
+                menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
                     .setIcon(drawable)
                     .setCheckable(true);
               }
+
+              if(order != 0) {
+                setIntGeneralInSharedPreferences(MENU_POSITION, which_menu_open + 1);
+                MainActivity.this.menuItem = menu.getItem(which_menu_open);
+              }
+              navigationView.setCheckedItem(MainActivity.this.menuItem);
 
               //データベースへの反映
               updateSettingsDB();
@@ -1352,20 +1325,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   public void setIntGeneralInSharedPreferences(String TAG, int value) {
 
     switch(TAG) {
-      case SNOOZE_DEFAULT_HOUR:
+      case DEFAULT_TEXT_SIZE: {
+        which_text_size = value;
+        text_size = 18 + 2 * value;
+        break;
+      }
+      case SNOOZE_DEFAULT_HOUR: {
         snooze_default_hour = value;
         break;
-      case SNOOZE_DEFAULT_MINUTE:
+      }
+      case SNOOZE_DEFAULT_MINUTE: {
         snooze_default_minute = value;
         break;
-      case MENU_POSITION:
+      }
+      case MENU_POSITION: {
         which_menu_open = value;
         break;
-      case SUBMENU_POSITION:
+      }
+      case SUBMENU_POSITION: {
         which_submenu_open = value;
         break;
-      default:
+      }
+      default: {
         throw new IllegalArgumentException(TAG);
+      }
     }
 
     getSharedPreferences(INT_GENERAL, Context.MODE_PRIVATE)
@@ -1377,14 +1360,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   public void setBooleanGeneralInSharedPreferences(String TAG, boolean value) {
 
     switch(TAG) {
-      case IS_EXPANDABLE_TODO:
+      case PLAY_SLIDE_ANIMATION: {
+        play_slide_animation = value;
+        break;
+      }
+      case IS_EXPANDABLE_TODO: {
         is_expandable_todo = value;
         break;
-      case IS_PREMIUM:
+      }
+      case IS_PREMIUM: {
         is_premium = value;
         break;
-      default:
+      }
+      default: {
         throw new IllegalArgumentException(TAG);
+      }
     }
 
     getSharedPreferences(BOOLEAN_GENERAL, Context.MODE_PRIVATE)
@@ -1605,8 +1595,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   public void showGeneralSettingsFragment() {
 
-    generalSettingsFragment = GeneralSettingsFragment.newInstance();
-    showFragment(GeneralSettingsFragment.TAG, generalSettingsFragment,
+    showFragment(GeneralSettingsFragment.TAG, GeneralSettingsFragment.newInstance(),
         null, null, false);
   }
 
@@ -1625,24 +1614,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private void commitFragment(Fragment remove1, Fragment remove2, String add1, Fragment addFragment1,
       String add2, Fragment addFragment2, boolean back_stack) {
 
-    Fade fade = new Fade();
+    Transition transition = new Fade()
+        .setDuration(300);
     FragmentManager manager = getSupportFragmentManager();
 
     FragmentTransaction transaction = manager.beginTransaction();
     if(remove1 != null) {
-      remove1.setExitTransition(fade);
+      remove1.setExitTransition(transition);
       transaction.remove(remove1);
     }
     if(remove2 != null) {
-      remove2.setExitTransition(fade);
+      remove2.setExitTransition(transition);
       transaction.remove(remove2);
     }
     if(add1 != null) {
-      addFragment1.setEnterTransition(fade);
+      addFragment1.setEnterTransition(transition);
       transaction.add(R.id.content, addFragment1, add1);
     }
     if(add2 != null) {
-      addFragment2.setEnterTransition(fade);
+      addFragment2.setEnterTransition(transition);
       transaction.add(R.id.content, addFragment2, add2);
     }
     if(back_stack) {

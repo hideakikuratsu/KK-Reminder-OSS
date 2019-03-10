@@ -2,7 +2,6 @@ package com.hideaki.kk_reminder;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -30,7 +29,6 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
   private int draggingPosition = -1;
   static boolean is_sorting;
   private List<NonScheduledList> filteredLists;
-  private final Handler handler = new Handler();
   static boolean is_scrolling;
 
   ManageListAdapter(List<NonScheduledList> nonScheduledLists, MainActivity activity) {
@@ -291,6 +289,7 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 
     //各種表示処理
     viewHolder.detail.setText(list.getTitle());
+    viewHolder.detail.setTextSize(activity.text_size);
     if(list.getWhich_tag_belongs() == 0) {
       viewHolder.tagPallet.setVisibility(View.GONE);
     }
@@ -328,7 +327,7 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
     convertView.setVisibility(position == draggingPosition ? View.INVISIBLE : View.VISIBLE);
 
     //CardViewが横から流れてくるアニメーション
-    if(is_scrolling) {
+    if(is_scrolling && activity.play_slide_animation) {
       Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
       convertView.startAnimation(animation);
     }

@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.transition.Fade;
+import android.support.transition.Transition;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.widget.Toolbar;
@@ -22,13 +24,16 @@ import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.hideaki.kk_reminder.UtilClass.PLAY_SLIDE_ANIMATION;
 
-public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+public class GeneralSettingsFragment extends BasePreferenceFragmentCompat
+    implements Preference.OnPreferenceClickListener, MyCheckBoxPreference.MyCheckBoxPreferenceCheckedChangeListener {
 
   static final String TAG = GeneralSettingsFragment.class.getSimpleName();
 
   private MainActivity activity;
   public BackupAndRestoreFragment backupAndRestoreFragment;
+  private CheckBoxPreference animation;
 
   public static GeneralSettingsFragment newInstance() {
 
@@ -58,8 +63,10 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
 
     addPreferencesFromResource(R.xml.general_settings_edit);
 
+    PreferenceScreen defaultTextSize = (PreferenceScreen)findPreference("text_size");
     PreferenceScreen defaultNewTask = (PreferenceScreen)findPreference("new_task");
     PreferenceScreen manuallySnooze = (PreferenceScreen)findPreference("manually_snooze");
+    animation = (CheckBoxPreference)findPreference("animation");
     PreferenceCategory adsCategory = (PreferenceCategory)findPreference("ads_category");
     PreferenceScreen disableAds = (PreferenceScreen)findPreference("disable_ads");
     PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
@@ -67,8 +74,10 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
     PreferenceScreen backup = (PreferenceScreen)findPreference("backup");
     PreferenceScreen about = (PreferenceScreen)findPreference("this_app");
 
+    defaultTextSize.setOnPreferenceClickListener(this);
     defaultNewTask.setOnPreferenceClickListener(this);
     manuallySnooze.setOnPreferenceClickListener(this);
+    ((MyCheckBoxPreference)animation).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     disableAds.setOnPreferenceClickListener(this);
     primaryColor.setOnPreferenceClickListener(this);
     secondaryColor.setOnPreferenceClickListener(this);
@@ -104,6 +113,10 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
     activity.drawerToggle.setDrawerIndicatorEnabled(true);
     actionBar.setTitle(R.string.settings);
 
+    //チェック状態の初期化
+    if(activity.play_slide_animation) animation.setChecked(true);
+    else animation.setChecked(false);
+
     return view;
   }
 
@@ -112,6 +125,11 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
 
     switch(preference.getKey()) {
 
+      case "text_size": {
+
+        transitionFragment(DefaultTextSizeEditFragment.newInstance());
+        return true;
+      }
       case "new_task": {
 
         activity.showMainEditFragment(activity.generalSettings.getItem());
@@ -158,9 +176,10 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
 
   private void transitionFragment(PreferenceFragmentCompat next) {
 
-    Fade fade = new Fade();
-    this.setExitTransition(fade);
-    next.setEnterTransition(fade);
+    Transition transition = new Fade()
+        .setDuration(300);
+    this.setExitTransition(transition);
+    next.setEnterTransition(transition);
     FragmentManager manager = getFragmentManager();
     checkNotNull(manager);
     manager
@@ -169,5 +188,14 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat implem
         .add(R.id.content, next)
         .addToBackStack(null)
         .commit();
+  }
+
+  @Override
+  public void onCheckedChange(String key, boolean checked) {
+
+    animation.setChecked(checked);
+    if(activity.play_slide_animation != checked) {
+      activity.setBooleanGeneralInSharedPreferences(PLAY_SLIDE_ANIMATION, checked);
+    }
   }
 }

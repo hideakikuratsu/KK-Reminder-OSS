@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.transition.Fade;
+import android.support.transition.Transition;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -46,7 +47,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LIST;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
+import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.REQUEST_CODE_RINGTONE_PICKER;
+import static com.hideaki.kk_reminder.UtilClass.generateUniqueId;
 
 public class MainEditFragment extends BasePreferenceFragmentCompat
     implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
@@ -583,10 +586,16 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
                     else {
                       drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
                     }
-                    activity.menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
+                    activity.menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
                         .setIcon(drawable)
                         .setCheckable(true);
                   }
+
+                  if(order != 0) {
+                    activity.setIntGeneralInSharedPreferences(MENU_POSITION, activity.which_menu_open - 1);
+                    activity.menuItem = activity.menu.getItem(activity.which_menu_open);
+                  }
+                  activity.navigationView.setCheckedItem(activity.menuItem);
 
                   //データベースへの反映
                   activity.updateSettingsDB();
@@ -761,9 +770,10 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
   private void transitionFragment(PreferenceFragmentCompat next) {
 
-    Fade fade = new Fade();
-    this.setExitTransition(fade);
-    next.setEnterTransition(fade);
+    Transition transition = new Fade()
+        .setDuration(300);
+    this.setExitTransition(transition);
+    next.setEnterTransition(transition);
     FragmentManager manager = getFragmentManager();
     checkNotNull(manager);
     manager
@@ -915,10 +925,16 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
         else {
           drawable.setColorFilter(ContextCompat.getColor(activity, R.color.icon_gray), PorterDuff.Mode.SRC_IN);
         }
-        activity.menu.add(R.id.reminder_list, Menu.NONE, 1, list.getTitle())
+        activity.menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
             .setIcon(drawable)
             .setCheckable(true);
       }
+
+      if(order != 0) {
+        activity.setIntGeneralInSharedPreferences(MENU_POSITION, activity.which_menu_open + 1);
+        activity.menuItem = activity.menu.getItem(activity.which_menu_open);
+      }
+      activity.navigationView.setCheckedItem(activity.menuItem);
 
       //データベースへの反映
       activity.updateSettingsDB();

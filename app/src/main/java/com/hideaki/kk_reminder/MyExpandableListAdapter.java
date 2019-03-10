@@ -127,18 +127,16 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     private int group_position;
     private int child_position;
     private Item item;
-    private View convertView;
     private ChildViewHolder viewHolder;
     private int which_list;
     private List<Item> itemListToMove;
 
-    private MyOnClickListener(int group_position, int child_position, Item item, View convertView,
-                             ChildViewHolder viewHolder) {
+    private MyOnClickListener(int group_position, int child_position, Item item,
+        ChildViewHolder viewHolder) {
 
       this.group_position = group_position;
       this.child_position = child_position;
       this.item = item;
-      this.convertView = convertView;
       this.viewHolder = viewHolder;
     }
 
@@ -1952,7 +1950,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     for(int j = 0; j < size; j++) {
       if(display_groups[j]) {
         if(count == i) {
-          listener = new MyOnClickListener(j, i1, item, convertView, viewHolder);
+          listener = new MyOnClickListener(j, i1, item, viewHolder);
           break;
         }
         count++;
@@ -1981,6 +1979,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     //各種表示処理
     displayDate(viewHolder, item);
     viewHolder.detail.setText(item.getDetail());
+    viewHolder.detail.setTextSize(activity.text_size);
     displayRepeat(viewHolder, item);
     if(item.getWhich_tag_belongs() == 0) {
       viewHolder.tagPallet.setVisibility(View.GONE);
@@ -2048,7 +2047,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     manually_checked = true;
 
     //CardViewが横から流れてくるアニメーション
-    if(is_scrolling) {
+    if(is_scrolling && activity.play_slide_animation) {
       Animation animation = AnimationUtils.loadAnimation(activity, R.anim.listview_motion);
       convertView.startAnimation(animation);
     }
