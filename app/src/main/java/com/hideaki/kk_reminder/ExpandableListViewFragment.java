@@ -108,6 +108,7 @@ public class ExpandableListViewFragment extends Fragment {
     MyExpandableListAdapter.has_panel = 0;
     MyExpandableListAdapter.checked_item_num = 0;
     MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+    activity.updateExpandableParentGroups(false);
     activity.expandableListView = view.findViewById(R.id.expandable_list);
     oldExpandableListView = activity.expandableListView;
     LinearLayout linearLayout = new LinearLayout(activity);

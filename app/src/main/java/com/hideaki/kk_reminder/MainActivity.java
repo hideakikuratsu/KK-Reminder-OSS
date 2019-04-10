@@ -874,27 +874,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       }
     }
 
-    if(is_updated) {
-      Calendar now = Calendar.getInstance();
-      Calendar tomorrow_cal = (Calendar)now.clone();
-      tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
-      CharSequence today;
-      CharSequence tomorrow;
-      if(LOCALE.equals(Locale.JAPAN)) {
-        today = DateFormat.format(" - yyyy年M月d日(E)", now);
-        tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
-      }
-      else {
-        today = DateFormat.format(" - yyyy/M/d (E)", now);
-        tomorrow = DateFormat.format(" - yyyy/M/d (E)", tomorrow_cal);
-      }
-      MyExpandableListAdapter.groups.set(1, getString(R.string.today) + today);
-      MyExpandableListAdapter.groups.set(2, getString(R.string.tomorrow) + tomorrow);
-
-      for(List<Item> itemList : MyExpandableListAdapter.children) {
-        Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
-      }
-    }
+    if(is_updated) updateExpandableParentGroups(true);
 
     if(!MyExpandableListAdapter.lock_block_notify_change || unlock_notify) {
       expandableListAdapter.notifyDataSetChanged();
@@ -976,6 +956,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
           })
           .show();
+    }
+  }
+
+  void updateExpandableParentGroups(boolean sort) {
+
+    Calendar now = Calendar.getInstance();
+    Calendar tomorrow_cal = (Calendar)now.clone();
+    tomorrow_cal.add(Calendar.DAY_OF_MONTH, 1);
+    CharSequence today;
+    CharSequence tomorrow;
+    if(LOCALE.equals(Locale.JAPAN)) {
+      today = DateFormat.format(" - yyyy年M月d日(E)", now);
+      tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrow_cal);
+    }
+    else {
+      today = DateFormat.format(" - yyyy/M/d (E)", now);
+      tomorrow = DateFormat.format(" - yyyy/M/d (E)", tomorrow_cal);
+    }
+    MyExpandableListAdapter.groups.set(1, getString(R.string.today) + today);
+    MyExpandableListAdapter.groups.set(2, getString(R.string.tomorrow) + tomorrow);
+
+    if(sort) {
+      for(List<Item> itemList : MyExpandableListAdapter.children) {
+        Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+      }
     }
   }
 
