@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ExpandableListView
+    <com.diegocarloslima.fgelv.lib.FloatingGroupExpandableListView
         android:id="@+id/expandable_list"
         android:divider="@null"
         android:dividerHeight="0dp"
