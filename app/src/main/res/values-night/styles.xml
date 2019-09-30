@@ -7,21 +7,20 @@
         <attr name="checked" format="boolean" />
     </declare-styleable>
 
-    <style name="TransparentTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@android:color/transparent</item>
+    <style name="TransparentTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/transparameter</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="ManuallySnoozeBackgroundTheme" parent="TransparentTheme">
-        <item name="android:windowBackground">@drawable/manually_snooze_activity_background</item>
-        <item name="colorPrimary">@color/red13PrimaryColor</item>
+        <item name="colorPrimary">@color/red6PrimaryColor</item>
         <item name="colorPrimaryDark">@color/red13PrimaryDarkColor</item>
-        <item name="colorAccent">@color/red13PrimaryColor</item>
-<!--        <item name="android:textColorPrimary">@color/red13PrimaryTextColor</item>-->
+        <item name="colorAccent">@color/secondaryTextMaterialDark</item>
+        <item name="android:textColorPrimary">@color/red13PrimaryTextColor</item>
     </style>
 
-    <style name="BaseTheme" parent="@style/PreferenceFixTheme.Light.NoActionBar">
+    <style name="BaseTheme" parent="@style/PreferenceFixTheme.NoActionBar">
         <item name="actionModeBackground">@color/iconGray</item>
         <item name="windowActionModeOverlay">true</item>
     </style>
