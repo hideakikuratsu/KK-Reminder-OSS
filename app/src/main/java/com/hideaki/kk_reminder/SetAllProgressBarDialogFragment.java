@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -20,22 +21,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import static com.hideaki.kk_reminder.MyDatabaseHelper.DONE_TABLE;
+import static com.hideaki.kk_reminder.MyDatabaseHelper.TODO_TABLE;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
-import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
-import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 import static java.util.Objects.requireNonNull;
 
-public class BackupAndRestoreProgressBarDialogFragment extends DialogFragment {
+public class SetAllProgressBarDialogFragment extends DialogFragment {
 
-  private int progress;
-  private int oldProgress;
-  private boolean isFirst;
-  private boolean isBackup;
+  private boolean isNotifySound;
 
-  BackupAndRestoreProgressBarDialogFragment(boolean isBackup) {
+  SetAllProgressBarDialogFragment(boolean isNotifySound) {
 
-    this.isBackup = isBackup;
+    this.isNotifySound = isNotifySound;
   }
 
   @Override
@@ -61,13 +59,17 @@ public class BackupAndRestoreProgressBarDialogFragment extends DialogFragment {
     int leftPadding = getPxFromDp(activity, 8);
     int topPadding = getPxFromDp(activity, 20);
     int rightPadding = getPxFromDp(activity, 8);
-    final int bottomPadding = getPxFromDp(activity, 8);
+    int bottomPadding = getPxFromDp(activity, 8);
     customTitle.setPadding(leftPadding, topPadding, rightPadding, bottomPadding);
     customTitle.setTextSize(getPxFromDp(activity, 7));
     customTitle.setTypeface(Typeface.DEFAULT_BOLD);
-    customTitle.setText(
-      isBackup? R.string.backup_progress_bar_title : R.string.restore_progress_bar_title
-    );
+    if(isNotifySound) {
+      customTitle.setText(activity.getString(R.string.set_all_notify_sound_progress_bar_title));
+    }
+    else {
+      customTitle.setText(activity.getString(R.string.set_all_vibration_progress_bar_title));
+    }
+
     if(activity.isDarkMode) {
       customTitle.setTextColor(
         ContextCompat.getColor(activity, R.color.primaryTextMaterialDark)
@@ -92,64 +94,62 @@ public class BackupAndRestoreProgressBarDialogFragment extends DialogFragment {
       @Override
       public void onShow(DialogInterface dialogInterface) {
 
-        progress = 0;
-        oldProgress = progress;
-        isFirst = true;
         Thread thread = new Thread() {
 
           @Override
           public void run() {
 
-            while(true) {
-              if(progress != oldProgress || isFirst) {
-                isFirst = false;
-                handler.post(new Runnable() {
-                  @Override
-                  public void run() {
+            List<ItemAdapter> todoItemList = activity.queryAllDB(TODO_TABLE);
+            List<ItemAdapter> doneItemList = activity.queryAllDB(DONE_TABLE);
 
-                    progressBar.setProgress(progress);
-                    String progressDescriptionResult = LOCALE.equals(Locale.JAPAN) ?
-                      (isBackup? "データのバックアップ中: " : "データの復元中: ") :
-                      (isBackup? "Backup: " : "Restore: ");
-                    progressDescriptionResult += progress + "%";
-                    progressDescription.setText(progressDescriptionResult);
-                  }
-                });
-                oldProgress = progress;
-
-                if(progress == 100) {
-                  break;
-                }
-              }
-              try {
-                Thread.sleep(10);
-              }
-              catch(InterruptedException e) {
-                Log.e("BackupRestoreProgress", Log.getStackTraceString(e));
-              }
-            }
-
-            try {
-              Thread.sleep(3500);
-            }
-            catch(InterruptedException e) {
-              Log.e("BackupRestoreProgress", Log.getStackTraceString(e));
-            }
-            dialog.dismiss();
-
-            if(!isBackup) {
-              activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
-              activity.setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
-              activity.menuItem = activity.menu.getItem(activity.whichMenuOpen);
+            int todoItemListSize = todoItemList.size();
+            int size = todoItemListSize + doneItemList.size();
+            for(int i = 0; i <= size; i++) {
+              final int progress = i * 100 / size;
               handler.post(new Runnable() {
                 @Override
                 public void run() {
 
-                  activity.navigationView.setCheckedItem(activity.menuItem);
-                  activity.recreate();
+                  progressBar.setProgress(progress);
+                  String progressDescriptionResult = LOCALE.equals(Locale.JAPAN) ?
+                    "一括設定中: " : "Setting to all tasks: ";
+                  progressDescriptionResult += progress + "%";
+                  progressDescription.setText(progressDescriptionResult);
                 }
               });
+
+              if(i == size) {
+                break;
+              }
+
+              if(i < todoItemListSize) {
+                ItemAdapter todoItem = todoItemList.get(i);
+                if(isNotifySound) {
+                  todoItem.setSoundUri(SetAllFragment.uriSound.toString());
+                }
+                else {
+                  todoItem.setVibrationPattern(SetAllFragment.vibrationStr);
+                }
+                activity.updateDB(todoItem, TODO_TABLE);
+              }
+              else {
+                ItemAdapter doneItem = doneItemList.get(i - todoItemListSize);
+                if(isNotifySound) {
+                  doneItem.setSoundUri(SetAllFragment.uriSound.toString());
+                }
+                else {
+                  doneItem.setVibrationPattern(SetAllFragment.vibrationStr);
+                }
+                activity.updateDB(doneItem, DONE_TABLE);
+              }
             }
+            try {
+              Thread.sleep(3500);
+            }
+            catch(InterruptedException e) {
+              Log.e("SetAllProgressBar", Log.getStackTraceString(e));
+            }
+            dialog.dismiss();
           }
         };
         thread.start();
@@ -157,20 +157,5 @@ public class BackupAndRestoreProgressBarDialogFragment extends DialogFragment {
     });
 
     return dialog;
-  }
-
-  int getProgress() {
-
-    return progress;
-  }
-
-  void setProgress(int progress) {
-
-    this.progress = progress;
-  }
-
-  void addProgress(int progress) {
-
-    this.progress += progress;
   }
 }
