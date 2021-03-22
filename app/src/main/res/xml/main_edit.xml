@@ -73,7 +73,7 @@
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:key="notes_category"
         android:title="@string/notes">
-        <PreferenceScreen
+        <com.hideaki.kk_reminder.NotesPreference
             android:key="notes"/>
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
