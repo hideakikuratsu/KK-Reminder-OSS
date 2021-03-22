@@ -67,7 +67,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
   private PreferenceScreen minuteRepeatItem;
   private Preference pickAlarm;
   private PreferenceScreen vibration;
-  private PreferenceScreen notes;
+  private Preference notes;
   static ItemAdapter item;
   private static String detailStr;
   static Calendar finalCal;
@@ -288,7 +288,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
       // notesセクション
       PreferenceCategory notesCategory = (PreferenceCategory)findPreference("notes_category");
-      notes = (PreferenceScreen)findPreference("notes");
+      notes = findPreference("notes");
       notes.setOnPreferenceClickListener(this);
 
       if(order == 0 || isMovingTask) {
