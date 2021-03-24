@@ -8,46 +8,46 @@ import androidx.annotation.NonNull;
 
 class ItemAdapter implements Cloneable {
 
-  private Item2 item;
+  private Item3 item;
 
   ItemAdapter() {
 
-    item = new Item2();
+    item = new Item3();
   }
 
   ItemAdapter(Object obj) {
 
-    if(obj instanceof Item2) {
-      item = (Item2)obj;
+    if(obj instanceof Item3) {
+      item = (Item3)obj;
     }
-    else if(obj instanceof Item) {
-      Item oldItem = (Item)obj;
-      item = new Item2();
+    else if(obj instanceof Item2) {
+      Item2 oldItem = (Item2)obj;
+      item = new Item3();
       item.setId(oldItem.getId());
       item.setDetail(oldItem.getDetail());
       item.setDate(oldItem.getDate());
-      item.setOrgDate(oldItem.getOrg_date());
-      item.setOrgDate2(oldItem.getOrg_date2());
-      item.setWhichTagBelongs(oldItem.getWhich_tag_belongs());
+      item.setOrgDate(oldItem.getOrgDate());
+      item.setOrgDate2(oldItem.getOrgDate2());
+      item.setWhichTagBelongs(oldItem.getWhichTagBelongs());
       item.setNotifyInterval(
-        new NotifyIntervalAdapter(oldItem.getNotify_interval()).getNotifyInterval()
+        new NotifyIntervalAdapter(oldItem.getNotifyInterval()).getNotifyInterval()
       );
       item.setDayRepeat(new DayRepeatAdapter(oldItem.getDayRepeat()).getDayRepeat());
       item.setMinuteRepeat(new MinuteRepeatAdapter(oldItem.getMinuteRepeat()).getMinuteRepeat());
       item.setSoundUri(oldItem.getSoundUri());
 
-      List<Notes> oldNotesList = oldItem.getNotesList();
+      List<Notes2> oldNotesList = oldItem.getNotesList();
       List<Notes2> newNotesList = item.getNotesList();
-      for(Notes oldNotes : oldNotesList) {
+      for(Notes2 oldNotes : oldNotesList) {
         newNotesList.add(new NotesAdapter(oldNotes).getNotes());
       }
 
-      item.setIsChecklistMode(oldItem.isChecklist_mode());
-      item.setAlteredTime(oldItem.getTime_altered());
-      item.setOrgAlteredTime(oldItem.getOrg_time_altered());
-      item.setIsAlarmStopped(oldItem.isAlarm_stopped());
-      item.setIsOrgAlarmStopped(oldItem.isOrg_alarm_stopped());
-      item.setWhichListBelongs(oldItem.getWhich_list_belongs());
+      item.setIsChecklistMode(oldItem.isChecklistMode());
+      item.setAlteredTime(oldItem.getAlteredTime());
+      item.setOrgAlteredTime(oldItem.getOrgAlteredTime());
+      item.setIsAlarmStopped(oldItem.isAlarmStopped());
+      item.setIsOrgAlarmStopped(oldItem.isOrgAlarmStopped());
+      item.setWhichListBelongs(oldItem.getWhichListBelongs());
       item.setOrder(oldItem.getOrder());
       item.setIsSelected(oldItem.isSelected());
       item.setDoneDate(oldItem.getDoneDate());
@@ -57,7 +57,7 @@ class ItemAdapter implements Cloneable {
     }
   }
 
-  Item2 getItem() {
+  Item3 getItem() {
 
     return item;
   }

@@ -976,7 +976,16 @@ public class DoneReceiver extends BroadcastReceiver {
 
 
     // tmp設定後の処理
-    if(item.getDayRepeat().getWhichSet() != 0 || item.getMinuteRepeat().getWhichSet() != 0) {
+    Calendar timeLimit = item.getDayRepeat().getTimeLimit();
+    boolean exceedsTimeLimit = true;
+    if(timeLimit == null || tmp.getTimeInMillis() < timeLimit.getTimeInMillis()) {
+      exceedsTimeLimit = false;
+    }
+    if(
+        (item.getDayRepeat().getWhichSet() != 0 ||
+            item.getMinuteRepeat().getWhichSet() != 0) &&
+            !exceedsTimeLimit
+    ) {
       if(!inMinuteRepeat) {
         item.setOrgIsAlarmStopped(item.isAlarmStopped());
         item.setOrgAlteredTime(item.getAlteredTime());

@@ -67,6 +67,7 @@
         <item quantity="one">Every year</item>
         <item quantity="other">Every %1$d years</item>
     </plurals>
+    <string name="time_limit">Time Limit</string>
     <string name="selection">Selection</string>
     <string name="repeat_minute_unit">Repeat (per minute)</string>
     <string name="repeat_minute_interval">Repeat Interval</string>

@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat;
 
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
+import static com.hideaki.kk_reminder.UtilClass.appendTimeLimitLabelOfDayRepeat;
 import static java.util.Objects.requireNonNull;
 
 public class DoneListAdapter extends BaseAdapter implements Filterable {
@@ -655,7 +656,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
       viewHolder.time.setText(setTime);
       viewHolder.time.setTextColor(Color.GRAY);
 
-      viewHolder.repeat.setText(R.string.non_repeat);
+      displayRepeat(viewHolder, item);
       viewHolder.repeat.setTextColor(Color.GRAY);
     }
     else if(order == 1) {
@@ -669,5 +670,67 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     }
 
     return convertView;
+  }
+
+  // リピートを表示する処理
+  private void displayRepeat(ViewHolder viewHolder, ItemAdapter item) {
+
+    String repeatStr = "";
+    String extractedStr = null;
+    String tmp = item.getDayRepeat().getLabel();
+    if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
+      if(!LOCALE.equals(Locale.JAPAN)) {
+        repeatStr += "Repeat ";
+      }
+      repeatStr += tmp;
+      int scale = item.getDayRepeat().getScale();
+      int template = item.getDayRepeat().getWhichTemplate();
+      if(LOCALE.equals(Locale.JAPAN)) {
+        if(item.getDayRepeat().getTimeLimit() != null) {
+          String targetString = " \\(\\d{4}年\\d{1,2}月\\d{1,2}日\\(.\\)まで\\)$";
+          Pattern pattern = Pattern.compile(targetString);
+          Matcher matcher = pattern.matcher(repeatStr);
+          if(matcher.find()) {
+            extractedStr = matcher.group();
+            repeatStr = repeatStr.replaceAll(targetString, "");
+          }
+        }
+        if(template > 0 && template < 1 << 5) {
+          if(template > 1) {
+            repeatStr += "に";
+          }
+        }
+        else if(scale > 1) {
+          repeatStr += "に";
+        }
+      }
+    }
+
+    tmp = item.getMinuteRepeat().getLabel();
+    if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
+      if(!LOCALE.equals(Locale.JAPAN) && !"".equals(repeatStr)) {
+        repeatStr += " and ";
+      }
+      repeatStr += tmp;
+    }
+
+    String day = item.getDayRepeat().getLabel();
+    String minute = item.getMinuteRepeat().getLabel();
+    if(LOCALE.equals(Locale.JAPAN) && day != null && !"".equals(day) &&
+        !activity.getString(R.string.none).equals(day)
+        &&
+        (minute == null || "".equals(minute) || activity.getString(R.string.none).equals(minute))) {
+      repeatStr += "繰り返す";
+    }
+
+    if("".equals(repeatStr)) {
+      viewHolder.repeat.setText(R.string.non_repeat);
+    }
+    else {
+      if(extractedStr != null) {
+        repeatStr += extractedStr;
+      }
+      viewHolder.repeat.setText(repeatStr);
+    }
   }
 }

@@ -29,6 +29,12 @@
         android:key="custom"
         android:title="@string/custom"/>
 
+    <com.hideaki.kk_reminder.MyCheckBoxPreference
+        android:key="time_limit"/>
+
+<!--    <PreferenceScreen-->
+<!--        android:summary="@string/time_limit"/>-->
+
     <PreferenceScreen
         android:key="label"
         android:summary="@string/non_repeat"/>

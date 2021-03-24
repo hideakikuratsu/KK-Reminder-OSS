@@ -1159,7 +1159,7 @@ public class MainActivity extends AppCompatActivity
     if(mainFragment != null) {
       MyExpandableListAdapter.isLockBlockNotifyChange = true;
       MyExpandableListAdapter.isBlockNotifyChange = true;
-      updateListTask(null, -1, true);
+      updateListTask(null, -1, true, false);
       setUpdateListTimerTask(true);
     }
 
@@ -1436,9 +1436,10 @@ public class MainActivity extends AppCompatActivity
   }
 
   public void updateListTask(
-    final ItemAdapter snackBarItem,
-    final int groupPosition,
-    boolean unlockNotify
+      final ItemAdapter snackBarItem,
+      final int groupPosition,
+      boolean unlockNotify,
+      final boolean exceedsTimeLimit
   ) {
 
     boolean isUpdated = false;
@@ -1527,7 +1528,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
 
-              updateListTask(null, -1, false);
+              updateListTask(
+                  null, -1, false, false
+              );
               runnable = null;
             }
           };
@@ -1566,8 +1569,9 @@ public class MainActivity extends AppCompatActivity
               MyExpandableListAdapter.isClosed = false;
             }
             if(
-              snackBarItem.getDayRepeat().getWhichSet() != 0 ||
-                snackBarItem.getMinuteRepeat().getWhichSet() != 0
+                (snackBarItem.getDayRepeat().getWhichSet() != 0 ||
+                    snackBarItem.getMinuteRepeat().getWhichSet() != 0) &&
+                !exceedsTimeLimit
             ) {
               snackBarItem.setAlarmStopped(snackBarItem.isOrgIsAlarmStopped());
               snackBarItem.setAlteredTime(snackBarItem.getOrgAlteredTime());
@@ -1653,7 +1657,9 @@ public class MainActivity extends AppCompatActivity
               deleteDB(snackBarItem, MyDatabaseHelper.DONE_TABLE);
             }
 
-            updateListTask(null, -1, true);
+            updateListTask(
+                null, -1, true, false
+            );
           }
         })
         .show();
@@ -1696,7 +1702,9 @@ public class MainActivity extends AppCompatActivity
 
           int second = Calendar.getInstance().get(Calendar.SECOND);
           if(!MyExpandableListAdapter.isBlockNotifyChange && second == 0) {
-            updateListTask(null, -1, false);
+            updateListTask(
+                null, -1, false, false
+            );
           }
         }
       });

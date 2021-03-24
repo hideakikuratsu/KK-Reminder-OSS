@@ -1,45 +1,47 @@
 package com.hideaki.kk_reminder;
 
+import java.util.Calendar;
+
 import androidx.annotation.NonNull;
 
 class DayRepeatAdapter implements Cloneable {
 
-  private DayRepeat2 dayRepeat;
+  private DayRepeat3 dayRepeat;
 
   DayRepeatAdapter() {
 
-    dayRepeat = new DayRepeat2();
+    dayRepeat = new DayRepeat3();
   }
 
   DayRepeatAdapter(Object obj) {
 
-    if(obj instanceof DayRepeat2) {
-      dayRepeat = (DayRepeat2)obj;
+    if(obj instanceof DayRepeat3) {
+      dayRepeat = (DayRepeat3)obj;
     }
-    else if(obj instanceof DayRepeat) {
-      DayRepeat oldDayRepeat = (DayRepeat)obj;
-      dayRepeat = new DayRepeat2();
+    else if(obj instanceof DayRepeat2) {
+      DayRepeat2 oldDayRepeat = (DayRepeat2)obj;
+      dayRepeat = new DayRepeat3();
       dayRepeat.setLabel(oldDayRepeat.getLabel());
       dayRepeat.setInterval(oldDayRepeat.getInterval());
       dayRepeat.setScale(oldDayRepeat.getScale());
       dayRepeat.setIsDay(oldDayRepeat.isDay());
       dayRepeat.setWeek(oldDayRepeat.getWeek());
-      dayRepeat.setDaysOfMonth(oldDayRepeat.getDays_of_month());
-      dayRepeat.setOrdinalNumber(oldDayRepeat.getOrdinal_number());
-      dayRepeat.setOnTheMonth(oldDayRepeat.getOn_the_month());
-      dayRepeat.setWeekdayNum(oldDayRepeat.getWeekday_num());
-      dayRepeat.setIsDaysOfMonthSet(oldDayRepeat.isDays_of_month_setted());
+      dayRepeat.setDaysOfMonth(oldDayRepeat.getDaysOfMonth());
+      dayRepeat.setOrdinalNumber(oldDayRepeat.getOrdinalNumber());
+      dayRepeat.setOnTheMonth(oldDayRepeat.getOnTheMonth());
+      dayRepeat.setWeekdayNum(oldDayRepeat.getWeekdayNum());
+      dayRepeat.setIsDaysOfMonthSet(oldDayRepeat.isDaysOfMonthSet());
       dayRepeat.setYear(oldDayRepeat.getYear());
-      dayRepeat.setDayOfMonthOfYear(oldDayRepeat.getDay_of_month_of_year());
-      dayRepeat.setWhichSet(oldDayRepeat.getSetted());
-      dayRepeat.setWhichTemplate(oldDayRepeat.getWhich_template());
+      dayRepeat.setDayOfMonthOfYear(oldDayRepeat.getDayOfMonthOfYear());
+      dayRepeat.setWhichSet(oldDayRepeat.getWhichSet());
+      dayRepeat.setWhichTemplate(oldDayRepeat.getWhichTemplate());
     }
     else {
       throw new IllegalArgumentException("Arg dayRepeat is not instance of DayRepeat Class");
     }
   }
 
-  DayRepeat2 getDayRepeat() {
+  DayRepeat3 getDayRepeat() {
 
     return dayRepeat;
   }
@@ -114,6 +116,11 @@ class DayRepeatAdapter implements Cloneable {
     return dayRepeat.getWhichTemplate();
   }
 
+  Calendar getTimeLimit() {
+
+    return dayRepeat.getTimeLimit();
+  }
+
   void setLabel(String label) {
 
     dayRepeat.setLabel(label);
@@ -182,6 +189,11 @@ class DayRepeatAdapter implements Cloneable {
   void setWhichTemplate(int whichTemplate) {
 
     dayRepeat.setWhichTemplate(whichTemplate);
+  }
+
+  void setTimeLimit(Calendar timeLimit) {
+
+    dayRepeat.setTimeLimit(timeLimit);
   }
 
   @NonNull
