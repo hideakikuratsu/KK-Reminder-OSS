@@ -353,7 +353,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
               item.setAlteredTime(0);
               Collections.sort(children.get(groupPosition), SCHEDULED_ITEM_COMPARATOR);
 
-              activity.updateListTask(null, -1, true);
+              activity.updateListTask(
+                  null, -1, true, false
+              );
 
               activity.deleteAlarm(item);
               activity.setAlarm(item);
@@ -1353,7 +1355,16 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
 
         // tmp設定後の処理
-        if(item.getDayRepeat().getWhichSet() != 0 || item.getMinuteRepeat().getWhichSet() != 0) {
+        Calendar timeLimit = item.getDayRepeat().getTimeLimit();
+        boolean exceedsTimeLimit = true;
+        if(timeLimit == null || tmp.getTimeInMillis() < timeLimit.getTimeInMillis()) {
+          exceedsTimeLimit = false;
+        }
+        if(
+            (item.getDayRepeat().getWhichSet() != 0 ||
+                item.getMinuteRepeat().getWhichSet() != 0) &&
+            !exceedsTimeLimit
+        ) {
           if(!inMinuteRepeat) {
             item.setOrgIsAlarmStopped(item.isAlarmStopped());
             item.setOrgAlteredTime(item.getAlteredTime());
@@ -1380,12 +1391,13 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
         }
 
+        final boolean finalExceedsTimeLimit = exceedsTimeLimit;
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
           @Override
           public void run() {
 
-            activity.updateListTask(item, groupPosition, true);
+            activity.updateListTask(item, groupPosition, true, finalExceedsTimeLimit);
           }
         }, 400);
       }
@@ -2287,7 +2299,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           for(List<ItemAdapter> itemList : children) {
             Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
           }
-          activity.updateListTask(null, -1, true);
+          activity.updateListTask(
+              null, -1, true, false
+          );
           runnable = null;
         }
       };
@@ -2526,6 +2540,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
   private void displayRepeat(ChildViewHolder viewHolder, ItemAdapter item) {
 
     String repeatStr = "";
+    String extractedStr = null;
     String tmp = item.getDayRepeat().getLabel();
     if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
       if(!LOCALE.equals(Locale.JAPAN)) {
@@ -2535,6 +2550,15 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       int scale = item.getDayRepeat().getScale();
       int template = item.getDayRepeat().getWhichTemplate();
       if(LOCALE.equals(Locale.JAPAN)) {
+        if(item.getDayRepeat().getTimeLimit() != null) {
+          String targetString = " \\(\\d{4}年\\d{1,2}月\\d{1,2}日\\(.\\)まで\\)$";
+          Pattern pattern = Pattern.compile(targetString);
+          Matcher matcher = pattern.matcher(repeatStr);
+          if(matcher.find()) {
+            extractedStr = matcher.group();
+            repeatStr = repeatStr.replaceAll(targetString, "");
+          }
+        }
         if(template > 0 && template < 1 << 5) {
           if(template > 1) {
             repeatStr += "に";
@@ -2567,6 +2591,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       viewHolder.repeat.setText(R.string.non_repeat);
     }
     else {
+      if(extractedStr != null) {
+        repeatStr += extractedStr;
+      }
       viewHolder.repeat.setText(repeatStr);
     }
   }

@@ -12,6 +12,7 @@ import android.graphics.drawable.VectorDrawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -506,5 +507,19 @@ class UtilClass {
         );
       }
     }
+  }
+
+  static String appendTimeLimitLabelOfDayRepeat(Calendar timeLimit, String label) {
+
+    if(timeLimit != null) {
+      if(LOCALE.equals(Locale.JAPAN)) {
+        label += DateFormat.format(" (yyyy年M月d日(E)まで)", timeLimit);
+      }
+      else {
+        label += DateFormat.format(" until yyyy/M/d (E)", timeLimit);
+      }
+    }
+
+    return label;
   }
 }

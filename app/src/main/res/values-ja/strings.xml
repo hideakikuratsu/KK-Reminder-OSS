@@ -64,6 +64,7 @@
     <plurals name="per_year">
         <item quantity="other">%1$d年に1度</item>
     </plurals>
+    <string name="time_limit">期限</string>
     <string name="selection">選択</string>
     <string name="repeat_minute_unit">繰り返し(分単位)</string>
     <string name="repeat_minute_interval">繰り返し間隔</string>

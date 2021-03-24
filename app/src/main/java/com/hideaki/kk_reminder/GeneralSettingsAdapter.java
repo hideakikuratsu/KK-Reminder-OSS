@@ -5,36 +5,36 @@ import java.util.List;
 
 class GeneralSettingsAdapter implements Cloneable {
 
-  private GeneralSettings2 generalSettings;
+  private GeneralSettings3 generalSettings;
   private boolean isCopiedFromOldVersion = false;
 
   GeneralSettingsAdapter() {
 
-    generalSettings = new GeneralSettings2();
+    generalSettings = new GeneralSettings3();
   }
 
   GeneralSettingsAdapter(Object obj) {
     
-    if(obj instanceof GeneralSettings2) {
-      generalSettings = (GeneralSettings2)obj;
+    if(obj instanceof GeneralSettings3) {
+      generalSettings = (GeneralSettings3)obj;
     }
-    else if(obj instanceof GeneralSettings) {
+    else if(obj instanceof GeneralSettings2) {
       isCopiedFromOldVersion = true;
-      GeneralSettings oldGeneralSettings = (GeneralSettings)obj;
-      generalSettings = new GeneralSettings2();
+      GeneralSettings2 oldGeneralSettings = (GeneralSettings2)obj;
+      generalSettings = new GeneralSettings3();
 
-      List<NonScheduledList> oldNonScheduledLists = oldGeneralSettings.getNonScheduledLists();
+      List<NonScheduledList2> oldNonScheduledLists = oldGeneralSettings.getNonScheduledLists();
       List<NonScheduledList2> newNonScheduledLists =
         generalSettings.getNonScheduledLists();
-      for(NonScheduledList oldNonScheduledList : oldNonScheduledLists) {
+      for(NonScheduledList2 oldNonScheduledList : oldNonScheduledLists) {
         newNonScheduledLists.add(
           new NonScheduledListAdapter(oldNonScheduledList).getNonScheduledList()
         );
       }
 
-      List<Tag> oldTagList = oldGeneralSettings.getTagList();
+      List<Tag2> oldTagList = oldGeneralSettings.getTagList();
       List<Tag2> newTagList = generalSettings.getTagList();
-      for(Tag oldTag : oldTagList) {
+      for(Tag2 oldTag : oldTagList) {
         newTagList.add(new TagAdapter(oldTag).getTag());
       }
 
@@ -48,7 +48,7 @@ class GeneralSettingsAdapter implements Cloneable {
     }
   }
 
-  GeneralSettings2 getGeneralSettings() {
+  GeneralSettings3 getGeneralSettings() {
 
     return generalSettings;
   }

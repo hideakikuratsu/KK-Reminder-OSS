@@ -73,6 +73,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
   static Calendar finalCal;
   static NotifyIntervalAdapter notifyInterval;
   static DayRepeatAdapter dayRepeat;
+  static Calendar tmpTimeLimit = null;
   static MinuteRepeatAdapter minuteRepeat;
   private static boolean isEdit;
   private static int order;
@@ -97,6 +98,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
     detailStr = "";
     notifyInterval = new NotifyIntervalAdapter();
     dayRepeat = new DayRepeatAdapter();
+    tmpTimeLimit = null;
     minuteRepeat = new MinuteRepeatAdapter();
     finalCal = Calendar.getInstance();
     finalCal.add(Calendar.MINUTE, 1);
@@ -118,6 +120,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
     detailStr = detail;
     notifyInterval = new NotifyIntervalAdapter();
     dayRepeat = new DayRepeatAdapter();
+    tmpTimeLimit = null;
     minuteRepeat = new MinuteRepeatAdapter();
     finalCal = Calendar.getInstance();
     finalCal.add(Calendar.MINUTE, 1);
@@ -138,6 +141,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
     detailStr = item.getDetail();
     notifyInterval = item.getNotifyInterval().clone();
     dayRepeat = item.getDayRepeat().clone();
+    tmpTimeLimit = null;
     minuteRepeat = item.getMinuteRepeat().clone();
     finalCal = (Calendar)item.getDate().clone();
     Bundle args = new Bundle();

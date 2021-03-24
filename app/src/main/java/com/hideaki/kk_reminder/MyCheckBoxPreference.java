@@ -5,8 +5,12 @@ import android.content.Context;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.PreferenceViewHolder;
 
+import android.content.ContextWrapper;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.TextView;
+
+import static java.util.Objects.requireNonNull;
 
 public class MyCheckBoxPreference extends CheckBoxPreference {
 
@@ -15,23 +19,28 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
   private MyCheckBoxPreferenceCheckedChangeListener listener = null;
   private boolean isFromOnClick;
   private boolean isChecked;
+  private TextView mySummary;
+  private MainActivity activity;
 
   @SuppressWarnings("unused")
   MyCheckBoxPreference(Context context) {
 
     super(context);
+    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
     setLayoutResource(R.layout.my_checkbox_preference_layout);
   }
 
   public MyCheckBoxPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
+    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
     setLayoutResource(R.layout.my_checkbox_preference_layout);
   }
 
   public MyCheckBoxPreference(Context context, AttributeSet attrs, int defStyleAttr) {
 
     super(context, attrs, defStyleAttr);
+    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
     setLayoutResource(R.layout.my_checkbox_preference_layout);
   }
 
@@ -52,6 +61,7 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
     super.onBindViewHolder(holder);
 
     TextView title = (TextView)holder.findViewById(R.id.item_name);
+    mySummary = (TextView)holder.findViewById(R.id.my_summary);
     animCheckBox = (AnimCheckBox)holder.findViewById(R.id.checkBox);
     animCheckBox.setOnCheckedChangeListener(null);
     animCheckBox.setChecked(isChecked, false);
@@ -107,5 +117,30 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
   public interface MyCheckBoxPreferenceCheckedChangeListener {
 
     void onCheckedChange(String key, boolean checked);
+  }
+
+  TextView getMySummary() {
+
+    return mySummary;
+  }
+
+  void setMySummary(String summary) {
+
+    mySummary.setText(summary);
+  }
+
+  void setMySummary(int stringId) {
+
+    mySummary.setText(activity.getString(stringId));
+  }
+
+  void showMySummary() {
+
+    mySummary.setVisibility(View.VISIBLE);
+  }
+
+  void hideMySummary() {
+
+    mySummary.setVisibility(View.GONE);
   }
 }
