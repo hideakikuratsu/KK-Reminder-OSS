@@ -19,7 +19,7 @@ import static java.util.Objects.requireNonNull;
 public class DatePickerDialogFragment extends DialogFragment
   implements DatePickerDialog.OnDateSetListener {
 
-  private MainEditFragment mainEditFragment;
+  private final MainEditFragment mainEditFragment;
 
   DatePickerDialogFragment(MainEditFragment mainEditFragment) {
 

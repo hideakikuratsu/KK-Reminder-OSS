@@ -40,9 +40,9 @@ public class DoneListViewFragment extends Fragment {
   private static int expandableListPosition;
   private static int expandableListOffset;
   @SuppressLint("UseSparseArrays")
-  private static Map<Long, Integer> listPosition = new HashMap<>();
+  private static final Map<Long, Integer> LIST_POSITION = new HashMap<>();
   @SuppressLint("UseSparseArrays")
-  private static Map<Long, Integer> listOffset = new HashMap<>();
+  private static final Map<Long, Integer> LIST_OFFSET = new HashMap<>();
   private ListView oldListView;
   private int order;
   private long id;
@@ -92,10 +92,10 @@ public class DoneListViewFragment extends Fragment {
       }
       case 1: {
 
-        listPosition.put(id, oldListView.getFirstVisiblePosition());
+        LIST_POSITION.put(id, oldListView.getFirstVisiblePosition());
         View child = oldListView.getChildAt(0);
         if(child != null) {
-          listOffset.put(id, child.getTop());
+          LIST_OFFSET.put(id, child.getTop());
         }
         break;
       }
@@ -199,8 +199,8 @@ public class DoneListViewFragment extends Fragment {
           }
           case 1: {
 
-            Integer listPosition = DoneListViewFragment.listPosition.get(id);
-            Integer listOffset = DoneListViewFragment.listOffset.get(id);
+            Integer listPosition = DoneListViewFragment.LIST_POSITION.get(id);
+            Integer listOffset = DoneListViewFragment.LIST_OFFSET.get(id);
             if(listPosition == null) {
               listPosition = 0;
             }

@@ -17,7 +17,7 @@ import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 public class ManuallySnoozeListAdapter extends BaseAdapter {
 
   private final List<String> snoozeList;
-  private ManuallySnoozeActivity activity;
+  private final ManuallySnoozeActivity activity;
   private static boolean isManuallyChecked;
   static int checkedPosition;
   private String defaultSnoozeTime;
@@ -47,18 +47,10 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
         defaultSnoozeTime += " ";
       }
     }
-    if(LOCALE.equals(Locale.JAPAN)) {
-      snoozeList.add(
-        0,
-        activity.getString(R.string.default_snooze) + " (" + defaultSnoozeTime + ")"
-      );
-    }
-    else {
-      snoozeList.add(
-        0,
-        activity.getString(R.string.default_snooze) + " (" + defaultSnoozeTime + ")"
-      );
-    }
+    snoozeList.add(
+      0,
+      activity.getString(R.string.default_snooze) + " (" + defaultSnoozeTime + ")"
+    );
 
     isManuallyChecked = false;
     checkedPosition = 0;
@@ -75,8 +67,8 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
   private class MyOnClickListener
     implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener {
 
-    private int position;
-    private ViewHolder viewHolder;
+    private final int position;
+    private final ViewHolder viewHolder;
 
     MyOnClickListener(int position, ViewHolder viewHolder) {
 
@@ -87,12 +79,7 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
     @Override
     public void onClick(View v) {
 
-      if(!viewHolder.checkBox.isChecked()) {
-        viewHolder.checkBox.setChecked(true);
-      }
-      else {
-        viewHolder.checkBox.setChecked(false);
-      }
+      viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
     }
 
     @Override

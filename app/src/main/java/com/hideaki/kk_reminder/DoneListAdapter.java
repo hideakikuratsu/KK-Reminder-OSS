@@ -32,13 +32,13 @@ import androidx.core.content.ContextCompat;
 
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
-import static com.hideaki.kk_reminder.UtilClass.appendTimeLimitLabelOfDayRepeat;
+import static com.hideaki.kk_reminder.UtilClass.getNow;
 import static java.util.Objects.requireNonNull;
 
 public class DoneListAdapter extends BaseAdapter implements Filterable {
 
   static List<ItemAdapter> itemList;
-  private MainActivity activity;
+  private final MainActivity activity;
   ActionMode actionMode = null;
   static int checkedItemNum;
   private static boolean isManuallyChecked;
@@ -67,9 +67,9 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener,
     View.OnLongClickListener, ActionMode.Callback {
 
-    private int position;
-    private ItemAdapter item;
-    private ViewHolder viewHolder;
+    private final int position;
+    private final ItemAdapter item;
+    private final ViewHolder viewHolder;
     private int whichList;
     private List<ItemAdapter> itemListToMove;
     Calendar tmp;
@@ -92,12 +92,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
           if(actionMode == null) {
             final String[] items = new String[3];
             if(order == 0) {
-              Calendar now = Calendar.getInstance();
-              if(now.get(Calendar.SECOND) >= 30) {
-                now.add(Calendar.MINUTE, 1);
-              }
-              now.set(Calendar.SECOND, 0);
-              now.set(Calendar.MILLISECOND, 0);
+              Calendar now = getNow();
 
               tmp = (Calendar)now.clone();
               tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
@@ -172,11 +167,8 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
 
             dialog.show();
           }
-          else if(viewHolder.checkBox.isChecked()) {
-            viewHolder.checkBox.setChecked(false);
-          }
           else {
-            viewHolder.checkBox.setChecked(true);
+            viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
           }
           break;
         }
@@ -208,20 +200,14 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
 
       if(actionMode != null) {
 
-        if(viewHolder.checkBox.isChecked()) {
-          viewHolder.checkBox.setChecked(false);
-        }
-        else {
-          viewHolder.checkBox.setChecked(true);
-        }
+        viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
 
-        return true;
       }
       else {
         actionMode = activity.startSupportActionMode(this);
         viewHolder.checkBox.setChecked(true);
-        return true;
       }
+      return true;
     }
 
     @Override
@@ -624,12 +610,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     isManuallyChecked = true;
 
     // 選択モードでない場合、チェックボックスを無効にする
-    if(actionMode == null) {
-      viewHolder.checkBox.setEnabled(false);
-    }
-    else {
-      viewHolder.checkBox.setEnabled(true);
-    }
+    viewHolder.checkBox.setEnabled(actionMode != null);
 
     // 個別レイアウト
     if(order == 0) {

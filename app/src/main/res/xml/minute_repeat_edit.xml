@@ -2,10 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceScreen
-        android:key="label"
-        android:summary="@string/non_repeat"/>
-
-    <PreferenceScreen
         android:key="interval"
         android:summary="@string/repeat_minute_interval"/>
 
@@ -28,5 +24,9 @@
     <PreferenceScreen
         android:key="duration_picker"
         android:summary="@string/repeat_minute_duration"/>
+
+    <PreferenceScreen
+        android:key="label"
+        android:summary="@string/non_repeat"/>
 
 </PreferenceScreen>

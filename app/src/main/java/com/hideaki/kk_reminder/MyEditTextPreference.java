@@ -16,23 +16,20 @@ import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
 
 public class MyEditTextPreference extends EditTextPreference {
 
-  private MainActivity activity;
+  private final MainActivity activity;
 
-  @SuppressWarnings("unused")
   public MyEditTextPreference(Context context, AttributeSet attrs, int defStyleAttr) {
 
     super(context, attrs, defStyleAttr);
     activity = (MainActivity)((ContextWrapper)context).getBaseContext();
   }
 
-  @SuppressWarnings("unused")
   public MyEditTextPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
     activity = (MainActivity)((ContextWrapper)context).getBaseContext();
   }
 
-  @SuppressWarnings("unused")
   public MyEditTextPreference(Context context) {
 
     super(context);

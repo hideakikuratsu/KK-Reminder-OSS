@@ -22,7 +22,7 @@ import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
 public class DefaultControlTimeModelPreference extends Preference {
 
-  private MainActivity activity;
+  private final MainActivity activity;
 
   public DefaultControlTimeModelPreference(Context context, AttributeSet attrs) {
 

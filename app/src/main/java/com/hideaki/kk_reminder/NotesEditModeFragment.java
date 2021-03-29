@@ -305,7 +305,7 @@ public class NotesEditModeFragment extends Fragment {
         int size = revised.size();
         for(int i = 0; i < size; i++) {
           String string = revised.get(i);
-          if(string.length() > 1 && string.substring(string.length() - 2).equals(" *")) {
+          if(string.length() > 1 && string.endsWith(" *")) {
             NotesEditModeFragment.item.addNotes(
               new NotesAdapter(string.substring(0, string.length() - 2), true, i)
             );

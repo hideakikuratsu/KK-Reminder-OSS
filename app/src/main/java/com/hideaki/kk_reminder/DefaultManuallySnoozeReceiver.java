@@ -33,7 +33,7 @@ import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL_COPY;
 import static com.hideaki.kk_reminder.UtilClass.copyDatabase;
 import static com.hideaki.kk_reminder.UtilClass.copySharedPreferences;
-import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
+import static com.hideaki.kk_reminder.UtilClass.getNow;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
 import static java.util.Objects.requireNonNull;
@@ -90,7 +90,7 @@ public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
     if(item.getAlteredTime() == 0) {
       item.setOrgDate((Calendar)item.getDate().clone());
     }
-    item.getDate().setTimeInMillis(currentTimeMinutes() + defaultSnooze);
+    item.getDate().setTimeInMillis(getNow().getTimeInMillis() + defaultSnooze);
     item.addAlteredTime(defaultSnooze);
 
     // 更新

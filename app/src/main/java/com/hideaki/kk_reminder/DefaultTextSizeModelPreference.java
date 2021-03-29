@@ -21,7 +21,7 @@ import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 
 public class DefaultTextSizeModelPreference extends Preference {
 
-  private MainActivity activity;
+  private final MainActivity activity;
 
   public DefaultTextSizeModelPreference(Context context, AttributeSet attrs) {
 

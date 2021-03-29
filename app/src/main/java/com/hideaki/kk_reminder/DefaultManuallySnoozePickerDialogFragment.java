@@ -21,7 +21,7 @@ public class DefaultManuallySnoozePickerDialogFragment extends DialogFragment
   implements TimePickerDialog.OnTimeSetListener {
 
   private MainActivity activity;
-  private DefaultManuallySnoozeFragment defaultManuallySnoozeFragment;
+  private final DefaultManuallySnoozeFragment defaultManuallySnoozeFragment;
 
   DefaultManuallySnoozePickerDialogFragment(
     DefaultManuallySnoozeFragment defaultManuallySnoozeFragment

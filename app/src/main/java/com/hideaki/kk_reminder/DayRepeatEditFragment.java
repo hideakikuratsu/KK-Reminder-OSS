@@ -3,6 +3,7 @@ package com.hideaki.kk_reminder;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -108,7 +109,7 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
     activity.setSupportActionBar(toolbar);
-    ActionBar actionBar = activity.getSupportActionBar();
+    final ActionBar actionBar = activity.getSupportActionBar();
     requireNonNull(actionBar);
 
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
@@ -233,11 +234,11 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
     }
 
     //Time Limitのラベルの初期化
-    new Handler().post(new Runnable() {
+    new Handler(Looper.getMainLooper()).post(new Runnable() {
       @Override
       public void run() {
 
-        ((MyCheckBoxPreference)timeLimit).setMySummary(getString(R.string.time_limit));
+        ((MyCheckBoxPreference)timeLimit).setMySummary(activity.getString(R.string.time_limit));
         ((MyCheckBoxPreference)timeLimit).showMySummary();
       }
     });

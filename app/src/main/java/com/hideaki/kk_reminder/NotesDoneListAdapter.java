@@ -1,6 +1,7 @@
 package com.hideaki.kk_reminder;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -17,8 +18,8 @@ import static com.hideaki.kk_reminder.UtilClass.NOTES_COMPARATOR;
 public class NotesDoneListAdapter extends BaseAdapter {
 
   static List<NotesAdapter> notesList;
-  private MainActivity activity;
-  private NotesChecklistModeFragment fragment;
+  private final MainActivity activity;
+  private final NotesChecklistModeFragment fragment;
   static boolean isFirst;
 
   NotesDoneListAdapter(MainActivity activity, NotesChecklistModeFragment fragment) {
@@ -38,9 +39,9 @@ public class NotesDoneListAdapter extends BaseAdapter {
   private class MyOnClickListener
     implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener {
 
-    private int position;
-    private NotesAdapter notes;
-    private ViewHolder viewHolder;
+    private final int position;
+    private final NotesAdapter notes;
+    private final ViewHolder viewHolder;
 
     MyOnClickListener(int position, NotesAdapter notes, ViewHolder viewHolder) {
 
@@ -60,7 +61,7 @@ public class NotesDoneListAdapter extends BaseAdapter {
 
       if(!checked) {
         isFirst = false;
-        final Handler handler = new Handler();
+        final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
           @Override
           public void run() {

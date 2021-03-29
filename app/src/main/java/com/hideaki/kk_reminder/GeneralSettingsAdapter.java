@@ -5,7 +5,7 @@ import java.util.List;
 
 class GeneralSettingsAdapter implements Cloneable {
 
-  private GeneralSettings3 generalSettings;
+  private final GeneralSettings3 generalSettings;
   private boolean isCopiedFromOldVersion = false;
 
   GeneralSettingsAdapter() {

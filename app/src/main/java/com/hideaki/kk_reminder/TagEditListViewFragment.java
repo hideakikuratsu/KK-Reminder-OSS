@@ -148,12 +148,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
 
     activity.drawerToggle.setDrawerIndicatorEnabled(false);
     actionBar.setHomeAsUpIndicator(activity.upArrow);
-    if(TagEditListAdapter.isEditing) {
-      actionBar.setDisplayHomeAsUpEnabled(false);
-    }
-    else {
-      actionBar.setDisplayHomeAsUpEnabled(true);
-    }
+    actionBar.setDisplayHomeAsUpEnabled(!TagEditListAdapter.isEditing);
     actionBar.setTitle(R.string.tag);
 
     AdView adView = view.findViewById(R.id.adView);
@@ -189,12 +184,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
       PorterDuff.Mode.SRC_IN
     ));
     sortItem.setIcon(drawable);
-    if(TagEditListAdapter.isEditing) {
-      sortItem.setVisible(false);
-    }
-    else {
-      sortItem.setVisible(true);
-    }
+    sortItem.setVisible(!TagEditListAdapter.isEditing);
   }
 
   @Override

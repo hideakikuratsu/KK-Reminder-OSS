@@ -204,7 +204,7 @@ public class DayRepeat3 implements Serializable, Cloneable {
     this.dayOfMonthOfYear = 0;
     this.whichSet = 0;
     this.whichTemplate = 0;
-    this.timeLimit = Calendar.getInstance();
+    this.timeLimit = null;
   }
 
   void dayClear() {

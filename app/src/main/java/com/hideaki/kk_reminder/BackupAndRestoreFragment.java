@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -407,7 +408,7 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
                         activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
                         activity.setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
                         activity.menuItem = activity.menu.getItem(activity.whichMenuOpen);
-                        new Handler().postDelayed(new Runnable() {
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                           @Override
                           public void run() {
 

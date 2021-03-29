@@ -49,7 +49,7 @@ import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL_COPY;
 import static com.hideaki.kk_reminder.UtilClass.copySharedPreferences;
-import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
+import static com.hideaki.kk_reminder.UtilClass.getNow;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.getVibrationPattern;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
@@ -319,7 +319,7 @@ public class AlarmReceiver extends BroadcastReceiver {
       PendingIntent recursiveSender = PendingIntent.getBroadcast(
         context, (int)item.getId(), recursiveAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
 
-      long resetSchedule = currentTimeMinutes()
+      long resetSchedule = getNow().getTimeInMillis()
         + item.getNotifyInterval().getHour() * HOUR
         + item.getNotifyInterval().getMinute() * MINUTE;
 
@@ -349,6 +349,7 @@ public class AlarmReceiver extends BroadcastReceiver {
       }
       catch(SQLiteCantOpenDatabaseException e) {
         try {
+          //noinspection BusyWait
           Thread.sleep(10);
         }
         catch(InterruptedException ex) {

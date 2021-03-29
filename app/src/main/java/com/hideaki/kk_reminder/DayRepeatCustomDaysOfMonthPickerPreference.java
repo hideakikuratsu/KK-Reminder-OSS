@@ -17,7 +17,7 @@ import java.util.Calendar;
 public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference
   implements View.OnClickListener {
 
-  private MainActivity activity;
+  private final MainActivity activity;
   private int maxDaysOfMonth;
   private CheckableTextView day;
   private int maskNum;

@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,26 +143,21 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat
     actionBar.setTitle(R.string.settings);
 
     // チェック状態の初期化
-    if(activity.isPlaySlideAnimation) {
-      animation.setChecked(true);
-    }
-    else {
-      animation.setChecked(false);
-    }
+    animation.setChecked(activity.isPlaySlideAnimation);
+    new Handler(Looper.getMainLooper()).post(new Runnable() {
+      @Override
+      public void run() {
 
-    if(activity.isDarkMode) {
-      darkTheme.setChecked(true);
-    }
-    else {
-      darkTheme.setChecked(false);
-    }
+        ((MyCheckBoxPreference)animation).setMySummary(
+            activity.getString(R.string.play_slide_animation_summary)
+        );
+        ((MyCheckBoxPreference)animation).showMySummary();
+      }
+    });
 
-    if(activity.isDarkThemeFollowSystem) {
-      darkThemeFollowSystem.setChecked(true);
-    }
-    else {
-      darkThemeFollowSystem.setChecked(false);
-    }
+    darkTheme.setChecked(activity.isDarkMode);
+
+    darkThemeFollowSystem.setChecked(activity.isDarkThemeFollowSystem);
 
     return view;
   }

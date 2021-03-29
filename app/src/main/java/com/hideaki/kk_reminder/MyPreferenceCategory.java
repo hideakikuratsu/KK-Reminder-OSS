@@ -12,23 +12,20 @@ import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 
 public class MyPreferenceCategory extends PreferenceCategory {
 
-  private MainActivity activity;
+  private final MainActivity activity;
 
-  @SuppressWarnings("unused")
   public MyPreferenceCategory(Context context, AttributeSet attrs, int defStyleAttr) {
 
     super(context, attrs, defStyleAttr);
     activity = (MainActivity)((ContextWrapper)context).getBaseContext();
   }
 
-  @SuppressWarnings("unused")
   public MyPreferenceCategory(Context context, AttributeSet attrs) {
 
     super(context, attrs);
     activity = (MainActivity)((ContextWrapper)context).getBaseContext();
   }
 
-  @SuppressWarnings("unused")
   public MyPreferenceCategory(Context context) {
 
     super(context);

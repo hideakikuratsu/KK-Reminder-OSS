@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 public class TagEditListAdapter extends BaseAdapter {
 
   static List<TagAdapter> tagList;
-  private MainActivity activity;
+  private final MainActivity activity;
   MyDragListener myDragListener;
   private int draggingPosition = -1;
   static boolean isSorting;
@@ -59,9 +59,9 @@ public class TagEditListAdapter extends BaseAdapter {
   private class MyOnClickListener
     implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener {
 
-    private int position;
-    private TagAdapter tag;
-    private ViewHolder viewHolder;
+    private final int position;
+    private final TagAdapter tag;
+    private final ViewHolder viewHolder;
 
     MyOnClickListener(int position, TagAdapter tag, ViewHolder viewHolder) {
 
@@ -74,12 +74,7 @@ public class TagEditListAdapter extends BaseAdapter {
     public void onClick(View v) {
 
       if(!isEditing && !isSorting) {
-        if(!viewHolder.checkBox.isChecked()) {
-          viewHolder.checkBox.setChecked(true);
-        }
-        else {
-          viewHolder.checkBox.setChecked(false);
-        }
+        viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
       }
       else if(position != 0) {
         switch(v.getId()) {
