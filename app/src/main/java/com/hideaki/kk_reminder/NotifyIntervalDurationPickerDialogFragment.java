@@ -18,7 +18,7 @@ import static java.util.Objects.requireNonNull;
 public class NotifyIntervalDurationPickerDialogFragment extends DialogFragment
   implements TimePickerDialog.OnTimeSetListener {
 
-  private NotifyIntervalEditFragment notifyIntervalEditFragment;
+  private final NotifyIntervalEditFragment notifyIntervalEditFragment;
 
   NotifyIntervalDurationPickerDialogFragment(
     NotifyIntervalEditFragment notifyIntervalEditFragment

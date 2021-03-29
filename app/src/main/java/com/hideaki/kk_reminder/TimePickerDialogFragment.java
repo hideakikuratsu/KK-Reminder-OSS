@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
 public class TimePickerDialogFragment extends DialogFragment
   implements TimePickerDialog.OnTimeSetListener {
 
-  private MainEditFragment mainEditFragment;
+  private final MainEditFragment mainEditFragment;
 
   TimePickerDialogFragment(MainEditFragment mainEditFragment) {
 

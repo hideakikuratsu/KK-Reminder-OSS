@@ -1,1 +1,0 @@
-・Fixed when dismissing a notification of a task, other notifications of tasks sometimes gone

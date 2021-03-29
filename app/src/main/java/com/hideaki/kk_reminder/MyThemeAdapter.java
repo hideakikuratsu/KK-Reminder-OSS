@@ -2,7 +2,7 @@ package com.hideaki.kk_reminder;
 
 class MyThemeAdapter {
 
-  private MyTheme2 theme;
+  private final MyTheme2 theme;
 
   MyThemeAdapter() {
 

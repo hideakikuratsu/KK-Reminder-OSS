@@ -14,7 +14,7 @@ import androidx.preference.PreferenceViewHolder;
 
 public class NotesPreference extends Preference {
 
-  private MainActivity activity;
+  private final MainActivity activity;
 
   public NotesPreference(Context context, AttributeSet attrs, int defStyleAttr) {
 

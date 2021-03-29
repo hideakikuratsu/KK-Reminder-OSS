@@ -26,7 +26,7 @@ public class SortableListView extends ListView {
   private static final int SCROLL_SPEED_SLOW = 8;
   private static final Bitmap.Config DRAG_BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
 
-  private MainActivity activity;
+  private final MainActivity activity;
   private boolean isDragging = false;
   private DragListener dragListener = new SimpleDragListener();
   private int bitmapBackgroundColor = Color.argb(0, 0xFF, 0xFF, 0xFF);

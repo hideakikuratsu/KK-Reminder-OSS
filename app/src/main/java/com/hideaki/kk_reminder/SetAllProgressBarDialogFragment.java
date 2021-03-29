@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -29,7 +30,7 @@ import static java.util.Objects.requireNonNull;
 
 public class SetAllProgressBarDialogFragment extends DialogFragment {
 
-  private boolean isNotifySound;
+  private final boolean isNotifySound;
 
   SetAllProgressBarDialogFragment(boolean isNotifySound) {
 
@@ -89,7 +90,7 @@ public class SetAllProgressBarDialogFragment extends DialogFragment {
       .setView(view)
       .create();
 
-    final Handler handler = new Handler();
+    final Handler handler = new Handler(Looper.getMainLooper());
     dialog.setOnShowListener(new DialogInterface.OnShowListener() {
       @Override
       public void onShow(DialogInterface dialogInterface) {

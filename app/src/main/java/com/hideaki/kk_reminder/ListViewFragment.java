@@ -34,9 +34,9 @@ public class ListViewFragment extends Fragment {
   static final String TAG = ListViewFragment.class.getSimpleName();
   private MainActivity activity;
   @SuppressLint("UseSparseArrays")
-  private static Map<Long, Integer> listPosition = new HashMap<>();
+  private static final Map<Long, Integer> LIST_POSITION = new HashMap<>();
   @SuppressLint("UseSparseArrays")
-  private static Map<Long, Integer> listOffset = new HashMap<>();
+  private static final Map<Long, Integer> LIST_OFFSET = new HashMap<>();
   private ListView oldListView;
   private long id;
 
@@ -72,10 +72,10 @@ public class ListViewFragment extends Fragment {
   public void onDestroyView() {
 
     super.onDestroyView();
-    listPosition.put(id, oldListView.getFirstVisiblePosition());
+    LIST_POSITION.put(id, oldListView.getFirstVisiblePosition());
     View child = oldListView.getChildAt(0);
     if(child != null) {
-      listOffset.put(id, child.getTop());
+      LIST_OFFSET.put(id, child.getTop());
     }
   }
 
@@ -155,8 +155,8 @@ public class ListViewFragment extends Fragment {
       @Override
       public void run() {
 
-        Integer listPosition = ListViewFragment.listPosition.get(id);
-        Integer listOffset = ListViewFragment.listOffset.get(id);
+        Integer listPosition = ListViewFragment.LIST_POSITION.get(id);
+        Integer listOffset = ListViewFragment.LIST_OFFSET.get(id);
         if(listPosition == null) {
           listPosition = 0;
         }

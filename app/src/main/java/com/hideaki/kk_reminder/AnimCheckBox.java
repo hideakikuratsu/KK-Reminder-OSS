@@ -23,10 +23,10 @@ public class AnimCheckBox extends View implements Checkable {
   private final double sin27 = Math.sin(Math.toRadians(27));
   private final double sin63 = Math.sin(Math.toRadians(63));
   private final int duration = 500;
-  private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-  private RectF rectF = new RectF();
-  private RectF innerRectF = new RectF();
-  private Path path = new Path();
+  private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+  private final RectF rectF = new RectF();
+  private final RectF innerRectF = new RectF();
+  private final Path path = new Path();
   private float sweepAngle;
   private float hookStartY;
   private float baseLeftHookOffset;

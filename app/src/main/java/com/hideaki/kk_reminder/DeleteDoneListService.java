@@ -13,14 +13,12 @@ public class DeleteDoneListService extends IntentService {
 
   DBAccessor accessor;
 
-  @SuppressWarnings("unused")
   public DeleteDoneListService() {
 
     super(DeleteDoneListService.class.getSimpleName());
     accessor = new DBAccessor(this, false);
   }
 
-  @SuppressWarnings("unused")
   public DeleteDoneListService(String name) {
 
     super(name);

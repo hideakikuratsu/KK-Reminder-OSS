@@ -22,7 +22,7 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
   private static final String[] SCALE_LIST_JA = {"日", "週", "月", "年"};
   private static final String[] SCALE_LIST_EN = {"Day", "Week", "Month", "Year"};
 
-  private DayRepeatCustomPickerFragment dayRepeatCustomPickerFragment;
+  private final DayRepeatCustomPickerFragment dayRepeatCustomPickerFragment;
   private NumberPicker interval;
   private NumberPicker scale;
 

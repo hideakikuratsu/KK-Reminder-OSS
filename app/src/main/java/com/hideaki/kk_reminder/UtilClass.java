@@ -262,7 +262,7 @@ class UtilClass {
     }
   }
 
-  static long currentTimeMinutes() {
+  static Calendar getNow() {
 
     Calendar now = Calendar.getInstance();
     if(now.get(Calendar.SECOND) >= 30) {
@@ -271,7 +271,7 @@ class UtilClass {
     now.set(Calendar.SECOND, 0);
     now.set(Calendar.MILLISECOND, 0);
 
-    return now.getTimeInMillis();
+    return now;
   }
 
   static int getPxFromDp(Context context, int dp) {

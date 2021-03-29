@@ -50,7 +50,7 @@ import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL_COPY;
 import static com.hideaki.kk_reminder.UtilClass.copyDatabase;
 import static com.hideaki.kk_reminder.UtilClass.copySharedPreferences;
-import static com.hideaki.kk_reminder.UtilClass.currentTimeMinutes;
+import static com.hideaki.kk_reminder.UtilClass.getNow;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
 import static java.util.Objects.requireNonNull;
@@ -345,7 +345,7 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
         if(item.getAlteredTime() == 0) {
           item.setOrgDate((Calendar)item.getDate().clone());
         }
-        item.getDate().setTimeInMillis(currentTimeMinutes() + howLong[checkedPosition]);
+        item.getDate().setTimeInMillis(getNow().getTimeInMillis() + howLong[checkedPosition]);
         item.addAlteredTime(howLong[checkedPosition]);
 
         // 更新

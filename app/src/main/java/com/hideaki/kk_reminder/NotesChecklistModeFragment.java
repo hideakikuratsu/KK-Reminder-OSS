@@ -247,12 +247,7 @@ public class NotesChecklistModeFragment extends Fragment {
     unselectItem = menu.findItem(R.id.unselect_all_items);
 
     // Todoリストのアイテム数に応じた表示処理
-    if(NotesTodoListAdapter.notesList.size() == 0) {
-      sortItem.setVisible(false);
-    }
-    else {
-      sortItem.setVisible(true);
-    }
+    sortItem.setVisible(NotesTodoListAdapter.notesList.size() != 0);
 
     // Doneリストのアイテム数に応じた表示処理
     if(NotesDoneListAdapter.notesList.size() == 0) {

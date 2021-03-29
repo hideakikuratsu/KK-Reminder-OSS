@@ -12,7 +12,7 @@ import java.util.List;
 
 public class SingleChoiceItemsAdapter extends BaseAdapter {
 
-  private List<String> items;
+  private final List<String> items;
   static int checkedPosition;
   private static boolean isFirst;
   private static boolean isManuallyChecked;
@@ -34,8 +34,8 @@ public class SingleChoiceItemsAdapter extends BaseAdapter {
   private class MyOnClickListener
     implements View.OnClickListener, AnimCheckBox.OnCheckedChangeListener {
 
-    private int position;
-    private ViewHolder viewHolder;
+    private final int position;
+    private final ViewHolder viewHolder;
 
     MyOnClickListener(int position, ViewHolder viewHolder) {
 
@@ -46,12 +46,7 @@ public class SingleChoiceItemsAdapter extends BaseAdapter {
     @Override
     public void onClick(View v) {
 
-      if(!viewHolder.checkBox.isChecked()) {
-        viewHolder.checkBox.setChecked(true);
-      }
-      else {
-        viewHolder.checkBox.setChecked(false);
-      }
+      viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
     }
 
     @Override

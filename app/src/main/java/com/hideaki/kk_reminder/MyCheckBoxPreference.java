@@ -1,16 +1,16 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-
-import androidx.preference.CheckBoxPreference;
-import androidx.preference.PreferenceViewHolder;
-
 import android.content.ContextWrapper;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import static java.util.Objects.requireNonNull;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.PreferenceViewHolder;
 
 public class MyCheckBoxPreference extends CheckBoxPreference {
 
@@ -20,9 +20,8 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
   private boolean isFromOnClick;
   private boolean isChecked;
   private TextView mySummary;
-  private MainActivity activity;
+  private final MainActivity activity;
 
-  @SuppressWarnings("unused")
   MyCheckBoxPreference(Context context) {
 
     super(context);
@@ -124,23 +123,127 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
     return mySummary;
   }
 
-  void setMySummary(String summary) {
+  void setMySummary(final String summary) {
 
-    mySummary.setText(summary);
+    if(mySummary != null) {
+      mySummary.setText(summary);
+    }
+    else {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+
+          while(mySummary == null) {
+            try {
+              //noinspection BusyWait
+              Thread.sleep(10);
+            }
+            catch(InterruptedException e) {
+              Log.e("MyCheckBoxPreference", Log.getStackTraceString(e));
+            }
+          }
+          new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+
+              mySummary.setText(summary);
+            }
+          });
+        }
+      }).start();
+    }
   }
 
-  void setMySummary(int stringId) {
+  void setMySummary(final int stringId) {
 
-    mySummary.setText(activity.getString(stringId));
+    if(mySummary != null) {
+      mySummary.setText(activity.getString(stringId));
+    }
+    else {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+
+          while(mySummary == null) {
+            try {
+              //noinspection BusyWait
+              Thread.sleep(10);
+            }
+            catch(InterruptedException e) {
+              Log.e("MyCheckBoxPreference", Log.getStackTraceString(e));
+            }
+          }
+          new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+
+              mySummary.setText(activity.getString(stringId));
+            }
+          });
+        }
+      }).start();
+    }
   }
 
   void showMySummary() {
 
-    mySummary.setVisibility(View.VISIBLE);
+    if(mySummary != null) {
+      mySummary.setVisibility(View.VISIBLE);
+    }
+    else {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+
+          while(mySummary == null) {
+            try {
+              //noinspection BusyWait
+              Thread.sleep(10);
+            }
+            catch(InterruptedException e) {
+              Log.e("MyCheckBoxPreference", Log.getStackTraceString(e));
+            }
+          }
+          new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+
+              mySummary.setVisibility(View.VISIBLE);
+            }
+          });
+        }
+      }).start();
+    }
   }
 
   void hideMySummary() {
 
-    mySummary.setVisibility(View.GONE);
+    if(mySummary != null) {
+      mySummary.setVisibility(View.GONE);
+    }
+    else {
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+
+          while(mySummary == null) {
+            try {
+              //noinspection BusyWait
+              Thread.sleep(10);
+            }
+            catch(InterruptedException e) {
+              Log.e("MyCheckBoxPreference", Log.getStackTraceString(e));
+            }
+          }
+          new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+
+              mySummary.setVisibility(View.GONE);
+            }
+          });
+        }
+      }).start();
+    }
   }
 }

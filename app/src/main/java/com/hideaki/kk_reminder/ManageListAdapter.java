@@ -2,11 +2,6 @@ package com.hideaki.kk_reminder;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-
-import androidx.core.content.ContextCompat;
-import androidx.cardview.widget.CardView;
-
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -23,11 +18,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+
 public class ManageListAdapter extends BaseAdapter implements Filterable {
 
   static List<NonScheduledListAdapter> nonScheduledLists;
   private static long hasPanel; // コントロールパネルがvisibleであるItemのid値を保持する
-  private MainActivity activity;
+  private final MainActivity activity;
   MyDragListener myDragListener;
   private int draggingPosition = -1;
   static boolean isSorting;
@@ -57,8 +55,8 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
 
   private class MyOnClickListener implements View.OnClickListener {
 
-    private NonScheduledListAdapter list;
-    private ViewHolder viewHolder;
+    private final NonScheduledListAdapter list;
+    private final ViewHolder viewHolder;
 
     MyOnClickListener(NonScheduledListAdapter list, ViewHolder viewHolder) {
 

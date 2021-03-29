@@ -13,7 +13,7 @@ import java.util.List;
 class DBAccessor {
 
   private SQLiteDatabase sdb;
-  private MyDatabaseHelper helper;
+  private final MyDatabaseHelper helper;
   private String stateStr;
   private SQLiteStatement statement;
 

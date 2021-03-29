@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
 
   private EditText count;
-  private MinuteRepeatEditFragment minuteRepeatEditFragment;
+  private final MinuteRepeatEditFragment minuteRepeatEditFragment;
 
   MinuteRepeatCountPickerDialogFragment(MinuteRepeatEditFragment minuteRepeatEditFragment) {
 

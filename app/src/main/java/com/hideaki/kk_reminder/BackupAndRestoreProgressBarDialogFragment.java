@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -31,7 +32,7 @@ public class BackupAndRestoreProgressBarDialogFragment extends DialogFragment {
   private int progress;
   private int oldProgress;
   private boolean isFirst;
-  private boolean isBackup;
+  private final boolean isBackup;
 
   BackupAndRestoreProgressBarDialogFragment(boolean isBackup) {
 
@@ -87,7 +88,7 @@ public class BackupAndRestoreProgressBarDialogFragment extends DialogFragment {
       .setView(view)
       .create();
 
-    final Handler handler = new Handler();
+    final Handler handler = new Handler(Looper.getMainLooper());
     dialog.setOnShowListener(new DialogInterface.OnShowListener() {
       @Override
       public void onShow(DialogInterface dialogInterface) {
@@ -122,6 +123,7 @@ public class BackupAndRestoreProgressBarDialogFragment extends DialogFragment {
                 }
               }
               try {
+                //noinspection BusyWait
                 Thread.sleep(10);
               }
               catch(InterruptedException e) {

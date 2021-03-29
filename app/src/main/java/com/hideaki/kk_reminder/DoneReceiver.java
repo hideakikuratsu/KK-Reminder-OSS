@@ -31,6 +31,7 @@ import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL_COPY;
 import static com.hideaki.kk_reminder.UtilClass.copyDatabase;
 import static com.hideaki.kk_reminder.UtilClass.copySharedPreferences;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
+import static com.hideaki.kk_reminder.UtilClass.getNow;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
 import static java.util.Objects.requireNonNull;
 
@@ -112,12 +113,7 @@ public class DoneReceiver extends BroadcastReceiver {
 
       // countリピート設定時
       inMinuteRepeat = true;
-      now = Calendar.getInstance();
-      if(now.get(Calendar.SECOND) >= 30) {
-        now.add(Calendar.MINUTE, 1);
-      }
-      now.set(Calendar.SECOND, 0);
-      now.set(Calendar.MILLISECOND, 0);
+      now = getNow();
 
       if(item.getMinuteRepeat().getCount() == item.getMinuteRepeat().getOrgCount()) {
         item.setOrgDate2((Calendar)item.getOrgDate().clone());
@@ -146,12 +142,7 @@ public class DoneReceiver extends BroadcastReceiver {
 
       // durationリピート設定時
       inMinuteRepeat = true;
-      now = Calendar.getInstance();
-      if(now.get(Calendar.SECOND) >= 30) {
-        now.add(Calendar.MINUTE, 1);
-      }
-      now.set(Calendar.SECOND, 0);
-      now.set(Calendar.MILLISECOND, 0);
+      now = getNow();
 
       if(item.getMinuteRepeat().getDuration() == item.getMinuteRepeat().getOrgDuration()) {
         item.setOrgDate2((Calendar)item.getOrgDate().clone());
@@ -179,12 +170,7 @@ public class DoneReceiver extends BroadcastReceiver {
     else if((item.getDayRepeat().getWhichSet() & 1) != 0) {
 
       // Dayリピート設定時
-      now = Calendar.getInstance();
-      if(now.get(Calendar.SECOND) >= 30) {
-        now.add(Calendar.MINUTE, 1);
-      }
-      now.set(Calendar.SECOND, 0);
-      now.set(Calendar.MILLISECOND, 0);
+      now = getNow();
 
       if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
         tmp = (Calendar)item.getDate().clone();
@@ -217,12 +203,7 @@ public class DoneReceiver extends BroadcastReceiver {
     else if((item.getDayRepeat().getWhichSet() & (1 << 1)) != 0) {
 
       // Weekリピート設定時
-      now = Calendar.getInstance();
-      if(now.get(Calendar.SECOND) >= 30) {
-        now.add(Calendar.MINUTE, 1);
-      }
-      now.set(Calendar.SECOND, 0);
-      now.set(Calendar.MILLISECOND, 0);
+      now = getNow();
       int dayOfWeekLast;
 
       if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
@@ -260,8 +241,6 @@ public class DoneReceiver extends BroadcastReceiver {
         tmp = (Calendar)now.clone();
         tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
         tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
-        tmp.set(Calendar.SECOND, 0);
-        tmp.set(Calendar.MILLISECOND, 0);
         dayOfWeek = now.get(Calendar.DAY_OF_WEEK) < 2 ?
           now.get(Calendar.DAY_OF_WEEK) + 5 : now.get(Calendar.DAY_OF_WEEK) - 2;
 
@@ -312,12 +291,7 @@ public class DoneReceiver extends BroadcastReceiver {
     else if((item.getDayRepeat().getWhichSet() & (1 << 2)) != 0) {
 
       // Monthリピート設定時
-      now = Calendar.getInstance();
-      if(now.get(Calendar.SECOND) >= 30) {
-        now.add(Calendar.MINUTE, 1);
-      }
-      now.set(Calendar.SECOND, 0);
-      now.set(Calendar.MILLISECOND, 0);
+      now = getNow();
 
       if(item.getDayRepeat().isDaysOfMonthSet()) {
 
@@ -369,8 +343,6 @@ public class DoneReceiver extends BroadcastReceiver {
           tmp = (Calendar)now.clone();
           tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
           tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
-          tmp.set(Calendar.SECOND, 0);
-          tmp.set(Calendar.MILLISECOND, 0);
           dayOfMonth = now.get(Calendar.DAY_OF_MONTH);
 
           // intervalの処理
@@ -423,12 +395,6 @@ public class DoneReceiver extends BroadcastReceiver {
         boolean matchToOrdinalNum;
         Calendar tmp2;
         Calendar tmp3;
-        now = Calendar.getInstance();
-        if(now.get(Calendar.SECOND) >= 30) {
-          now.add(Calendar.MINUTE, 1);
-        }
-        now.set(Calendar.SECOND, 0);
-        now.set(Calendar.MILLISECOND, 0);
         if(item.getDayRepeat().getOnTheMonth().ordinal() < 6) {
           dayOfWeek = item.getDayRepeat().getOnTheMonth().ordinal() + 2;
         }
@@ -637,8 +603,6 @@ public class DoneReceiver extends BroadcastReceiver {
           tmp = (Calendar)now.clone();
           tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
           tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
-          tmp.set(Calendar.SECOND, 0);
-          tmp.set(Calendar.MILLISECOND, 0);
 
           if(dayOfWeek < 8) {
             month = tmp.get(Calendar.MONTH);
@@ -850,12 +814,7 @@ public class DoneReceiver extends BroadcastReceiver {
     else if((item.getDayRepeat().getWhichSet() & (1 << 3)) != 0) {
 
       // Yearリピート設定時
-      now = Calendar.getInstance();
-      if(now.get(Calendar.SECOND) >= 30) {
-        now.add(Calendar.MINUTE, 1);
-      }
-      now.set(Calendar.SECOND, 0);
-      now.set(Calendar.MILLISECOND, 0);
+      now = getNow();
       int monthLast;
 
       if(item.getDate().getTimeInMillis() > now.getTimeInMillis()) {
@@ -906,8 +865,6 @@ public class DoneReceiver extends BroadcastReceiver {
         );
         tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
         tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
-        tmp.set(Calendar.SECOND, 0);
-        tmp.set(Calendar.MILLISECOND, 0);
         month = now.get(Calendar.MONTH);
 
         // intervalの処理
@@ -952,8 +909,9 @@ public class DoneReceiver extends BroadcastReceiver {
     }
 
     if(!inMinuteRepeat) {
-      if((item.getMinuteRepeat().getWhichSet() & 1) != 0
-        && item.getMinuteRepeat().getCount() == 0) {
+      if((item.getMinuteRepeat().getWhichSet() & 1) != 0 &&
+          item.getMinuteRepeat().getCount() == 0
+      ) {
 
         if(item.getDayRepeat().getWhichSet() != 0) {
           item.getMinuteRepeat().setCount(item.getMinuteRepeat().getOrgCount());
@@ -962,8 +920,9 @@ public class DoneReceiver extends BroadcastReceiver {
           item.getMinuteRepeat().setWhichSet(0);
         }
       }
-      else if((item.getMinuteRepeat().getWhichSet() & (1 << 1)) != 0
-        && item.getMinuteRepeat().getInterval() > item.getMinuteRepeat().getDuration()) {
+      else if((item.getMinuteRepeat().getWhichSet() & (1 << 1)) != 0 &&
+          item.getMinuteRepeat().getInterval() > item.getMinuteRepeat().getDuration()
+      ) {
 
         if(item.getDayRepeat().getWhichSet() != 0) {
           item.getMinuteRepeat().setDuration(item.getMinuteRepeat().getOrgDuration());

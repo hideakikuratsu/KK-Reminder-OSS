@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,7 +47,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
   static List<ItemAdapter> itemList;
   static long hasPanel; // コントロールパネルがvisibleであるItemのid値を保持する
   private static long panelLockId;
-  private MainActivity activity;
+  private final MainActivity activity;
   ActionMode actionMode = null;
   static int checkedItemNum;
   private static boolean isManuallyChecked;
@@ -80,9 +81,9 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
   private class MyOnClickListener implements View.OnClickListener, View.OnLongClickListener,
     ActionMode.Callback, AnimCheckBox.OnCheckedChangeListener {
 
-    private int position;
-    private ItemAdapter item;
-    private ViewHolder viewHolder;
+    private final int position;
+    private final ItemAdapter item;
+    private final ViewHolder viewHolder;
     private int whichList;
     private List<ItemAdapter> itemListToMove;
 
@@ -164,11 +165,8 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                 });
             }
           }
-          else if(viewHolder.checkBox.isChecked()) {
-            viewHolder.checkBox.setChecked(false);
-          }
           else {
-            viewHolder.checkBox.setChecked(true);
+            viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
           }
           break;
         }
@@ -219,7 +217,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
         activity.insertDB(item, MyDatabaseHelper.DONE_TABLE);
 
-        final Handler handler = new Handler();
+        final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
           @Override
           public void run() {
@@ -290,20 +288,14 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
 
       if(actionMode != null) {
 
-        if(viewHolder.checkBox.isChecked()) {
-          viewHolder.checkBox.setChecked(false);
-        }
-        else {
-          viewHolder.checkBox.setChecked(true);
-        }
+        viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
 
-        return true;
       }
       else {
         actionMode = activity.startSupportActionMode(this);
         viewHolder.checkBox.setChecked(true);
-        return true;
       }
+      return true;
     }
 
     @Override

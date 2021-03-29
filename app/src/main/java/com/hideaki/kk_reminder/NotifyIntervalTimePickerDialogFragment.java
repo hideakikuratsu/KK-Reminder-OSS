@@ -28,7 +28,7 @@ import static java.util.Objects.requireNonNull;
 public class NotifyIntervalTimePickerDialogFragment extends DialogFragment {
 
   private EditText time;
-  private NotifyIntervalEditFragment notifyIntervalEditFragment;
+  private final NotifyIntervalEditFragment notifyIntervalEditFragment;
 
   NotifyIntervalTimePickerDialogFragment(NotifyIntervalEditFragment notifyIntervalEditFragment) {
 

@@ -21,7 +21,7 @@ import static java.util.Objects.requireNonNull;
 public class DayRepeatTimeLimitPickerDialogFragment extends DialogFragment
     implements DatePickerDialog.OnDateSetListener {
 
-  private DayRepeatEditFragment dayRepeatEditFragment;
+  private final DayRepeatEditFragment dayRepeatEditFragment;
   private boolean isProcessed;
 
   DayRepeatTimeLimitPickerDialogFragment(DayRepeatEditFragment dayRepeatEditFragment) {
@@ -83,6 +83,8 @@ public class DayRepeatTimeLimitPickerDialogFragment extends DialogFragment
     timeLimit.set(Calendar.YEAR, year);
     timeLimit.set(Calendar.MONTH, month);
     timeLimit.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+    timeLimit.set(Calendar.HOUR_OF_DAY, 0);
+    timeLimit.set(Calendar.MINUTE, 0);
     timeLimit.set(Calendar.SECOND, 0);
     timeLimit.set(Calendar.MILLISECOND, 0);
     MainEditFragment.tmpTimeLimit = (Calendar)timeLimit.clone();

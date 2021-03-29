@@ -52,6 +52,8 @@ import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -146,7 +148,7 @@ public class MainActivity extends AppCompatActivity
   static String IS_FIRST_USE = "";
 
   private Timer timer;
-  private Handler handler = new Handler();
+  private Handler handler;
   private Runnable runnable;
   private DBAccessor accessor = null;
   int minusTime1Hour;
@@ -198,7 +200,7 @@ public class MainActivity extends AppCompatActivity
   private int tryCount;
   private BillingClient billingClient;
   public AlertDialog promotionDialog;
-  private BroadcastReceiver defaultSnoozeReceiver = new BroadcastReceiver() {
+  private final BroadcastReceiver defaultSnoozeReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -236,6 +238,7 @@ public class MainActivity extends AppCompatActivity
 
     super.onCreate(savedInstanceState);
 
+    handler = new Handler(getMainLooper());
     accessor = new DBAccessor(this, false);
 
     // 共通設定と新しく追加したリストのリストア
@@ -289,7 +292,12 @@ public class MainActivity extends AppCompatActivity
     isPremium = booleanPreferences.getBoolean(IS_PREMIUM, false);
 
     // 広告読み出し機能のセットアップ
-    MobileAds.initialize(this, getString(R.string.app_id));
+    MobileAds.initialize(this, new OnInitializationCompleteListener() {
+      @Override
+      public void onInitializationComplete(InitializationStatus initializationStatus) {
+
+      }
+    });
 
     if(!isPremium) {
 
@@ -547,7 +555,7 @@ public class MainActivity extends AppCompatActivity
 
       billingClient.startConnection(new BillingClientStateListener() {
         @Override
-        public void onBillingSetupFinished(BillingResult billingResult) {
+        public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
 
           if(billingResult.getResponseCode() == BillingResponseCode.OK) {
             // プレミアムアカウントかどうかの確認
@@ -614,7 +622,7 @@ public class MainActivity extends AppCompatActivity
       new PurchaseHistoryResponseListener() {
         @Override
         public void onPurchaseHistoryResponse(
-          BillingResult billingResult,
+          @NonNull BillingResult billingResult,
           List<PurchaseHistoryRecord> purchasesList
         ) {
 
@@ -867,7 +875,7 @@ public class MainActivity extends AppCompatActivity
 
       @Override
       public void onSkuDetailsResponse(
-        BillingResult billingResult, List<SkuDetails> list
+        @NonNull BillingResult billingResult, List<SkuDetails> list
       ) {
 
         int responseCode = billingResult.getResponseCode();
@@ -1586,28 +1594,10 @@ public class MainActivity extends AppCompatActivity
                   .setDuration(snackBarItem.getMinuteRepeat().getOrgDuration2());
               }
 
-              Calendar now = Calendar.getInstance();
-              if(now.get(Calendar.SECOND) >= 30) {
-                now.add(Calendar.MINUTE, 1);
-              }
-              now.set(Calendar.SECOND, 0);
-              now.set(Calendar.MILLISECOND, 0);
+              snackBarItem.getDate().setTimeInMillis(
+                  MyExpandableListAdapter.backupDate.getTimeInMillis()
+              );
 
-              if(
-                snackBarItem.getOrgDate().getTimeInMillis() < now.getTimeInMillis() &&
-                  snackBarItem.getAlteredTime() != 0
-              ) {
-                snackBarItem.getDate().setTimeInMillis(
-                  now.getTimeInMillis() +
-                    snackBarItem.getAlteredTime()
-                );
-              }
-              else {
-                snackBarItem.getDate().setTimeInMillis(
-                  snackBarItem.getOrgDate().getTimeInMillis() +
-                    snackBarItem.getAlteredTime()
-                );
-              }
               Collections.sort(
                 MyExpandableListAdapter.children.get(groupPosition),
                 SCHEDULED_ITEM_COMPARATOR
@@ -1621,28 +1611,27 @@ public class MainActivity extends AppCompatActivity
               updateDB(snackBarItem, MyDatabaseHelper.TODO_TABLE);
             }
             else {
-              Calendar now = Calendar.getInstance();
-              if(now.get(Calendar.SECOND) >= 30) {
-                now.add(Calendar.MINUTE, 1);
+              if(MyExpandableListAdapter.refilledWhichSetInfo == 1) {
+                snackBarItem
+                    .getMinuteRepeat()
+                    .setCount(snackBarItem.getMinuteRepeat().getOrgCount2());
               }
-              now.set(Calendar.SECOND, 0);
-              now.set(Calendar.MILLISECOND, 0);
+              else if(MyExpandableListAdapter.refilledWhichSetInfo == 1 << 1) {
+                snackBarItem
+                    .getMinuteRepeat()
+                    .setDuration(snackBarItem.getMinuteRepeat().getOrgDuration2());
+              }
 
-              if(
-                snackBarItem.getOrgDate().getTimeInMillis() < now.getTimeInMillis() &&
-                  snackBarItem.getAlteredTime() != 0
-              ) {
-                snackBarItem.getDate().setTimeInMillis(
-                  now.getTimeInMillis() +
-                    snackBarItem.getAlteredTime()
-                );
+              if(MyExpandableListAdapter.deletedWhichSetInfo == 1) {
+                snackBarItem.getMinuteRepeat().setWhichSet(1);
               }
-              else {
-                snackBarItem.getDate().setTimeInMillis(
-                  snackBarItem.getOrgDate().getTimeInMillis() +
-                    snackBarItem.getAlteredTime()
-                );
+              else if(MyExpandableListAdapter.deletedWhichSetInfo == 1 << 1) {
+                snackBarItem.getMinuteRepeat().setWhichSet(1 << 1);
               }
+
+              snackBarItem.getDate().setTimeInMillis(
+                  MyExpandableListAdapter.backupDate.getTimeInMillis()
+              );
 
               MyExpandableListAdapter.children.get(groupPosition).add(snackBarItem);
               for(List<ItemAdapter> itemList : MyExpandableListAdapter.children) {
@@ -2050,6 +2039,7 @@ public class MainActivity extends AppCompatActivity
       }
       catch(SQLiteCantOpenDatabaseException e) {
         try {
+          //noinspection BusyWait
           Thread.sleep(10);
         }
         catch(InterruptedException ex) {
@@ -2102,6 +2092,7 @@ public class MainActivity extends AppCompatActivity
       }
       catch(SQLiteCantOpenDatabaseException e) {
         try {
+          //noinspection BusyWait
           Thread.sleep(10);
         }
         catch(InterruptedException ex) {
@@ -2435,32 +2426,22 @@ public class MainActivity extends AppCompatActivity
       menuItemColor = Color.WHITE;
       menuBackgroundColor = ContextCompat.getColor(this, R.color.colorPrimary);
       statusBarColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
-      theme.setIsColorPrimary(false);
-      if(theme.getColor() == 0) {
-        accentColor = ContextCompat.getColor(this, R.color.colorAccent);
-        secondaryTextColor = ContextCompat.getColor(this, android.R.color.black);
-      }
-      else {
-        accentColor = theme.getColor();
-        secondaryTextColor = theme.getTextColor();
-      }
-      theme.setIsColorPrimary(true);
     }
     else {
       menuItemColor = theme.getTextColor();
       menuBackgroundColor = theme.getColor();
       statusBarColor = theme.getDarkColor();
-      theme.setIsColorPrimary(false);
-      if(theme.getColor() == 0) {
-        accentColor = ContextCompat.getColor(this, R.color.colorAccent);
-        secondaryTextColor = ContextCompat.getColor(this, android.R.color.black);
-      }
-      else {
-        accentColor = theme.getColor();
-        secondaryTextColor = theme.getTextColor();
-      }
-      theme.setIsColorPrimary(true);
     }
+    theme.setIsColorPrimary(false);
+    if(theme.getColor() == 0) {
+      accentColor = ContextCompat.getColor(this, R.color.colorAccent);
+      secondaryTextColor = ContextCompat.getColor(this, android.R.color.black);
+    }
+    else {
+      accentColor = theme.getColor();
+      secondaryTextColor = theme.getTextColor();
+    }
+    theme.setIsColorPrimary(true);
   }
 
   public void showDoneListViewFragment() {

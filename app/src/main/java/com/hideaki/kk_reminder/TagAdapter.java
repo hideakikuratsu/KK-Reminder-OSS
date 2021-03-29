@@ -2,7 +2,7 @@ package com.hideaki.kk_reminder;
 
 class TagAdapter {
 
-  private Tag2 tag;
+  private final Tag2 tag;
 
   TagAdapter() {
 

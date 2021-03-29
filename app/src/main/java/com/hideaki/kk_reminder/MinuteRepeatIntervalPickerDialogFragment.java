@@ -18,7 +18,7 @@ public class MinuteRepeatIntervalPickerDialogFragment extends DialogFragment
   implements TimePickerDialog.OnTimeSetListener {
 
   private MainActivity activity;
-  private MinuteRepeatEditFragment minuteRepeatEditFragment;
+  private final MinuteRepeatEditFragment minuteRepeatEditFragment;
 
   MinuteRepeatIntervalPickerDialogFragment(
     MinuteRepeatEditFragment minuteRepeatEditFragment

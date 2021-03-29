@@ -29,7 +29,7 @@ public class DayRepeatCustomOnTheMonthPickerDialogFragment extends DialogFragmen
     "Sat", "Sun", "Weekday", "Weekend Day"
   };
 
-  private DayRepeatCustomPickerFragment dayRepeatCustomPickerFragment;
+  private final DayRepeatCustomPickerFragment dayRepeatCustomPickerFragment;
   private NumberPicker ordinalNumber;
   private NumberPicker dayOfWeek;
 

@@ -31,9 +31,6 @@
         <com.hideaki.kk_reminder.MyCheckBoxPreference
             android:title="@string/play_slide_animation"
             android:key="animation"/>
-
-        <PreferenceScreen
-            android:summary="@string/play_slide_animation_summary"/>
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
