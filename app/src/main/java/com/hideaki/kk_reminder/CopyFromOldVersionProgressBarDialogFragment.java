@@ -124,6 +124,7 @@ public class CopyFromOldVersionProgressBarDialogFragment extends DialogFragment 
               }
             }
             activity.setBooleanGeneralInSharedPreferences(IS_COPIED_FROM_OLD_VERSION, false);
+            activity.generalSettings.setIsCopiedFromOldVersion(false);
             try {
               Thread.sleep(3500);
             }
