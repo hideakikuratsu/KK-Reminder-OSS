@@ -319,7 +319,7 @@ public class MainActivity extends AppCompatActivity
     // ダークモードの設定
     int currentNightMode =
       getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-    if(!isDarkThemeFollowSystem) {
+    if(!isDarkThemeFollowSystem && !generalSettings.isCopiedFromOldVersion()) {
       if(isDarkMode && currentNightMode != Configuration.UI_MODE_NIGHT_YES) {
         setBooleanGeneralInSharedPreferences(IS_RECREATED, true);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
