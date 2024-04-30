@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity
         getIsDirectBootContext(this) ? BOOLEAN_GENERAL_COPY : BOOLEAN_GENERAL,
         MODE_PRIVATE
       );
-    readNotice = booleanPreferences.getBoolean(READ_NOTICE, false);
+    readNotice = booleanPreferences.getBoolean(READ_NOTICE, true);
     isCopiedFromOldVersion =
       booleanPreferences.getBoolean(IS_COPIED_FROM_OLD_VERSION, false);
     isQueriedPurchaseHistory =
@@ -431,14 +431,6 @@ public class MainActivity extends AppCompatActivity
 
       // プロモーション用ダイアログのセットアップ
       createPromotionDialog();
-    }
-
-    // アプリ更新後初めての起動時にアップデート情報を表示
-    if(isFirstUse) {
-      updateInfoMessageDialog = createUpdateInfoMessageDialog();
-      if(updateInfoMessageDialog != null) {
-        updateInfoMessageDialog.show();
-      }
     }
 
     // テーマの設定
@@ -532,16 +524,22 @@ public class MainActivity extends AppCompatActivity
     }
 
     MenuItem noticeItem = menu.findItem(R.id.notice);
-    if(readNotice) {
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
       badgeDrawable.setEnabled(false);
-      noticeItem.setIcon(R.drawable.ic_email_read_24dp);
+      noticeItem.setVisible(false);
     }
     else {
-      badgeDrawable.setEnabled(true);
-      badgeDrawable.setBackgroundColor(
-          ContextCompat.getColor(this, R.color.red11PrimaryColor)
-      );
-      noticeItem.setIcon(R.drawable.ic_email_unread_24dp);
+      if(readNotice) {
+        badgeDrawable.setEnabled(false);
+        noticeItem.setIcon(R.drawable.ic_email_read_24dp);
+      }
+      else {
+        badgeDrawable.setEnabled(true);
+        badgeDrawable.setBackgroundColor(
+            ContextCompat.getColor(this, R.color.red11PrimaryColor)
+        );
+        noticeItem.setIcon(R.drawable.ic_email_unread_24dp);
+      }
     }
 
     // Adapterの初期化
@@ -654,8 +652,12 @@ public class MainActivity extends AppCompatActivity
         }
       }
 
+      // アプリ更新後初めての起動時にアップデート情報を表示
       if(isFirstUse) {
-        setBooleanGeneralInSharedPreferences(IS_FIRST_USE, false);
+        updateInfoMessageDialog = createUpdateInfoMessageDialog();
+        if(updateInfoMessageDialog != null) {
+          updateInfoMessageDialog.show();
+        }
       }
 
       // generalSettingsにおいて旧バージョンからの移行処理が行われた場合は、まだデータベース全体の
@@ -785,9 +787,7 @@ public class MainActivity extends AppCompatActivity
         .setCancelable(false)
         .setCustomTitle(customTitle)
         .setMessage(message)
-        .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
-
-        })
+        .setPositiveButton(R.string.ok, (dialogInterface, i) -> setBooleanGeneralInSharedPreferences(IS_FIRST_USE, false))
         .create();
 
       updateInfoMessageDialog.setOnShowListener(dialogInterface -> {
