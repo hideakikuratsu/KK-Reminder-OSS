@@ -141,20 +141,7 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
                   label += "第" + MainEditFragment.dayRepeat.getOrdinalNumber();
                 }
                 else {
-                  int ordinalNumber = MainEditFragment.dayRepeat.getOrdinalNumber();
-                  String ordinalStr = ordinalNumber + "";
-                  if(ordinalNumber == 1) {
-                    ordinalStr += "st";
-                  }
-                  else if(ordinalNumber == 2) {
-                    ordinalStr += "nd";
-                  }
-                  else if(ordinalNumber == 3) {
-                    ordinalStr += "rd";
-                  }
-                  else {
-                    ordinalStr += "th";
-                  }
+                  String ordinalStr = getOrdinalString();
                   label += ordinalStr + " ";
                 }
               }
@@ -236,5 +223,23 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
     });
 
     return dialog;
+  }
+
+  private static String getOrdinalString() {
+    int ordinalNumber = MainEditFragment.dayRepeat.getOrdinalNumber();
+    String ordinalStr = ordinalNumber + "";
+    if(ordinalNumber == 1) {
+      ordinalStr += "st";
+    }
+    else if(ordinalNumber == 2) {
+      ordinalStr += "nd";
+    }
+    else if(ordinalNumber == 3) {
+      ordinalStr += "rd";
+    }
+    else {
+      ordinalStr += "th";
+    }
+    return ordinalStr;
   }
 }

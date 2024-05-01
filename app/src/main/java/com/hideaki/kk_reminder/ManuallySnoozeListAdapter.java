@@ -104,7 +104,7 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
         }
         else if(position == snoozeList.size() - 1) {
           title = activity.customSnoozeSummary;
-          if(title == null || title.equals("")) {
+          if(title == null || title.isEmpty()) {
 
             title = "";
             if(activity.customHour != 0) {

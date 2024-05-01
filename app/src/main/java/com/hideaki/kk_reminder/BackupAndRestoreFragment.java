@@ -253,7 +253,7 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
         .addOnSuccessListener(fileList -> {
 
           List<File> folderList = fileList.getFiles();
-          if(folderList.size() == 0) {
+          if(folderList.isEmpty()) {
             Toast
               .makeText(activity, getString(R.string.backup_not_exists), Toast.LENGTH_LONG)
               .show();
@@ -511,7 +511,7 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
         .addOnSuccessListener(fileList -> {
 
           List<File> folderList = fileList.getFiles();
-          if(folderList.size() == 0) {
+          if(folderList.isEmpty()) {
 
             driveServiceHelper
               .createFolder(ROOT_FOLDER_NAME, null)

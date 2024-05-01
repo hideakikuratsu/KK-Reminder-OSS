@@ -270,7 +270,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
       .setPositiveButton(R.string.add, (dialog1, which) -> {
 
         String name = editText.getText().toString();
-        if(name.equals("")) {
+        if(name.isEmpty()) {
           name = getString(R.string.default_tag);
         }
         TagAdapter tag = new TagAdapter();

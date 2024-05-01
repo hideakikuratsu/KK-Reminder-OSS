@@ -135,8 +135,8 @@ public class NotesChecklistModeFragment extends Fragment {
         NotesTodoListAdapter.notesList.add(notes);
       }
     }
-    Collections.sort(NotesTodoListAdapter.notesList, NOTES_COMPARATOR);
-    Collections.sort(NotesDoneListAdapter.notesList, NOTES_COMPARATOR);
+    NotesTodoListAdapter.notesList.sort(NOTES_COMPARATOR);
+    NotesDoneListAdapter.notesList.sort(NOTES_COMPARATOR);
 
     // NotesTodoListの初期化
     NotesTodoListAdapter.isSorting = false;
@@ -146,7 +146,7 @@ public class NotesChecklistModeFragment extends Fragment {
     todoHeader.setBackgroundColor(activity.accentColor);
     TextView todoHeaderTitle = todoHeader.findViewById(R.id.todo);
     todoHeaderTitle.setTextColor(activity.secondaryTextColor);
-    if(NotesTodoListAdapter.notesList.size() != 0 && sortableListView.getHeaderViewsCount() == 0
+    if(!NotesTodoListAdapter.notesList.isEmpty() && sortableListView.getHeaderViewsCount() == 0
       && !NotesTodoListAdapter.isSorting) {
       sortableListView.addHeaderView(todoHeader);
     }
@@ -160,14 +160,14 @@ public class NotesChecklistModeFragment extends Fragment {
     doneHeader.setBackgroundColor(activity.accentColor);
     TextView doneHeaderTitle = doneHeader.findViewById(R.id.done);
     doneHeaderTitle.setTextColor(activity.secondaryTextColor);
-    if(NotesDoneListAdapter.notesList.size() != 0 && listView.getHeaderViewsCount() == 0) {
+    if(!NotesDoneListAdapter.notesList.isEmpty() && listView.getHeaderViewsCount() == 0) {
       listView.addHeaderView(doneHeader);
     }
     listView.setAdapter(notesDoneListAdapter);
 
     emptyView = View.inflate(activity, R.layout.notes_list_empty_layout, null);
     isEmptyViewAdded = false;
-    if(NotesChecklistModeFragment.item.getNotesList().size() == 0) {
+    if(NotesChecklistModeFragment.item.getNotesList().isEmpty()) {
       LinearLayout linearLayout = new LinearLayout(activity);
       linearLayout.setOrientation(LinearLayout.VERTICAL);
       LinearLayout.LayoutParams layoutParams =
@@ -242,10 +242,10 @@ public class NotesChecklistModeFragment extends Fragment {
     unselectItem = menu.findItem(R.id.unselect_all_items);
 
     // Todoリストのアイテム数に応じた表示処理
-    sortItem.setVisible(NotesTodoListAdapter.notesList.size() != 0);
+    sortItem.setVisible(!NotesTodoListAdapter.notesList.isEmpty());
 
     // Doneリストのアイテム数に応じた表示処理
-    if(NotesDoneListAdapter.notesList.size() == 0) {
+    if(NotesDoneListAdapter.notesList.isEmpty()) {
       deleteItem.setVisible(false);
       unselectItem.setVisible(false);
     }
@@ -275,10 +275,7 @@ public class NotesChecklistModeFragment extends Fragment {
 
             NotesChecklistModeFragment.item.setNotesList(new ArrayList<>(NotesTodoListAdapter.notesList));
 
-            if(
-                NotesChecklistModeFragment.item.getNotesList().size() == 0 &&
-                    !isEmptyViewAdded
-            ) {
+            if(NotesChecklistModeFragment.item.getNotesList().isEmpty() && !isEmptyViewAdded) {
               LinearLayout linearLayout = new LinearLayout(activity);
               linearLayout.setOrientation(LinearLayout.VERTICAL);
               LinearLayout.LayoutParams layoutParams =
@@ -327,7 +324,7 @@ public class NotesChecklistModeFragment extends Fragment {
         notes.setIsChecked(false);
         NotesTodoListAdapter.notesList.add(notes);
       }
-      Collections.sort(NotesTodoListAdapter.notesList, NOTES_COMPARATOR);
+      NotesTodoListAdapter.notesList.sort(NOTES_COMPARATOR);
       NotesDoneListAdapter.notesList = new ArrayList<>();
       notesTodoListAdapter.notifyDataSetChanged();
       notesDoneListAdapter.notifyDataSetChanged();
@@ -377,33 +374,18 @@ public class NotesChecklistModeFragment extends Fragment {
         activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         actionBar.setDisplayHomeAsUpEnabled(true);
         editModeItem.setVisible(true);
-        if(NotesDoneListAdapter.notesList.size() != 0) {
+        if(!NotesDoneListAdapter.notesList.isEmpty()) {
           deleteItem.setVisible(true);
           unselectItem.setVisible(true);
         }
-        if(NotesTodoListAdapter.notesList.size() != 0 &&
+        if(!NotesTodoListAdapter.notesList.isEmpty() &&
             sortableListView.getHeaderViewsCount() == 0) {
           sortableListView.addHeaderView(todoHeader);
         }
         listView.setVisibility(View.VISIBLE);
 
 
-        List<NotesAdapter> doneList = NotesDoneListAdapter.notesList;
-        List<Integer> doneOrderList = new ArrayList<>();
-        for(NotesAdapter notes : doneList) {
-          doneOrderList.add(notes.getOrder());
-        }
-
-        List<Integer> sortedIndex = new ArrayList<>();
-        int allListSize = NotesChecklistModeFragment.item.getNotesList().size();
-        for(int i = 0; i < allListSize; i++) {
-          sortedIndex.add(i);
-        }
-
-        int doneListSize = doneList.size();
-        for(int i = 0; i < doneListSize; i++) {
-          sortedIndex.remove(doneOrderList.get(i));
-        }
+        List<Integer> sortedIndex = getSortedIndex();
         Collections.sort(sortedIndex);
 
         List<NotesAdapter> notesList = NotesTodoListAdapter.notesList;
@@ -419,7 +401,7 @@ public class NotesChecklistModeFragment extends Fragment {
 
         notesList = new ArrayList<>(NotesTodoListAdapter.notesList);
         notesList.addAll(NotesDoneListAdapter.notesList);
-        Collections.sort(notesList, NOTES_COMPARATOR);
+        notesList.sort(NOTES_COMPARATOR);
 
         if(isUpdated) {
           NotesChecklistModeFragment.item.setNotesList(new ArrayList<>(notesList));
@@ -449,5 +431,25 @@ public class NotesChecklistModeFragment extends Fragment {
       return true;
     }
     return false;
+  }
+
+  private static List<Integer> getSortedIndex() {
+    List<NotesAdapter> doneList = NotesDoneListAdapter.notesList;
+    List<Integer> doneOrderList = new ArrayList<>();
+    for(NotesAdapter notes : doneList) {
+      doneOrderList.add(notes.getOrder());
+    }
+
+    List<Integer> sortedIndex = new ArrayList<>();
+    int allListSize = NotesChecklistModeFragment.item.getNotesList().size();
+    for(int i = 0; i < allListSize; i++) {
+      sortedIndex.add(i);
+    }
+
+    int doneListSize = doneList.size();
+    for(int i = 0; i < doneListSize; i++) {
+      sortedIndex.remove(doneOrderList.get(i));
+    }
+    return sortedIndex;
   }
 }

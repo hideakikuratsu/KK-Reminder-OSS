@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
-import static java.util.Objects.requireNonNull;
 
 public class ManuallySnoozePickerDialogFragment extends DialogFragment
   implements TimePickerDialog.OnTimeSetListener {
@@ -23,8 +22,7 @@ public class ManuallySnoozePickerDialogFragment extends DialogFragment
   @Override
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-    activity = (ManuallySnoozeActivity)getActivity();
-    requireNonNull(activity);
+    activity = (ManuallySnoozeActivity)requireActivity();
 
     int hour = activity.customHour;
     int minute = activity.customMinute;

@@ -110,9 +110,9 @@ public class HelpAndFeedbackFragment extends BasePreferenceFragmentCompat
       case "request": {
 
         Intent intent = new Intent()
-          .setAction(Intent.ACTION_SENDTO)
-          .setType("text/plain")
-          .setData(Uri.parse("mailto:bisigness100@gmail.com"));
+            .setAction(Intent.ACTION_SENDTO)
+            .setData(Uri.parse("mailto:"))
+            .putExtra(Intent.EXTRA_EMAIL, new String[]{"bisigness100@gmail.com"});
         if(preference.getKey().equals("contact")) {
           intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.contact));
         }

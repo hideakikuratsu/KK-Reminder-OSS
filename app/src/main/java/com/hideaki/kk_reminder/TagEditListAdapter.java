@@ -103,7 +103,7 @@ public class TagEditListAdapter extends BaseAdapter {
               .setPositiveButton(R.string.determine, (dialog1, which) -> {
 
                 String name = editText.getText().toString();
-                if(!name.equals("")) {
+                if(!name.isEmpty()) {
                   tag.setName(name);
                   activity.generalSettings.getTagList().get(position).setName(name);
                   activity.updateSettingsDB();

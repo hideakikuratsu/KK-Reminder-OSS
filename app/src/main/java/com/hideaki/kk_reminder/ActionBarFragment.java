@@ -8,7 +8,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -34,9 +33,11 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import static androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT;
 import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
 import static com.hideaki.kk_reminder.UtilClass.generateUniqueId;
 import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
@@ -461,6 +462,7 @@ public class ActionBarFragment extends Fragment {
   private void initToggleItem() {
 
     ConstraintLayout toggleLayout = (ConstraintLayout)toggleItem.getActionView();
+    requireNonNull(toggleLayout);
     todo = toggleLayout.findViewById(R.id.todo);
     done = toggleLayout.findViewById(R.id.done);
 
@@ -662,13 +664,13 @@ public class ActionBarFragment extends Fragment {
     searchClose.setColorFilter(searchColor);
     // ヒントの色
     String strColor = String.format("#%06X", 0xFFFFFF & searchColor);
-    searchView.setQueryHint(Html.fromHtml(
+    searchView.setQueryHint(HtmlCompat.fromHtml(
       "<font color = " +
         strColor +
         ">" +
         getResources().getString(R.string.search_hint) +
-        "</font>"
-    ));
+        "</font>", FROM_HTML_MODE_COMPACT)
+    );
     searchView.setIconifiedByDefault(true);
     searchView.setSubmitButtonEnabled(false);
 
@@ -759,7 +761,7 @@ public class ActionBarFragment extends Fragment {
       @Override
       public boolean onQueryTextChange(String text) {
 
-        if(text == null || text.equals("")) {
+        if(text == null || text.isEmpty()) {
           if(order == 0 && activity.isExpandableTodo) {
             activity.expandableListView.clearTextFilter();
             activity.expandableListAdapter.getFilter().filter("");

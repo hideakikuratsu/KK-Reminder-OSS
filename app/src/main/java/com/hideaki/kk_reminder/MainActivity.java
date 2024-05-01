@@ -1,6 +1,7 @@
 package com.hideaki.kk_reminder;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -44,12 +45,15 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClient.BillingResponseCode;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.BillingFlowParams.ProductDetailsParams;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.PurchasesUpdatedListener;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
+import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.QueryPurchaseHistoryParams;
+import com.android.billingclient.api.QueryPurchasesParams;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
@@ -57,11 +61,11 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -239,7 +243,7 @@ public class MainActivity extends AppCompatActivity
   private AlertDialog updateInfoMessageDialog = null;
   private boolean isRecreated;
   private boolean isRecreatedTwice;
-  private List<SkuDetails> skuDetailsList = null;
+  private List<ProductDetails> productDetailsList = null;
   List<ItemAdapter> todoItemList;
   boolean isCopiedFromOldVersion;
   AdView adView;
@@ -306,10 +310,11 @@ public class MainActivity extends AppCompatActivity
   }
 
 
+  @SuppressLint("UnspecifiedRegisterReceiverFlag")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 
-    if(IS_FIRST_USE.equals("")) {
+    if(IS_FIRST_USE.isEmpty()) {
       IS_FIRST_USE = "IS_FIRST_USE_" + getString(R.string.version_value);
     }
 
@@ -558,7 +563,12 @@ public class MainActivity extends AppCompatActivity
     onNewIntent(getIntent());
 
     // 画面がフォアグラウンドの状態におけるDefaultManuallySnoozeReceiverからのインテントを待ち受ける
-    registerReceiver(defaultSnoozeReceiver, new IntentFilter(ACTION_IN_NOTIFICATION));
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      registerReceiver(defaultSnoozeReceiver, new IntentFilter(ACTION_IN_NOTIFICATION), Context.RECEIVER_NOT_EXPORTED);
+    }
+    else {
+      registerReceiver(defaultSnoozeReceiver, new IntentFilter(ACTION_IN_NOTIFICATION));
+    }
   }
 
   @Override
@@ -744,7 +754,7 @@ public class MainActivity extends AppCompatActivity
         (LOCALE.equals(Locale.JAPAN) ? "_ja.txt" : "_en.txt");
 
     String message = readFileFromAssets(this, updateInfoFileName);
-    if(!"".equals(message)) {
+    if(!message.isEmpty()) {
       TextView customTitle = new TextView(this);
       String title =
         "ver. " + getString(R.string.version_value) + " " + getString(R.string.update_info);
@@ -794,9 +804,7 @@ public class MainActivity extends AppCompatActivity
       .setTitle(R.string.disable_ads)
       .setMessage(R.string.disable_ads_promotion)
       .setPositiveButton(R.string.yes, (dialog, which) -> onBuyButtonClicked())
-      .setNeutralButton(R.string.cancel, (dialog, which) -> {
-
-      })
+      .setNeutralButton(R.string.cancel, (dialog, which) -> {})
       .create();
 
     promotionDialog.setOnShowListener(dialogInterface -> {
@@ -855,8 +863,12 @@ public class MainActivity extends AppCompatActivity
 
   private void checkIsPremium() {
 
+    QueryPurchasesParams params = QueryPurchasesParams.newBuilder()
+        .setProductType(BillingClient.ProductType.INAPP)
+        .build();
+    // 購入履歴を問い合わせる(ローカルのキャッシュデータを参照)
     billingClient.queryPurchasesAsync(
-        BillingClient.SkuType.INAPP, (billingResult, purchaseList) -> {
+        params, (billingResult, purchaseList) -> {
 
       int responseCode = billingResult.getResponseCode();
       if(responseCode == BillingResponseCode.OK) {
@@ -881,8 +893,11 @@ public class MainActivity extends AppCompatActivity
   // 購入履歴を問い合わせる(ネットワークアクセス処理)
   private void queryPurchaseHistory() {
 
+    QueryPurchaseHistoryParams params = QueryPurchaseHistoryParams.newBuilder()
+        .setProductType(BillingClient.ProductType.INAPP)
+        .build();
     billingClient.queryPurchaseHistoryAsync(
-      BillingClient.SkuType.INAPP,
+      params,
         (billingResult, purchasesList) -> {
 
           int responseCode = billingResult.getResponseCode();
@@ -896,10 +911,10 @@ public class MainActivity extends AppCompatActivity
             }
             else {
               for(PurchaseHistoryRecord purchase : purchasesList) {
-                if(purchase.getSkus().contains(PRODUCT_ID_PREMIUM)) {
+                if(purchase.getProducts().contains(PRODUCT_ID_PREMIUM)) {
                   Log.i(
                       "MainActivity#queryPurchaseHistory",
-                      purchase.getSkus().get(0) + ": Purchased"
+                      purchase.getProducts().get(0) + ": Purchased"
                   );
                   handler.post(() -> {
                     Toast
@@ -978,12 +993,12 @@ public class MainActivity extends AppCompatActivity
     if("purchased".equals(purchaseState)) {
       Log.i(
         "MainActivity#checkPurchaseState",
-        "Sku: " + purchase.getSkus().get(0) + ", State: " + purchaseState
+        "Product: " + purchase.getProducts().get(0) + ", State: " + purchaseState
       );
-      if(purchase.getSkus().contains(PRODUCT_ID_PREMIUM)) {
+      if(purchase.getProducts().contains(PRODUCT_ID_PREMIUM)) {
         Log.i(
             "MainActivity#checkPurchaseState",
-            "Sku: " + purchase.getSkus().get(0) + ", set IS_PREMIUM on"
+            "Product: " + purchase.getProducts().get(0) + ", set IS_PREMIUM on"
         );
         handler.post(() -> {
           Toast
@@ -1003,7 +1018,7 @@ public class MainActivity extends AppCompatActivity
     else {
       Log.w(
         "MainActivity#checkPurchaseState",
-        "Sku: " + purchase.getSkus().get(0) + ", State: " + purchaseState
+        "Product: " + purchase.getProducts().get(0) + ", State: " + purchaseState
       );
     }
   }
@@ -1044,21 +1059,34 @@ public class MainActivity extends AppCompatActivity
     int responseCode = billingResult.getResponseCode();
     if(responseCode != BillingResponseCode.OK) {
       Log.e("MainActivity#onAcknowledgePurchaseResponse", getResponseCodeString(responseCode));
+      handler.post(() ->
+          Toast
+              .makeText(
+                  MainActivity.this,
+                  getString(R.string.error_occurred), Toast.LENGTH_LONG
+              )
+              .show()
+      );
     }
   }
 
   private void onBuyButtonClicked() {
 
-    getSkuDetails(PRODUCT_ID_PREMIUM).onSuccess((Continuation<SkuDetails, Void>)task -> {
+    getProductDetails(PRODUCT_ID_PREMIUM).onSuccess((Continuation<ProductDetails, Void>)task -> {
 
-      SkuDetails skuDetails = task.getResult();
-      BillingFlowParams flowParams = BillingFlowParams
-        .newBuilder()
-        .setSkuDetails(skuDetails)
-        .build();
+      ProductDetails productDetails = task.getResult();
+      ImmutableList<ProductDetailsParams> productDetailsParamsList = ImmutableList.of(
+          ProductDetailsParams.newBuilder()
+              .setProductDetails(productDetails)
+              .build()
+      );
+
+      BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
+          .setProductDetailsParamsList(productDetailsParamsList)
+          .build();
 
       BillingResult billingResult =
-        billingClient.launchBillingFlow(MainActivity.this, flowParams);
+        billingClient.launchBillingFlow(MainActivity.this, billingFlowParams);
 
       int responseCode = billingResult.getResponseCode();
       if(responseCode == BillingResponseCode.OK) {
@@ -1073,7 +1101,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   @SuppressWarnings("SameParameterValue")
-  private Task<SkuDetails> getSkuDetails(@NonNull final String sku) {
+  private Task<ProductDetails> getProductDetails(@NonNull final String productId) {
 
     // continueWith()もcontinueWithTask()もクライアントの渡したContinuationインスタンス内で定義される
     // then()は非同期で処理されるが、continueWith()と異なりcontinueWithTask()はthen()内でさらなる
@@ -1092,47 +1120,51 @@ public class MainActivity extends AppCompatActivity
     // continueWith()は、前のTaskが完了していればそのTaskがfailed, canceled, succeededのいずれ
     // であってもthen()内の処理を行うが、onSuccess()は、前のTaskがsucceededのときのみthen()
     // 内の処理を行う。
-    final TaskCompletionSource<SkuDetails> taskCompletionSource = new TaskCompletionSource<>();
-    if(skuDetailsList == null) {
-      querySkuDetailsList().onSuccess((Continuation<List<SkuDetails>, Void>)task -> {
+    final TaskCompletionSource<ProductDetails> taskCompletionSource = new TaskCompletionSource<>();
+    if(productDetailsList == null) {
+      queryProductDetailsList().onSuccess((Continuation<List<ProductDetails>, Void>)task -> {
 
-        skuDetailsList = task.getResult();
-        getSkuDetailsFromListAndSetTaskCompletionSource(
-          sku,
-          skuDetailsList,
-          taskCompletionSource
+        productDetailsList = task.getResult();
+        getProductDetailsFromListAndSetTaskCompletionSource(
+            productId,
+            productDetailsList,
+            taskCompletionSource
         );
         return null;
       });
     }
     else {
-      getSkuDetailsFromListAndSetTaskCompletionSource(sku, skuDetailsList, taskCompletionSource);
+      getProductDetailsFromListAndSetTaskCompletionSource(
+          productId,
+          productDetailsList,
+          taskCompletionSource
+      );
     }
 
     return taskCompletionSource.getTask();
   }
 
-  private void getSkuDetailsFromListAndSetTaskCompletionSource(
-    String sku,
-    List<SkuDetails> skuDetailsList,
-    TaskCompletionSource<SkuDetails> taskCompletionSource
+  private void getProductDetailsFromListAndSetTaskCompletionSource(
+    String productId,
+    List<ProductDetails> productDetailsList,
+    TaskCompletionSource<ProductDetails> taskCompletionSource
   ) {
 
-    for(SkuDetails skuDetails : skuDetailsList) {
-      if(sku.equals(skuDetails.getSku())) {
+    for(ProductDetails productDetails : productDetailsList) {
+      if(productId.equals(productDetails.getProductId())) {
         Log.i(
-            "MainActivity#getSkuDetailsFromListAndSetTaskCompletionSource",
-            sku + " found"
+            "MainActivity#getProductDetailsFromListAndSetTaskCompletionSource",
+            productId + " found"
         );
-        taskCompletionSource.setResult(skuDetails);
+        taskCompletionSource.setResult(productDetails);
         return;
       }
     }
 
     taskCompletionSource.setError(new IllegalStateException());
     Log.e(
-        "MainActivity#getSkuDetailsFromListAndSetTaskCompletionSource",
-        sku + " not found"
+        "MainActivity#getProductDetailsFromListAndSetTaskCompletionSource",
+        productId + " not found"
     );
     handler.post(() ->
         Toast
@@ -1145,26 +1177,28 @@ public class MainActivity extends AppCompatActivity
     );
   }
 
-  private Task<List<SkuDetails>> querySkuDetailsList() {
+  private Task<List<ProductDetails>> queryProductDetailsList() {
 
-    final TaskCompletionSource<List<SkuDetails>> taskCompletionSource =
+    final TaskCompletionSource<List<ProductDetails>> taskCompletionSource =
       new TaskCompletionSource<>();
 
-    List<String> skuList = new ArrayList<>();
-    skuList.add(PRODUCT_ID_PREMIUM);
+    QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder()
+        .setProductType(BillingClient.ProductType.INAPP)
+        .setProductId(PRODUCT_ID_PREMIUM)
+        .build();
+    List<QueryProductDetailsParams.Product> productList = new ArrayList<>();
+    productList.add(product);
 
-    SkuDetailsParams params = SkuDetailsParams
-      .newBuilder()
-      .setSkusList(skuList)
-      .setType(BillingClient.SkuType.INAPP)
-      .build();
+    QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
+        .setProductList(productList)
+        .build();
 
-    billingClient.querySkuDetailsAsync(params, (billingResult, list) -> {
+    billingClient.queryProductDetailsAsync(params, (billingResult, productDetailsList) -> {
 
       int responseCode = billingResult.getResponseCode();
       if(responseCode == BillingResponseCode.OK) {
-        if(list == null || list.isEmpty()) {
-          Log.e("MainActivity#querySkuDetailsList", "list is null or empty");
+        if(productDetailsList.isEmpty()) {
+          Log.e("MainActivity#queryProductDetailsAsync", "productDetailsList is null or empty");
           taskCompletionSource.setError(new IllegalStateException());
           handler.post(() ->
               Toast
@@ -1177,8 +1211,8 @@ public class MainActivity extends AppCompatActivity
           );
         }
         else {
-          Log.i("MainActivity#querySkuDetailsList", getResponseCodeString(responseCode));
-          taskCompletionSource.setResult(list);
+          Log.i("MainActivity#queryProductDetailsAsync", getResponseCodeString(responseCode));
+          taskCompletionSource.setResult(productDetailsList);
         }
       }
       else if(responseCode == BillingResponseCode.USER_CANCELED) {
@@ -1268,7 +1302,7 @@ public class MainActivity extends AppCompatActivity
           MenuItem menuItem = menu.getItem(i);
           if(menuItem.hasSubMenu()) {
             SubMenu subMenu = menuItem.getSubMenu();
-            int subSize = subMenu.size();
+            int subSize = requireNonNull(subMenu).size();
             for(int j = 0; j < subSize; j++) {
               MenuItem subMenuItem = subMenu.getItem(j);
               subMenuItem.setChecked(false);
@@ -1283,7 +1317,7 @@ public class MainActivity extends AppCompatActivity
         generalSettings.getNonScheduledLists();
       int size = nonScheduledListList.size();
       String[] items = new String[size + 1];
-      items[0] = menu.findItem(R.id.scheduled_list).getTitle().toString();
+      items[0] = requireNonNull(menu.findItem(R.id.scheduled_list).getTitle()).toString();
       for(int i = 0; i < size; i++) {
         items[i + 1] = nonScheduledListList.get(i).getTitle();
       }
@@ -1323,6 +1357,7 @@ public class MainActivity extends AppCompatActivity
             menuItem.setChecked(false);
             if(menuItem.hasSubMenu()) {
               SubMenu subMenu = menuItem.getSubMenu();
+              requireNonNull(subMenu);
               int subSize = subMenu.size();
               for(int j = 0; j < subSize; j++) {
                 MenuItem subMenuItem = subMenu.getItem(j);
@@ -1569,7 +1604,7 @@ public class MainActivity extends AppCompatActivity
       menuItem = menu.getItem(0);
     }
     if(menuItem.hasSubMenu()) {
-      menuItem = menuItem.getSubMenu().getItem(whichSubmenuOpen);
+      menuItem = requireNonNull(menuItem.getSubMenu()).getItem(whichSubmenuOpen);
     }
 
     // 選択状態のリストア
@@ -1649,7 +1684,7 @@ public class MainActivity extends AppCompatActivity
 
           if(menu.getItem(i).hasSubMenu()) {
             SubMenu subMenu = menu.getItem(i).getSubMenu();
-            int subSize = subMenu.size();
+            int subSize = requireNonNull(subMenu).size();
             for(int j = 0; j < subSize; j++) {
               if(subMenu.getItem(j) == menuItem) {
                 setIntGeneralInSharedPreferences(MENU_POSITION, i);
@@ -1732,7 +1767,7 @@ public class MainActivity extends AppCompatActivity
 
           // GeneralSettingsとManageListAdapterへの反映
           String name = editText.getText().toString();
-          if(name.equals("")) {
+          if(name.isEmpty()) {
             name = getString(R.string.default_list);
           }
           generalSettings.addNonScheduledList(0, new NonScheduledListAdapter(name));
@@ -2012,10 +2047,7 @@ public class MainActivity extends AppCompatActivity
                 MyExpandableListAdapter.backupDate.getTimeInMillis()
             );
 
-            Collections.sort(
-              MyExpandableListAdapter.children.get(groupPosition),
-              SCHEDULED_ITEM_COMPARATOR
-            );
+            MyExpandableListAdapter.children.get(groupPosition).sort(SCHEDULED_ITEM_COMPARATOR);
             expandableListAdapter.notifyDataSetChanged();
 
             deleteAlarm(snackBarItem);
@@ -2049,7 +2081,7 @@ public class MainActivity extends AppCompatActivity
 
             MyExpandableListAdapter.children.get(groupPosition).add(snackBarItem);
             for(List<ItemAdapter> itemList : MyExpandableListAdapter.children) {
-              Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+              itemList.sort(SCHEDULED_ITEM_COMPARATOR);
             }
             expandableListAdapter.notifyDataSetChanged();
 
@@ -2088,7 +2120,7 @@ public class MainActivity extends AppCompatActivity
 
     if(sort) {
       for(List<ItemAdapter> itemList : MyExpandableListAdapter.children) {
-        Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+        itemList.sort(SCHEDULED_ITEM_COMPARATOR);
       }
     }
   }
@@ -2180,7 +2212,7 @@ public class MainActivity extends AppCompatActivity
     children.add(futureList);
 
     for(List<ItemAdapter> child : children) {
-      Collections.sort(child, SCHEDULED_ITEM_COMPARATOR);
+      child.sort(SCHEDULED_ITEM_COMPARATOR);
     }
     return children;
   }
@@ -2212,7 +2244,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     for(List<ItemAdapter> itemList : MyExpandableListAdapter.children) {
-      Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+      itemList.sort(SCHEDULED_ITEM_COMPARATOR);
     }
     expandableListAdapter.notifyDataSetChanged();
     insertDB(item, table);
@@ -2267,7 +2299,7 @@ public class MainActivity extends AppCompatActivity
           itemList.add(item);
         }
       }
-      Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
+      itemList.sort(NON_SCHEDULED_ITEM_COMPARATOR);
 
       return itemList;
     }
@@ -2286,7 +2318,7 @@ public class MainActivity extends AppCompatActivity
         itemList.add(item);
       }
     }
-    Collections.sort(itemList, DONE_ITEM_COMPARATOR);
+    itemList.sort(DONE_ITEM_COMPARATOR);
 
     return itemList;
   }

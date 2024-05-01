@@ -5,13 +5,18 @@
     android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- SDK VER.33以降は権限の取得処理がなくてもUSE_EXACT_ALARMを宣言するだけで正確なアラーム設定が可能 -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+    <!-- SDK VER.33以降は外部ストレージアクセスに対しより詳細なアクセス権限が必要 -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <!-- SDK VER.33以降は広告表示に権限が必要 -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <!-- SDK VER.33以降はアプリによる通知送信に権限取得が必要 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
