@@ -81,7 +81,11 @@
     <string name="permission_external_alarm_rationale_message">外部ストレージから通知音を選択する場合はアクセス許可が必要です</string>
     <string name="permission_external_alarm_denied">外部ストレージへのアクセスが拒否されました。デフォルトの通知音を設定します</string>
     <string name="permission_exact_alarm_rationale_title">アラーム通知権限</string>
-    <string name="permission_exact_alarm_rationale_message">Android 12以降、アプリが正確な設定時間で通知を行うためには特別な権限が必要になりました。現在このアプリはその権限が許可されていないため、使用することができません。アプリを正常に使用するには権限を許可してください。</string>
+    <string name="permission_exact_alarm_rationale_message">Android 12以降、アプリが正確な設定時間で通知を行うためには特別な権限が必要になりました。現在このアプリにはその権限が許可されていません。アプリを正常に使用するには権限を許可してください。</string>
+    <string name="permission_exact_alarm_denied">正確なアラーム通知の権限が拒否されました。タスク通知が最大で十分程度遅れる可能性があります</string>
+    <string name="permission_post_notification_rationale_title">アプリ通知権限</string>
+    <string name="permission_post_notification_rationale_message">Android 13以降、アプリが通知を送信するためには通知の権限を許可する必要があります。現在このアプリにはその権限が許可されていません。アプリを正常に使用するには権限を許可してください。</string>
+    <string name="permission_post_notification_denied">通知権限が拒否されました。すべてのタスク通知が停止されます</string>
     <string name="permit">許可</string>
     <string name="deny">拒否</string>
     <string name="default_snooze">デフォルト</string>

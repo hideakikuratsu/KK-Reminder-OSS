@@ -86,6 +86,10 @@
     <string name="permission_external_alarm_denied">External Storage Access Permission was denied. Setting default alarm sound</string>
     <string name="permission_exact_alarm_rationale_title">Exact Alarm Permission</string>
     <string name="permission_exact_alarm_rationale_message">After update to Android 12, you have to accept a special permission in order to set an exact time alarm. This app currently doesn\'t have the permission, so you have to give the permission to it if you want to use it normally.</string>
+    <string name="permission_exact_alarm_denied">Exact Alarm Permission was denied. Notification can be delayed up to around 10 minutes</string>
+    <string name="permission_post_notification_rationale_title">Notification Permission</string>
+    <string name="permission_post_notification_rationale_message">After update to Android 13, you have to accept notification permission in order to receive notification from app. This app currently doesn\'t have the permission, so you have to give the permission to it if you want to use it normally.</string>
+    <string name="permission_post_notification_denied">Post Notification Permission was denied. No notification will be gone off</string>
     <string name="permit">Permit</string>
     <string name="deny">Deny</string>
     <string name="default_snooze">Default</string>

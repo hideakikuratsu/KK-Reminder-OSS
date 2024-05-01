@@ -59,6 +59,15 @@ public class StartupReceiver extends BroadcastReceiver {
 
   private void resetAlarm(Context context) {
 
+    AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+    requireNonNull(alarmManager);
+    // Exact Alarm Permissionが付与されていない場合はアラームを発火しない
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      if(!alarmManager.canScheduleExactAlarms()) {
+        return;
+      }
+    }
+
     List<byte[]> streamList = accessor.executeQueryAll(MyDatabaseHelper.TODO_TABLE);
     for(byte[] stream : streamList) {
 
@@ -76,9 +85,6 @@ public class StartupReceiver extends BroadcastReceiver {
           context, (int)item.getId(), setAlarm,
           PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
         );
-
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        requireNonNull(alarmManager);
 
         alarmManager.setAlarmClock(
           new AlarmManager.AlarmClockInfo(
