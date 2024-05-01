@@ -1,4 +1,4 @@
-(Update about ver. 4.2.0.3)
+(Update about ver. 4.2.0.4)
 ・Fixed purchased state not recognized
 (Update about ver. 4.2.0.2)
 ・Added notice about a bug on Android 12
