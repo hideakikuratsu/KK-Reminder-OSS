@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Build;
@@ -25,7 +24,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_VIBRATION_PATTERN;
@@ -61,101 +59,86 @@ public class VibrationEditFragment extends BasePreferenceFragmentCompat {
 
     vibrationStr = MainEditFragment.item.getVibrationPattern();
     label = (PreferenceScreen)findPreference("label");
-    label.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
+    label.setOnPreferenceClickListener(preference -> {
 
-        // ダイアログに表示するEditTextの設定
-        LinearLayout linearLayout = new LinearLayout(activity);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        final EditText editText = new EditText(activity);
-        setCursorDrawableColor(activity, editText);
-        editText.getBackground().mutate().setColorFilter(new PorterDuffColorFilter(
-          activity.accentColor,
-          PorterDuff.Mode.SRC_IN
-        ));
-        editText.setText(vibrationStr);
-        editText.setSelection(editText.getText().length());
-        editText.setHint(R.string.vibration_hint);
-        editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        editText.setLayoutParams(new LinearLayout.LayoutParams(
-          LinearLayout.LayoutParams.MATCH_PARENT,
-          LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        linearLayout.addView(editText);
-        int paddingPx = getPxFromDp(activity, 20);
-        linearLayout.setPadding(paddingPx, 0, paddingPx, 0);
+      // ダイアログに表示するEditTextの設定
+      LinearLayout linearLayout = new LinearLayout(activity);
+      linearLayout.setOrientation(LinearLayout.VERTICAL);
+      final EditText editText = new EditText(activity);
+      setCursorDrawableColor(activity, editText);
+      editText.getBackground().mutate().setColorFilter(new PorterDuffColorFilter(
+        activity.accentColor,
+        PorterDuff.Mode.SRC_IN
+      ));
+      editText.setText(vibrationStr);
+      editText.setSelection(editText.getText().length());
+      editText.setHint(R.string.vibration_hint);
+      editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+      editText.setLayoutParams(new LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.MATCH_PARENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT
+      ));
+      linearLayout.addView(editText);
+      int paddingPx = getPxFromDp(activity, 20);
+      linearLayout.setPadding(paddingPx, 0, paddingPx, 0);
 
-        // バイブレーションのパターンを設定するダイアログを表示
-        final AlertDialog dialog = new AlertDialog.Builder(activity)
-          .setTitle(R.string.default_vibration)
-          .setView(linearLayout)
-          .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+      // バイブレーションのパターンを設定するダイアログを表示
+      final AlertDialog dialog = new AlertDialog.Builder(activity)
+        .setTitle(R.string.default_vibration)
+        .setView(linearLayout)
+        .setPositiveButton(R.string.ok, (dialog1, which) -> {
 
-              vibrationStr = editText.getText().toString();
-              vibrationStr = getRegularizedVibrationStr(vibrationStr);
-              label.setTitle(vibrationStr);
-              if(vibrationStr.equals(DEFAULT_VIBRATION_PATTERN)) {
-                label.setSummary(R.string.default_vibration_hint);
-              }
-              else {
-                label.setSummary(R.string.custom_vibration_hint);
-              }
-              long[] vibrationPattern = getVibrationPattern(vibrationStr);
-              Vibrator vibrator = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
-              requireNonNull(vibrator);
-              if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                VibrationEffect effect =
-                  VibrationEffect.createWaveform(vibrationPattern, -1);
-                vibrator.vibrate(effect);
-              }
-              else {
-                vibrator.vibrate(vibrationPattern, -1);
-              }
-
-              MainEditFragment.item.setVibrationPattern(vibrationStr);
-            }
-          })
-          .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-          })
-          .create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-          @Override
-          public void onShow(DialogInterface dialogInterface) {
-
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+          vibrationStr = editText.getText().toString();
+          vibrationStr = getRegularizedVibrationStr(vibrationStr);
+          label.setTitle(vibrationStr);
+          if(vibrationStr.equals(DEFAULT_VIBRATION_PATTERN)) {
+            label.setSummary(R.string.default_vibration_hint);
           }
-        });
-
-        dialog.show();
-
-        // ダイアログ表示時にソフトキーボードを自動で表示
-        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-          @Override
-          public void onFocusChange(View v, boolean hasFocus) {
-
-            if(hasFocus) {
-              Window dialogWindow = dialog.getWindow();
-              requireNonNull(dialogWindow);
-
-              dialogWindow.setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-              );
-            }
+          else {
+            label.setSummary(R.string.custom_vibration_hint);
           }
-        });
-        editText.requestFocus();
+          long[] vibrationPattern = getVibrationPattern(vibrationStr);
+          Vibrator vibrator = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
+          requireNonNull(vibrator);
+          if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            VibrationEffect effect =
+              VibrationEffect.createWaveform(vibrationPattern, -1);
+            vibrator.vibrate(effect);
+          }
+          else {
+            vibrator.vibrate(vibrationPattern, -1);
+          }
 
-        return true;
-      }
+          MainEditFragment.item.setVibrationPattern(vibrationStr);
+        })
+        .setNeutralButton(R.string.cancel, (dialog12, which) -> {
+
+        })
+        .create();
+
+      dialog.setOnShowListener(dialogInterface -> {
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+      });
+
+      dialog.show();
+
+      // ダイアログ表示時にソフトキーボードを自動で表示
+      editText.setOnFocusChangeListener((v, hasFocus) -> {
+
+        if(hasFocus) {
+          Window dialogWindow = dialog.getWindow();
+          requireNonNull(dialogWindow);
+
+          dialogWindow.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+          );
+        }
+      });
+      editText.requestFocus();
+
+      return true;
     });
   }
 
@@ -201,8 +184,7 @@ public class VibrationEditFragment extends BasePreferenceFragmentCompat {
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-    FragmentManager manager = getFragmentManager();
-    requireNonNull(manager);
+    FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
     manager.popBackStack();
     return super.onOptionsItemSelected(item);
   }

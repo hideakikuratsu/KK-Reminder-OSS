@@ -132,13 +132,7 @@ public class AnimCheckBox extends View implements Checkable {
     paint.setStyle(Paint.Style.STROKE);
     paint.setStrokeWidth(strokeWidth);
     paint.setColor(strokeColor);
-    super.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-
-        setChecked(!AnimCheckBox.this.isChecked);
-      }
-    });
+    super.setOnClickListener(v -> setChecked(!AnimCheckBox.this.isChecked));
     setCheckedViewInner(checked, false);
   }
 
@@ -287,21 +281,18 @@ public class AnimCheckBox extends View implements Checkable {
     final float circleMaxFraction = hookSize / hookMaxValue;
     final float circleMaxValue = 360 / circleMaxFraction;
     animator.setFloatValues(0, 1);
-    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-      @Override
-      public void onAnimationUpdate(ValueAnimator animation) {
+    animator.addUpdateListener(animation -> {
 
-        float fraction = animation.getAnimatedFraction();
-        hookOffset = fraction * hookMaxValue;
-        if(fraction <= circleMaxFraction) {
-          sweepAngle = (int)((circleMaxFraction - fraction) * circleMaxValue);
-        }
-        else {
-          sweepAngle = 0;
-        }
-        innerCircleAlpha = (int)(fraction * 0xFF);
-        invalidate();
+      float fraction = animation.getAnimatedFraction();
+      hookOffset = fraction * hookMaxValue;
+      if(fraction <= circleMaxFraction) {
+        sweepAngle = (int)((circleMaxFraction - fraction) * circleMaxValue);
       }
+      else {
+        sweepAngle = 0;
+      }
+      innerCircleAlpha = (int)(fraction * 0xFF);
+      invalidate();
     });
     animator.setInterpolator(new AccelerateDecelerateInterpolator());
     animator.setDuration(duration).start();
@@ -314,22 +305,19 @@ public class AnimCheckBox extends View implements Checkable {
     final float circleMinFraction = (endLeftHookOffset - baseLeftHookOffset) / hookMaxValue;
     final float circleMaxValue = 360 / (1 - circleMinFraction);
     animator.setFloatValues(0, 1);
-    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-      @Override
-      public void onAnimationUpdate(ValueAnimator animation) {
+    animator.addUpdateListener(animation -> {
 
-        float circleFraction = animation.getAnimatedFraction();
-        float fraction = 1 - circleFraction;
-        hookOffset = fraction * hookMaxValue;
-        if(circleFraction >= circleMinFraction) {
-          sweepAngle = (int)((circleFraction - circleMinFraction) * circleMaxValue);
-        }
-        else {
-          sweepAngle = 0;
-        }
-        innerCircleAlpha = (int)(fraction * 0xFF);
-        invalidate();
+      float circleFraction = animation.getAnimatedFraction();
+      float fraction = 1 - circleFraction;
+      hookOffset = fraction * hookMaxValue;
+      if(circleFraction >= circleMinFraction) {
+        sweepAngle = (int)((circleFraction - circleMinFraction) * circleMaxValue);
       }
+      else {
+        sweepAngle = 0;
+      }
+      innerCircleAlpha = (int)(fraction * 0xFF);
+      invalidate();
     });
     animator.setInterpolator(new AccelerateDecelerateInterpolator());
     animator.setDuration(duration).start();

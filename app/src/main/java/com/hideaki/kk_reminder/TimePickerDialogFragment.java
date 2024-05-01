@@ -7,11 +7,13 @@ import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static java.util.Objects.requireNonNull;
 
 public class TimePickerDialogFragment extends DialogFragment
@@ -54,6 +56,13 @@ public class TimePickerDialogFragment extends DialogFragment
 
     MainEditFragment.finalCal.set(Calendar.HOUR_OF_DAY, hourOfDay);
     MainEditFragment.finalCal.set(Calendar.MINUTE, minute);
-    mainEditFragment.timePicker.setTitle(DateFormat.format("kk:mm", MainEditFragment.finalCal));
+    String dateFormat;
+    if(LOCALE.equals(Locale.JAPAN)) {
+      dateFormat = "kk:mm";
+    }
+    else {
+      dateFormat = "hh:mm a";
+    }
+    mainEditFragment.timePicker.setTitle(DateFormat.format(dateFormat, MainEditFragment.finalCal));
   }
 }

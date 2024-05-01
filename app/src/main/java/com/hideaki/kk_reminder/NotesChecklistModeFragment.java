@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -94,8 +93,7 @@ public class NotesChecklistModeFragment extends Fragment {
   ) {
 
     if(MainEditFragment.isNotesPopping) {
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager.popBackStack();
     }
     View view = inflater.inflate(R.layout.notes_checklist_layout, container, false);
@@ -107,26 +105,23 @@ public class NotesChecklistModeFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 
-          if(NotesTodoListAdapter.isSorting) {
-            new AlertDialog.Builder(activity)
-              .setTitle(R.string.is_sorting_title)
-              .setMessage(R.string.is_sorting_message)
-              .show();
+        if(NotesTodoListAdapter.isSorting) {
+          new AlertDialog.Builder(activity)
+            .setTitle(R.string.is_sorting_title)
+            .setMessage(R.string.is_sorting_message)
+            .show();
 
-            return true;
-          }
-
-          MainEditFragment.isNotesPopping = true;
+          return true;
         }
 
-        return false;
+        MainEditFragment.isNotesPopping = true;
       }
+
+      return false;
     });
 
     // NotesTodoListとNotesDoneListの保持するnotesListの初期化
@@ -263,212 +258,195 @@ public class NotesChecklistModeFragment extends Fragment {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    switch(item.getItemId()) {
-
-      case R.id.delete_checked_items: {
-
-        final AlertDialog dialog = new AlertDialog.Builder(activity)
+    int itemId = item.getItemId();
+    if(itemId == R.id.delete_checked_items) {
+      final AlertDialog dialog = new AlertDialog.Builder(activity)
           .setTitle(R.string.delete_checked_items)
           .setMessage(R.string.delete_checked_items_message)
-          .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+          .setPositiveButton(R.string.yes, (dialog1, which) -> {
 
-              NotesDoneListAdapter.notesList = new ArrayList<>();
-              if(listView.getHeaderViewsCount() != 0) {
-                deleteItem.setVisible(false);
-                unselectItem.setVisible(false);
-                listView.removeHeaderView(doneHeader);
-              }
-              notesDoneListAdapter.notifyDataSetChanged();
+            NotesDoneListAdapter.notesList = new ArrayList<>();
+            if(listView.getHeaderViewsCount() != 0) {
+              deleteItem.setVisible(false);
+              unselectItem.setVisible(false);
+              listView.removeHeaderView(doneHeader);
+            }
+            notesDoneListAdapter.notifyDataSetChanged();
 
-              NotesChecklistModeFragment.item.setNotesList(new ArrayList<>(NotesTodoListAdapter.notesList));
+            NotesChecklistModeFragment.item.setNotesList(new ArrayList<>(NotesTodoListAdapter.notesList));
 
-              if(
+            if(
                 NotesChecklistModeFragment.item.getNotesList().size() == 0 &&
-                  !isEmptyViewAdded
-              ) {
-                LinearLayout linearLayout = new LinearLayout(activity);
-                linearLayout.setOrientation(LinearLayout.VERTICAL);
-                LinearLayout.LayoutParams layoutParams =
+                    !isEmptyViewAdded
+            ) {
+              LinearLayout linearLayout = new LinearLayout(activity);
+              linearLayout.setOrientation(LinearLayout.VERTICAL);
+              LinearLayout.LayoutParams layoutParams =
                   new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
+                      LinearLayout.LayoutParams.MATCH_PARENT,
+                      LinearLayout.LayoutParams.MATCH_PARENT
                   );
-                layoutParams.gravity = Gravity.CENTER;
-                emptyView.setLayoutParams(layoutParams);
-                linearLayout.addView(emptyView);
-                int paddingPx = getPxFromDp(activity, 75);
-                linearLayout.setPadding(0, 0, 0, paddingPx);
-                ((ViewGroup)sortableListView.getParent()).addView(linearLayout, layoutParams);
-                isEmptyViewAdded = true;
-              }
+              layoutParams.gravity = Gravity.CENTER;
+              emptyView.setLayoutParams(layoutParams);
+              linearLayout.addView(emptyView);
+              int paddingPx = getPxFromDp(activity, 75);
+              linearLayout.setPadding(0, 0, 0, paddingPx);
+              ((ViewGroup)sortableListView.getParent()).addView(linearLayout, layoutParams);
+              isEmptyViewAdded = true;
+            }
 
-              if(activity.isItemExists(
+            if(activity.isItemExists(
                 NotesChecklistModeFragment.item,
                 MyDatabaseHelper.TODO_TABLE
-              )) {
-                activity.updateDB(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE);
-              }
-              else {
-                MainEditFragment.item.setNotesList(
-                  new ArrayList<>(NotesChecklistModeFragment.item.getNotesList())
-                );
-              }
-            }
-          })
-          .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-          })
-          .create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-          @Override
-          public void onShow(DialogInterface dialogInterface) {
-
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-          }
-        });
-
-        dialog.show();
-
-        return true;
-      }
-      case R.id.unselect_all_items: {
-
-        for(NotesAdapter notes : NotesDoneListAdapter.notesList) {
-          notes.setIsChecked(false);
-          NotesTodoListAdapter.notesList.add(notes);
-        }
-        Collections.sort(NotesTodoListAdapter.notesList, NOTES_COMPARATOR);
-        NotesDoneListAdapter.notesList = new ArrayList<>();
-        notesTodoListAdapter.notifyDataSetChanged();
-        notesDoneListAdapter.notifyDataSetChanged();
-
-        if(sortableListView.getHeaderViewsCount() == 0) {
-          sortItem.setVisible(true);
-          sortableListView.addHeaderView(todoHeader);
-        }
-
-        if(listView.getHeaderViewsCount() != 0) {
-          deleteItem.setVisible(false);
-          unselectItem.setVisible(false);
-          listView.removeHeaderView(doneHeader);
-        }
-
-        if(activity.isItemExists(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE)) {
-          activity.updateDB(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE);
-        }
-        else {
-          MainEditFragment.item.setNotesList(
-            new ArrayList<>(NotesChecklistModeFragment.item.getNotesList())
-          );
-        }
-
-        return true;
-      }
-      case R.id.edit_mode: {
-
-        NotesChecklistModeFragment.item.setChecklistMode(false);
-        activity.updateDB(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE);
-        activity.showNotesFragment(NotesChecklistModeFragment.item);
-        return true;
-      }
-      case R.id.sort: {
-
-        NotesTodoListAdapter.isSorting = !NotesTodoListAdapter.isSorting;
-        if(NotesTodoListAdapter.isSorting) {
-          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-          actionBar.setDisplayHomeAsUpEnabled(false);
-          editModeItem.setVisible(false);
-          deleteItem.setVisible(false);
-          unselectItem.setVisible(false);
-          if(sortableListView.getHeaderViewsCount() != 0) {
-            sortableListView.removeHeaderView(todoHeader);
-          }
-          listView.setVisibility(View.GONE);
-        }
-        else {
-          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-          actionBar.setDisplayHomeAsUpEnabled(true);
-          editModeItem.setVisible(true);
-          if(NotesDoneListAdapter.notesList.size() != 0) {
-            deleteItem.setVisible(true);
-            unselectItem.setVisible(true);
-          }
-          if(NotesTodoListAdapter.notesList.size() != 0 &&
-            sortableListView.getHeaderViewsCount() == 0) {
-            sortableListView.addHeaderView(todoHeader);
-          }
-          listView.setVisibility(View.VISIBLE);
-
-
-          List<NotesAdapter> doneList = NotesDoneListAdapter.notesList;
-          List<Integer> doneOrderList = new ArrayList<>();
-          for(NotesAdapter notes : doneList) {
-            doneOrderList.add(notes.getOrder());
-          }
-
-          List<Integer> sortedIndex = new ArrayList<>();
-          int allListSize = NotesChecklistModeFragment.item.getNotesList().size();
-          for(int i = 0; i < allListSize; i++) {
-            sortedIndex.add(i);
-          }
-
-          int doneListSize = doneList.size();
-          for(int i = 0; i < doneListSize; i++) {
-            sortedIndex.remove(doneOrderList.get(i));
-          }
-          Collections.sort(sortedIndex);
-
-          List<NotesAdapter> notesList = NotesTodoListAdapter.notesList;
-          int size = notesList.size();
-          boolean isUpdated = false;
-          for(int i = 0; i < size; i++) {
-            NotesAdapter notes = notesList.get(i);
-            if(notes.getOrder() != sortedIndex.get(i)) {
-              notes.setOrder(sortedIndex.get(i));
-              isUpdated = true;
-            }
-          }
-
-          notesList = new ArrayList<>(NotesTodoListAdapter.notesList);
-          notesList.addAll(NotesDoneListAdapter.notesList);
-          Collections.sort(notesList, NOTES_COMPARATOR);
-
-          if(isUpdated) {
-            NotesChecklistModeFragment.item.setNotesList(new ArrayList<>(notesList));
-            if(activity.isItemExists(
-              NotesChecklistModeFragment.item,
-              MyDatabaseHelper.TODO_TABLE
             )) {
               activity.updateDB(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE);
             }
             else {
               MainEditFragment.item.setNotesList(
-                new ArrayList<>(NotesChecklistModeFragment.item.getNotesList())
+                  new ArrayList<>(NotesChecklistModeFragment.item.getNotesList())
               );
             }
+          })
+          .setNeutralButton(R.string.cancel, (dialog12, which) -> {
+
+          })
+          .create();
+
+      dialog.setOnShowListener(dialogInterface -> {
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+      });
+
+      dialog.show();
+
+      return true;
+    }
+    else if(itemId == R.id.unselect_all_items) {
+      for(NotesAdapter notes : NotesDoneListAdapter.notesList) {
+        notes.setIsChecked(false);
+        NotesTodoListAdapter.notesList.add(notes);
+      }
+      Collections.sort(NotesTodoListAdapter.notesList, NOTES_COMPARATOR);
+      NotesDoneListAdapter.notesList = new ArrayList<>();
+      notesTodoListAdapter.notifyDataSetChanged();
+      notesDoneListAdapter.notifyDataSetChanged();
+
+      if(sortableListView.getHeaderViewsCount() == 0) {
+        sortItem.setVisible(true);
+        sortableListView.addHeaderView(todoHeader);
+      }
+
+      if(listView.getHeaderViewsCount() != 0) {
+        deleteItem.setVisible(false);
+        unselectItem.setVisible(false);
+        listView.removeHeaderView(doneHeader);
+      }
+
+      if(activity.isItemExists(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE)) {
+        activity.updateDB(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE);
+      }
+      else {
+        MainEditFragment.item.setNotesList(
+            new ArrayList<>(NotesChecklistModeFragment.item.getNotesList())
+        );
+      }
+
+      return true;
+    }
+    else if(itemId == R.id.edit_mode) {
+      NotesChecklistModeFragment.item.setChecklistMode(false);
+      activity.updateDB(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE);
+      activity.showNotesFragment(NotesChecklistModeFragment.item);
+      return true;
+    }
+    else if(itemId == R.id.sort) {
+      NotesTodoListAdapter.isSorting = !NotesTodoListAdapter.isSorting;
+      if(NotesTodoListAdapter.isSorting) {
+        activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        editModeItem.setVisible(false);
+        deleteItem.setVisible(false);
+        unselectItem.setVisible(false);
+        if(sortableListView.getHeaderViewsCount() != 0) {
+          sortableListView.removeHeaderView(todoHeader);
+        }
+        listView.setVisibility(View.GONE);
+      }
+      else {
+        activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        editModeItem.setVisible(true);
+        if(NotesDoneListAdapter.notesList.size() != 0) {
+          deleteItem.setVisible(true);
+          unselectItem.setVisible(true);
+        }
+        if(NotesTodoListAdapter.notesList.size() != 0 &&
+            sortableListView.getHeaderViewsCount() == 0) {
+          sortableListView.addHeaderView(todoHeader);
+        }
+        listView.setVisibility(View.VISIBLE);
+
+
+        List<NotesAdapter> doneList = NotesDoneListAdapter.notesList;
+        List<Integer> doneOrderList = new ArrayList<>();
+        for(NotesAdapter notes : doneList) {
+          doneOrderList.add(notes.getOrder());
+        }
+
+        List<Integer> sortedIndex = new ArrayList<>();
+        int allListSize = NotesChecklistModeFragment.item.getNotesList().size();
+        for(int i = 0; i < allListSize; i++) {
+          sortedIndex.add(i);
+        }
+
+        int doneListSize = doneList.size();
+        for(int i = 0; i < doneListSize; i++) {
+          sortedIndex.remove(doneOrderList.get(i));
+        }
+        Collections.sort(sortedIndex);
+
+        List<NotesAdapter> notesList = NotesTodoListAdapter.notesList;
+        int size = notesList.size();
+        boolean isUpdated = false;
+        for(int i = 0; i < size; i++) {
+          NotesAdapter notes = notesList.get(i);
+          if(notes.getOrder() != sortedIndex.get(i)) {
+            notes.setOrder(sortedIndex.get(i));
+            isUpdated = true;
           }
         }
 
-        notesTodoListAdapter.notifyDataSetChanged();
-        notesDoneListAdapter.notifyDataSetChanged();
-        return true;
-      }
-      case android.R.id.home: {
+        notesList = new ArrayList<>(NotesTodoListAdapter.notesList);
+        notesList.addAll(NotesDoneListAdapter.notesList);
+        Collections.sort(notesList, NOTES_COMPARATOR);
 
-        MainEditFragment.isNotesPopping = true;
-        FragmentManager manager = getFragmentManager();
-        requireNonNull(manager);
-        manager.popBackStack();
-
-        return true;
+        if(isUpdated) {
+          NotesChecklistModeFragment.item.setNotesList(new ArrayList<>(notesList));
+          if(activity.isItemExists(
+              NotesChecklistModeFragment.item,
+              MyDatabaseHelper.TODO_TABLE
+          )) {
+            activity.updateDB(NotesChecklistModeFragment.item, MyDatabaseHelper.TODO_TABLE);
+          }
+          else {
+            MainEditFragment.item.setNotesList(
+                new ArrayList<>(NotesChecklistModeFragment.item.getNotesList())
+            );
+          }
+        }
       }
+
+      notesTodoListAdapter.notifyDataSetChanged();
+      notesDoneListAdapter.notifyDataSetChanged();
+      return true;
+    }
+    else if(itemId == android.R.id.home) {
+      MainEditFragment.isNotesPopping = true;
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
+      manager.popBackStack();
+
+      return true;
     }
     return false;
   }

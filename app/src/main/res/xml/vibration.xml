@@ -5,7 +5,7 @@
         android:key="label"
         android:summary="@string/default_vibration_hint"/>
 
-    <PreferenceScreen
+    <com.hideaki.kk_reminder.AdjustedSummaryTextSpacingPreference
         android:summary="@string/default_vibration_summary"/>
 
 </PreferenceScreen>

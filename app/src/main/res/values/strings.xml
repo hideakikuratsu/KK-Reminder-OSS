@@ -81,6 +81,13 @@
     <string name="repeat_minute_illegal_dialog">Repeat interval exceeds the repeat duration.\nSet shorter interval than the duration again</string>
     <string name="alarm_option">Alarm options</string>
     <string name="pick_alarm">Pick an alarm</string>
+    <string name="permission_external_alarm_rationale_title">External Storage Access Permission</string>
+    <string name="permission_external_alarm_rationale_message">External Storage Access Permission is needed if you want to pick an alarm from external storage</string>
+    <string name="permission_external_alarm_denied">External Storage Access Permission was denied. Setting default alarm sound</string>
+    <string name="permission_exact_alarm_rationale_title">Exact Alarm Permission</string>
+    <string name="permission_exact_alarm_rationale_message">After update to Android 12, you have to accept a special permission in order to set an exact time alarm. This app currently doesn\'t have the permission, so you have to give the permission to it if you want to use it normally.</string>
+    <string name="permit">Permit</string>
+    <string name="deny">Deny</string>
     <string name="default_snooze">Default</string>
     <string name="snooze">snooze</string>
     <string name="snooze_time">Snooze Time</string>
@@ -134,7 +141,7 @@
     <string name="play_slide_animation">Slide animation of cards</string>
     <string name="play_slide_animation_summary">Whether playing sliding animation of cards when scrolling</string>
     <string name="default_vibration">Vibration pattern</string>
-    <string name="default_vibration_summary" tools:ignore="TypographyEllipsis">example: 0, 250, 500, 200\nSet vibration off/on interval in turn by the millisecond (1/1000 second) such as \'NON VIBE TIME\', \'VIBE TIME\', \'NON VIBE TIME\', ... If pattern is not set correctly, or nothing is set, default pattern will be applied</string>
+    <string name="default_vibration_summary" tools:ignore="TypographyEllipsis">example: 0, 250, 500, 200\nSet vibration off/on interval in turn by the millisecond (1/1000 second) such as\n\'NON VIBE TIME\', \'VIBE TIME\', \'NON VIBE TIME\', ...\nIf pattern is not set correctly, or nothing is set, default pattern will be applied</string>
     <string name="vibration_hint">0, 250, 500, 200</string>
     <string name="default_vibration_hint">Default vibration pattern</string>
     <string name="custom_vibration_hint">Custom vibration pattern</string>
@@ -160,7 +167,9 @@
     <string name="logout_done">Logouted from backup account</string>
     <string name="fail_to_logout">Failed to logout</string>
     <string name="error">Unexpected error occurred</string>
-    <string name="backup_and_restore_note">If the latest backup data doesn\'t sync properly, try to logout, and then restore some times.</string>
+    <string name="backup_functions_denial_title">You cannot use Backup/Restore functions</string>
+    <string name="backup_functions_denial_message">This OS version is not compatible to backup and restore functions. Please use OS version >= 7.0 (Nougat/API24).</string>
+    <string name="backup_and_restore_note">If the latest backup data doesn\'t sync properly, try to logout, and then restore some times.\nIf you want to restore data on a new device from old one, you have to reset notification sounds on\n[Settings] > [Set to all tasks] > [Pick an alarm]\n[Settings] > [New task] > [Pick an alarm]\nbecause the new device cannot recognize those notification sounds from old one.</string>
     <string name="about">About</string>
     <string name="version">Version</string>
     <string name="about_this_app">About this app</string>
@@ -212,30 +221,30 @@
     <string name="every_day_summary">Notify every 24 hours unless you finish this task</string>
     <string name="unless_complete_task">unless you finish this task</string>
     <plurals name="year">
-        <item quantity="one">1 year</item>
-        <item quantity="other">%1$d years</item>
+        <item quantity="one">1y</item>
+        <item quantity="other">%1$dy</item>
     </plurals>
     <plurals name="month">
-        <item quantity="one">1 month</item>
-        <item quantity="other">%1$d months</item>
+        <item quantity="one">1m</item>
+        <item quantity="other">%1$dm</item>
     </plurals>
     <plurals name="week">
-        <item quantity="one">1 week</item>
-        <item quantity="other">%1$d weeks</item>
+        <item quantity="one">1w</item>
+        <item quantity="other">%1$dw</item>
     </plurals>
     <plurals name="day">
-        <item quantity="one">1 day</item>
-        <item quantity="other">%1$d days</item>
+        <item quantity="one">1d</item>
+        <item quantity="other">%1$dd</item>
     </plurals>
     <plurals name="hour">
-        <item quantity="one">1 hour</item>
-        <item quantity="other">%1$d hours</item>
+        <item quantity="one">1h</item>
+        <item quantity="other">%1$dh</item>
     </plurals>
     <plurals name="minute">
-        <item quantity="one">1 minute</item>
-        <item quantity="other">%1$d minutes</item>
+        <item quantity="one">1min</item>
+        <item quantity="other">%1$dmin</item>
     </plurals>
-    <string name="within_one_minute">&lt;&lt; 1 minute &gt;&gt;</string>
+    <string name="within_one_minute">&lt; 1min &gt;</string>
     <string name="per">per</string>
     <plurals name="times_notify">
         <item quantity="one">x 1 time</item>
@@ -336,6 +345,8 @@
     <string name="pick_color">Pick color</string>
     <string name="pick_color_description">Pick color variations</string>
     <string name="action_send_booted_dialog_title">You will create a new task. Choose a list which you want to add the task to</string>
+    <string name="date_and_time_detected_title">Time and Date detected</string>
+    <string name="date_and_time_detected_message">Time and date detected from shared strings. Do you want to set it to schedule of the task?</string>
     <string name="sort">Sort task</string>
     <string name="done_task_click_title">Which processing do you want to do to this task?</string>
     <string name="recycle_task">Recycle task</string>

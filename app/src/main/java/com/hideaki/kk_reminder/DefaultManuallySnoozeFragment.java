@@ -15,7 +15,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
@@ -45,17 +44,14 @@ public class DefaultManuallySnoozeFragment extends BasePreferenceFragmentCompat 
     setHasOptionsMenu(true);
 
     label = (PreferenceScreen)findPreference("label");
-    label.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
+    label.setOnPreferenceClickListener(preference -> {
 
-        DefaultManuallySnoozePickerDialogFragment dialog =
-          new DefaultManuallySnoozePickerDialogFragment(
-            DefaultManuallySnoozeFragment.this
-          );
-        dialog.show(activity.getSupportFragmentManager(), "default_manually_snooze_picker");
-        return true;
-      }
+      DefaultManuallySnoozePickerDialogFragment dialog =
+        new DefaultManuallySnoozePickerDialogFragment(
+          DefaultManuallySnoozeFragment.this
+        );
+      dialog.show(activity.getSupportFragmentManager(), "default_manually_snooze_picker");
+      return true;
     });
   }
 
@@ -110,8 +106,7 @@ public class DefaultManuallySnoozeFragment extends BasePreferenceFragmentCompat 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-    FragmentManager manager = getFragmentManager();
-    requireNonNull(manager);
+    FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
     manager.popBackStack();
     return super.onOptionsItemSelected(item);
   }

@@ -69,8 +69,8 @@ public abstract class BasePreferenceFragmentCompat extends PreferenceFragmentCom
   @Override
   public void onDisplayPreferenceDialog(Preference preference) {
 
-    FragmentManager manager = getFragmentManager();
-    requireNonNull(manager);
+    MainActivity activity = (MainActivity)requireActivity();
+    FragmentManager manager = activity.getSupportFragmentManager();
     if(manager.findFragmentByTag(DIALOG_FRAGMENT_TAG) != null) {
       return;
     }
@@ -79,14 +79,10 @@ public abstract class BasePreferenceFragmentCompat extends PreferenceFragmentCom
     if(preference instanceof EditTextPreference) {
       f = EditTextPreferenceDialogFragmentCompat.newInstance(preference.getKey());
       f.setTargetFragment(this, 0);
-      f.show(getFragmentManager(), DIALOG_FRAGMENT_TAG);
+      f.show(manager, DIALOG_FRAGMENT_TAG);
 
-      getFragmentManager().executePendingTransactions();
-      final AlertDialog dialog = (AlertDialog)f.getDialog();
-      requireNonNull(dialog);
-
-      MainActivity activity = (MainActivity)getActivity();
-      requireNonNull(activity);
+      manager.executePendingTransactions();
+      final AlertDialog dialog = requireNonNull((AlertDialog)f.getDialog());
 
       dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
       dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.accentColor);

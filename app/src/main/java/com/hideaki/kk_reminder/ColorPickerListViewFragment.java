@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 
-import com.google.android.gms.ads.AdView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -60,8 +58,7 @@ public class ColorPickerListViewFragment extends Fragment {
 
     }
     else {
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager
         .beginTransaction()
         .remove(this)
@@ -93,26 +90,23 @@ public class ColorPickerListViewFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-          if(order == 3) {
-            MainEditFragment.list.setIsColorPrimary(true);
-          }
-          if(ColorPickerListAdapter.isGeneralSettings) {
-            ColorPickerListAdapter.isGeneralSettings = false;
-            if(!activity.generalSettings.getTheme().isColorPrimary()) {
-              activity.generalSettings.getTheme().setIsColorPrimary(true);
-              activity.updateSettingsDB();
-            }
-            activity.recreate();
-          }
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+        if(order == 3) {
+          MainEditFragment.list.setIsColorPrimary(true);
         }
-
-        return false;
+        if(ColorPickerListAdapter.isGeneralSettings) {
+          ColorPickerListAdapter.isGeneralSettings = false;
+          if(!activity.generalSettings.getTheme().isColorPrimary()) {
+            activity.generalSettings.getTheme().setIsColorPrimary(true);
+            activity.updateSettingsDB();
+          }
+          activity.recreate();
+        }
       }
+
+      return false;
     });
 
     ColorPickerListAdapter.isFirst = true;
@@ -159,9 +153,6 @@ public class ColorPickerListViewFragment extends Fragment {
     actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setTitle(R.string.pick_color);
 
-    AdView adView = view.findViewById(R.id.adView);
-    adView.setVisibility(View.GONE);
-
     return view;
   }
 
@@ -180,8 +171,7 @@ public class ColorPickerListViewFragment extends Fragment {
         }
         activity.recreate();
       }
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager.popBackStack();
       return true;
     }

@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -65,17 +64,14 @@ public class NotifyIntervalTimePickerDialogFragment extends DialogFragment {
     drawable.setStroke(3, activity.accentColor);
     drawable.setCornerRadius(8.0f);
 
-    plus.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    plus.setOnClickListener(v -> {
 
-        if("".equals(time.getText().toString())) {
-          time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrgTime()));
-        }
-        if(Integer.parseInt(time.getText().toString()) < 999) {
-          time.setText(String.valueOf(Integer.parseInt(time.getText().toString()) + 1));
-          time.setSelection(time.getText().length());
-        }
+      if("".equals(time.getText().toString())) {
+        time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrgTime()));
+      }
+      if(Integer.parseInt(time.getText().toString()) < 999) {
+        time.setText(String.valueOf(Integer.parseInt(time.getText().toString()) + 1));
+        time.setSelection(time.getText().length());
       }
     });
 
@@ -92,142 +88,127 @@ public class NotifyIntervalTimePickerDialogFragment extends DialogFragment {
     drawable.setStroke(3, activity.accentColor);
     drawable.setCornerRadius(8.0f);
 
-    minus.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    minus.setOnClickListener(v -> {
 
-        if("".equals(time.getText().toString())) {
-          time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrgTime()));
-        }
-        if(Integer.parseInt(time.getText().toString()) > -1) {
-          time.setText(String.valueOf(Integer.parseInt(time.getText().toString()) - 1));
-          time.setSelection(time.getText().length());
-        }
+      if("".equals(time.getText().toString())) {
+        time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrgTime()));
+      }
+      if(Integer.parseInt(time.getText().toString()) > -1) {
+        time.setText(String.valueOf(Integer.parseInt(time.getText().toString()) - 1));
+        time.setSelection(time.getText().length());
       }
     });
 
     final AlertDialog dialog = new AlertDialog.Builder(activity)
-      .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setPositiveButton(R.string.ok, (dialog1, which) -> {
 
-          if("".equals(time.getText().toString())) {
-            time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrgTime()));
-          }
-          int setTime = Integer.parseInt(time.getText().toString());
-          if(setTime > -2) {
-            NotifyIntervalAdapter interval = MainEditFragment.notifyInterval;
+        if("".equals(time.getText().toString())) {
+          time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrgTime()));
+        }
+        int setTime = Integer.parseInt(time.getText().toString());
+        if(setTime > -2) {
+          NotifyIntervalAdapter interval = MainEditFragment.notifyInterval;
 
-            interval.setOrgTime(setTime);
+          interval.setOrgTime(setTime);
 
-            if(interval.getOrgTime() != 0) {
-              Resources res = activity.getResources();
-              String summary;
-              if(LOCALE.equals(Locale.JAPAN)) {
-                summary = activity.getString(R.string.unless_complete_task);
-                if(interval.getHour() != 0) {
-                  summary += res.getQuantityString(
-                    R.plurals.hour,
-                    interval.getHour(),
-                    interval.getHour()
-                  );
-                }
-                if(interval.getMinute() != 0) {
-                  summary += res.getQuantityString(
-                    R.plurals.minute,
-                    interval.getMinute(),
-                    interval.getMinute()
-                  );
-                }
-                summary += activity.getString(R.string.per);
-                if(interval.getOrgTime() == -1) {
-                  summary += activity.getString(R.string.infinite_times_notify);
-                }
-                else {
-                  summary += res.getQuantityString(R.plurals.times_notify, interval.getOrgTime(),
-                    interval.getOrgTime()
-                  );
-                }
+          if(interval.getOrgTime() != 0) {
+            Resources res = activity.getResources();
+            String summary;
+            if(LOCALE.equals(Locale.JAPAN)) {
+              summary = activity.getString(R.string.unless_complete_task);
+              if(interval.getHour() != 0) {
+                summary += res.getQuantityString(
+                  R.plurals.hour,
+                  interval.getHour(),
+                  interval.getHour()
+                );
+              }
+              if(interval.getMinute() != 0) {
+                summary += res.getQuantityString(
+                  R.plurals.minute,
+                  interval.getMinute(),
+                  interval.getMinute()
+                );
+              }
+              summary += activity.getString(R.string.per);
+              if(interval.getOrgTime() == -1) {
+                summary += activity.getString(R.string.infinite_times_notify);
               }
               else {
-                summary = "Notify every ";
-                if(interval.getHour() != 0) {
-                  summary += res.getQuantityString(
-                    R.plurals.hour,
-                    interval.getHour(),
-                    interval.getHour()
-                  );
-                  if(!LOCALE.equals(Locale.JAPAN)) {
-                    summary += " ";
-                  }
-                }
-                if(interval.getMinute() != 0) {
-                  summary += res.getQuantityString(
-                    R.plurals.minute,
-                    interval.getMinute(),
-                    interval.getMinute()
-                  );
-                  if(!LOCALE.equals(Locale.JAPAN)) {
-                    summary += " ";
-                  }
-                }
-                if(interval.getOrgTime() != -1) {
-                  summary += res.getQuantityString(R.plurals.times_notify, interval.getOrgTime(),
-                    interval.getOrgTime()
-                  ) + " ";
-                }
-                summary += activity.getString(R.string.unless_complete_task);
+                summary += res.getQuantityString(R.plurals.times_notify, interval.getOrgTime(),
+                  interval.getOrgTime()
+                );
               }
-
-              notifyIntervalEditFragment.label.setSummary(summary);
-
-              MainEditFragment.notifyInterval.setLabel(summary);
             }
             else {
-              notifyIntervalEditFragment.label.setSummary(activity.getString(R.string.non_notify));
-
-              MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.none));
+              summary = "Notify every ";
+              if(interval.getHour() != 0) {
+                summary += res.getQuantityString(
+                  R.plurals.hour,
+                  interval.getHour(),
+                  interval.getHour()
+                );
+                if(!LOCALE.equals(Locale.JAPAN)) {
+                  summary += " ";
+                }
+              }
+              if(interval.getMinute() != 0) {
+                summary += res.getQuantityString(
+                  R.plurals.minute,
+                  interval.getMinute(),
+                  interval.getMinute()
+                );
+                if(!LOCALE.equals(Locale.JAPAN)) {
+                  summary += " ";
+                }
+              }
+              if(interval.getOrgTime() != -1) {
+                summary += res.getQuantityString(R.plurals.times_notify, interval.getOrgTime(),
+                  interval.getOrgTime()
+                ) + " ";
+              }
+              summary += activity.getString(R.string.unless_complete_task);
             }
 
-            // 項目のタイトル部に現在の設定値を表示
-            int orgTime = interval.getOrgTime();
-            notifyIntervalEditFragment.time.setTitle(getResources().getQuantityString(
-              R.plurals.times,
-              orgTime,
-              orgTime
-            ));
+            notifyIntervalEditFragment.label.setSummary(summary);
+
+            MainEditFragment.notifyInterval.setLabel(summary);
           }
+          else {
+            notifyIntervalEditFragment.label.setSummary(activity.getString(R.string.non_notify));
+
+            MainEditFragment.notifyInterval.setLabel(activity.getString(R.string.none));
+          }
+
+          // 項目のタイトル部に現在の設定値を表示
+          int orgTime = interval.getOrgTime();
+          notifyIntervalEditFragment.time.setTitle(getResources().getQuantityString(
+            R.plurals.times,
+            orgTime,
+            orgTime
+          ));
         }
       })
-      .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setNeutralButton(R.string.cancel, (dialog12, which) -> {
 
-        }
       })
       .setView(view)
       .create();
 
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
+    dialog.setOnShowListener(dialogInterface -> {
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-      }
+      dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+      dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
     });
 
     // ダイアログ表示時にソフトキーボードを自動で表示
-    time.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override
-      public void onFocusChange(View v, boolean hasFocus) {
+    time.setOnFocusChangeListener((v, hasFocus) -> {
 
-        if(hasFocus) {
-          Window dialogWindow = dialog.getWindow();
-          requireNonNull(dialogWindow);
+      if(hasFocus) {
+        Window dialogWindow = dialog.getWindow();
+        requireNonNull(dialogWindow);
 
-          dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
+        dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
       }
     });
     time.requestFocus();

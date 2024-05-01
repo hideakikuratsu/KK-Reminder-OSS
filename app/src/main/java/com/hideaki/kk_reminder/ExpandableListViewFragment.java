@@ -13,10 +13,8 @@ import android.widget.AbsListView.LayoutParams;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +39,6 @@ public class ExpandableListViewFragment extends Fragment
   static long updatedItemId = 0;
   static boolean isGetTagNull = false;
   private static int nullPointerCount = 0;
-  private AdView adView;
 
   public static ExpandableListViewFragment newInstance() {
 
@@ -56,16 +53,10 @@ public class ExpandableListViewFragment extends Fragment
     try {
       if(activity.drawerLayout != null) {
         activity.drawerLayout.closeDrawer(GravityCompat.START);
-        if(activity.detail != null) {
-          activity.showMainEditFragment(activity.detail);
-          activity.detail = null;
-        }
-
         activity.setUpdateListTimerTask(true);
       }
       else {
-        FragmentManager manager = getFragmentManager();
-        requireNonNull(manager);
+        FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
         manager
           .beginTransaction()
           .remove(this)
@@ -78,7 +69,7 @@ public class ExpandableListViewFragment extends Fragment
         Thread.sleep(10);
       }
       catch(InterruptedException ex) {
-        Log.e("ExpandFragment#onAttach", Log.getStackTraceString(ex));
+        Log.e("ExpandableListViewFragment#onAttach", Log.getStackTraceString(ex));
       }
       nullPointerCount++;
       if(nullPointerCount < 3) {
@@ -135,17 +126,14 @@ public class ExpandableListViewFragment extends Fragment
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-          if(activity.expandableListAdapter.actionMode != null) {
-            activity.expandableListAdapter.actionMode.finish();
-          }
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+        if(activity.expandableListAdapter.actionMode != null) {
+          activity.expandableListAdapter.actionMode.finish();
         }
-        return false;
       }
+      return false;
     });
 
     MyExpandableListAdapter.hasPanel = 0;
@@ -207,13 +195,12 @@ public class ExpandableListViewFragment extends Fragment
       }
     });
 
-    adView = view.findViewById(R.id.adView);
-    if(activity.isPremium) {
-      adView.setVisibility(View.GONE);
-    }
-    else {
-      AdRequest adRequest = new AdRequest.Builder().build();
-      adView.loadAd(adRequest);
+    if(!activity.isPremium) {
+      LinearLayout adContainer = view.findViewById(R.id.ad_mob_view);
+      if(activity.adView.getParent() != null) {
+        ((ViewGroup)activity.adView.getParent()).removeView(activity.adView);
+      }
+      adContainer.addView(activity.adView);
     }
 
     return view;
@@ -221,28 +208,25 @@ public class ExpandableListViewFragment extends Fragment
 
   void disableAdView() {
 
-    if(adView != null) {
-      adView.setVisibility(View.GONE);
+    if(activity.adView != null) {
+      activity.adView.setVisibility(View.GONE);
     }
   }
 
   void setPosition() {
 
-    activity.expandableListView.post(new Runnable() {
-      @Override
-      public void run() {
+    activity.expandableListView.post(() -> {
 
-        if(updatedItemId != 0) {
-          activity.setUpdatedItemPosition(updatedItemId);
-          updatedItemId = 0;
-        }
-        if(activity.isBootFromNotification) {
-          position = 0;
-          offset = 0;
-          activity.isBootFromNotification = false;
-        }
-        activity.expandableListView.setSelectionFromTop(position, offset);
+      if(updatedItemId != 0) {
+        activity.setUpdatedItemPosition(updatedItemId);
+        updatedItemId = 0;
       }
+      if(activity.isBootFromNotification) {
+        position = 0;
+        offset = 0;
+        activity.isBootFromNotification = false;
+      }
+      activity.expandableListView.setSelectionFromTop(position, offset);
     });
   }
 

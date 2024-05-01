@@ -66,7 +66,7 @@ public class DatePickerDialogFragment extends DialogFragment
     }
     else {
       mainEditFragment.datePicker.setTitle(DateFormat.format(
-        "yyyy/M/d (E)",
+        "E, MMM d, yyyy",
         MainEditFragment.finalCal
       ));
     }

@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
-import static java.util.Objects.requireNonNull;
 
 public class MinuteRepeatIntervalPickerDialogFragment extends DialogFragment
   implements TimePickerDialog.OnTimeSetListener {
@@ -34,8 +33,7 @@ public class MinuteRepeatIntervalPickerDialogFragment extends DialogFragment
     int hour = MainEditFragment.minuteRepeat.getHour();
     int minute = MainEditFragment.minuteRepeat.getMinute();
 
-    activity = (MainActivity)getActivity();
-    requireNonNull(activity);
+    activity = (MainActivity)requireActivity();
 
     if(activity.isDarkMode) {
       return new TimePickerDialog(activity, this, hour, minute, true);

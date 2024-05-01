@@ -73,7 +73,9 @@ public class StartupReceiver extends BroadcastReceiver {
         byte[] obArray = serialize(item.getItem());
         setAlarm.putExtra(ITEM, obArray);
         PendingIntent sender = PendingIntent.getBroadcast(
-          context, (int)item.getId(), setAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
+          context, (int)item.getId(), setAlarm,
+          PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+        );
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         requireNonNull(alarmManager);
@@ -118,7 +120,7 @@ public class StartupReceiver extends BroadcastReceiver {
         file.createNewFile();
       }
       catch(IOException e) {
-        Log.e("writeOrDeleteFile", Log.getStackTraceString(e));
+        Log.e("StartupReceiver#writeOrDeleteFile", Log.getStackTraceString(e));
       }
     }
     else {

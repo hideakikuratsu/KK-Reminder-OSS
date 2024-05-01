@@ -68,14 +68,14 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
     public void onClick(View v) {
 
       activity.actionBarFragment.searchView.clearFocus();
-      switch(v.getId()) {
-        case R.id.list_card: {
-          if(viewHolder.edit.getVisibility() == View.GONE) {
-            hasPanel = list.getId();
-            View cardView = (View)viewHolder.edit.getParent().getParent();
-            cardView.setTranslationY(-30.0f);
-            cardView.setAlpha(0.0f);
-            cardView
+      int id = v.getId();
+      if(id == R.id.list_card) {
+        if(viewHolder.edit.getVisibility() == View.GONE) {
+          hasPanel = list.getId();
+          View cardView = (View)viewHolder.edit.getParent().getParent();
+          cardView.setTranslationY(-30.0f);
+          cardView.setAlpha(0.0f);
+          cardView
               .animate()
               .translationY(0.0f)
               .alpha(1.0f)
@@ -94,18 +94,18 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
                     final TextView panel = visibleView.findViewById(R.id.edit);
                     if(panel != null && panel.getVisibility() == View.VISIBLE) {
                       ((View)panel.getParent().getParent())
-                        .animate()
-                        .translationY(-30.0f)
-                        .alpha(0.0f)
-                        .setDuration(150)
-                        .setListener(new AnimatorListenerAdapter() {
-                          @Override
-                          public void onAnimationEnd(Animator animation) {
+                          .animate()
+                          .translationY(-30.0f)
+                          .alpha(0.0f)
+                          .setDuration(150)
+                          .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
 
-                            super.onAnimationEnd(animation);
-                            panel.setVisibility(View.GONE);
-                          }
-                        });
+                              super.onAnimationEnd(animation);
+                              panel.setVisibility(View.GONE);
+                            }
+                          });
                       break;
                     }
                   }
@@ -113,10 +113,10 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
                   viewHolder.edit.setVisibility(View.VISIBLE);
                 }
               });
-          }
-          else {
-            hasPanel = 0;
-            ((View)viewHolder.edit.getParent().getParent())
+        }
+        else {
+          hasPanel = 0;
+          ((View)viewHolder.edit.getParent().getParent())
               .animate()
               .translationY(-30.0f)
               .alpha(0.0f)
@@ -129,16 +129,13 @@ public class ManageListAdapter extends BaseAdapter implements Filterable {
                   viewHolder.edit.setVisibility(View.GONE);
                 }
               });
-          }
-          break;
         }
-        case R.id.edit: {
-          activity.listView.clearTextFilter();
-          activity.showMainEditFragmentForList(list);
-          hasPanel = 0;
-          viewHolder.edit.setVisibility(View.GONE);
-          break;
-        }
+      }
+      else if(id == R.id.edit) {
+        activity.listView.clearTextFilter();
+        activity.showMainEditFragmentForList(list);
+        hasPanel = 0;
+        viewHolder.edit.setVisibility(View.GONE);
       }
     }
   }

@@ -43,29 +43,30 @@ public class ManuallySnoozePickerDialogFragment extends DialogFragment
     }
     activity.customMinute = minute;
 
-    activity.summary = "";
+    activity.customSnoozeSummary = "";
     if(activity.customHour != 0) {
-      activity.summary += getResources().getQuantityString(
+      activity.customSnoozeSummary += getResources().getQuantityString(
         R.plurals.hour,
         activity.customHour,
         activity.customHour
       );
       if(!LOCALE.equals(Locale.JAPAN)) {
-        activity.summary += " ";
+        activity.customSnoozeSummary += " ";
       }
     }
     if(activity.customMinute != 0) {
-      activity.summary += getResources().getQuantityString(
+      activity.customSnoozeSummary += getResources().getQuantityString(
         R.plurals.minute,
         activity.customMinute,
         activity.customMinute
       );
       if(!LOCALE.equals(Locale.JAPAN)) {
-        activity.summary += " ";
+        activity.customSnoozeSummary += " ";
       }
     }
-    activity.summary += getString(R.string.snooze);
-    activity.title.setText(activity.summary);
-    activity.time.setText(activity.summary);
+    activity.customSnoozeSummary += getString(R.string.snooze);
+    activity.title.setText(activity.customSnoozeSummary);
+    activity.time.setText(activity.customSnoozeSummary);
+    activity.setCustomSnoozeDuration();
   }
 }

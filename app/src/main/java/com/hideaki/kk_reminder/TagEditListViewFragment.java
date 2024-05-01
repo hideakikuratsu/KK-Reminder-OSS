@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -17,8 +16,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-
-import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +65,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
       }
     }
     else {
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager
         .beginTransaction()
         .remove(this)
@@ -101,32 +97,29 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-          ColorPickerListAdapter.isFromListTagEdit = false;
-          if(TagEditListAdapter.isEditing) {
-            new AlertDialog.Builder(activity)
-              .setTitle(R.string.is_editing_title)
-              .setMessage(R.string.is_editing_message)
-              .show();
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+        ColorPickerListAdapter.isFromListTagEdit = false;
+        if(TagEditListAdapter.isEditing) {
+          new AlertDialog.Builder(activity)
+            .setTitle(R.string.is_editing_title)
+            .setMessage(R.string.is_editing_message)
+            .show();
 
-            return true;
-          }
-          else if(TagEditListAdapter.isSorting) {
-            new AlertDialog.Builder(activity)
-              .setTitle(R.string.is_sorting_title)
-              .setMessage(R.string.is_sorting_message)
-              .show();
-
-            return true;
-          }
+          return true;
         }
+        else if(TagEditListAdapter.isSorting) {
+          new AlertDialog.Builder(activity)
+            .setTitle(R.string.is_sorting_title)
+            .setMessage(R.string.is_sorting_message)
+            .show();
 
-        return false;
+          return true;
+        }
       }
+
+      return false;
     });
 
     TagEditListAdapter.isFirst = true;
@@ -150,9 +143,6 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     actionBar.setHomeAsUpIndicator(activity.upArrow);
     actionBar.setDisplayHomeAsUpEnabled(!TagEditListAdapter.isEditing);
     actionBar.setTitle(R.string.tag);
-
-    AdView adView = view.findViewById(R.id.adView);
-    adView.setVisibility(View.GONE);
 
     return view;
   }
@@ -190,74 +180,67 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    switch(item.getItemId()) {
-      case R.id.edit: {
-
-        TagEditListAdapter.isEditing = !TagEditListAdapter.isEditing;
-        if(TagEditListAdapter.isEditing) {
-          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-          actionBar.setDisplayHomeAsUpEnabled(false);
-          sortItem.setVisible(false);
-          activity.listView.removeFooterView(footer);
-        }
-        else {
-          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-          actionBar.setDisplayHomeAsUpEnabled(true);
-          sortItem.setVisible(true);
-          if(activity.listView.getFooterViewsCount() == 0) {
-            activity.listView.addFooterView(footer);
-          }
-        }
-        activity.tagEditListAdapter.notifyDataSetChanged();
-        return true;
+    int itemId = item.getItemId();
+    if(itemId == R.id.edit) {
+      TagEditListAdapter.isEditing = !TagEditListAdapter.isEditing;
+      if(TagEditListAdapter.isEditing) {
+        activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        sortItem.setVisible(false);
+        activity.listView.removeFooterView(footer);
       }
-      case R.id.sort: {
-
-        TagEditListAdapter.isSorting = !TagEditListAdapter.isSorting;
-        if(TagEditListAdapter.isSorting) {
-          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-          actionBar.setDisplayHomeAsUpEnabled(false);
-          editItem.setVisible(false);
-          activity.listView.removeFooterView(footer);
+      else {
+        activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        sortItem.setVisible(true);
+        if(activity.listView.getFooterViewsCount() == 0) {
+          activity.listView.addFooterView(footer);
         }
-        else {
-          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-          actionBar.setDisplayHomeAsUpEnabled(true);
-          editItem.setVisible(true);
-          if(activity.listView.getFooterViewsCount() == 0) {
-            activity.listView.addFooterView(footer);
-          }
-
-          int size = TagEditListAdapter.tagList.size();
-          boolean isUpdated = false;
-          for(int i = 0; i < size; i++) {
-            TagAdapter tag = TagEditListAdapter.tagList.get(i);
-            if(tag.getOrder() != i) {
-              tag.setOrder(i);
-              isUpdated = true;
-            }
-          }
-
-          if(isUpdated) {
-            activity.generalSettings.setTagList(new ArrayList<>(TagEditListAdapter.tagList));
-            activity.updateSettingsDB();
-          }
-        }
-
-        return true;
       }
-      case android.R.id.home: {
-
-        ColorPickerListAdapter.isFromListTagEdit = false;
-        FragmentManager manager = getFragmentManager();
-        requireNonNull(manager);
-        manager.popBackStack();
-        return true;
-      }
-      default: {
-        return super.onOptionsItemSelected(item);
-      }
+      activity.tagEditListAdapter.notifyDataSetChanged();
+      return true;
     }
+    else if(itemId == R.id.sort) {
+      TagEditListAdapter.isSorting = !TagEditListAdapter.isSorting;
+      if(TagEditListAdapter.isSorting) {
+        activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        editItem.setVisible(false);
+        activity.listView.removeFooterView(footer);
+      }
+      else {
+        activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        editItem.setVisible(true);
+        if(activity.listView.getFooterViewsCount() == 0) {
+          activity.listView.addFooterView(footer);
+        }
+
+        int size = TagEditListAdapter.tagList.size();
+        boolean isUpdated = false;
+        for(int i = 0; i < size; i++) {
+          TagAdapter tag = TagEditListAdapter.tagList.get(i);
+          if(tag.getOrder() != i) {
+            tag.setOrder(i);
+            isUpdated = true;
+          }
+        }
+
+        if(isUpdated) {
+          activity.generalSettings.setTagList(new ArrayList<>(TagEditListAdapter.tagList));
+          activity.updateSettingsDB();
+        }
+      }
+
+      return true;
+    }
+    else if(itemId == android.R.id.home) {
+      ColorPickerListAdapter.isFromListTagEdit = false;
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
+      manager.popBackStack();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -284,57 +267,45 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     final AlertDialog dialog = new AlertDialog.Builder(activity)
       .setTitle(R.string.add_tag)
       .setView(linearLayout)
-      .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setPositiveButton(R.string.add, (dialog1, which) -> {
 
-          String name = editText.getText().toString();
-          if(name.equals("")) {
-            name = getString(R.string.default_tag);
-          }
-          TagAdapter tag = new TagAdapter();
-          tag.setName(name);
-          activity.generalSettings.addTag(1, tag);
-          List<TagAdapter> tagAdapterList = activity.generalSettings.getTagList();
-          int size = tagAdapterList.size();
-          for(int i = 0; i < size; i++) {
-            tagAdapterList.get(i).setOrder(i);
-          }
-          TagEditListAdapter.tagList = new ArrayList<>(tagAdapterList);
-          activity.tagEditListAdapter.notifyDataSetChanged();
-          activity.updateSettingsDB();
+        String name = editText.getText().toString();
+        if(name.equals("")) {
+          name = getString(R.string.default_tag);
         }
+        TagAdapter tag = new TagAdapter();
+        tag.setName(name);
+        activity.generalSettings.addTag(1, tag);
+        List<TagAdapter> tagAdapterList = activity.generalSettings.getTagList();
+        int size = tagAdapterList.size();
+        for(int i = 0; i < size; i++) {
+          tagAdapterList.get(i).setOrder(i);
+        }
+        TagEditListAdapter.tagList = new ArrayList<>(tagAdapterList);
+        activity.tagEditListAdapter.notifyDataSetChanged();
+        activity.updateSettingsDB();
       })
-      .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setNeutralButton(R.string.cancel, (dialog12, which) -> {
 
-        }
       })
       .create();
 
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
+    dialog.setOnShowListener(dialogInterface -> {
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-      }
+      dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+      dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
     });
 
     dialog.show();
 
     // ダイアログ表示時にソフトキーボードを自動で表示
-    editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override
-      public void onFocusChange(View v, boolean hasFocus) {
+    editText.setOnFocusChangeListener((v1, hasFocus) -> {
 
-        if(hasFocus) {
-          Window dialogWindow = dialog.getWindow();
-          requireNonNull(dialogWindow);
+      if(hasFocus) {
+        Window dialogWindow = dialog.getWindow();
+        requireNonNull(dialogWindow);
 
-          dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
+        dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
       }
     });
     editText.requestFocus();

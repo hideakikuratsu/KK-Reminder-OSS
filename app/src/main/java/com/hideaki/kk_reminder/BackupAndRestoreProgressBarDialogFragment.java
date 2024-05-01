@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -89,73 +88,70 @@ public class BackupAndRestoreProgressBarDialogFragment extends DialogFragment {
       .create();
 
     final Handler handler = new Handler(Looper.getMainLooper());
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
+    dialog.setOnShowListener(dialogInterface -> {
 
-        progress = 0;
-        oldProgress = progress;
-        isFirst = true;
-        Thread thread = new Thread() {
+      progress = 0;
+      oldProgress = progress;
+      isFirst = true;
+      Thread thread = new Thread() {
 
-          @Override
-          public void run() {
+        @Override
+        public void run() {
 
-            while(true) {
-              if(progress != oldProgress || isFirst) {
-                isFirst = false;
-                handler.post(new Runnable() {
-                  @Override
-                  public void run() {
+          while(true) {
+            if(progress != oldProgress || isFirst) {
+              isFirst = false;
+              handler.post(() -> {
 
-                    progressBar.setProgress(progress);
-                    String progressDescriptionResult = LOCALE.equals(Locale.JAPAN) ?
-                      (isBackup? "データのバックアップ中: " : "データの復元中: ") :
-                      (isBackup? "Backup: " : "Restore: ");
-                    progressDescriptionResult += progress + "%";
-                    progressDescription.setText(progressDescriptionResult);
-                  }
-                });
-                oldProgress = progress;
+                progressBar.setProgress(progress);
+                String progressDescriptionResult = LOCALE.equals(Locale.JAPAN) ?
+                  (isBackup? "データのバックアップ中: " : "データの復元中: ") :
+                  (isBackup? "Backup: " : "Restore: ");
+                progressDescriptionResult += progress + "%";
+                progressDescription.setText(progressDescriptionResult);
+              });
+              oldProgress = progress;
 
-                if(progress == 100) {
-                  break;
-                }
-              }
-              try {
-                //noinspection BusyWait
-                Thread.sleep(10);
-              }
-              catch(InterruptedException e) {
-                Log.e("BackupRestoreProgress", Log.getStackTraceString(e));
+              if(progress == 100) {
+                break;
               }
             }
-
             try {
-              Thread.sleep(3500);
+              //noinspection BusyWait
+              Thread.sleep(10);
             }
             catch(InterruptedException e) {
-              Log.e("BackupRestoreProgress", Log.getStackTraceString(e));
-            }
-            dialog.dismiss();
-
-            if(!isBackup) {
-              activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
-              activity.setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
-              activity.menuItem = activity.menu.getItem(activity.whichMenuOpen);
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-
-                  activity.navigationView.setCheckedItem(activity.menuItem);
-                  activity.recreate();
-                }
-              });
+              Log.e(
+                  "BackupAndRestoreProgressBarDialogFragment#onCreateDialog",
+                  Log.getStackTraceString(e)
+              );
             }
           }
-        };
-        thread.start();
-      }
+
+          try {
+            Thread.sleep(3500);
+          }
+          catch(InterruptedException e) {
+            Log.e(
+                "BackupAndRestoreProgressBarDialogFragment#onCreateDialog",
+                Log.getStackTraceString(e)
+            );
+          }
+          dialog.dismiss();
+
+          if(!isBackup) {
+            activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
+            activity.setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
+            activity.menuItem = activity.menu.getItem(activity.whichMenuOpen);
+            handler.post(() -> {
+
+              activity.navigationView.setCheckedItem(activity.menuItem);
+              activity.recreate();
+            });
+          }
+        }
+      };
+      thread.start();
     });
 
     return dialog;

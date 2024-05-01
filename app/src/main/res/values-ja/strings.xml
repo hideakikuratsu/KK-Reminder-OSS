@@ -77,6 +77,13 @@
     <string name="repeat_minute_illegal_dialog">繰り返しの間隔が繰り返す長さを超えています\n繰り返す長さよりも短い間隔を設定し直してください</string>
     <string name="alarm_option">通知音の設定</string>
     <string name="pick_alarm">通知音の選択</string>
+    <string name="permission_external_alarm_rationale_title">外部ストレージアクセス許可</string>
+    <string name="permission_external_alarm_rationale_message">外部ストレージから通知音を選択する場合はアクセス許可が必要です</string>
+    <string name="permission_external_alarm_denied">外部ストレージへのアクセスが拒否されました。デフォルトの通知音を設定します</string>
+    <string name="permission_exact_alarm_rationale_title">アラーム通知権限</string>
+    <string name="permission_exact_alarm_rationale_message">Android 12以降、アプリが正確な設定時間で通知を行うためには特別な権限が必要になりました。現在このアプリはその権限が許可されていないため、使用することができません。アプリを正常に使用するには権限を許可してください。</string>
+    <string name="permit">許可</string>
+    <string name="deny">拒否</string>
     <string name="default_snooze">デフォルト</string>
     <string name="snooze">スヌーズ</string>
     <string name="snooze_time">スヌーズ時間</string>
@@ -130,7 +137,7 @@
     <string name="play_slide_animation">カードのスライドアニメーション</string>
     <string name="play_slide_animation_summary">スクロール時にカードがスライドしながら表示されるアニメーションのオンオフを設定します</string>
     <string name="default_vibration">バイブレーションパターン</string>
-    <string name="default_vibration_summary">例: 0, 250, 500, 200\nパターンは非鳴動時間、鳴動時間、非鳴動時間、・・・というようにバイブレーションの鳴らない時間と鳴る時間をミリ秒(1000分の1秒)単位で交互に指定します。\nパターンが正しく設定されていない、または空の場合、デフォルトのパターンが適用されます。</string>
+    <string name="default_vibration_summary">例: 0, 250, 500, 200\nパターンは\n非鳴動時間、鳴動時間、非鳴動時間、・・・\nというようにバイブレーションの鳴らない時間と鳴る時間をミリ秒(1000分の1秒)単位で交互に指定します。\nパターンが正しく設定されていない、または空の場合、デフォルトのパターンが適用されます。</string>
     <string name="vibration_hint">0, 250, 500, 200</string>
     <string name="default_vibration_hint">デフォルトのバイブレーションパターン</string>
     <string name="custom_vibration_hint">カスタムバイブレーションパターン</string>
@@ -156,7 +163,9 @@
     <string name="logout_done">バックアップアカウントからログアウトしました。</string>
     <string name="fail_to_logout">ログアウトに失敗しました。</string>
     <string name="error">予期せぬエラーが発生しました。</string>
-    <string name="backup_and_restore_note">復元ポイントが上手く同期されない場合は、一度ログアウトした上で復元操作を何回か試してみてください。</string>
+    <string name="backup_functions_denial_title">バックアップと復元機能は利用できません。</string>
+    <string name="backup_functions_denial_message">現在使用しているOSのバージョンではバックアップと復元の機能は使用できません。使用するにはOSのバージョンを7.0(Nougat/API24)以上にしてください。</string>
+    <string name="backup_and_restore_note">復元ポイントが上手く同期されない場合は、一度ログアウトした上で復元操作を何回か試してみてください。\n新しい端末に乗り換えた後に復元をした場合は以前の端末で使用していた通知音の場所を正しく認識できないので、\n[設定] > [タスクの一括設定] > [通知音の選択]\n[設定] > [新しく追加するタスク] > [通知音の選択]\nから改めてタスクの通知音を再設定してください。</string>
     <string name="about">概要</string>
     <string name="version">バージョン</string>
     <string name="about_this_app">このアプリについて</string>
@@ -224,7 +233,7 @@
     <plurals name="minute">
         <item quantity="other">%1$d分</item>
     </plurals>
-    <string name="within_one_minute">&lt;&lt; 1分 &gt;&gt;</string>
+    <string name="within_one_minute">&lt; 1分 &gt;</string>
     <string name="per">おきに</string>
     <plurals name="times_notify">
         <item quantity="other">最大%1$d回通知する</item>
@@ -319,6 +328,8 @@
     <string name="pick_color">色の選択</string>
     <string name="pick_color_description">色のバリエーションを選択してください</string>
     <string name="action_send_booted_dialog_title">新たなタスクを作成します。タスクを追加するリストを選択してください。</string>
+    <string name="date_and_time_detected_title">日時の検出</string>
+    <string name="date_and_time_detected_message">共有された文字から日時が検出されました。タスクの日時として設定しますか？</string>
     <string name="sort">タスクの並び替え</string>
     <string name="done_task_click_title">このタスクに行う処理を次から選んでください</string>
     <string name="recycle_task">タスクをリサイクルする</string>

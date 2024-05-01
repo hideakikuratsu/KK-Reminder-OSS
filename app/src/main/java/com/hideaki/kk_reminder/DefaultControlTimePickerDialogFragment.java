@@ -23,7 +23,6 @@ import static com.hideaki.kk_reminder.UtilClass.DEFAULT_PLUS_TIME_2_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_PLUS_TIME_2_MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_PLUS_TIME_3_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.DEFAULT_PLUS_TIME_3_MINUTE;
-import static java.util.Objects.requireNonNull;
 
 public class DefaultControlTimePickerDialogFragment extends DialogFragment
   implements TimePickerDialog.OnTimeSetListener {
@@ -57,8 +56,7 @@ public class DefaultControlTimePickerDialogFragment extends DialogFragment
   @Override
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-    activity = (MainActivity)getActivity();
-    requireNonNull(activity);
+    activity = (MainActivity)requireActivity();
 
     int hour;
     int minute;

@@ -48,18 +48,10 @@ public class DefaultTextSizeModelPreference extends Preference {
       setTime = (String)DateFormat.format("M月d日(E) k:mm", now);
     }
     else {
-      setTime = (String)DateFormat.format("M/d (E) k:mm", now);
+      setTime = (String)DateFormat.format("E, MMM d 'at' h:mma", now);
     }
 
-    setTime += " (";
-    if(!LOCALE.equals(Locale.JAPAN)) {
-      setTime += " ";
-    }
-    setTime += activity.getString(R.string.within_one_minute);
-    if(!LOCALE.equals(Locale.JAPAN)) {
-      setTime += " ";
-    }
-    setTime += ")";
+    setTime += " (" + activity.getString(R.string.within_one_minute) + ")";
 
     if(activity.isDarkMode) {
       childCard.setBackgroundColor(activity.backgroundFloatingMaterialDarkColor);

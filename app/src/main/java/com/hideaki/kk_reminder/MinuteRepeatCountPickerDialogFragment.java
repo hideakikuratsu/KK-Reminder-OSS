@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -64,17 +63,14 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
     drawable.setStroke(3, activity.accentColor);
     drawable.setCornerRadius(8.0f);
 
-    plus.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    plus.setOnClickListener(v -> {
 
-        if("".equals(count.getText().toString())) {
-          count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrgCount()));
-        }
-        if(Integer.parseInt(count.getText().toString()) < 999) {
-          count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
-          count.setSelection(count.getText().length());
-        }
+      if("".equals(count.getText().toString())) {
+        count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrgCount()));
+      }
+      if(Integer.parseInt(count.getText().toString()) < 999) {
+        count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
+        count.setSelection(count.getText().length());
       }
     });
 
@@ -91,96 +87,81 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
     drawable.setStroke(3, activity.accentColor);
     drawable.setCornerRadius(8.0f);
 
-    minus.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    minus.setOnClickListener(v -> {
 
-        if("".equals(count.getText().toString())) {
-          count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrgCount()));
-        }
-        if(Integer.parseInt(count.getText().toString()) > 1) {
-          count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) - 1));
-          count.setSelection(count.getText().length());
-        }
+      if("".equals(count.getText().toString())) {
+        count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrgCount()));
+      }
+      if(Integer.parseInt(count.getText().toString()) > 1) {
+        count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) - 1));
+        count.setSelection(count.getText().length());
       }
     });
 
     final AlertDialog dialog = new AlertDialog.Builder(activity)
-      .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setPositiveButton(R.string.ok, (dialog1, which) -> {
 
-          if("".equals(count.getText().toString())) {
-            count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrgCount()));
-          }
-          int setCount = Integer.parseInt(count.getText().toString());
-          if(setCount > 0) {
-            MainEditFragment.minuteRepeat.setOrgCount(setCount);
+        if("".equals(count.getText().toString())) {
+          count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrgCount()));
+        }
+        int setCount = Integer.parseInt(count.getText().toString());
+        if(setCount > 0) {
+          MainEditFragment.minuteRepeat.setOrgCount(setCount);
 
-            String interval = "";
-            int hour = MainEditFragment.minuteRepeat.getHour();
-            if(hour != 0) {
-              interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
-              if(!LOCALE.equals(Locale.JAPAN)) {
-                interval += " ";
-              }
+          String interval = "";
+          int hour = MainEditFragment.minuteRepeat.getHour();
+          if(hour != 0) {
+            interval += activity.getResources().getQuantityString(R.plurals.hour, hour, hour);
+            if(!LOCALE.equals(Locale.JAPAN)) {
+              interval += " ";
             }
-            int minute = MainEditFragment.minuteRepeat.getMinute();
-            if(minute != 0) {
-              interval +=
-                activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
-              if(!LOCALE.equals(Locale.JAPAN)) {
-                interval += " ";
-              }
-            }
-            int count = MainEditFragment.minuteRepeat.getOrgCount();
-            String label =
-              activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
-                count, interval, count
-              );
-            MinuteRepeatEditFragment.labelStr = label;
-            minuteRepeatEditFragment.label.setSummary(label);
-
-            MainEditFragment.minuteRepeat.setLabel(label);
-
-            // 項目のタイトル部に現在の設定値を表示
-            minuteRepeatEditFragment.countPicker.setTitle(getResources().getQuantityString(
-              R.plurals.times,
-              count,
-              count
-            ));
           }
+          int minute = MainEditFragment.minuteRepeat.getMinute();
+          if(minute != 0) {
+            interval +=
+              activity.getResources().getQuantityString(R.plurals.minute, minute, minute);
+            if(!LOCALE.equals(Locale.JAPAN)) {
+              interval += " ";
+            }
+          }
+          int count = MainEditFragment.minuteRepeat.getOrgCount();
+          String label =
+            activity.getResources().getQuantityString(R.plurals.repeat_minute_count_format,
+              count, interval, count
+            );
+          MinuteRepeatEditFragment.labelStr = label;
+          minuteRepeatEditFragment.label.setSummary(label);
+
+          MainEditFragment.minuteRepeat.setLabel(label);
+
+          // 項目のタイトル部に現在の設定値を表示
+          minuteRepeatEditFragment.countPicker.setTitle(getResources().getQuantityString(
+            R.plurals.times,
+            count,
+            count
+          ));
         }
       })
-      .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setNeutralButton(R.string.cancel, (dialog12, which) -> {
 
-        }
       })
       .setView(view)
       .create();
 
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
+    dialog.setOnShowListener(dialogInterface -> {
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-      }
+      dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+      dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
     });
 
     // ダイアログ表示時にソフトキーボードを自動で表示
-    count.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override
-      public void onFocusChange(View v, boolean hasFocus) {
+    count.setOnFocusChangeListener((v, hasFocus) -> {
 
-        if(hasFocus) {
-          Window dialogWindow = dialog.getWindow();
-          requireNonNull(dialogWindow);
+      if(hasFocus) {
+        Window dialogWindow = dialog.getWindow();
+        requireNonNull(dialogWindow);
 
-          dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
+        dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
       }
     });
     count.requestFocus();

@@ -1,4 +1,0 @@
-・Got rid of the limitation of the number of lines that appear in the Notes section when editing tasks
-・Implemented the Time Limit feature that can set a time limit to repeat features
-・Fixed undoing the tasks sometimes don't restore the exact time
-・Fixed various bugs

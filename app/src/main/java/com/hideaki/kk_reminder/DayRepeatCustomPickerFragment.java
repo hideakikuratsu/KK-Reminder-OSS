@@ -110,15 +110,12 @@ public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-          registerCustomRepeat();
-        }
-        return false;
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+        registerCustomRepeat();
       }
+      return false;
     });
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
@@ -297,8 +294,7 @@ public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat
 
     registerCustomRepeat();
 
-    FragmentManager manager = getFragmentManager();
-    requireNonNull(manager);
+    FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
     manager.popBackStack();
     return super.onOptionsItemSelected(item);
   }

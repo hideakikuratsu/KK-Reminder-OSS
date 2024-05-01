@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -91,70 +90,64 @@ public class SetAllProgressBarDialogFragment extends DialogFragment {
       .create();
 
     final Handler handler = new Handler(Looper.getMainLooper());
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
+    dialog.setOnShowListener(dialogInterface -> {
 
-        Thread thread = new Thread() {
+      Thread thread = new Thread() {
 
-          @Override
-          public void run() {
+        @Override
+        public void run() {
 
-            List<ItemAdapter> todoItemList = activity.queryAllDB(TODO_TABLE);
-            List<ItemAdapter> doneItemList = activity.queryAllDB(DONE_TABLE);
+          List<ItemAdapter> todoItemList = activity.queryAllDB(TODO_TABLE);
+          List<ItemAdapter> doneItemList = activity.queryAllDB(DONE_TABLE);
 
-            int todoItemListSize = todoItemList.size();
-            int size = todoItemListSize + doneItemList.size();
-            for(int i = 0; i <= size; i++) {
-              final int progress = i * 100 / size;
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
+          int todoItemListSize = todoItemList.size();
+          int size = todoItemListSize + doneItemList.size();
+          for(int i = 0; i <= size; i++) {
+            final int progress = i * 100 / size;
+            handler.post(() -> {
 
-                  progressBar.setProgress(progress);
-                  String progressDescriptionResult = LOCALE.equals(Locale.JAPAN) ?
-                    "一括設定中: " : "Setting to all tasks: ";
-                  progressDescriptionResult += progress + "%";
-                  progressDescription.setText(progressDescriptionResult);
-                }
-              });
+              progressBar.setProgress(progress);
+              String progressDescriptionResult = LOCALE.equals(Locale.JAPAN) ?
+                "一括設定中: " : "Setting to all tasks: ";
+              progressDescriptionResult += progress + "%";
+              progressDescription.setText(progressDescriptionResult);
+            });
 
-              if(i == size) {
-                break;
-              }
+            if(i == size) {
+              break;
+            }
 
-              if(i < todoItemListSize) {
-                ItemAdapter todoItem = todoItemList.get(i);
-                if(isNotifySound) {
-                  todoItem.setSoundUri(SetAllFragment.uriSound.toString());
-                }
-                else {
-                  todoItem.setVibrationPattern(SetAllFragment.vibrationStr);
-                }
-                activity.updateDB(todoItem, TODO_TABLE);
+            if(i < todoItemListSize) {
+              ItemAdapter todoItem = todoItemList.get(i);
+              if(isNotifySound) {
+                todoItem.setSoundUri(SetAllFragment.uriSound.toString());
               }
               else {
-                ItemAdapter doneItem = doneItemList.get(i - todoItemListSize);
-                if(isNotifySound) {
-                  doneItem.setSoundUri(SetAllFragment.uriSound.toString());
-                }
-                else {
-                  doneItem.setVibrationPattern(SetAllFragment.vibrationStr);
-                }
-                activity.updateDB(doneItem, DONE_TABLE);
+                todoItem.setVibrationPattern(SetAllFragment.vibrationStr);
               }
+              activity.updateDB(todoItem, TODO_TABLE);
             }
-            try {
-              Thread.sleep(3500);
+            else {
+              ItemAdapter doneItem = doneItemList.get(i - todoItemListSize);
+              if(isNotifySound) {
+                doneItem.setSoundUri(SetAllFragment.uriSound.toString());
+              }
+              else {
+                doneItem.setVibrationPattern(SetAllFragment.vibrationStr);
+              }
+              activity.updateDB(doneItem, DONE_TABLE);
             }
-            catch(InterruptedException e) {
-              Log.e("SetAllProgressBar", Log.getStackTraceString(e));
-            }
-            dialog.dismiss();
           }
-        };
-        thread.start();
-      }
+          try {
+            Thread.sleep(3500);
+          }
+          catch(InterruptedException e) {
+            Log.e("SetAllProgressBarDialogFragment#onCreateDialog", Log.getStackTraceString(e));
+          }
+          dialog.dismiss();
+        }
+      };
+      thread.start();
     });
 
     return dialog;

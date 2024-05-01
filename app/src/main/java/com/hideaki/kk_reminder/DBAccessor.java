@@ -46,7 +46,7 @@ class DBAccessor {
       sdb.setTransactionSuccessful();
     }
     catch(SQLException e) {
-      Log.e("executeInsert", Log.getStackTraceString(e));
+      Log.e("DBAccessor#executeInsert", Log.getStackTraceString(e));
     }
     finally {
       sdb.endTransaction();
@@ -70,7 +70,7 @@ class DBAccessor {
       sdb.setTransactionSuccessful();
     }
     catch(SQLException e) {
-      Log.e("executeUpdate", Log.getStackTraceString(e));
+      Log.e("DBAccessor#executeUpdate", Log.getStackTraceString(e));
     }
     finally {
       sdb.endTransaction();
@@ -93,7 +93,7 @@ class DBAccessor {
       sdb.setTransactionSuccessful();
     }
     catch(SQLException e) {
-      Log.e("executeDelete", Log.getStackTraceString(e));
+      Log.e("DBAccessor#executeDelete", Log.getStackTraceString(e));
     }
     finally {
       sdb.endTransaction();
