@@ -981,7 +981,7 @@ public class DoneReceiver extends BroadcastReceiver {
     int created = intPreferences.getInt(CREATED, -1);
     int destroyed = intPreferences.getInt(DESTROYED, -1);
     if(created > destroyed) {
-      context.sendBroadcast(new Intent(ACTION_IN_NOTIFICATION));
+      context.sendBroadcast(new Intent(ACTION_IN_NOTIFICATION).setPackage(context.getPackageName()));
     }
   }
 

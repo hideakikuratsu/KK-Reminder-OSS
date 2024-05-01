@@ -420,7 +420,7 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
       int created = preferences.getInt(CREATED, -1);
       int destroyed = preferences.getInt(DESTROYED, -1);
       if(created > destroyed) {
-        sendBroadcast(new Intent(ACTION_IN_NOTIFICATION));
+        sendBroadcast(new Intent(ACTION_IN_NOTIFICATION).setPackage(getPackageName()));
       }
 
       this.finish();

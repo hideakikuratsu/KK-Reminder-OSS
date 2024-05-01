@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class DBAccessor {
 
@@ -71,6 +73,29 @@ class DBAccessor {
     }
     catch(SQLException e) {
       Log.e("DBAccessor#executeUpdate", Log.getStackTraceString(e));
+    }
+    finally {
+      sdb.endTransaction();
+      closeDB();
+    }
+  }
+
+  void executeDeleteMany(long[] ids, String table) {
+
+    sdb = helper.getWritableDatabase();
+    String idsStr = Arrays.stream(ids).mapToObj(Long::toString).collect(Collectors.joining("\",\""));
+    stateStr = "DELETE FROM " + table + " WHERE item_id IN (\"" + idsStr + "\")";
+
+    sdb.beginTransaction();
+    try {
+      statement = sdb.compileStatement(stateStr);
+
+      statement.executeUpdateDelete();
+
+      sdb.setTransactionSuccessful();
+    }
+    catch(SQLException e) {
+      Log.e("DBAccessor#executeDeleteMany", Log.getStackTraceString(e));
     }
     finally {
       sdb.endTransaction();
