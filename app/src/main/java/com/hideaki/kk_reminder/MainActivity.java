@@ -52,6 +52,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -379,6 +380,11 @@ public class MainActivity extends AppCompatActivity
     System.out.println("onCreateComplete");
 
     // 広告読み出し機能のセットアップ
+    RequestConfiguration conf = new RequestConfiguration.Builder()
+        .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_G)
+        .setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
+        .build();
+    MobileAds.setRequestConfiguration(conf);
     MobileAds.initialize(this, initializationStatus -> {});
     AdSize adSize = getAdSize(this);
     adView = new AdView(this);
