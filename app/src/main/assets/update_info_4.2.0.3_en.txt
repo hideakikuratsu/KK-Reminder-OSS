@@ -1,4 +1,7 @@
-・Added notice about a bug on Android 12 (ver. 4.2.0.2)
+(Update about ver. 4.2.0.3)
+・Fixed purchased state not recognized
+(Update about ver. 4.2.0.2)
+・Added notice about a bug on Android 12
 (Update about ver. 4.2.0.0)
 ・Support for Android 12
 ・Enabled access to sounds on external storage

@@ -830,7 +830,9 @@ public class MainActivity extends AppCompatActivity
           int responseCode = billingResult.getResponseCode();
           if(responseCode == BillingResponseCode.OK) {
             Log.i("MainActivity#queryPurchaseHistory", getResponseCodeString(responseCode));
-            setBooleanGeneralInSharedPreferences(IS_QUERIED_PURCHASE_HISTORY, true);
+            handler.post(() ->
+                setBooleanGeneralInSharedPreferences(IS_QUERIED_PURCHASE_HISTORY, true)
+            );
             if(purchasesList == null || purchasesList.isEmpty()) {
               Log.w("MainActivity#queryPurchaseHistory", "No History");
             }
@@ -841,17 +843,19 @@ public class MainActivity extends AppCompatActivity
                       "MainActivity#queryPurchaseHistory",
                       purchase.getSkus().get(0) + ": Purchased"
                   );
-                  Toast
-                    .makeText(
-                      MainActivity.this,
-                      getString(R.string.succeed_to_upgrade),
-                      Toast.LENGTH_LONG
-                    )
-                    .show();
-                  setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
-                  if(expandableListViewFragment != null) {
-                    expandableListViewFragment.disableAdView();
-                  }
+                  handler.post(() -> {
+                    Toast
+                        .makeText(
+                            MainActivity.this,
+                            getString(R.string.succeed_to_upgrade),
+                            Toast.LENGTH_LONG
+                        )
+                        .show();
+                    setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
+                    if(expandableListViewFragment != null) {
+                      expandableListViewFragment.disableAdView();
+                    }
+                  });
                 }
               }
             }
@@ -870,9 +874,14 @@ public class MainActivity extends AppCompatActivity
     if(responseCode == BillingResponseCode.OK) {
       if(purchases == null || purchases.isEmpty()) {
         Log.e("MainActivity#onPurchasesUpdated", "purchases is null or empty");
-        Toast
-          .makeText(MainActivity.this, getString(R.string.error_occurred), Toast.LENGTH_LONG)
-          .show();
+        handler.post(() ->
+            Toast
+                .makeText(
+                    MainActivity.this,
+                    getString(R.string.error_occurred), Toast.LENGTH_LONG
+                )
+                .show()
+        );
       }
       else {
         Log.i("MainActivity#onPurchasesUpdated", getResponseCodeString(responseCode));
@@ -883,15 +892,25 @@ public class MainActivity extends AppCompatActivity
     }
     else if(responseCode == BillingResponseCode.USER_CANCELED) {
       Log.w("MainActivity#onPurchasesUpdated", getResponseCodeString(responseCode));
-      Toast
-        .makeText(MainActivity.this, getString(R.string.cancel_to_buy), Toast.LENGTH_LONG)
-        .show();
+      handler.post(() ->
+          Toast
+              .makeText(
+                  MainActivity.this,
+                  getString(R.string.cancel_to_buy), Toast.LENGTH_LONG
+              )
+              .show()
+      );
     }
     else {
       Log.e("MainActivity#onPurchasesUpdated", getResponseCodeString(responseCode));
-      Toast
-        .makeText(MainActivity.this, getString(R.string.error_occurred), Toast.LENGTH_LONG)
-        .show();
+      handler.post(() ->
+          Toast
+              .makeText(
+                  MainActivity.this,
+                  getString(R.string.error_occurred), Toast.LENGTH_LONG
+              )
+              .show()
+      );
     }
   }
 
@@ -904,17 +923,23 @@ public class MainActivity extends AppCompatActivity
         "Sku: " + purchase.getSkus().get(0) + ", State: " + purchaseState
       );
       if(purchase.getSkus().contains(PRODUCT_ID_PREMIUM)) {
-        Toast
-          .makeText(
-            this,
-            getString(R.string.succeed_to_upgrade),
-            Toast.LENGTH_LONG
-          )
-          .show();
-        setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
-        if(expandableListViewFragment != null) {
-          expandableListViewFragment.disableAdView();
-        }
+        Log.i(
+            "MainActivity#checkPurchaseState",
+            "Sku: " + purchase.getSkus().get(0) + ", set IS_PREMIUM on"
+        );
+        handler.post(() -> {
+          Toast
+              .makeText(
+                  this,
+                  getString(R.string.succeed_to_upgrade),
+                  Toast.LENGTH_LONG
+              )
+              .show();
+          setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
+          if(expandableListViewFragment != null) {
+            expandableListViewFragment.disableAdView();
+          }
+        });
       }
     }
     else {
@@ -1051,13 +1076,15 @@ public class MainActivity extends AppCompatActivity
         "MainActivity#getSkuDetailsFromListAndSetTaskCompletionSource",
         sku + " not found"
     );
-    Toast
-      .makeText(
-        this,
-        getString(R.string.error_occurred),
-        Toast.LENGTH_LONG
-      )
-      .show();
+    handler.post(() ->
+        Toast
+            .makeText(
+                this,
+                getString(R.string.error_occurred),
+                Toast.LENGTH_LONG
+            )
+            .show()
+    );
   }
 
   private Task<List<SkuDetails>> querySkuDetailsList() {
@@ -1081,13 +1108,15 @@ public class MainActivity extends AppCompatActivity
         if(list == null || list.isEmpty()) {
           Log.e("MainActivity#querySkuDetailsList", "list is null or empty");
           taskCompletionSource.setError(new IllegalStateException());
-          Toast
-            .makeText(
-              MainActivity.this,
-              getString(R.string.error_occurred),
-              Toast.LENGTH_LONG
-            )
-            .show();
+          handler.post(() ->
+              Toast
+                  .makeText(
+                      MainActivity.this,
+                      getString(R.string.error_occurred),
+                      Toast.LENGTH_LONG
+                  )
+                  .show()
+          );
         }
         else {
           Log.i("MainActivity#querySkuDetailsList", getResponseCodeString(responseCode));
@@ -1097,24 +1126,28 @@ public class MainActivity extends AppCompatActivity
       else if(responseCode == BillingResponseCode.USER_CANCELED) {
         Log.w("MainActivity#querySkuDetailsList", getResponseCodeString(responseCode));
         taskCompletionSource.setCancelled();
-        Toast
-          .makeText(
-            MainActivity.this,
-            getString(R.string.cancel_to_buy),
-            Toast.LENGTH_LONG
-          )
-          .show();
+        handler.post(() ->
+            Toast
+                .makeText(
+                    MainActivity.this,
+                    getString(R.string.cancel_to_buy),
+                    Toast.LENGTH_LONG
+                )
+                .show()
+        );
       }
       else {
         Log.e("MainActivity#querySkuDetailsList", getResponseCodeString(responseCode));
         taskCompletionSource.setError(new IllegalStateException());
-        Toast
-          .makeText(
-            MainActivity.this,
-            getString(R.string.error_occurred),
-            Toast.LENGTH_LONG
-          )
-          .show();
+        handler.post(() ->
+            Toast
+                .makeText(
+                    MainActivity.this,
+                    getString(R.string.error_occurred),
+                    Toast.LENGTH_LONG
+                )
+                .show()
+        );
       }
     });
 
