@@ -380,11 +380,12 @@ public class MainActivity extends AppCompatActivity
     System.out.println("onCreateComplete");
 
     // 広告読み出し機能のセットアップ
-    RequestConfiguration conf = new RequestConfiguration.Builder()
-        .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_G)
-        .setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
-        .build();
-    MobileAds.setRequestConfiguration(conf);
+//    RequestConfiguration conf = MobileAds.getRequestConfiguration()
+//        .toBuilder()
+//        .setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
+//        .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_G)
+//        .build();
+//    MobileAds.setRequestConfiguration(conf);
     MobileAds.initialize(this, initializationStatus -> {});
     AdSize adSize = getAdSize(this);
     adView = new AdView(this);
