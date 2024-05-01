@@ -8,8 +8,8 @@ android {
         minSdk 24
         compileSdk 34
         targetSdkVersion 34
-        versionCode 40200004
-        versionName "4.2.0.4"
+        versionCode 40300000
+        versionName "4.3.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

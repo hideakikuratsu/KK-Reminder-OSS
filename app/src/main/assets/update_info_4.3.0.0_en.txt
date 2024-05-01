@@ -1,0 +1,8 @@
+(Update about ver. 4.3.0.0)
+・Support for Android 14
+・Terminated support under Android 7
+・Small bug fixes
+(Update about ver. 4.2.0.4)
+・Fixed purchased state not recognized
+(Update about ver. 4.2.0.2)
+・Added notice about a bug on Android 12
