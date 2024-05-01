@@ -62,6 +62,13 @@
                 android:checkable="true"
                 android:orderInCategory="6"/>
 
+            <item
+                android:id="@+id/notice"
+                android:icon="@drawable/ic_email_read_24dp"
+                android:title="@string/notice"
+                android:checkable="true"
+                android:orderInCategory="7" />
+
         </menu>
 
     </item>

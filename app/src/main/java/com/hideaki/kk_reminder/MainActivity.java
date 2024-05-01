@@ -131,6 +131,7 @@ import static com.hideaki.kk_reminder.UtilClass.MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.NON_SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.PLAY_SLIDE_ANIMATION;
 import static com.hideaki.kk_reminder.UtilClass.PRODUCT_ID_PREMIUM;
+import static com.hideaki.kk_reminder.UtilClass.READ_NOTICE;
 import static com.hideaki.kk_reminder.UtilClass.SCHEDULED_ITEM_COMPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
@@ -187,6 +188,7 @@ public class MainActivity extends AppCompatActivity
   DrawerLayout drawerLayout;
   NavigationView navigationView;
   ActionBarDrawerToggle drawerToggle;
+  private BadgeDrawerArrowDrawable badgeDrawable;
   Drawable upArrow;
   Menu menu;
   MenuItem menuItem;
@@ -236,6 +238,7 @@ public class MainActivity extends AppCompatActivity
   List<ItemAdapter> todoItemList;
   boolean isCopiedFromOldVersion;
   AdView adView;
+  private boolean readNotice;
   private boolean dateSet;
   private static final Map<String, Integer> DAY_OF_WEEK_MAP_JP = new HashMap<>();
   private static final Map<String, Integer> DAY_OF_WEEK_MAP_EN = new HashMap<>();
@@ -322,6 +325,7 @@ public class MainActivity extends AppCompatActivity
         getIsDirectBootContext(this) ? BOOLEAN_GENERAL_COPY : BOOLEAN_GENERAL,
         MODE_PRIVATE
       );
+    readNotice = booleanPreferences.getBoolean(READ_NOTICE, false);
     isCopiedFromOldVersion =
       booleanPreferences.getBoolean(IS_COPIED_FROM_OLD_VERSION, false);
     isQueriedPurchaseHistory =
@@ -458,7 +462,9 @@ public class MainActivity extends AppCompatActivity
     drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
       R.string.drawer_open, R.string.drawer_close
     );
+    badgeDrawable = new BadgeDrawerArrowDrawable(getSupportActionBar().getThemedContext());
     drawerToggle.setDrawerIndicatorEnabled(true);
+    drawerToggle.setDrawerArrowDrawable(badgeDrawable);
     drawerLayout.addDrawerListener(drawerToggle);
 
     navigationView = findViewById(R.id.nav_view);
@@ -486,6 +492,19 @@ public class MainActivity extends AppCompatActivity
       menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
         .setIcon(drawable)
         .setCheckable(true);
+    }
+
+    MenuItem noticeItem = menu.findItem(R.id.notice);
+    if(readNotice) {
+      badgeDrawable.setEnabled(false);
+      noticeItem.setIcon(R.drawable.ic_email_read_24dp);
+    }
+    else {
+      badgeDrawable.setEnabled(true);
+      badgeDrawable.setBackgroundColor(
+          ContextCompat.getColor(this, R.color.red11PrimaryColor)
+      );
+      noticeItem.setIcon(R.drawable.ic_email_unread_24dp);
     }
 
     // Adapterの初期化
@@ -1516,7 +1535,10 @@ public class MainActivity extends AppCompatActivity
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-    if(menuItem.getItemId() != R.id.add_list && menuItem.getItemId() != R.id.share) {
+    if(
+        menuItem.getItemId() != R.id.add_list && menuItem.getItemId() != R.id.share &&
+        menuItem.getItemId() != R.id.notice
+    ) {
 
       // 選択されたメニューアイテム以外のチェックを外す
       if(!menuItem.isChecked()) {
@@ -1709,6 +1731,35 @@ public class MainActivity extends AppCompatActivity
         .putExtra(Intent.EXTRA_TEXT, content);
 
       startActivity(intent);
+    }
+    else if(menuItem.getItemId() == R.id.notice) {
+      if(!readNotice) {
+        setBooleanGeneralInSharedPreferences(READ_NOTICE, true);
+        MenuItem noticeItem = menu.findItem(R.id.notice);
+        noticeItem.setIcon(R.drawable.ic_email_read_24dp);
+        badgeDrawable.setEnabled(false);
+      }
+      final AlertDialog noticeDialog = new AlertDialog.Builder(this)
+          .setTitle(R.string.notice_title)
+          .setMessage(R.string.notice_message)
+          .setPositiveButton(R.string.ok, (dialog15, which12) -> {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+              startActivity(new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM));
+            }
+          })
+          .setOnCancelListener(dialog1 -> {})
+          .create();
+
+      noticeDialog.setOnShowListener(dialogInterface -> {
+        noticeDialog
+            .getButton(AlertDialog.BUTTON_POSITIVE)
+            .setTextColor(accentColor);
+        noticeDialog
+            .getButton(AlertDialog.BUTTON_NEGATIVE)
+            .setTextColor(accentColor);
+      });
+
+      noticeDialog.show();
     }
 
     return false;
@@ -2462,6 +2513,10 @@ public class MainActivity extends AppCompatActivity
   public void setBooleanGeneralInSharedPreferences(String TAG, boolean value) {
 
     switch(TAG) {
+      case READ_NOTICE: {
+        readNotice = value;
+        break;
+      }
       case IS_COPIED_FROM_OLD_VERSION: {
         isCopiedFromOldVersion = value;
         break;

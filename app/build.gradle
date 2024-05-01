@@ -8,8 +8,8 @@ android {
         applicationId "com.hideaki.kk_reminder"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 40200000
-        versionName "4.2.0.0"
+        versionCode 40200001
+        versionName "4.2.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

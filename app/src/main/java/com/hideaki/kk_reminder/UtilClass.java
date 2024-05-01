@@ -89,6 +89,7 @@ class UtilClass {
   static final String COLLAPSE_GROUP = "COLLAPSE_GROUP";
   static final String BOOLEAN_GENERAL = "BOOLEAN_GENERAL";
   static final String BOOLEAN_GENERAL_COPY = "BOOLEAN_GENERAL_COPY";
+  static final String READ_NOTICE = "READ_NOTICE";
   static final String IS_COPIED_FROM_OLD_VERSION = "IS_COPIED_FROM_OLD_VERSION";
   static final String IS_QUERIED_PURCHASE_HISTORY = "IS_QUERIED_PURCHASE_HISTORY";
   static final String IS_RECREATED = "IS_RECREATED";

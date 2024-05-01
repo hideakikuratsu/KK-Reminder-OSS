@@ -311,6 +311,9 @@
     <string name="review">Review this app in Google Play</string>
     <string name="request">Requests</string>
     <string name="share_this_app">Share this app</string>
+    <string name="notice">Notice</string>
+    <string name="notice_title">About a bug after version 4.2.0.0</string>
+    <string name="notice_message">After version 4.2.0.0, we confirmed a bug on Android 12 that reminder of tasks do not end after completing them on app main screen. If you encounter a similar bug, you can solve this issue by disabling and then enabling setting on alarm notification setting page (If you touch \'OK\' button, you will jump to the page) because all alarm scheduling will be reset, or you can also solve this by backing up on\n[Settings] > [Backup and Restore]\npage, then reinstalling this app, and restoring data.</string>
     <string name="notification_channel_name">KK Reminder Notification Channel</string>
     <plurals name="cab_selected_task_num">
         <item quantity="one">1 task selected</item>
