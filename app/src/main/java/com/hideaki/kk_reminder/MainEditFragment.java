@@ -573,7 +573,13 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
         }
         else {
           Ringtone ringtone = RingtoneManager.getRingtone(activity, Uri.parse(uriString));
-          pickAlarm.setSummary(ringtone.getTitle(activity));
+          try {
+            pickAlarm.setSummary(ringtone.getTitle(activity));
+          }
+          catch(Exception e) {
+            item.setSoundUri(null);
+            pickAlarm.setSummary(R.string.none);
+          }
         }
 
         vibration.setSummary(item.getVibrationPattern());
