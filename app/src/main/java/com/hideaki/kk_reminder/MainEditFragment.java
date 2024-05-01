@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.KeyEvent;
@@ -124,19 +125,21 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
           }
           else {
             String uriString = uri.toString();
+            String externalAccessPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                ? Manifest.permission.READ_MEDIA_AUDIO : Manifest.permission.READ_EXTERNAL_STORAGE;
             if(
                 uriString.contains("external") &&
                     ActivityCompat.checkSelfPermission(
-                        activity, Manifest.permission.READ_EXTERNAL_STORAGE
+                        activity, externalAccessPermission
                     ) == PackageManager.PERMISSION_DENIED
             ) {
-              if(shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+              if(shouldShowRequestPermissionRationale(externalAccessPermission)) {
                 final AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(R.string.permission_external_alarm_rationale_title)
                     .setMessage(R.string.permission_external_alarm_rationale_message)
                     .setPositiveButton(R.string.permit, (dialog1, which) ->
                         readExternalPermissionLauncher.launch(
-                            Manifest.permission.READ_EXTERNAL_STORAGE
+                            externalAccessPermission
                         )
                     )
                     .setNegativeButton(R.string.deny, (dialog12, which) ->
@@ -155,7 +158,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
                 dialog.show();
               }
               else {
-                readExternalPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                readExternalPermissionLauncher.launch(externalAccessPermission);
               }
             }
             else {
@@ -808,18 +811,20 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
         }
         else {
           String uriString = uri.toString();
+          String externalAccessPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+              ? Manifest.permission.READ_MEDIA_AUDIO : Manifest.permission.READ_EXTERNAL_STORAGE;
           if(
               uriString.contains("external") &&
               ActivityCompat.checkSelfPermission(
-                  activity, Manifest.permission.READ_EXTERNAL_STORAGE
+                  activity, externalAccessPermission
               ) == PackageManager.PERMISSION_DENIED
           ) {
-            if(shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if(shouldShowRequestPermissionRationale(externalAccessPermission)) {
               final AlertDialog dialog = new AlertDialog.Builder(activity)
                   .setTitle(R.string.permission_external_alarm_rationale_title)
                   .setMessage(R.string.permission_external_alarm_rationale_message)
                   .setPositiveButton(R.string.permit, (dialog1, which) ->
-                      readExternalPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                      readExternalPermissionLauncher.launch(externalAccessPermission)
                   )
                   .setNegativeButton(R.string.deny, (dialog12, which) ->
                       processAfterExternalAlarmPermissionDenial()
@@ -837,7 +842,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
               dialog.show();
             }
             else {
-              readExternalPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+              readExternalPermissionLauncher.launch(externalAccessPermission);
             }
           }
           else {

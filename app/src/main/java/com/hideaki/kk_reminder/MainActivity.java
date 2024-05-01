@@ -1,5 +1,6 @@
 package com.hideaki.kk_reminder;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -52,7 +54,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -70,6 +71,8 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -78,6 +81,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -244,6 +248,32 @@ public class MainActivity extends AppCompatActivity
   private static final Map<String, Integer> DAY_OF_WEEK_MAP_JP = new HashMap<>();
   private static final Map<String, Integer> DAY_OF_WEEK_MAP_EN = new HashMap<>();
   private static final Map<String, Integer> MONTH_MAP = new HashMap<>();
+  private final ActivityResultLauncher<String> postNotificationPermissionLauncher =
+      registerForActivityResult(new RequestPermission(), isPermitted -> {
+          if (!isPermitted) {
+            processPostNotificationPermissionDenial();
+          }
+        }
+      );
+
+  private void processPostNotificationPermissionDenial() {
+
+    View parentView = findViewById(android.R.id.content);
+    requireNonNull(parentView);
+    Snackbar
+        .make(parentView, R.string.permission_post_notification_denied, Snackbar.LENGTH_LONG)
+        .show();
+  }
+
+  private void processExactAlarmPermissionDenial() {
+
+    View parentView = findViewById(android.R.id.content);
+    requireNonNull(parentView);
+    Snackbar
+        .make(parentView, R.string.permission_exact_alarm_denied, Snackbar.LENGTH_LONG)
+        .show();
+  }
+
   static {
     DAY_OF_WEEK_MAP_JP.put("日", 1);
     DAY_OF_WEEK_MAP_JP.put("月", 2);
@@ -380,12 +410,6 @@ public class MainActivity extends AppCompatActivity
     System.out.println("onCreateComplete");
 
     // 広告読み出し機能のセットアップ
-//    RequestConfiguration conf = MobileAds.getRequestConfiguration()
-//        .toBuilder()
-//        .setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
-//        .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_G)
-//        .build();
-//    MobileAds.setRequestConfiguration(conf);
     MobileAds.initialize(this, initializationStatus -> {});
     AdSize adSize = getAdSize(this);
     adView = new AdView(this);
@@ -551,34 +575,67 @@ public class MainActivity extends AppCompatActivity
   protected void onResume() {
 
     super.onResume();
-    System.out.println("onResume");
 
     if(!isRecreated) {
-      // Exact Alarm Permissionがない場合はアプリの使用を許可しない
+      // SDK VER.33以上はアプリの通知送信にPOST_NOTIFICATIONの権限が必要
+      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+          ActivityCompat.checkSelfPermission(
+            this, Manifest.permission.POST_NOTIFICATIONS
+          ) == PackageManager.PERMISSION_DENIED
+      ) {
+        if(shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+          final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+              .setTitle(R.string.permission_post_notification_rationale_title)
+              .setMessage(R.string.permission_post_notification_rationale_message)
+              .setPositiveButton(R.string.permit, (dialog1, which) ->
+                  postNotificationPermissionLauncher.launch(
+                      Manifest.permission.POST_NOTIFICATIONS
+                  )
+              )
+              .setNegativeButton(R.string.deny, (dialog12, which) -> processPostNotificationPermissionDenial())
+              .setNeutralButton(R.string.cancel, (dialog13, which) -> processPostNotificationPermissionDenial())
+              .create();
+
+          dialog.setOnShowListener(dialogInterface -> {
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(MainActivity.this.accentColor);
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(MainActivity.this.accentColor);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(MainActivity.this.accentColor);
+          });
+
+          dialog.show();
+        }
+        else {
+          postNotificationPermissionLauncher.launch(
+              Manifest.permission.POST_NOTIFICATIONS
+          );
+        }
+      }
+
+      // SDK VER.31以上はアプリ通知の正確な時刻での発火にExact Alarm Permissionの権限が必要
+      // Exact Alarm Permissionを求めるダイアログ表示
       AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       requireNonNull(alarmManager);
       if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         if(!alarmManager.canScheduleExactAlarms()) {
-          final AlertDialog getExactAlarmsPermissionDialog = new AlertDialog.Builder(this)
+          final AlertDialog dialog = new AlertDialog.Builder(this)
               .setTitle(R.string.permission_exact_alarm_rationale_title)
               .setMessage(R.string.permission_exact_alarm_rationale_message)
-              .setPositiveButton(R.string.yes, (dialog15, which12) ->
-                  startActivity(new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+              .setPositiveButton(R.string.permit, (dialog15, which12) ->
+                startActivity(new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
               )
-              .setNegativeButton(R.string.no, (dialog1, which1) -> finish())
-              .setOnCancelListener(dialog1 -> finish())
+              .setNegativeButton(R.string.deny, (dialog1, which1) -> processExactAlarmPermissionDenial())
+              .setNeutralButton(R.string.cancel, (dialog13, which) -> processExactAlarmPermissionDenial())
               .create();
 
-          getExactAlarmsPermissionDialog.setOnShowListener(dialogInterface -> {
-            getExactAlarmsPermissionDialog
-                .getButton(AlertDialog.BUTTON_POSITIVE)
-                .setTextColor(accentColor);
-            getExactAlarmsPermissionDialog
-                .getButton(AlertDialog.BUTTON_NEGATIVE)
-                .setTextColor(accentColor);
+          dialog.setOnShowListener(dialogInterface -> {
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(MainActivity.this.accentColor);
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(MainActivity.this.accentColor);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(MainActivity.this.accentColor);
           });
 
-          getExactAlarmsPermissionDialog.show();
+          dialog.show();
         }
       }
 

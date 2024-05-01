@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 
 import java.util.Calendar;
 import java.util.Set;
@@ -113,6 +114,15 @@ public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
 
   public void setAlarm(ItemAdapter item) {
 
+    AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+    requireNonNull(alarmManager);
+    // Exact Alarm Permissionが付与されていない場合はアラームを発火しない
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      if(!alarmManager.canScheduleExactAlarms()) {
+        return;
+      }
+    }
+
     if(item.getDate().getTimeInMillis() > System.currentTimeMillis() &&
       item.getWhichListBelongs() == 0) {
       item.getNotifyInterval().setTime(item.getNotifyInterval().getOrgTime());
@@ -123,9 +133,6 @@ public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
         context, (int)item.getId(), intent,
         PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
       );
-
-      AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-      requireNonNull(alarmManager);
 
       alarmManager.setAlarmClock(
         new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);

@@ -75,6 +75,15 @@ public class AlarmReceiver extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
 
+    AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+    requireNonNull(alarmManager);
+    // Exact Alarm Permissionが付与されていない場合はアラームを発火しない
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      if(!alarmManager.canScheduleExactAlarms()) {
+        return;
+      }
+    }
+
     this.context = context;
     ItemAdapter item = new ItemAdapter(deserialize(intent.getByteArrayExtra(ITEM)));
     requireNonNull(item);
@@ -333,9 +342,6 @@ public class AlarmReceiver extends BroadcastReceiver {
       long resetSchedule = getNow().getTimeInMillis()
         + item.getNotifyInterval().getHour() * HOUR
         + item.getNotifyInterval().getMinute() * MINUTE;
-
-      AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-      requireNonNull(alarmManager);
 
       alarmManager.setAlarmClock(
         new AlarmManager.AlarmClockInfo(resetSchedule, null), recursiveSender);
