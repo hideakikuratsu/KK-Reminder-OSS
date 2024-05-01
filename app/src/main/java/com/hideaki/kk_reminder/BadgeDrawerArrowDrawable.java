@@ -52,7 +52,7 @@ public class BadgeDrawerArrowDrawable extends DrawerArrowDrawable {
     final float y = SIZE_FACTOR * bounds.height();
     canvas.drawCircle(x, y, SIZE_FACTOR * bounds.width(), backgroundPaint);
 
-    if(text == null || text.length() == 0) {
+    if(text == null || text.isEmpty()) {
       return;
     }
 

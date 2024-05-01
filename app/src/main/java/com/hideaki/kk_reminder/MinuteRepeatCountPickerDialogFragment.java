@@ -65,7 +65,7 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
 
     plus.setOnClickListener(v -> {
 
-      if("".equals(count.getText().toString())) {
+      if(count.getText().toString().isEmpty()) {
         count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrgCount()));
       }
       if(Integer.parseInt(count.getText().toString()) < 999) {
@@ -89,7 +89,7 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
 
     minus.setOnClickListener(v -> {
 
-      if("".equals(count.getText().toString())) {
+      if(count.getText().toString().isEmpty()) {
         count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrgCount()));
       }
       if(Integer.parseInt(count.getText().toString()) > 1) {
@@ -101,7 +101,7 @@ public class MinuteRepeatCountPickerDialogFragment extends DialogFragment {
     final AlertDialog dialog = new AlertDialog.Builder(activity)
       .setPositiveButton(R.string.ok, (dialog1, which) -> {
 
-        if("".equals(count.getText().toString())) {
+        if(count.getText().toString().isEmpty()) {
           count.setText(String.valueOf(MainEditFragment.minuteRepeat.getOrgCount()));
         }
         int setCount = Integer.parseInt(count.getText().toString());

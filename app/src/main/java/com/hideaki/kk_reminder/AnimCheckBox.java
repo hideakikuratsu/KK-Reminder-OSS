@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Checkable;
 
+import androidx.annotation.NonNull;
+
 public class AnimCheckBox extends View implements Checkable {
 
   private final double sin27 = Math.sin(Math.toRadians(27));
@@ -191,7 +193,7 @@ public class AnimCheckBox extends View implements Checkable {
   }
 
   @Override
-  protected void onDraw(Canvas canvas) {
+  protected void onDraw(@NonNull Canvas canvas) {
 
     super.onDraw(canvas);
     drawCircle(canvas);

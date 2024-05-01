@@ -616,7 +616,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     String repeatStr = "";
     String extractedStr = null;
     String tmp = item.getDayRepeat().getLabel();
-    if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
+    if(tmp != null && !tmp.isEmpty() && !activity.getString(R.string.none).equals(tmp)) {
       if(!LOCALE.equals(Locale.JAPAN)) {
         repeatStr += "Repeat ";
       }
@@ -645,8 +645,8 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     }
 
     tmp = item.getMinuteRepeat().getLabel();
-    if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
-      if(!LOCALE.equals(Locale.JAPAN) && !"".equals(repeatStr)) {
+    if(tmp != null && !tmp.isEmpty() && !activity.getString(R.string.none).equals(tmp)) {
+      if(!LOCALE.equals(Locale.JAPAN) && !repeatStr.isEmpty()) {
         repeatStr += " and ";
       }
       repeatStr += tmp;
@@ -654,14 +654,14 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
 
     String day = item.getDayRepeat().getLabel();
     String minute = item.getMinuteRepeat().getLabel();
-    if(LOCALE.equals(Locale.JAPAN) && day != null && !"".equals(day) &&
+    if(LOCALE.equals(Locale.JAPAN) && day != null && !day.isEmpty() &&
         !activity.getString(R.string.none).equals(day)
         &&
-        (minute == null || "".equals(minute) || activity.getString(R.string.none).equals(minute))) {
+        (minute == null || minute.isEmpty() || activity.getString(R.string.none).equals(minute))) {
       repeatStr += "繰り返す";
     }
 
-    if("".equals(repeatStr)) {
+    if(repeatStr.isEmpty()) {
       viewHolder.repeat.setText(R.string.non_repeat);
     }
     else {

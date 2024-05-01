@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,7 +17,6 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -201,32 +199,9 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat
         return true;
       }
       case "backup": {
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-          final AlertDialog adaptItemFailedDialog = new AlertDialog.Builder(activity)
-              .setTitle(R.string.backup_functions_denial_title)
-              .setMessage(R.string.backup_functions_denial_message)
-              .setPositiveButton(R.string.ok, (dialog15, which12) -> {
-              })
-              .setOnCancelListener(dialog1 -> {
-              })
-              .create();
-
-          adaptItemFailedDialog.setOnShowListener(dialogInterface -> {
-            adaptItemFailedDialog
-                .getButton(AlertDialog.BUTTON_POSITIVE)
-                .setTextColor(activity.accentColor);
-            adaptItemFailedDialog
-                .getButton(AlertDialog.BUTTON_NEGATIVE)
-                .setTextColor(activity.accentColor);
-          });
-
-          adaptItemFailedDialog.show();
-        }
-        else {
-          BackupAndRestoreFragment backupAndRestoreFragment =
-              BackupAndRestoreFragment.newInstance();
-          transitionFragment(backupAndRestoreFragment);
-        }
+        BackupAndRestoreFragment backupAndRestoreFragment =
+            BackupAndRestoreFragment.newInstance();
+        transitionFragment(backupAndRestoreFragment);
 
         return true;
       }

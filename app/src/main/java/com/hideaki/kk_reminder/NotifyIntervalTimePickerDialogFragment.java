@@ -66,7 +66,7 @@ public class NotifyIntervalTimePickerDialogFragment extends DialogFragment {
 
     plus.setOnClickListener(v -> {
 
-      if("".equals(time.getText().toString())) {
+      if(time.getText().toString().isEmpty()) {
         time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrgTime()));
       }
       if(Integer.parseInt(time.getText().toString()) < 999) {
@@ -90,7 +90,7 @@ public class NotifyIntervalTimePickerDialogFragment extends DialogFragment {
 
     minus.setOnClickListener(v -> {
 
-      if("".equals(time.getText().toString())) {
+      if(time.getText().toString().isEmpty()) {
         time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrgTime()));
       }
       if(Integer.parseInt(time.getText().toString()) > -1) {
@@ -102,7 +102,7 @@ public class NotifyIntervalTimePickerDialogFragment extends DialogFragment {
     final AlertDialog dialog = new AlertDialog.Builder(activity)
       .setPositiveButton(R.string.ok, (dialog1, which) -> {
 
-        if("".equals(time.getText().toString())) {
+        if(time.getText().toString().isEmpty()) {
           time.setText(String.valueOf(MainEditFragment.notifyInterval.getOrgTime()));
         }
         int setTime = Integer.parseInt(time.getText().toString());

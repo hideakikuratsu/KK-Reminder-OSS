@@ -70,7 +70,7 @@ public class NotesDoneListAdapter extends BaseAdapter {
 
       notes.setIsChecked(false);
       NotesTodoListAdapter.notesList.add(notes);
-      Collections.sort(NotesTodoListAdapter.notesList, NOTES_COMPARATOR);
+      NotesTodoListAdapter.notesList.sort(NOTES_COMPARATOR);
       notesList.remove(position);
 
       // todoListにおけるheaderの管理

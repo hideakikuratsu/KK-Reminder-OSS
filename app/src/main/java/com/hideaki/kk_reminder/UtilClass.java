@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -39,7 +38,6 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.DrawableRes;
-import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
@@ -138,7 +136,7 @@ class UtilClass {
 
   static String getRegularizedVibrationStr(String vibrationStr) {
 
-    if(vibrationStr.equals("")) {
+    if(vibrationStr.isEmpty()) {
       return DEFAULT_VIBRATION_PATTERN;
     }
 
@@ -213,7 +211,6 @@ class UtilClass {
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   private static Bitmap getBitmap(VectorDrawable vectorDrawable) {
 
     Bitmap bitmap = Bitmap.createBitmap(
@@ -339,49 +336,44 @@ class UtilClass {
   static void copyDatabase(Context context, boolean isFromDirectBootContext) {
 
     // 引数のcontextは必ず通常の(directBootContextでない)Contextを指定すること
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      // NormalContext上でコピーする場合はアプリに負荷をかけないようにするため非同期の
-      // IntentServiceを利用し、DirectBootContext上でコピーする場合は同期で実行させて
-      // sendBroadcast()を発行し、アプリ起動時のタスクの情報を最も直近に行われた
-      // Transactionに同期させる。(実際には仕様上、アプリのMainActivityがフォアグラウンド
-      // にあるときのみ非同期でコピーを行っている。)
-      if(!isFromDirectBootContext && MainActivity.isScreenOn) {
-        Intent intent = new Intent(context, CopyDatabaseService.class);
-        try {
-          context.startService(intent);
-        }
-        catch(IllegalStateException e) {
-          Log.e("UtilClass#copyDatabase", Log.getStackTraceString(e));
-          copyDatabaseKernel(context, false);
-        }
+    // NormalContext上でコピーする場合はアプリに負荷をかけないようにするため非同期の
+    // IntentServiceを利用し、DirectBootContext上でコピーする場合は同期で実行させて
+    // sendBroadcast()を発行し、アプリ起動時のタスクの情報を最も直近に行われた
+    // Transactionに同期させる。(実際には仕様上、アプリのMainActivityがフォアグラウンド
+    // にあるときのみ非同期でコピーを行っている。)
+    if(!isFromDirectBootContext && MainActivity.isScreenOn) {
+      Intent intent = new Intent(context, CopyDatabaseService.class);
+      try {
+        context.startService(intent);
       }
-      else {
-        copyDatabaseKernel(context, isFromDirectBootContext);
+      catch(IllegalStateException e) {
+        Log.e("UtilClass#copyDatabase", Log.getStackTraceString(e));
+        copyDatabaseKernel(context, false);
       }
+    }
+    else {
+      copyDatabaseKernel(context, isFromDirectBootContext);
     }
   }
 
   // 指定されたContext上でSharedPreferencesの複製を作り、それを他方のContextへ移動する
   static void copySharedPreferences(Context context, boolean isFromDirectBootContext) {
 
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      if(!isFromDirectBootContext && MainActivity.isScreenOn) {
-        Intent intent = new Intent(context, CopySharedPreferencesService.class);
-        try {
-          context.startService(intent);
-        }
-        catch(IllegalStateException e) {
-          Log.e("UtilClass#copySharedPreferences", Log.getStackTraceString(e));
-          copySharedPreferencesKernel(context, false);
-        }
+    if(!isFromDirectBootContext && MainActivity.isScreenOn) {
+      Intent intent = new Intent(context, CopySharedPreferencesService.class);
+      try {
+        context.startService(intent);
       }
-      else {
-        copySharedPreferencesKernel(context, isFromDirectBootContext);
+      catch(IllegalStateException e) {
+        Log.e("UtilClass#copySharedPreferences", Log.getStackTraceString(e));
+        copySharedPreferencesKernel(context, false);
       }
+    }
+    else {
+      copySharedPreferencesKernel(context, isFromDirectBootContext);
     }
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.N)
   static void copyDatabaseKernel(Context context, boolean isFromDirectBootContext) {
 
     // データベースの複製を作る
@@ -442,7 +434,6 @@ class UtilClass {
     }
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.N)
   static void copySharedPreferencesKernel(Context context, boolean isFromDirectBootContext) {
 
     // SharedPreferencesの複製を作る

@@ -247,7 +247,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                   isClosed = false;
                 }
                 itemList.add(item);
-                Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
+                itemList.sort(NON_SCHEDULED_ITEM_COMPARATOR);
                 notifyDataSetChanged();
 
                 activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
@@ -362,7 +362,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         int j = 1;
         int size = ManageListAdapter.nonScheduledLists.size();
         String[] items = new String[size];
-        items[0] = activity.menu.findItem(R.id.scheduled_list).getTitle().toString();
+        items[0] = requireNonNull(activity.menu.findItem(R.id.scheduled_list).getTitle()).toString();
         for(int i = 0; i < size; i++) {
           if(activity.whichMenuOpen - 1 != i) {
             items[i + j] = ManageListAdapter.nonScheduledLists.get(i).getTitle();
@@ -410,7 +410,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                     itemList.add(item);
                   }
                 }
-                Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
+                itemList.sort(NON_SCHEDULED_ITEM_COMPARATOR);
 
                 for(ItemAdapter item : itemListToMove) {
 
@@ -757,7 +757,7 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
         viewHolder.tagPallet.setColorFilter(ContextCompat.getColor(activity, R.color.iconGray));
       }
     }
-    if(item.getNotesList().size() == 0) {
+    if(item.getNotesList().isEmpty()) {
       if(!activity.isDarkMode) {
         viewHolder.notes.setTextColor(defaultColorStateList);
       }

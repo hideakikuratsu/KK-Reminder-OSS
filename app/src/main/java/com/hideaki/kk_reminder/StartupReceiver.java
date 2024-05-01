@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import androidx.annotation.RequiresApi;
-
 import static com.hideaki.kk_reminder.UtilClass.ACTION_IN_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.copyDatabase;
@@ -30,30 +28,22 @@ public class StartupReceiver extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
 
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      if(Intent.ACTION_LOCKED_BOOT_COMPLETED.equals(intent.getAction())) {
+    if(Intent.ACTION_LOCKED_BOOT_COMPLETED.equals(intent.getAction())) {
 
-        setIsDirectBootContext(context, true);
+      setIsDirectBootContext(context, true);
 
-        Context directBootContext = context.createDeviceProtectedStorageContext();
-        accessor = new DBAccessor(directBootContext, true);
-        resetAlarm(context);
-      }
-      else if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-
-        setIsDirectBootContext(context, false);
-
-        // DirectBoot終了時にDirectBootContextでの変更点をNormalContextに反映する
-        copyDatabase(context, true);
-        copySharedPreferences(context, true);
-        context.sendBroadcast(new Intent(ACTION_IN_NOTIFICATION));
-      }
+      Context directBootContext = context.createDeviceProtectedStorageContext();
+      accessor = new DBAccessor(directBootContext, true);
+      resetAlarm(context);
     }
-    else {
-      if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-        accessor = new DBAccessor(context, false);
-        resetAlarm(context);
-      }
+    else if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+
+      setIsDirectBootContext(context, false);
+
+      // DirectBoot終了時にDirectBootContextでの変更点をNormalContextに反映する
+      copyDatabase(context, true);
+      copySharedPreferences(context, true);
+      context.sendBroadcast(new Intent(ACTION_IN_NOTIFICATION));
     }
   }
 
@@ -99,14 +89,11 @@ public class StartupReceiver extends BroadcastReceiver {
 
   private static void setIsDirectBootContext(Context context, boolean isDirectBootContext) {
 
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      File file = getSyncFile(context, IN_DIRECT_BOOT_CONTEXT_MODE);
-      writeOrDeleteFile(file, isDirectBootContext);
-    }
+    File file = getSyncFile(context, IN_DIRECT_BOOT_CONTEXT_MODE);
+    writeOrDeleteFile(file, isDirectBootContext);
   }
 
   @SuppressWarnings("SameParameterValue")
-  @RequiresApi(api = Build.VERSION_CODES.N)
   private static File getSyncFile(Context context, String fileName) {
 
     Context directBootContext = context.createDeviceProtectedStorageContext();
@@ -136,23 +123,13 @@ public class StartupReceiver extends BroadcastReceiver {
 
   static boolean getIsDirectBootContext(Context context) {
 
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      return getSyncFile(context, IN_DIRECT_BOOT_CONTEXT_MODE).exists();
-    }
-    else {
-      return false;
-    }
+    return getSyncFile(context, IN_DIRECT_BOOT_CONTEXT_MODE).exists();
   }
 
   static Context getDynamicContext(Context normalContext) {
 
     // 引数のnormalContextはDirectBootContextではなく必ず通常のContextを渡すこと
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      return getIsDirectBootContext(normalContext) ?
+    return getIsDirectBootContext(normalContext) ?
         normalContext.createDeviceProtectedStorageContext() : normalContext;
-    }
-    else {
-      return normalContext;
-    }
-  }
+}
 }

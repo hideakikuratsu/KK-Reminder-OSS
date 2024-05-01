@@ -32,7 +32,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -170,36 +169,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     private void setTimeStep(boolean isMinus, int which) {
 
-      int hour;
-      int minute;
-      switch(which) {
-        case 1: {
-          hour = isMinus ? activity.minusTime1Hour : activity.plusTime1Hour;
-          minute = isMinus ? activity.minusTime1Minute : activity.plusTime1Minute;
-          break;
-        }
-        case 2: {
-          hour = isMinus ? activity.minusTime2Hour : activity.plusTime2Hour;
-          minute = isMinus ? activity.minusTime2Minute : activity.plusTime2Minute;
-          break;
-        }
-        case 3: {
-          hour = isMinus ? activity.minusTime3Hour : activity.plusTime3Hour;
-          minute = isMinus ? activity.minusTime3Minute : activity.plusTime3Minute;
-          break;
-        }
-        default: {
-          throw new IllegalStateException("Such a control num not exists! : " + which);
-        }
-      }
-
-      long timeStepInMillis;
-      if(hour == 0 && minute == 0) {
-        timeStepInMillis = 24 * HOUR;
-      }
-      else {
-        timeStepInMillis = hour * HOUR + minute * MINUTE;
-      }
+      long timeStepInMillis = getTimeStepInMillis(isMinus, which);
 
       if(isMinus) {
         if(item.getDate().getTimeInMillis() > getNow().getTimeInMillis() + timeStepInMillis) {
@@ -210,7 +180,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
           if(item.getAlteredTime() == 0) {
             item.setOrgDate((Calendar)item.getDate().clone());
           }
-          item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() + -timeStepInMillis);
+          item.getDate().setTimeInMillis(item.getDate().getTimeInMillis() - timeStepInMillis);
 
           item.addAlteredTime(-timeStepInMillis);
           item.setAlarmStopped(false);
@@ -364,7 +334,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
             item.setDate((Calendar)item.getOrgDate().clone());
             item.setAlteredTime(0);
-            Collections.sort(children.get(groupPosition), SCHEDULED_ITEM_COMPARATOR);
+            children.get(groupPosition).sort(SCHEDULED_ITEM_COMPARATOR);
 
             activity.updateListTask(
                 null, -1, true, false
@@ -1339,7 +1309,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
             }
           }
           item.setDate((Calendar)tmp.clone());
-          Collections.sort(children.get(groupPosition), SCHEDULED_ITEM_COMPARATOR);
+          children.get(groupPosition).sort(SCHEDULED_ITEM_COMPARATOR);
 
           activity.deleteAlarm(item);
           activity.setAlarm(item);
@@ -1413,7 +1383,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
 
       MenuItem moveTaskItem = menu.findItem(R.id.move_task_between_list);
-      moveTaskItem.setVisible(ManageListAdapter.nonScheduledLists.size() > 0);
+      moveTaskItem.setVisible(!ManageListAdapter.nonScheduledLists.isEmpty());
       return true;
     }
 
@@ -1504,7 +1474,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
                   MyListAdapter.itemList.add(item);
                 }
               }
-              Collections.sort(MyListAdapter.itemList, NON_SCHEDULED_ITEM_COMPARATOR);
+              MyListAdapter.itemList.sort(NON_SCHEDULED_ITEM_COMPARATOR);
 
               for(ItemAdapter item : itemListToMove) {
 
@@ -1673,6 +1643,40 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     }
   }
 
+  private long getTimeStepInMillis(boolean isMinus, int which) {
+    int hour;
+    int minute;
+    switch(which) {
+      case 1: {
+        hour = isMinus ? activity.minusTime1Hour : activity.plusTime1Hour;
+        minute = isMinus ? activity.minusTime1Minute : activity.plusTime1Minute;
+        break;
+      }
+      case 2: {
+        hour = isMinus ? activity.minusTime2Hour : activity.plusTime2Hour;
+        minute = isMinus ? activity.minusTime2Minute : activity.plusTime2Minute;
+        break;
+      }
+      case 3: {
+        hour = isMinus ? activity.minusTime3Hour : activity.plusTime3Hour;
+        minute = isMinus ? activity.minusTime3Minute : activity.plusTime3Minute;
+        break;
+      }
+      default: {
+        throw new IllegalStateException("Such a control num not exists! : " + which);
+      }
+    }
+
+    long timeStepInMillis;
+    if(hour == 0 && minute == 0) {
+      timeStepInMillis = 24 * HOUR;
+    }
+    else {
+      timeStepInMillis = hour * HOUR + minute * MINUTE;
+    }
+    return timeStepInMillis;
+  }
+
   @Override
   public Filter getFilter() {
 
@@ -1763,7 +1767,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     Arrays.fill(displayGroups, false);
     int size = groups.size();
     for(int i = 0; i < size; i++) {
-      if(children.get(i).size() != 0) {
+      if(!children.get(i).isEmpty()) {
         displayGroups[i] = true;
         count++;
       }
@@ -2110,7 +2114,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
         viewHolder.tagPallet.setColorFilter(ContextCompat.getColor(activity, R.color.iconGray));
       }
     }
-    if(item.getNotesList().size() == 0) {
+    if(item.getNotesList().isEmpty()) {
       if(!activity.isDarkMode) {
         viewHolder.notes.setTextColor(defaultColorStateList);
       }
@@ -2191,7 +2195,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
       runnable = () -> {
 
         for(List<ItemAdapter> itemList : children) {
-          Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+          itemList.sort(SCHEDULED_ITEM_COMPARATOR);
         }
         activity.updateListTask(
             null, -1, true, false
@@ -2429,7 +2433,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     String repeatStr = "";
     String extractedStr = null;
     String tmp = item.getDayRepeat().getLabel();
-    if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
+    if(tmp != null && !tmp.isEmpty() && !activity.getString(R.string.none).equals(tmp)) {
       if(!LOCALE.equals(Locale.JAPAN)) {
         repeatStr += "Repeat ";
       }
@@ -2458,8 +2462,8 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
     }
 
     tmp = item.getMinuteRepeat().getLabel();
-    if(tmp != null && !"".equals(tmp) && !activity.getString(R.string.none).equals(tmp)) {
-      if(!LOCALE.equals(Locale.JAPAN) && !"".equals(repeatStr)) {
+    if(tmp != null && !tmp.isEmpty() && !activity.getString(R.string.none).equals(tmp)) {
+      if(!LOCALE.equals(Locale.JAPAN) && !repeatStr.isEmpty()) {
         repeatStr += " and ";
       }
       repeatStr += tmp;
@@ -2467,14 +2471,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter implement
 
     String day = item.getDayRepeat().getLabel();
     String minute = item.getMinuteRepeat().getLabel();
-    if(LOCALE.equals(Locale.JAPAN) && day != null && !"".equals(day) &&
+    if(LOCALE.equals(Locale.JAPAN) && day != null && !day.isEmpty() &&
       !activity.getString(R.string.none).equals(day)
       &&
-      (minute == null || "".equals(minute) || activity.getString(R.string.none).equals(minute))) {
+      (minute == null || minute.isEmpty() || activity.getString(R.string.none).equals(minute))) {
       repeatStr += "繰り返す";
     }
 
-    if("".equals(repeatStr)) {
+    if(repeatStr.isEmpty()) {
       viewHolder.repeat.setText(R.string.non_repeat);
     }
     else {

@@ -492,7 +492,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
       actionBar.setTitle(R.string.edit);
 
       // タイトルが未入力の場合、ヒントを表示
-      if(detailStr == null || detailStr.equals("")) {
+      if(detailStr == null || detailStr.isEmpty()) {
         detail.setSummary(R.string.detail_hint);
       }
 
@@ -514,7 +514,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
       // メモのラベルの初期化
       if(order == 0 || order == 1 || isMovingTask) {
-        if(item.getNotesList().size() == 0) {
+        if(item.getNotesList().isEmpty()) {
           notes.setSummary(R.string.none);
         }
         else {
@@ -966,7 +966,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
       detailStr = (String)newValue;
 
       // タイトルが未入力の場合、ヒントを表示
-      if(detailStr == null || detailStr.equals("")) {
+      if(detailStr == null || detailStr.isEmpty()) {
         detail.setSummary(R.string.detail_hint);
       }
       else {
@@ -999,7 +999,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
     if(order == 0 || order == 1 || order == 4 || isMovingTask) {
 
-      if(detailStr == null || detailStr.equals("")) {
+      if(detailStr == null || detailStr.isEmpty()) {
         detailStr = getString(R.string.default_detail);
       }
       item.setDetail(detailStr);
@@ -1119,7 +1119,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
     }
     else if(order == 3) {
 
-      if(detailStr == null || detailStr.equals("")) {
+      if(detailStr == null || detailStr.isEmpty()) {
         detailStr = getString(R.string.default_list);
       }
       list.setTitle(detailStr);
