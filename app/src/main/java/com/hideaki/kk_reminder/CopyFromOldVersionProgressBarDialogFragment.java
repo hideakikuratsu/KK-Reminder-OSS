@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -79,63 +78,60 @@ public class CopyFromOldVersionProgressBarDialogFragment extends DialogFragment 
       .create();
 
     final Handler handler = new Handler(Looper.getMainLooper());
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
+    dialog.setOnShowListener(dialogInterface -> {
 
-        Thread thread = new Thread() {
+      Thread thread = new Thread() {
 
-          @Override
-          public void run() {
+        @Override
+        public void run() {
 
-            // generalSettingsへの代入はMainActivity#onCreate()内で既に行っているので必要ない
-            // todoItemListも同様
-            List<ItemAdapter> todoItemList = activity.todoItemList;
-            List<ItemAdapter> doneItemList = activity.queryAllDB(DONE_TABLE);
+          // generalSettingsへの代入はMainActivity#onCreate()内で既に行っているので必要ない
+          // todoItemListも同様
+          List<ItemAdapter> todoItemList = activity.todoItemList;
+          List<ItemAdapter> doneItemList = activity.queryAllDB(DONE_TABLE);
 
-            int todoItemListSize = todoItemList.size();
-            int size = todoItemListSize + doneItemList.size() + 1;
-            for(int i = 0; i <= size; i++) {
-              final int progress = i * 100 / size;
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
+          int todoItemListSize = todoItemList.size();
+          int size = todoItemListSize + doneItemList.size() + 1;
+          for(int i = 0; i <= size; i++) {
+            final int progress = i * 100 / size;
+            handler.post(() -> {
 
-                  progressBar.setProgress(progress);
-                  String progressDescriptionResult = LOCALE.equals(Locale.JAPAN) ?
-                    "データベース更新中: " : "Updating Database: ";
-                  progressDescriptionResult += progress + "%";
-                  progressDescription.setText(progressDescriptionResult);
-                }
-              });
+              progressBar.setProgress(progress);
+              String progressDescriptionResult = LOCALE.equals(Locale.JAPAN) ?
+                "データベース更新中: " : "Updating Database: ";
+              progressDescriptionResult += progress + "%";
+              progressDescription.setText(progressDescriptionResult);
+            });
 
-              if(i == size) {
-                break;
-              }
-
-              if(i == 0) {
-                activity.updateSettingsDB();
-              }
-              else if(i < todoItemListSize + 1) {
-                activity.updateDB(todoItemList.get(i - 1), TODO_TABLE);
-              }
-              else {
-                activity.updateDB(doneItemList.get(i - todoItemListSize - 1), DONE_TABLE);
-              }
+            if(i == size) {
+              break;
             }
-            activity.setBooleanGeneralInSharedPreferences(IS_COPIED_FROM_OLD_VERSION, false);
-            activity.generalSettings.setIsCopiedFromOldVersion(false);
-            try {
-              Thread.sleep(3500);
+
+            if(i == 0) {
+              activity.updateSettingsDB();
             }
-            catch(InterruptedException e) {
-              Log.e("CopyProgressBar", Log.getStackTraceString(e));
+            else if(i < todoItemListSize + 1) {
+              activity.updateDB(todoItemList.get(i - 1), TODO_TABLE);
             }
-            dialog.dismiss();
+            else {
+              activity.updateDB(doneItemList.get(i - todoItemListSize - 1), DONE_TABLE);
+            }
           }
-        };
-        thread.start();
-      }
+          activity.setBooleanGeneralInSharedPreferences(IS_COPIED_FROM_OLD_VERSION, false);
+          activity.generalSettings.setIsCopiedFromOldVersion(false);
+          try {
+            Thread.sleep(3500);
+          }
+          catch(InterruptedException e) {
+            Log.e(
+                "CopyFromOldVersionProgressBarDialogFragment#onCreateDialog",
+                Log.getStackTraceString(e)
+            );
+          }
+          dialog.dismiss();
+        }
+      };
+      thread.start();
     });
 
     return dialog;

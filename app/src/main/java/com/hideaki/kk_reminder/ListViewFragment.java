@@ -11,9 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import android.widget.RelativeLayout;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,15 +50,9 @@ public class ListViewFragment extends Fragment {
     activity = (MainActivity)context;
     if(activity.drawerLayout != null) {
       activity.drawerLayout.closeDrawer(GravityCompat.START);
-      if(activity.detail != null) {
-        activity.showMainEditFragment(activity.detail);
-        activity.detail = null;
-      }
-
     }
     else {
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager
         .beginTransaction()
         .remove(this)
@@ -103,28 +95,25 @@ public class ListViewFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 
-          if(MyListAdapter.isSorting) {
-            new AlertDialog.Builder(activity)
-              .setTitle(R.string.is_sorting_title)
-              .setMessage(R.string.is_sorting_message)
-              .show();
+        if(MyListAdapter.isSorting) {
+          new AlertDialog.Builder(activity)
+            .setTitle(R.string.is_sorting_title)
+            .setMessage(R.string.is_sorting_message)
+            .show();
 
-            return true;
-          }
-
-          if(activity.listAdapter.actionMode != null) {
-            activity.listAdapter.actionMode.finish();
-          }
+          return true;
         }
 
-        return false;
+        if(activity.listAdapter.actionMode != null) {
+          activity.listAdapter.actionMode.finish();
+        }
       }
+
+      return false;
     });
 
     MyListAdapter.checkedItemNum = 0;
@@ -151,20 +140,17 @@ public class ListViewFragment extends Fragment {
     ((ViewGroup)activity.listView.getParent()).addView(linearLayout, 0, layoutParams);
     activity.listView.setEmptyView(linearLayout);
     activity.listView.setDragListener(activity.listAdapter.myDragListener);
-    activity.listView.post(new Runnable() {
-      @Override
-      public void run() {
+    activity.listView.post(() -> {
 
-        Integer listPosition = ListViewFragment.LIST_POSITION.get(id);
-        Integer listOffset = ListViewFragment.LIST_OFFSET.get(id);
-        if(listPosition == null) {
-          listPosition = 0;
-        }
-        if(listOffset == null) {
-          listOffset = 0;
-        }
-        activity.listView.setSelectionFromTop(listPosition, listOffset);
+      Integer listPosition = ListViewFragment.LIST_POSITION.get(id);
+      Integer listOffset = ListViewFragment.LIST_OFFSET.get(id);
+      if(listPosition == null) {
+        listPosition = 0;
       }
+      if(listOffset == null) {
+        listOffset = 0;
+      }
+      activity.listView.setSelectionFromTop(listPosition, listOffset);
     });
     activity.listView.setAdapter(activity.listAdapter);
     activity.listView.setTextFilterEnabled(true);
@@ -199,13 +185,12 @@ public class ListViewFragment extends Fragment {
       }
     });
 
-    AdView adView = view.findViewById(R.id.adView);
-    if(activity.isPremium) {
-      adView.setVisibility(View.GONE);
-    }
-    else {
-      AdRequest adRequest = new AdRequest.Builder().build();
-      adView.loadAd(adRequest);
+    if(!activity.isPremium) {
+      LinearLayout adContainer = view.findViewById(R.id.ad_mob_view);
+      if(activity.adView.getParent() != null) {
+        ((ViewGroup)activity.adView.getParent()).removeView(activity.adView);
+      }
+      adContainer.addView(activity.adView);
     }
 
     return view;

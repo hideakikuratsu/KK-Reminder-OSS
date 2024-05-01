@@ -15,7 +15,6 @@ import androidx.fragment.app.DialogFragment;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_HOUR;
 import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
-import static java.util.Objects.requireNonNull;
 
 public class DefaultManuallySnoozePickerDialogFragment extends DialogFragment
   implements TimePickerDialog.OnTimeSetListener {
@@ -34,8 +33,7 @@ public class DefaultManuallySnoozePickerDialogFragment extends DialogFragment
   @Override
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-    activity = (MainActivity)getActivity();
-    requireNonNull(activity);
+    activity = (MainActivity)requireActivity();
 
     int hour = activity.snoozeDefaultHour;
     int minute = activity.snoozeDefaultMinute;

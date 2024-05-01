@@ -57,8 +57,9 @@ public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
       getIsDirectBootContext(context) ? STRING_GENERAL_COPY : STRING_GENERAL,
       MODE_PRIVATE
     );
-    Set<String> idTable =
-      stringPreferences.getStringSet(NOTIFICATION_ID_TABLE, new TreeSet<String>());
+    Set<String> idTable = new TreeSet<>(
+        stringPreferences.getStringSet(NOTIFICATION_ID_TABLE, new TreeSet<>())
+    );
     requireNonNull(idTable);
     int parentId = intent.getIntExtra(PARENT_NOTIFICATION_ID, 0);
     int childId = intent.getIntExtra(CHILD_NOTIFICATION_ID, 0);
@@ -119,7 +120,9 @@ public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
       byte[] obArray = serialize(item.getItem());
       intent.putExtra(ITEM, obArray);
       PendingIntent sender = PendingIntent.getBroadcast(
-        context, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        context, (int)item.getId(), intent,
+        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+      );
 
       AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
       requireNonNull(alarmManager);
@@ -134,7 +137,9 @@ public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
     if(isAlarmSet(item)) {
       Intent intent = new Intent(context, AlarmReceiver.class);
       PendingIntent sender = PendingIntent.getBroadcast(
-        context, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        context, (int)item.getId(), intent,
+        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+      );
 
       AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
       requireNonNull(alarmManager);
@@ -148,7 +153,9 @@ public class DefaultManuallySnoozeReceiver extends BroadcastReceiver {
 
     Intent intent = new Intent(context, AlarmReceiver.class);
     PendingIntent sender = PendingIntent.getBroadcast(
-      context, (int)item.getId(), intent, PendingIntent.FLAG_NO_CREATE);
+      context, (int)item.getId(), intent,
+      PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_NO_CREATE
+    );
 
     return sender != null;
   }

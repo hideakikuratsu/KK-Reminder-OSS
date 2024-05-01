@@ -1,8 +1,10 @@
 package com.hideaki.kk_reminder;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -13,7 +15,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
@@ -32,11 +34,15 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
@@ -46,6 +52,7 @@ import androidx.transition.Transition;
 
 import static android.app.Activity.RESULT_OK;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.hideaki.kk_reminder.UtilClass.DEFAULT_URI_SOUND;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LIST;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
@@ -55,7 +62,8 @@ import static com.hideaki.kk_reminder.UtilClass.generateUniqueId;
 import static java.util.Objects.requireNonNull;
 
 public class MainEditFragment extends BasePreferenceFragmentCompat
-  implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+  implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener,
+    ActivityCompat.OnRequestPermissionsResultCallback {
 
   static final String TAG = MainEditFragment.class.getSimpleName();
 
@@ -89,6 +97,75 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
   static boolean isMainPopping;
   private boolean isNextEditExists;
   private boolean isDestroyed;
+  private View view;
+  private Uri uri;
+  private final ActivityResultLauncher<String> readExternalPermissionLauncher =
+      registerForActivityResult(new RequestPermission(), isPermitted -> {
+        if(isPermitted) {
+          item.setSoundUri(uri.toString());
+          Ringtone ringtone = RingtoneManager.getRingtone(activity, uri);
+          pickAlarm.setSummary(ringtone.getTitle(activity));
+        }
+        else {
+          processAfterExternalAlarmPermissionDenial();
+        }
+      }
+  );
+  private final ActivityResultLauncher<Intent> ringtonePickLauncher =
+      registerForActivityResult(new StartActivityForResult(), activityResult -> {
+
+        int resultCode = activityResult.getResultCode();
+        if(resultCode == RESULT_OK) {
+          Intent data = requireNonNull(activityResult.getData());
+          uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+          if(uri == null) {
+            item.setSoundUri(null);
+            pickAlarm.setSummary(getString(R.string.none));
+          }
+          else {
+            String uriString = uri.toString();
+            if(
+                uriString.contains("external") &&
+                    ActivityCompat.checkSelfPermission(
+                        activity, Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_DENIED
+            ) {
+              if(shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                final AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setTitle(R.string.permission_external_alarm_rationale_title)
+                    .setMessage(R.string.permission_external_alarm_rationale_message)
+                    .setPositiveButton(R.string.permit, (dialog1, which) ->
+                        readExternalPermissionLauncher.launch(
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        )
+                    )
+                    .setNegativeButton(R.string.deny, (dialog12, which) ->
+                        processAfterExternalAlarmPermissionDenial()
+                    )
+                    .setNeutralButton(R.string.cancel, (dialog13, which) -> {})
+                    .create();
+
+                dialog.setOnShowListener(dialogInterface -> {
+
+                  dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+                  dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.accentColor);
+                  dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+                });
+
+                dialog.show();
+              }
+              else {
+                readExternalPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+              }
+            }
+            else {
+              item.setSoundUri(uriString);
+              Ringtone ringtone = RingtoneManager.getRingtone(activity, uri);
+              pickAlarm.setSummary(ringtone.getTitle(activity));
+            }
+          }
+        }
+      });
 
   public static MainEditFragment newInstance() {
 
@@ -105,6 +182,25 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
     finalCal.add(Calendar.MINUTE, 1);
     finalCal.set(Calendar.SECOND, 0);
     finalCal.set(Calendar.MILLISECOND, 0);
+    Bundle args = new Bundle();
+    args.putSerializable(ITEM, item.getItem());
+    fragment.setArguments(args);
+
+    return fragment;
+  }
+
+  public static MainEditFragment newInstance(Calendar cal) {
+
+    MainEditFragment fragment = new MainEditFragment();
+
+    ItemAdapter item = new ItemAdapter();
+    isEdit = false;
+    detailStr = "";
+    notifyInterval = new NotifyIntervalAdapter();
+    dayRepeat = new DayRepeatAdapter();
+    tmpTimeLimit = null;
+    minuteRepeat = new MinuteRepeatAdapter();
+    finalCal = (Calendar)cal.clone();
     Bundle args = new Bundle();
     args.putSerializable(ITEM, item.getItem());
     fragment.setArguments(args);
@@ -320,8 +416,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
     }
     else {
       isDestroyed = true;
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager
         .beginTransaction()
         .remove(this)
@@ -339,6 +434,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
     setDividerHeight(0);
   }
 
+  @SuppressLint("UseRequireInsteadOfGet")
   @Override
   public View onCreateView(
     LayoutInflater inflater,
@@ -348,11 +444,10 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
     if(!isDestroyed) {
       if(MainEditFragment.isMainPopping) {
-        FragmentManager manager = getFragmentManager();
-        requireNonNull(manager);
+        FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
         manager.popBackStack();
       }
-      View view = super.onCreateView(inflater, container, savedInstanceState);
+      view = super.onCreateView(inflater, container, savedInstanceState);
       requireNonNull(view);
 
       if(activity.isDarkMode) {
@@ -363,27 +458,24 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
       }
       view.setFocusableInTouchMode(true);
       view.requestFocus();
-      view.setOnKeyListener(new View.OnKeyListener() {
-        @Override
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
+      view.setOnKeyListener((v, keyCode, event) -> {
 
-          if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 
-            isNextEditExists = false;
-            if((isMovingTask || isCloningTask) && checkedItemNum > 0) {
-              activity.showMainEditFragment(nextItem.clone());
-              isNextEditExists = true;
-            }
-            else if(isCloningTask) {
-              isCloningTask = false;
-            }
-
-            if(!isNextEditExists) {
-              isMainPopping = true;
-            }
+          isNextEditExists = false;
+          if((isMovingTask || isCloningTask) && checkedItemNum > 0) {
+            activity.showMainEditFragment(nextItem.clone());
+            isNextEditExists = true;
           }
-          return false;
+          else if(isCloningTask) {
+            isCloningTask = false;
+          }
+
+          if(!isNextEditExists) {
+            isMainPopping = true;
+          }
         }
+        return false;
       });
 
       Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
@@ -407,9 +499,14 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
           datePicker.setTitle(DateFormat.format("yyyy年M月d日(E)", finalCal));
         }
         else {
-          datePicker.setTitle(DateFormat.format("yyyy/M/d (E)", finalCal));
+          datePicker.setTitle(DateFormat.format("E, MMM d, yyyy", finalCal));
         }
-        timePicker.setTitle(DateFormat.format("kk:mm", finalCal));
+        if(LOCALE.equals(Locale.JAPAN)) {
+          timePicker.setTitle(DateFormat.format("kk:mm", finalCal));
+        }
+        else {
+          timePicker.setTitle(DateFormat.format("hh:mm a", finalCal));
+        }
       }
 
       // メモのラベルの初期化
@@ -524,207 +621,179 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    switch(item.getItemId()) {
-      case R.id.done: {
-        if((order == 0 || isMovingTask) && isEdit
+    int itemId = item.getItemId();
+    if(itemId == R.id.done) {
+      if((order == 0 || isMovingTask) && isEdit
           && MainEditFragment.item.getDate().getTimeInMillis() != finalCal.getTimeInMillis()
           && (
           MainEditFragment.dayRepeat.getWhichSet() != 0 ||
-            MainEditFragment.minuteRepeat.getWhichSet() != 0
-        )) {
+              MainEditFragment.minuteRepeat.getWhichSet() != 0
+      )) {
 
-          final AlertDialog dialog = new AlertDialog.Builder(activity)
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setMessage(R.string.repeat_conflict_dialog_message)
-            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setPositiveButton(R.string.yes, (dialog1, which) -> {
 
-                if(MainEditFragment.item.getAlteredTime() == 0) {
-                  MainEditFragment.item.setOrgDate((Calendar)MainEditFragment.item
+              if(MainEditFragment.item.getAlteredTime() == 0) {
+                MainEditFragment.item.setOrgDate((Calendar)MainEditFragment.item
                     .getDate()
                     .clone());
-                }
-                long alteredTime = finalCal.getTimeInMillis() -
+              }
+              long alteredTime = finalCal.getTimeInMillis() -
                   MainEditFragment.item.getDate().getTimeInMillis();
-                MainEditFragment.item.addAlteredTime(alteredTime);
+              MainEditFragment.item.addAlteredTime(alteredTime);
 
-                registerItem();
-              }
+              registerItem();
             })
-            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setNegativeButton(R.string.no, (dialog12, which) -> {
 
-                MainEditFragment.item.setOrgDate((Calendar)finalCal.clone());
-                MainEditFragment.item.setAlteredTime(0);
+              MainEditFragment.item.setOrgDate((Calendar)finalCal.clone());
+              MainEditFragment.item.setAlteredTime(0);
 
-                registerItem();
-              }
+              registerItem();
             })
-            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setNeutralButton(R.string.cancel, (dialog13, which) -> {
 
-              }
             })
             .create();
 
-          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
+        dialog.setOnShowListener(dialogInterface -> {
 
-              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-              dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.accentColor);
-              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-            }
-          });
-
-          dialog.show();
-        }
-        else {
-          registerItem();
-        }
-        return true;
-      }
-      case R.id.delete: {
-
-        final AlertDialog dialog = new AlertDialog.Builder(activity)
-          .setTitle(R.string.delete_dialog_title)
-          .setMessage(R.string.delete_dialog_message)
-          .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-              if(order == 0) {
-
-                activity.deleteDB(MainEditFragment.item, MyDatabaseHelper.TODO_TABLE);
-                MyExpandableListAdapter.children =
-                  activity.getChildren(MyDatabaseHelper.TODO_TABLE);
-                activity.deleteAlarm(MainEditFragment.item);
-                activity.expandableListAdapter.notifyDataSetChanged();
-              }
-              else if(order == 1) {
-                activity.deleteDB(MainEditFragment.item, MyDatabaseHelper.TODO_TABLE);
-                MyListAdapter.itemList =
-                  activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
-                activity.listAdapter.notifyDataSetChanged();
-              }
-              else if(order == 3) {
-                // GeneralSettingsとManageListAdapterへの反映
-                activity.generalSettings.removeNonScheduledList(list.getOrder());
-                List<NonScheduledListAdapter> nonScheduledListList =
-                  activity.generalSettings.getNonScheduledLists();
-                int size = nonScheduledListList.size();
-                for(int i = 0; i < size; i++) {
-                  nonScheduledListList.get(i).setOrder(i);
-                }
-                ManageListAdapter.nonScheduledLists =
-                  new ArrayList<>(nonScheduledListList);
-                activity.manageListAdapter.notifyDataSetChanged();
-
-                long id = list.getId();
-                for(ItemAdapter itemInList : activity.queryAllDB(MyDatabaseHelper.TODO_TABLE)) {
-                  if(itemInList.getWhichListBelongs() == id) {
-                    activity.deleteDB(itemInList, MyDatabaseHelper.TODO_TABLE);
-                  }
-                }
-
-                // 一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
-
-                // デフォルトアイテムのリストア
-                activity.menu.removeGroup(R.id.reminder_list);
-                activity.menu
-                  .add(R.id.reminder_list, R.id.scheduled_list, 0, R.string.nav_scheduled_item)
-                  .setIcon(R.drawable.ic_time)
-                  .setCheckable(true);
-                activity.menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
-                  .setIcon(R.drawable.ic_add_24dp)
-                  .setCheckable(false);
-
-                // 新しく追加したリストのリストア
-                for(NonScheduledListAdapter list : nonScheduledListList) {
-                  Drawable drawable =
-                    ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
-                  requireNonNull(drawable);
-                  drawable = drawable.mutate();
-                  if(list.getColor() != 0) {
-                    drawable.setColorFilter(new PorterDuffColorFilter(
-                      list.getColor(),
-                      PorterDuff.Mode.SRC_IN
-                    ));
-                  }
-                  else {
-                    drawable.setColorFilter(new PorterDuffColorFilter(
-                      ContextCompat.getColor(activity, R.color.iconGray),
-                      PorterDuff.Mode.SRC_IN
-                    ));
-                  }
-                  activity.menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
-                    .setIcon(drawable)
-                    .setCheckable(true);
-                }
-
-                activity.setIntGeneralInSharedPreferences(
-                  MENU_POSITION,
-                  activity.whichMenuOpen - 1
-                );
-                activity.menuItem = activity.menu.getItem(activity.whichMenuOpen);
-                activity.navigationView.setCheckedItem(activity.menuItem);
-
-                // データベースへの反映
-                activity.updateSettingsDB();
-              }
-
-              FragmentManager manager = getFragmentManager();
-              requireNonNull(manager);
-              manager.popBackStack();
-            }
-          })
-          .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-          })
-          .create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-          @Override
-          public void onShow(DialogInterface dialogInterface) {
-
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-          }
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+          dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.accentColor);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
         });
 
         dialog.show();
-
-        return true;
       }
-      case android.R.id.home: {
-
-        isNextEditExists = false;
-        if((isMovingTask || isCloningTask) && checkedItemNum > 0) {
-          activity.showMainEditFragment(nextItem.clone());
-          isNextEditExists = true;
-        }
-        else if(isCloningTask) {
-          isCloningTask = false;
-        }
-
-        if(!isNextEditExists) {
-          isMainPopping = true;
-          FragmentManager manager = getFragmentManager();
-          requireNonNull(manager);
-          manager.popBackStack();
-        }
-
-        return true;
+      else {
+        registerItem();
       }
-      default: {
-        return super.onOptionsItemSelected(item);
-      }
+      return true;
     }
+    else if(itemId == R.id.delete) {
+      final AlertDialog dialog = new AlertDialog.Builder(activity)
+          .setTitle(R.string.delete_dialog_title)
+          .setMessage(R.string.delete_dialog_message)
+          .setPositiveButton(R.string.delete, (dialog14, which) -> {
+
+            if(order == 0) {
+
+              activity.deleteDB(MainEditFragment.item, MyDatabaseHelper.TODO_TABLE);
+              MyExpandableListAdapter.children =
+                  activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+              activity.deleteAlarm(MainEditFragment.item);
+              activity.expandableListAdapter.notifyDataSetChanged();
+            }
+            else if(order == 1) {
+              activity.deleteDB(MainEditFragment.item, MyDatabaseHelper.TODO_TABLE);
+              MyListAdapter.itemList =
+                  activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+              activity.listAdapter.notifyDataSetChanged();
+            }
+            else if(order == 3) {
+              // GeneralSettingsとManageListAdapterへの反映
+              activity.generalSettings.removeNonScheduledList(list.getOrder());
+              List<NonScheduledListAdapter> nonScheduledListList =
+                  activity.generalSettings.getNonScheduledLists();
+              int size = nonScheduledListList.size();
+              for(int i = 0; i < size; i++) {
+                nonScheduledListList.get(i).setOrder(i);
+              }
+              ManageListAdapter.nonScheduledLists =
+                  new ArrayList<>(nonScheduledListList);
+              activity.manageListAdapter.notifyDataSetChanged();
+
+              long id = list.getId();
+              for(ItemAdapter itemInList : activity.queryAllDB(MyDatabaseHelper.TODO_TABLE)) {
+                if(itemInList.getWhichListBelongs() == id) {
+                  activity.deleteDB(itemInList, MyDatabaseHelper.TODO_TABLE);
+                }
+              }
+
+              // 一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
+
+              // デフォルトアイテムのリストア
+              activity.menu.removeGroup(R.id.reminder_list);
+              activity.menu
+                  .add(R.id.reminder_list, R.id.scheduled_list, 0, R.string.nav_scheduled_item)
+                  .setIcon(R.drawable.ic_time)
+                  .setCheckable(true);
+              activity.menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
+                  .setIcon(R.drawable.ic_add_24dp)
+                  .setCheckable(false);
+
+              // 新しく追加したリストのリストア
+              for(NonScheduledListAdapter list : nonScheduledListList) {
+                Drawable drawable =
+                    ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
+                requireNonNull(drawable);
+                drawable = drawable.mutate();
+                if(list.getColor() != 0) {
+                  drawable.setColorFilter(new PorterDuffColorFilter(
+                      list.getColor(),
+                      PorterDuff.Mode.SRC_IN
+                  ));
+                }
+                else {
+                  drawable.setColorFilter(new PorterDuffColorFilter(
+                      ContextCompat.getColor(activity, R.color.iconGray),
+                      PorterDuff.Mode.SRC_IN
+                  ));
+                }
+                activity.menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
+                    .setIcon(drawable)
+                    .setCheckable(true);
+              }
+
+              activity.setIntGeneralInSharedPreferences(
+                  MENU_POSITION,
+                  activity.whichMenuOpen - 1
+              );
+              activity.menuItem = activity.menu.getItem(activity.whichMenuOpen);
+              activity.navigationView.setCheckedItem(activity.menuItem);
+
+              // データベースへの反映
+              activity.updateSettingsDB();
+            }
+
+            FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
+            manager.popBackStack();
+          })
+          .setNeutralButton(R.string.cancel, (dialog15, which) -> {
+
+          })
+          .create();
+
+      dialog.setOnShowListener(dialogInterface -> {
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+      });
+
+      dialog.show();
+
+      return true;
+    }
+    else if(itemId == android.R.id.home) {
+      isNextEditExists = false;
+      if((isMovingTask || isCloningTask) && checkedItemNum > 0) {
+        activity.showMainEditFragment(nextItem.clone());
+        isNextEditExists = true;
+      }
+      else if(isCloningTask) {
+        isCloningTask = false;
+      }
+
+      if(!isNextEditExists) {
+        isMainPopping = true;
+        FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
+        manager.popBackStack();
+      }
+
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -732,19 +801,63 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
     if(requestCode == REQUEST_CODE_RINGTONE_PICKER) {
       if(resultCode == RESULT_OK) {
-
-        Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+        uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
         if(uri == null) {
           item.setSoundUri(null);
           pickAlarm.setSummary(getString(R.string.none));
         }
         else {
-          item.setSoundUri(uri.toString());
-          Ringtone ringtone = RingtoneManager.getRingtone(activity, uri);
-          pickAlarm.setSummary(ringtone.getTitle(activity));
+          String uriString = uri.toString();
+          if(
+              uriString.contains("external") &&
+              ActivityCompat.checkSelfPermission(
+                  activity, Manifest.permission.READ_EXTERNAL_STORAGE
+              ) == PackageManager.PERMISSION_DENIED
+          ) {
+            if(shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+              final AlertDialog dialog = new AlertDialog.Builder(activity)
+                  .setTitle(R.string.permission_external_alarm_rationale_title)
+                  .setMessage(R.string.permission_external_alarm_rationale_message)
+                  .setPositiveButton(R.string.permit, (dialog1, which) ->
+                      readExternalPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                  )
+                  .setNegativeButton(R.string.deny, (dialog12, which) ->
+                      processAfterExternalAlarmPermissionDenial()
+                  )
+                  .setNeutralButton(R.string.cancel, (dialog13, which) -> {})
+                  .create();
+
+              dialog.setOnShowListener(dialogInterface -> {
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(activity.accentColor);
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+              });
+
+              dialog.show();
+            }
+            else {
+              readExternalPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+          }
+          else {
+            item.setSoundUri(uriString);
+            Ringtone ringtone = RingtoneManager.getRingtone(activity, uri);
+            pickAlarm.setSummary(ringtone.getTitle(activity));
+          }
         }
       }
     }
+  }
+
+  private void processAfterExternalAlarmPermissionDenial() {
+
+    Ringtone ringtone = RingtoneManager.getRingtone(activity, DEFAULT_URI_SOUND);
+    pickAlarm.setSummary(ringtone.getTitle(activity));
+    item.setSoundUri(DEFAULT_URI_SOUND.toString());
+    Snackbar
+        .make(view, R.string.permission_external_alarm_denied, Snackbar.LENGTH_LONG)
+        .show();
   }
 
   @Override
@@ -823,7 +936,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
         if(uriString != null) {
           intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(uriString));
         }
-        startActivityForResult(intent, REQUEST_CODE_RINGTONE_PICKER);
+        ringtonePickLauncher.launch(intent);
 
         return true;
       }
@@ -868,8 +981,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
       .setDuration(300);
     this.setExitTransition(transition);
     next.setEnterTransition(transition);
-    FragmentManager manager = getFragmentManager();
-    requireNonNull(manager);
+    FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
     manager
       .beginTransaction()
       .remove(this)
@@ -1083,8 +1195,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
     if(!isNextEditExists) {
       isMainPopping = true;
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager.popBackStack();
     }
   }

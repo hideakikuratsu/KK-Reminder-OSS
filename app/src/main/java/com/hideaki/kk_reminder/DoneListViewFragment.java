@@ -12,9 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,15 +57,9 @@ public class DoneListViewFragment extends Fragment {
     activity = (MainActivity)context;
     if(activity.drawerLayout != null) {
       activity.drawerLayout.closeDrawer(GravityCompat.START);
-      if(activity.detail != null) {
-        activity.showMainEditFragment(activity.detail);
-        activity.detail = null;
-      }
-
     }
     else {
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager
         .beginTransaction()
         .remove(this)
@@ -124,19 +116,16 @@ public class DoneListViewFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 
-          if(activity.doneListAdapter.actionMode != null) {
-            activity.doneListAdapter.actionMode.finish();
-          }
+        if(activity.doneListAdapter.actionMode != null) {
+          activity.doneListAdapter.actionMode.finish();
         }
-
-        return false;
       }
+
+      return false;
     });
 
     List<ItemAdapter> itemList = activity.getDoneItem();
@@ -186,30 +175,27 @@ public class DoneListViewFragment extends Fragment {
     linearLayout.setPadding(0, 0, 0, paddingPx);
     ((ViewGroup)activity.listView.getParent()).addView(linearLayout, 0, layoutParams);
     activity.listView.setEmptyView(linearLayout);
-    activity.listView.post(new Runnable() {
-      @Override
-      public void run() {
+    activity.listView.post(() -> {
 
-        switch(order) {
+      switch(order) {
 
-          case 0: {
+        case 0: {
 
-            activity.listView.setSelectionFromTop(expandableListPosition, expandableListOffset);
-            break;
+          activity.listView.setSelectionFromTop(expandableListPosition, expandableListOffset);
+          break;
+        }
+        case 1: {
+
+          Integer listPosition = DoneListViewFragment.LIST_POSITION.get(id);
+          Integer listOffset = DoneListViewFragment.LIST_OFFSET.get(id);
+          if(listPosition == null) {
+            listPosition = 0;
           }
-          case 1: {
-
-            Integer listPosition = DoneListViewFragment.LIST_POSITION.get(id);
-            Integer listOffset = DoneListViewFragment.LIST_OFFSET.get(id);
-            if(listPosition == null) {
-              listPosition = 0;
-            }
-            if(listOffset == null) {
-              listOffset = 0;
-            }
-            activity.listView.setSelectionFromTop(listPosition, listOffset);
-            break;
+          if(listOffset == null) {
+            listOffset = 0;
           }
+          activity.listView.setSelectionFromTop(listPosition, listOffset);
+          break;
         }
       }
     });
@@ -246,13 +232,12 @@ public class DoneListViewFragment extends Fragment {
       }
     });
 
-    AdView adView = view.findViewById(R.id.adView);
-    if(activity.isPremium) {
-      adView.setVisibility(View.GONE);
-    }
-    else {
-      AdRequest adRequest = new AdRequest.Builder().build();
-      adView.loadAd(adRequest);
+    if(!activity.isPremium) {
+      LinearLayout adContainer = view.findViewById(R.id.ad_mob_view);
+      if(activity.adView.getParent() != null) {
+        ((ViewGroup)activity.adView.getParent()).removeView(activity.adView);
+      }
+      adContainer.addView(activity.adView);
     }
 
     return view;

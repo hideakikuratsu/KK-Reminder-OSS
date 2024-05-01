@@ -174,298 +174,285 @@ public class ActionBarFragment extends Fragment {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    switch(item.getItemId()) {
-      case R.id.align_top: {
+    int itemId = item.getItemId();
+    if(itemId == R.id.align_top) {
+      activity.expandableListView.smoothScrollToPosition(0);
+      return true;
+    }
+    else if(itemId == R.id.tag_search) {
+      View tagSearchView = activity.findViewById(R.id.tag_search);
+      PopupMenu popupMenu = new PopupMenu(activity, tagSearchView);
+      final Menu menu = popupMenu.getMenu();
 
-        activity.expandableListView.smoothScrollToPosition(0);
-        return true;
-      }
-      case R.id.tag_search: {
+      for(final TagAdapter tag : activity.generalSettings.getTagList()) {
 
-        View tagSearchView = activity.findViewById(R.id.tag_search);
-        PopupMenu popupMenu = new PopupMenu(activity, tagSearchView);
-        final Menu menu = popupMenu.getMenu();
-
-        for(final TagAdapter tag : activity.generalSettings.getTagList()) {
-
-          Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_pallet_24dp);
-          requireNonNull(drawable);
-          drawable = drawable.mutate();
-          if(tag.getPrimaryColor() != 0) {
-            drawable.setColorFilter(new PorterDuffColorFilter(
+        Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_pallet_24dp);
+        requireNonNull(drawable);
+        drawable = drawable.mutate();
+        if(tag.getPrimaryColor() != 0) {
+          drawable.setColorFilter(new PorterDuffColorFilter(
               tag.getPrimaryColor(),
               PorterDuff.Mode.SRC_IN
-            ));
-          }
-          else {
-            drawable.setColorFilter(new PorterDuffColorFilter(
+          ));
+        }
+        else {
+          drawable.setColorFilter(new PorterDuffColorFilter(
               ContextCompat.getColor(activity, R.color.iconGray),
               PorterDuff.Mode.SRC_IN
-            ));
-          }
+          ));
+        }
 
-          MenuItem tagItem = menu.add(Menu.NONE, Menu.NONE, tag.getOrder(), tag.getName())
+        MenuItem tagItem = menu.add(Menu.NONE, Menu.NONE, tag.getOrder(), tag.getName())
             .setIcon(drawable)
-            .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-              @Override
-              public boolean onMenuItemClick(MenuItem item) {
+            .setOnMenuItemClickListener(item1 -> {
 
-                if(tag.getId() != checkedTag) {
-                  int size = menu.size();
-                  for(int i = 0; i < size; i++) {
-                    MenuItem menuItem = menu.getItem(i);
-                    if(menuItem.isChecked()) {
-                      menuItem.setChecked(false);
-                    }
+              if(tag.getId() != checkedTag) {
+                int size = menu.size();
+                for(int i = 0; i < size; i++) {
+                  MenuItem menuItem = menu.getItem(i);
+                  if(menuItem.isChecked()) {
+                    menuItem.setChecked(false);
                   }
-                  item.setChecked(true);
-                  checkedTag = tag.getId();
+                }
+                item1.setChecked(true);
+                checkedTag = tag.getId();
 
-                  if(order == 0) {
+                if(order == 0) {
 
-                    if(activity.isExpandableTodo) {
-                      MyExpandableListAdapter.children =
+                  if(activity.isExpandableTodo) {
+                    MyExpandableListAdapter.children =
                         activity.getChildren(MyDatabaseHelper.TODO_TABLE);
 
-                      filteredLists = new ArrayList<>();
-                      for(List<ItemAdapter> itemList : MyExpandableListAdapter.children) {
-                        List<ItemAdapter> filteredList = new ArrayList<>();
-                        for(ItemAdapter filteredItem : itemList) {
-                          if(filteredItem.getWhichTagBelongs() == tag.getId()) {
-                            filteredList.add(filteredItem);
-                          }
+                    filteredLists = new ArrayList<>();
+                    for(List<ItemAdapter> itemList : MyExpandableListAdapter.children) {
+                      List<ItemAdapter> filteredList = new ArrayList<>();
+                      for(ItemAdapter filteredItem : itemList) {
+                        if(filteredItem.getWhichTagBelongs() == tag.getId()) {
+                          filteredList.add(filteredItem);
                         }
-                        filteredLists.add(filteredList);
                       }
+                      filteredLists.add(filteredList);
+                    }
 
-                      MyExpandableListAdapter.children = filteredLists;
-                      activity.expandableListAdapter.notifyDataSetChanged();
+                    MyExpandableListAdapter.children = filteredLists;
+                    activity.expandableListAdapter.notifyDataSetChanged();
 
-                      if(filteredText != null) {
+                    if(filteredText != null) {
 //                          activity.expandableListView.setFilterText(filteredText);
-                        activity.expandableListAdapter.getFilter().filter(filteredText);
-                      }
-                    }
-                    else {
-                      DoneListAdapter.itemList = activity.getDoneItem();
-
-                      filteredList = new ArrayList<>();
-                      for(ItemAdapter filteredItem : DoneListAdapter.itemList) {
-                        if(filteredItem.getWhichTagBelongs() == tag.getId()) {
-                          filteredList.add(filteredItem);
-                        }
-                      }
-
-                      DoneListAdapter.itemList = filteredList;
-                      activity.doneListAdapter.notifyDataSetChanged();
-
-                      if(filteredText != null) {
-                        activity.listView.setFilterText(filteredText);
-                      }
+                      activity.expandableListAdapter.getFilter().filter(filteredText);
                     }
                   }
-                  else if(order == 1) {
+                  else {
+                    DoneListAdapter.itemList = activity.getDoneItem();
 
-                    if(
-                      activity.generalSettings
-                        .getNonScheduledLists()
-                        .get(activity.whichMenuOpen - 1)
-                        .isTodo()
-                    ) {
-                      MyListAdapter.itemList =
-                        activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
-
-                      filteredList = new ArrayList<>();
-                      for(ItemAdapter filteredItem : MyListAdapter.itemList) {
-                        if(filteredItem.getWhichTagBelongs() == tag.getId()) {
-                          filteredList.add(filteredItem);
-                        }
-                      }
-
-                      MyListAdapter.itemList = filteredList;
-                      activity.listAdapter.notifyDataSetChanged();
-
-                      if(filteredText != null) {
-                        activity.listView.setFilterText(filteredText);
-                      }
-                    }
-                    else {
-                      DoneListAdapter.itemList = activity.getDoneItem();
-
-                      filteredList = new ArrayList<>();
-                      for(ItemAdapter filteredItem : DoneListAdapter.itemList) {
-                        if(filteredItem.getWhichTagBelongs() == tag.getId()) {
-                          filteredList.add(filteredItem);
-                        }
-                      }
-
-                      DoneListAdapter.itemList = filteredList;
-                      activity.doneListAdapter.notifyDataSetChanged();
-
-                      if(filteredText != null) {
-                        activity.listView.setFilterText(filteredText);
-                      }
-                    }
-                  }
-                  else if(order == 3) {
-
-                    ManageListAdapter.nonScheduledLists = new ArrayList<>(
-                      activity.generalSettings.getNonScheduledLists()
-                    );
-
-                    nonScheduledLists = new ArrayList<>();
-                    for(NonScheduledListAdapter list : ManageListAdapter.nonScheduledLists) {
-                      if(list.getWhichTagBelongs() == tag.getId()) {
-                        nonScheduledLists.add(list);
+                    filteredList = new ArrayList<>();
+                    for(ItemAdapter filteredItem : DoneListAdapter.itemList) {
+                      if(filteredItem.getWhichTagBelongs() == tag.getId()) {
+                        filteredList.add(filteredItem);
                       }
                     }
 
-                    ManageListAdapter.nonScheduledLists = nonScheduledLists;
-                    activity.manageListAdapter.notifyDataSetChanged();
+                    DoneListAdapter.itemList = filteredList;
+                    activity.doneListAdapter.notifyDataSetChanged();
 
                     if(filteredText != null) {
                       activity.listView.setFilterText(filteredText);
                     }
                   }
                 }
+                else if(order == 1) {
 
-                return false;
+                  if(
+                      activity.generalSettings
+                          .getNonScheduledLists()
+                          .get(activity.whichMenuOpen - 1)
+                          .isTodo()
+                  ) {
+                    MyListAdapter.itemList =
+                        activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+
+                    filteredList = new ArrayList<>();
+                    for(ItemAdapter filteredItem : MyListAdapter.itemList) {
+                      if(filteredItem.getWhichTagBelongs() == tag.getId()) {
+                        filteredList.add(filteredItem);
+                      }
+                    }
+
+                    MyListAdapter.itemList = filteredList;
+                    activity.listAdapter.notifyDataSetChanged();
+                  }
+                  else {
+                    DoneListAdapter.itemList = activity.getDoneItem();
+
+                    filteredList = new ArrayList<>();
+                    for(ItemAdapter filteredItem : DoneListAdapter.itemList) {
+                      if(filteredItem.getWhichTagBelongs() == tag.getId()) {
+                        filteredList.add(filteredItem);
+                      }
+                    }
+
+                    DoneListAdapter.itemList = filteredList;
+                    activity.doneListAdapter.notifyDataSetChanged();
+                  }
+                  if(filteredText != null) {
+                    activity.listView.setFilterText(filteredText);
+                  }
+                }
+                else if(order == 3) {
+
+                  ManageListAdapter.nonScheduledLists = new ArrayList<>(
+                      activity.generalSettings.getNonScheduledLists()
+                  );
+
+                  nonScheduledLists = new ArrayList<>();
+                  for(NonScheduledListAdapter list : ManageListAdapter.nonScheduledLists) {
+                    if(list.getWhichTagBelongs() == tag.getId()) {
+                      nonScheduledLists.add(list);
+                    }
+                  }
+
+                  ManageListAdapter.nonScheduledLists = nonScheduledLists;
+                  activity.manageListAdapter.notifyDataSetChanged();
+
+                  if(filteredText != null) {
+                    activity.listView.setFilterText(filteredText);
+                  }
+                }
               }
+
+              return false;
             });
 
-          if(tag.getId() == checkedTag) {
-            SpannableString spannable = new SpannableString(tag.getName());
-            spannable.setSpan(
+        if(tag.getId() == checkedTag) {
+          SpannableString spannable = new SpannableString(tag.getName());
+          spannable.setSpan(
               new ForegroundColorSpan(Color.RED),
               0,
               tag.getName().length(),
               Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
-            tagItem.setTitle(spannable);
+          );
+          tagItem.setTitle(spannable);
 //            tagItem.setChecked(true);
-          }
         }
+      }
 
-        MenuPopupHelper popupHelper =
+      MenuPopupHelper popupHelper =
           new MenuPopupHelper(activity, (MenuBuilder)popupMenu.getMenu(), tagSearchView);
-        popupHelper.setForceShowIcon(true);
-        popupHelper.show();
+      popupHelper.setForceShowIcon(true);
+      popupHelper.show();
 
-        return true;
+      return true;
+    }
+    else if(itemId == R.id.add_item) {
+      if(order == 0) {
+        activity.showMainEditFragment();
       }
-      case R.id.add_item: {
-
-        if(order == 0) {
-          activity.showMainEditFragment();
-        }
-        else if(order == 1) {
-          activity.showMainEditFragment();
-        }
-        else if(order == 3) {
-          activity.showMainEditFragmentForList();
-        }
-        return true;
+      else if(order == 1) {
+        activity.showMainEditFragment();
       }
-      case R.id.sort: {
+      else if(order == 3) {
+        activity.showMainEditFragmentForList();
+      }
+      return true;
+    }
+    else if(itemId == R.id.sort) {
+      if(order == 1) {
+        MyListAdapter.isSorting = !MyListAdapter.isSorting;
+        if(MyListAdapter.isSorting) {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+          actionBar.setDisplayHomeAsUpEnabled(false);
+          searchItem.setVisible(false);
+          addItem.setVisible(false);
+          toggleItem.setVisible(false);
+        }
+        else {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+          actionBar.setDisplayHomeAsUpEnabled(true);
+          searchItem.setVisible(true);
+          addItem.setVisible(true);
+          toggleItem.setVisible(true);
 
-        if(order == 1) {
-          MyListAdapter.isSorting = !MyListAdapter.isSorting;
-          if(MyListAdapter.isSorting) {
-            activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            searchItem.setVisible(false);
-            addItem.setVisible(false);
-            toggleItem.setVisible(false);
+          int size = MyListAdapter.itemList.size();
+          for(int i = 0; i < size; i++) {
+            ItemAdapter tmpItem = MyListAdapter.itemList.get(i);
+            if(tmpItem.getOrder() != i) {
+              tmpItem.setOrder(i);
+              activity.updateDB(tmpItem, MyDatabaseHelper.TODO_TABLE);
+            }
           }
-          else {
-            activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            searchItem.setVisible(true);
-            addItem.setVisible(true);
-            toggleItem.setVisible(true);
+        }
 
-            int size = MyListAdapter.itemList.size();
-            for(int i = 0; i < size; i++) {
-              ItemAdapter tmpItem = MyListAdapter.itemList.get(i);
-              if(tmpItem.getOrder() != i) {
-                tmpItem.setOrder(i);
-                activity.updateDB(tmpItem, MyDatabaseHelper.TODO_TABLE);
-              }
+        activity.listAdapter.notifyDataSetChanged();
+      }
+      else if(order == 3) {
+        ManageListAdapter.isSorting = !ManageListAdapter.isSorting;
+        if(ManageListAdapter.isSorting) {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+          actionBar.setDisplayHomeAsUpEnabled(false);
+          searchItem.setVisible(false);
+          addItem.setVisible(false);
+        }
+        else {
+          activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+          actionBar.setDisplayHomeAsUpEnabled(true);
+          searchItem.setVisible(true);
+          addItem.setVisible(true);
+
+          activity.generalSettings.setNonScheduledLists(new ArrayList<>(ManageListAdapter.nonScheduledLists));
+          int size = ManageListAdapter.nonScheduledLists.size();
+          boolean isUpdated = false;
+          for(int i = 0; i < size; i++) {
+            NonScheduledListAdapter list = activity.generalSettings.getNonScheduledLists().get(i);
+            if(list.getOrder() != i) {
+              list.setOrder(i);
+              isUpdated = true;
             }
           }
 
-          activity.listAdapter.notifyDataSetChanged();
-        }
-        else if(order == 3) {
-          ManageListAdapter.isSorting = !ManageListAdapter.isSorting;
-          if(ManageListAdapter.isSorting) {
-            activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            searchItem.setVisible(false);
-            addItem.setVisible(false);
-          }
-          else {
-            activity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            searchItem.setVisible(true);
-            addItem.setVisible(true);
+          if(isUpdated) {
 
-            activity.generalSettings.setNonScheduledLists(new ArrayList<>(ManageListAdapter.nonScheduledLists));
-            int size = ManageListAdapter.nonScheduledLists.size();
-            boolean isUpdated = false;
-            for(int i = 0; i < size; i++) {
-              NonScheduledListAdapter list = activity.generalSettings.getNonScheduledLists().get(i);
-              if(list.getOrder() != i) {
-                list.setOrder(i);
-                isUpdated = true;
-              }
-            }
+            // 一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
 
-            if(isUpdated) {
-
-              // 一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
-
-              // デフォルトアイテムのリストア
-              activity.menu.removeGroup(R.id.reminder_list);
-              activity.menu
+            // デフォルトアイテムのリストア
+            activity.menu.removeGroup(R.id.reminder_list);
+            activity.menu
                 .add(R.id.reminder_list, R.id.scheduled_list, 0, R.string.nav_scheduled_item)
                 .setIcon(R.drawable.ic_time)
                 .setCheckable(true);
-              activity.menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
+            activity.menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
                 .setIcon(R.drawable.ic_add_24dp)
                 .setCheckable(false);
 
-              // 新しく追加したリストのリストア
-              for(NonScheduledListAdapter list : activity.generalSettings.getNonScheduledLists()) {
-                Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
-                requireNonNull(drawable);
-                drawable = drawable.mutate();
-                if(list.getColor() != 0) {
-                  drawable.setColorFilter(new PorterDuffColorFilter(
+            // 新しく追加したリストのリストア
+            for(NonScheduledListAdapter list : activity.generalSettings.getNonScheduledLists()) {
+              Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_my_list_24dp);
+              requireNonNull(drawable);
+              drawable = drawable.mutate();
+              if(list.getColor() != 0) {
+                drawable.setColorFilter(new PorterDuffColorFilter(
                     list.getColor(),
                     PorterDuff.Mode.SRC_IN
-                  ));
-                }
-                else {
-                  drawable.setColorFilter(new PorterDuffColorFilter(
+                ));
+              }
+              else {
+                drawable.setColorFilter(new PorterDuffColorFilter(
                     ContextCompat.getColor(activity, R.color.iconGray),
                     PorterDuff.Mode.SRC_IN
-                  ));
-                }
-                activity.menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
+                ));
+              }
+              activity.menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
                   .setIcon(drawable)
                   .setCheckable(true);
-              }
-
-              activity.updateSettingsDB();
             }
-          }
 
-          activity.manageListAdapter.notifyDataSetChanged();
+            activity.updateSettingsDB();
+          }
         }
 
-        return true;
+        activity.manageListAdapter.notifyDataSetChanged();
       }
+
+      return true;
     }
 
     return false;
@@ -501,78 +488,72 @@ public class ActionBarFragment extends Fragment {
     todoDrawable.setCornerRadius(8.0f);
     doneDrawable.setCornerRadius(8.0f);
 
-    todo.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    todo.setOnClickListener(v -> {
 
-        if(order == 0) {
-          if(!activity.isExpandableTodo) {
-            alignTop.setVisible(true);
-            addItem.setVisible(true);
-            activity.setBooleanGeneralInSharedPreferences(
-              IS_EXPANDABLE_TODO, true
-            );
-            activity.showExpandableListViewFragment();
+      if(order == 0) {
+        if(!activity.isExpandableTodo) {
+          alignTop.setVisible(true);
+          addItem.setVisible(true);
+          activity.setBooleanGeneralInSharedPreferences(
+            IS_EXPANDABLE_TODO, true
+          );
+          activity.showExpandableListViewFragment();
 
-            setTodoPushedColor();
-          }
+          setTodoPushedColor();
         }
-        else if(order == 1) {
-          if(
-            !activity.generalSettings
-              .getNonScheduledLists()
-              .get(activity.whichMenuOpen - 1)
-              .isTodo()
-          ) {
-            addItem.setVisible(true);
-            sortItem.setVisible(true);
-            activity.generalSettings
-              .getNonScheduledLists()
-              .get(activity.whichMenuOpen - 1)
-              .setIsTodo(true);
-            activity.updateSettingsDB();
-            activity.showListViewFragment();
+      }
+      else if(order == 1) {
+        if(
+          !activity.generalSettings
+            .getNonScheduledLists()
+            .get(activity.whichMenuOpen - 1)
+            .isTodo()
+        ) {
+          addItem.setVisible(true);
+          sortItem.setVisible(true);
+          activity.generalSettings
+            .getNonScheduledLists()
+            .get(activity.whichMenuOpen - 1)
+            .setIsTodo(true);
+          activity.updateSettingsDB();
+          activity.showListViewFragment();
 
-            setTodoPushedColor();
-          }
+          setTodoPushedColor();
         }
       }
     });
 
-    done.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    done.setOnClickListener(v -> {
 
-        if(order == 0) {
-          if(activity.isExpandableTodo) {
-            alignTop.setVisible(false);
-            addItem.setVisible(false);
-            activity.setBooleanGeneralInSharedPreferences(
-              IS_EXPANDABLE_TODO, false
-            );
-            activity.showDoneListViewFragment();
+      if(order == 0) {
+        if(activity.isExpandableTodo) {
+          alignTop.setVisible(false);
+          addItem.setVisible(false);
+          activity.setBooleanGeneralInSharedPreferences(
+            IS_EXPANDABLE_TODO, false
+          );
+          activity.showDoneListViewFragment();
 
-            setDonePushedColor();
-          }
+          setDonePushedColor();
         }
-        else if(order == 1) {
-          if(
-            activity.generalSettings
-              .getNonScheduledLists()
-              .get(activity.whichMenuOpen - 1)
-              .isTodo()
-          ) {
-            addItem.setVisible(false);
-            sortItem.setVisible(false);
-            activity.generalSettings
-              .getNonScheduledLists()
-              .get(activity.whichMenuOpen - 1)
-              .setIsTodo(false);
-            activity.updateSettingsDB();
-            activity.showDoneListViewFragment();
+      }
+      else if(order == 1) {
+        if(
+          activity.generalSettings
+            .getNonScheduledLists()
+            .get(activity.whichMenuOpen - 1)
+            .isTodo()
+        ) {
+          addItem.setVisible(false);
+          sortItem.setVisible(false);
+          activity.generalSettings
+            .getNonScheduledLists()
+            .get(activity.whichMenuOpen - 1)
+            .setIsTodo(false);
+          activity.updateSettingsDB();
+          activity.showDoneListViewFragment();
 
-            setDonePushedColor();
-          }
+          setDonePushedColor();
         }
       }
     });
@@ -692,86 +673,80 @@ public class ActionBarFragment extends Fragment {
     searchView.setSubmitButtonEnabled(false);
 
     // 検索アイコン押下時の処理
-    searchView.setOnSearchClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    searchView.setOnSearchClickListener(v -> {
 
-        alignTop.setVisible(false);
-        toggleItem.setVisible(false);
-        sortItem.setVisible(false);
-        addItem.setVisible(false);
-        tagSearchItem.setVisible(true);
+      alignTop.setVisible(false);
+      toggleItem.setVisible(false);
+      sortItem.setVisible(false);
+      addItem.setVisible(false);
+      tagSearchItem.setVisible(true);
 
-        checkedTag = -1;
-        searchView.requestFocus();
-      }
+      checkedTag = -1;
+      searchView.requestFocus();
     });
 
-    searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-      @Override
-      public boolean onClose() {
+    searchView.setOnCloseListener(() -> {
 
-        // 各アイテムの表示処理
+      // 各アイテムの表示処理
+      if(order == 0) {
+        toggleItem.setVisible(true);
+        if(activity.isExpandableTodo) {
+          alignTop.setVisible(true);
+          addItem.setVisible(true);
+        }
+      }
+      else if(order == 1) {
+        toggleItem.setVisible(true);
+        if(
+          activity.generalSettings
+            .getNonScheduledLists()
+            .get(activity.whichMenuOpen - 1)
+            .isTodo()
+        ) {
+          addItem.setVisible(true);
+          sortItem.setVisible(true);
+        }
+      }
+      else if(order == 3) {
+        addItem.setVisible(true);
+        sortItem.setVisible(true);
+      }
+      tagSearchItem.setVisible(false);
+
+      if(checkedTag != -1) {
         if(order == 0) {
-          toggleItem.setVisible(true);
           if(activity.isExpandableTodo) {
-            alignTop.setVisible(true);
-            addItem.setVisible(true);
+            MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
+            activity.expandableListAdapter.notifyDataSetChanged();
+          }
+          else {
+            DoneListAdapter.itemList = activity.getDoneItem();
+            activity.doneListAdapter.notifyDataSetChanged();
           }
         }
         else if(order == 1) {
-          toggleItem.setVisible(true);
           if(
             activity.generalSettings
               .getNonScheduledLists()
               .get(activity.whichMenuOpen - 1)
               .isTodo()
           ) {
-            addItem.setVisible(true);
-            sortItem.setVisible(true);
+            MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+            activity.listAdapter.notifyDataSetChanged();
+          }
+          else {
+            DoneListAdapter.itemList = activity.getDoneItem();
+            activity.doneListAdapter.notifyDataSetChanged();
           }
         }
         else if(order == 3) {
-          addItem.setVisible(true);
-          sortItem.setVisible(true);
+          ManageListAdapter.nonScheduledLists =
+            new ArrayList<>(activity.generalSettings.getNonScheduledLists());
+          activity.manageListAdapter.notifyDataSetChanged();
         }
-        tagSearchItem.setVisible(false);
-
-        if(checkedTag != -1) {
-          if(order == 0) {
-            if(activity.isExpandableTodo) {
-              MyExpandableListAdapter.children = activity.getChildren(MyDatabaseHelper.TODO_TABLE);
-              activity.expandableListAdapter.notifyDataSetChanged();
-            }
-            else {
-              DoneListAdapter.itemList = activity.getDoneItem();
-              activity.doneListAdapter.notifyDataSetChanged();
-            }
-          }
-          else if(order == 1) {
-            if(
-              activity.generalSettings
-                .getNonScheduledLists()
-                .get(activity.whichMenuOpen - 1)
-                .isTodo()
-            ) {
-              MyListAdapter.itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
-              activity.listAdapter.notifyDataSetChanged();
-            }
-            else {
-              DoneListAdapter.itemList = activity.getDoneItem();
-              activity.doneListAdapter.notifyDataSetChanged();
-            }
-          }
-          else if(order == 3) {
-            ManageListAdapter.nonScheduledLists =
-              new ArrayList<>(activity.generalSettings.getNonScheduledLists());
-            activity.manageListAdapter.notifyDataSetChanged();
-          }
-        }
-
-        return false;
       }
+
+      return false;
     });
 
     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

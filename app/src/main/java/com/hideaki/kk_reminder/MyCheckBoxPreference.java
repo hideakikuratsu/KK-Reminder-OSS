@@ -64,14 +64,11 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
     animCheckBox = (AnimCheckBox)holder.findViewById(R.id.checkBox);
     animCheckBox.setOnCheckedChangeListener(null);
     animCheckBox.setChecked(isChecked, false);
-    animCheckBox.setOnCheckedChangeListener(new AnimCheckBox.OnCheckedChangeListener() {
-      @Override
-      public void onChange(AnimCheckBox view, boolean checked) {
+    animCheckBox.setOnCheckedChangeListener((view, checked) -> {
 
-        isChecked = checked;
-        if(isManuallyChecked) {
-          listener.onCheckedChange(getKey(), checked);
-        }
+      isChecked = checked;
+      if(isManuallyChecked) {
+        listener.onCheckedChange(getKey(), checked);
       }
     });
     title.setText(getTitle());
@@ -129,27 +126,18 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
       mySummary.setText(summary);
     }
     else {
-      new Thread(new Runnable() {
-        @Override
-        public void run() {
+      new Thread(() -> {
 
-          while(mySummary == null) {
-            try {
-              //noinspection BusyWait
-              Thread.sleep(10);
-            }
-            catch(InterruptedException e) {
-              Log.e("MyCheckBoxPreference", Log.getStackTraceString(e));
-            }
+        while(mySummary == null) {
+          try {
+            //noinspection BusyWait
+            Thread.sleep(10);
           }
-          new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-
-              mySummary.setText(summary);
-            }
-          });
+          catch(InterruptedException e) {
+            Log.e("MyCheckBoxPreference#setMySummary", Log.getStackTraceString(e));
+          }
         }
+        new Handler(Looper.getMainLooper()).post(() -> mySummary.setText(summary));
       }).start();
     }
   }
@@ -160,27 +148,20 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
       mySummary.setText(activity.getString(stringId));
     }
     else {
-      new Thread(new Runnable() {
-        @Override
-        public void run() {
+      new Thread(() -> {
 
-          while(mySummary == null) {
-            try {
-              //noinspection BusyWait
-              Thread.sleep(10);
-            }
-            catch(InterruptedException e) {
-              Log.e("MyCheckBoxPreference", Log.getStackTraceString(e));
-            }
+        while(mySummary == null) {
+          try {
+            //noinspection BusyWait
+            Thread.sleep(10);
           }
-          new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-
-              mySummary.setText(activity.getString(stringId));
-            }
-          });
+          catch(InterruptedException e) {
+            Log.e("MyCheckBoxPreference#setMySummary", Log.getStackTraceString(e));
+          }
         }
+        new Handler(Looper.getMainLooper()).post(
+            () -> mySummary.setText(activity.getString(stringId))
+        );
       }).start();
     }
   }
@@ -191,27 +172,18 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
       mySummary.setVisibility(View.VISIBLE);
     }
     else {
-      new Thread(new Runnable() {
-        @Override
-        public void run() {
+      new Thread(() -> {
 
-          while(mySummary == null) {
-            try {
-              //noinspection BusyWait
-              Thread.sleep(10);
-            }
-            catch(InterruptedException e) {
-              Log.e("MyCheckBoxPreference", Log.getStackTraceString(e));
-            }
+        while(mySummary == null) {
+          try {
+            //noinspection BusyWait
+            Thread.sleep(10);
           }
-          new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-
-              mySummary.setVisibility(View.VISIBLE);
-            }
-          });
+          catch(InterruptedException e) {
+            Log.e("MyCheckBoxPreference#showMySummary", Log.getStackTraceString(e));
+          }
         }
+        new Handler(Looper.getMainLooper()).post(() -> mySummary.setVisibility(View.VISIBLE));
       }).start();
     }
   }
@@ -222,27 +194,18 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
       mySummary.setVisibility(View.GONE);
     }
     else {
-      new Thread(new Runnable() {
-        @Override
-        public void run() {
+      new Thread(() -> {
 
-          while(mySummary == null) {
-            try {
-              //noinspection BusyWait
-              Thread.sleep(10);
-            }
-            catch(InterruptedException e) {
-              Log.e("MyCheckBoxPreference", Log.getStackTraceString(e));
-            }
+        while(mySummary == null) {
+          try {
+            //noinspection BusyWait
+            Thread.sleep(10);
           }
-          new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-
-              mySummary.setVisibility(View.GONE);
-            }
-          });
+          catch(InterruptedException e) {
+            Log.e("MyCheckBoxPreference#hideMySummary", Log.getStackTraceString(e));
+          }
         }
+        new Handler(Looper.getMainLooper()).post(() -> mySummary.setVisibility(View.GONE));
       }).start();
     }
   }

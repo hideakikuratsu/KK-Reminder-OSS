@@ -105,7 +105,7 @@ public class DayRepeatTimeLimitPickerDialogFragment extends DialogFragment
     }
     else {
       dayRepeatEditFragment.timeLimit.setTitle(DateFormat.format(
-          "yyyy/M/d (E)",
+          "E, MMM d, yyyy",
           timeLimit
       ));
     }

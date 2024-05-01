@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
@@ -62,187 +61,178 @@ public class DayRepeatCustomPickerDialogFragment extends DialogFragment {
     }
 
     final AlertDialog dialog = new AlertDialog.Builder(activity)
-      .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setPositiveButton(R.string.ok, (dialog1, which) -> {
 
-          int intervalValue = interval.getValue();
-          int scaleValue = scale.getValue();
+        int intervalValue = interval.getValue();
+        int scaleValue = scale.getValue();
 
-          MainEditFragment.dayRepeat.setInterval(intervalValue);
-          MainEditFragment.dayRepeat.setScale(scaleValue);
+        MainEditFragment.dayRepeat.setInterval(intervalValue);
+        MainEditFragment.dayRepeat.setScale(scaleValue);
 
-          // Scaleの表示処理
-          String intervalLabel = "";
-          Resources res = getResources();
-          dayRepeatCustomPickerFragment.rootPreferenceScreen.removeAll();
-          dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
-            dayRepeatCustomPickerFragment.picker
-          );
-          switch(MainEditFragment.dayRepeat.getScale()) {
+        // Scaleの表示処理
+        String intervalLabel = "";
+        Resources res = getResources();
+        dayRepeatCustomPickerFragment.rootPreferenceScreen.removeAll();
+        dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
+          dayRepeatCustomPickerFragment.picker
+        );
+        switch(MainEditFragment.dayRepeat.getScale()) {
 
-            case 1: {
+          case 1: {
 
-              if(LOCALE.equals(Locale.JAPAN) && intervalValue == 1) {
-                intervalLabel = getString(R.string.everyday);
-              }
-              else {
-                intervalLabel =
-                  res.getQuantityString(R.plurals.per_day, intervalValue, intervalValue);
-              }
-
-              break;
+            if(LOCALE.equals(Locale.JAPAN) && intervalValue == 1) {
+              intervalLabel = getString(R.string.everyday);
             }
-            case 2: {
-
-              dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
-                dayRepeatCustomPickerFragment.week
-              );
-
-              if(LOCALE.equals(Locale.JAPAN) && intervalValue == 1) {
-                intervalLabel = getString(R.string.every_week);
-              }
-              else {
-                intervalLabel =
-                  res.getQuantityString(R.plurals.per_week, intervalValue, intervalValue);
-              }
-
-              break;
+            else {
+              intervalLabel =
+                res.getQuantityString(R.plurals.per_day, intervalValue, intervalValue);
             }
-            case 3: {
 
+            break;
+          }
+          case 2: {
+
+            dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
+              dayRepeatCustomPickerFragment.week
+            );
+
+            if(LOCALE.equals(Locale.JAPAN) && intervalValue == 1) {
+              intervalLabel = getString(R.string.every_week);
+            }
+            else {
+              intervalLabel =
+                res.getQuantityString(R.plurals.per_week, intervalValue, intervalValue);
+            }
+
+            break;
+          }
+          case 3: {
+
+            dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
+              dayRepeatCustomPickerFragment.daysOfMonth
+            );
+            dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
+              dayRepeatCustomPickerFragment.onTheMonth
+            );
+            if(MainEditFragment.dayRepeat.isDaysOfMonthSet()) {
               dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
-                dayRepeatCustomPickerFragment.daysOfMonth
+                dayRepeatCustomPickerFragment.daysOfMonthPicker
               );
+            }
+            else {
               dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
-                dayRepeatCustomPickerFragment.onTheMonth
+                dayRepeatCustomPickerFragment.onTheMonthPicker
               );
-              if(MainEditFragment.dayRepeat.isDaysOfMonthSet()) {
-                dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
-                  dayRepeatCustomPickerFragment.daysOfMonthPicker
-                );
-              }
-              else {
-                dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
-                  dayRepeatCustomPickerFragment.onTheMonthPicker
-                );
-              }
+            }
 
-              if(LOCALE.equals(Locale.JAPAN) && intervalValue == 1) {
-                intervalLabel = getString(R.string.every_month);
-              }
-              else {
-                intervalLabel =
-                  res.getQuantityString(R.plurals.per_month, intervalValue, intervalValue);
-              }
+            if(LOCALE.equals(Locale.JAPAN) && intervalValue == 1) {
+              intervalLabel = getString(R.string.every_month);
+            }
+            else {
+              intervalLabel =
+                res.getQuantityString(R.plurals.per_month, intervalValue, intervalValue);
+            }
 
-              // onTheMonthPickerのラベルを初期化
-              String label = "";
-              if(!MainEditFragment.dayRepeat.isDaysOfMonthSet()) {
-                if(MainEditFragment.dayRepeat.getOrdinalNumber() < 5) {
-                  if(LOCALE.equals(Locale.JAPAN)) {
-                    label += "第" + MainEditFragment.dayRepeat.getOrdinalNumber();
-                  }
-                  else {
-                    int ordinalNumber = MainEditFragment.dayRepeat.getOrdinalNumber();
-                    String ordinalStr = ordinalNumber + "";
-                    if(ordinalNumber == 1) {
-                      ordinalStr += "st";
-                    }
-                    else if(ordinalNumber == 2) {
-                      ordinalStr += "nd";
-                    }
-                    else if(ordinalNumber == 3) {
-                      ordinalStr += "rd";
-                    }
-                    else {
-                      ordinalStr += "th";
-                    }
-                    label += ordinalStr + " ";
-                  }
+            // onTheMonthPickerのラベルを初期化
+            String label = "";
+            if(!MainEditFragment.dayRepeat.isDaysOfMonthSet()) {
+              if(MainEditFragment.dayRepeat.getOrdinalNumber() < 5) {
+                if(LOCALE.equals(Locale.JAPAN)) {
+                  label += "第" + MainEditFragment.dayRepeat.getOrdinalNumber();
                 }
                 else {
-                  if(LOCALE.equals(Locale.JAPAN)) {
-                    label += "最終週の";
+                  int ordinalNumber = MainEditFragment.dayRepeat.getOrdinalNumber();
+                  String ordinalStr = ordinalNumber + "";
+                  if(ordinalNumber == 1) {
+                    ordinalStr += "st";
+                  }
+                  else if(ordinalNumber == 2) {
+                    ordinalStr += "nd";
+                  }
+                  else if(ordinalNumber == 3) {
+                    ordinalStr += "rd";
                   }
                   else {
-                    label += "Last ";
+                    ordinalStr += "th";
                   }
+                  label += ordinalStr + " ";
                 }
-
-                if(MainEditFragment.dayRepeat.getOnTheMonth().ordinal() < 7) {
-                  if(LOCALE.equals(Locale.JAPAN)) {
-                    label += DayRepeatCustomPickerFragment
-                      .DAY_OF_WEEK_LIST_JA[MainEditFragment.dayRepeat
-                      .getOnTheMonth()
-                      .ordinal()] + "曜日";
-                  }
-                  else {
-                    label += DayRepeatCustomPickerFragment
-                      .DAY_OF_WEEK_LIST_EN[MainEditFragment.dayRepeat
-                      .getOnTheMonth()
-                      .ordinal()];
-                  }
-                }
-                else if(MainEditFragment.dayRepeat.getOnTheMonth().ordinal() == 7) {
-                  if(LOCALE.equals(Locale.JAPAN)) {
-                    label += "平日";
-                  }
-                  else {
-                    label += "Weekday";
-                  }
-                }
-                else if(MainEditFragment.dayRepeat.getOnTheMonth().ordinal() == 8) {
-                  if(LOCALE.equals(Locale.JAPAN)) {
-                    label += "週末";
-                  }
-                  else {
-                    label += "Weekend day";
-                  }
-                }
-
-                dayRepeatCustomPickerFragment.onTheMonthPicker.setTitle(label);
-              }
-
-              break;
-            }
-            case 4: {
-
-              dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
-                dayRepeatCustomPickerFragment.year);
-
-              if(LOCALE.equals(Locale.JAPAN) && intervalValue == 1) {
-                intervalLabel = getString(R.string.every_year);
               }
               else {
-                intervalLabel =
-                  res.getQuantityString(R.plurals.per_year, intervalValue, intervalValue);
+                if(LOCALE.equals(Locale.JAPAN)) {
+                  label += "最終週の";
+                }
+                else {
+                  label += "Last ";
+                }
               }
 
-              break;
+              if(MainEditFragment.dayRepeat.getOnTheMonth().ordinal() < 7) {
+                if(LOCALE.equals(Locale.JAPAN)) {
+                  label += DayRepeatCustomPickerFragment
+                    .DAY_OF_WEEK_LIST_JA[MainEditFragment.dayRepeat
+                    .getOnTheMonth()
+                    .ordinal()] + "曜日";
+                }
+                else {
+                  label += DayRepeatCustomPickerFragment
+                    .DAY_OF_WEEK_LIST_EN[MainEditFragment.dayRepeat
+                    .getOnTheMonth()
+                    .ordinal()];
+                }
+              }
+              else if(MainEditFragment.dayRepeat.getOnTheMonth().ordinal() == 7) {
+                if(LOCALE.equals(Locale.JAPAN)) {
+                  label += "平日";
+                }
+                else {
+                  label += "Weekday";
+                }
+              }
+              else if(MainEditFragment.dayRepeat.getOnTheMonth().ordinal() == 8) {
+                if(LOCALE.equals(Locale.JAPAN)) {
+                  label += "週末";
+                }
+                else {
+                  label += "Weekend day";
+                }
+              }
+
+              dayRepeatCustomPickerFragment.onTheMonthPicker.setTitle(label);
             }
+
+            break;
           }
+          case 4: {
 
-          // Pickerのラベルを更新
-          dayRepeatCustomPickerFragment.picker.setTitle(intervalLabel);
+            dayRepeatCustomPickerFragment.rootPreferenceScreen.addPreference(
+              dayRepeatCustomPickerFragment.year);
+
+            if(LOCALE.equals(Locale.JAPAN) && intervalValue == 1) {
+              intervalLabel = getString(R.string.every_year);
+            }
+            else {
+              intervalLabel =
+                res.getQuantityString(R.plurals.per_year, intervalValue, intervalValue);
+            }
+
+            break;
+          }
         }
+
+        // Pickerのラベルを更新
+        dayRepeatCustomPickerFragment.picker.setTitle(intervalLabel);
       })
-      .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setNeutralButton(R.string.cancel, (dialog12, which) -> {
 
-        }
       })
       .setView(view)
       .create();
 
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
+    dialog.setOnShowListener(dialogInterface -> {
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-      }
+      dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+      dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
     });
 
     return dialog;

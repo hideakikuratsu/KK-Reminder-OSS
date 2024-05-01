@@ -234,13 +234,10 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
     }
 
     //Time Limitのラベルの初期化
-    new Handler(Looper.getMainLooper()).post(new Runnable() {
-      @Override
-      public void run() {
+    new Handler(Looper.getMainLooper()).post(() -> {
 
-        ((MyCheckBoxPreference)timeLimit).setMySummary(activity.getString(R.string.time_limit));
-        ((MyCheckBoxPreference)timeLimit).showMySummary();
-      }
+      ((MyCheckBoxPreference)timeLimit).setMySummary(activity.getString(R.string.time_limit));
+      ((MyCheckBoxPreference)timeLimit).showMySummary();
     });
     if(MainEditFragment.dayRepeat.getTimeLimit() != null) {
       MainEditFragment.tmpTimeLimit = (Calendar)MainEditFragment.dayRepeat.getTimeLimit().clone();
@@ -253,7 +250,7 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
       }
       else {
         this.timeLimit.setTitle(DateFormat.format(
-            "yyyy/M/d (E)",
+            "E, MMM d, yyyy",
             MainEditFragment.dayRepeat.getTimeLimit()
         ));
       }
@@ -277,8 +274,7 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-    FragmentManager manager = getFragmentManager();
-    requireNonNull(manager);
+    FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
     manager.popBackStack();
     return super.onOptionsItemSelected(item);
   }
@@ -289,8 +285,7 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
       .setDuration(300);
     this.setExitTransition(transition);
     next.setEnterTransition(transition);
-    FragmentManager manager = getFragmentManager();
-    requireNonNull(manager);
+    FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
     manager
       .beginTransaction()
       .remove(this)
@@ -311,12 +306,13 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
       else {
         if(!never.isChecked()) {
           String label = this.label.getSummary().toString();
+          System.out.println(label);
           String targetString;
           if(LOCALE.equals(Locale.JAPAN)) {
-            targetString = " \\(\\d{4}年\\d{1,2}月\\d{1,2}日\\(.\\)まで\\)$";
+            targetString = " \\(.*まで\\)$";
           }
           else {
-            targetString = " until \\d{4}/\\d{1,2}/\\d{1,2} \\(...\\)$";
+            targetString = " until.*$";
           }
           label = label.replaceAll(targetString, "");
           this.label.setSummary(label);

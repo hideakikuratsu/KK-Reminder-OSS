@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -86,8 +85,7 @@ public class NotesEditModeFragment extends Fragment {
   ) {
 
     if(MainEditFragment.isNotesPopping) {
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager.popBackStack();
     }
 
@@ -100,26 +98,23 @@ public class NotesEditModeFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 
-          if(isEditing) {
-            new AlertDialog.Builder(activity)
-              .setTitle(R.string.is_editing_title)
-              .setMessage(R.string.is_editing_message)
-              .show();
+        if(isEditing) {
+          new AlertDialog.Builder(activity)
+            .setTitle(R.string.is_editing_title)
+            .setMessage(R.string.is_editing_message)
+            .show();
 
-            return true;
-          }
-
-          MainEditFragment.isNotesPopping = true;
+          return true;
         }
 
-        return false;
+        MainEditFragment.isNotesPopping = true;
       }
+
+      return false;
     });
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
@@ -138,31 +133,28 @@ public class NotesEditModeFragment extends Fragment {
       activity.accentColor,
       PorterDuff.Mode.SRC_IN
     ));
-    memo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override
-      public void onFocusChange(View v, boolean hasFocus) {
+    memo.setOnFocusChangeListener((v, hasFocus) -> {
 
-        if(hasFocus) {
-          isEditing = true;
-          Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_cancel_24dp);
-          requireNonNull(drawable);
-          drawable = drawable.mutate();
-          drawable.setColorFilter(new PorterDuffColorFilter(
-            activity.menuItemColor,
-            PorterDuff.Mode.SRC_IN
-          ));
-          actionBar.setHomeAsUpIndicator(drawable);
+      if(hasFocus) {
+        isEditing = true;
+        Drawable drawable = ContextCompat.getDrawable(activity, R.drawable.ic_cancel_24dp);
+        requireNonNull(drawable);
+        drawable = drawable.mutate();
+        drawable.setColorFilter(new PorterDuffColorFilter(
+          activity.menuItemColor,
+          PorterDuff.Mode.SRC_IN
+        ));
+        actionBar.setHomeAsUpIndicator(drawable);
 
-          clearNotesItem.setVisible(false);
-          doneItem.setVisible(true);
-          checklistModeItem.setVisible(false);
-        }
-        else {
-          InputMethodManager manager =
-            (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-          requireNonNull(manager);
-          manager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
+        clearNotesItem.setVisible(false);
+        doneItem.setVisible(true);
+        checklistModeItem.setVisible(false);
+      }
+      else {
+        InputMethodManager manager =
+          (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        requireNonNull(manager);
+        manager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
       }
     });
     StringBuilder stringBuilder = new StringBuilder();
@@ -227,127 +219,112 @@ public class NotesEditModeFragment extends Fragment {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    switch(item.getItemId()) {
-
-      case R.id.clear_notes: {
-
-        final AlertDialog dialog = new AlertDialog.Builder(activity)
+    int itemId = item.getItemId();
+    if(itemId == R.id.clear_notes) {
+      final AlertDialog dialog = new AlertDialog.Builder(activity)
           .setTitle(R.string.clear_notes)
           .setMessage(R.string.clear_notes_message)
-          .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+          .setPositiveButton(R.string.yes, (dialog1, which) -> {
 
-              NotesEditModeFragment.item.setNotesList(new ArrayList<NotesAdapter>());
-              memo.setText(null);
-              notes = null;
+            NotesEditModeFragment.item.setNotesList(new ArrayList<>());
+            memo.setText(null);
+            notes = null;
 
-              if(activity.isItemExists(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE)) {
-                activity.updateDB(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE);
-              }
-              else {
-                MainEditFragment.item.setNotesList(
+            if(activity.isItemExists(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE)) {
+              activity.updateDB(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE);
+            }
+            else {
+              MainEditFragment.item.setNotesList(
                   new ArrayList<>(NotesEditModeFragment.item.getNotesList())
-                );
-              }
+              );
             }
           })
-          .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+          .setNeutralButton(R.string.cancel, (dialog12, which) -> {
 
-            }
           })
           .create();
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-          @Override
-          public void onShow(DialogInterface dialogInterface) {
+      dialog.setOnShowListener(dialogInterface -> {
 
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-          }
-        });
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+      });
 
-        dialog.show();
+      dialog.show();
 
-        return true;
+      return true;
+    }
+    else if(itemId == R.id.checklist_mode) {
+      NotesEditModeFragment.item.setChecklistMode(true);
+      activity.updateDB(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE);
+      activity.showNotesFragment(NotesEditModeFragment.item);
+      return true;
+    }
+    else if(itemId == R.id.done) {
+      memo.clearFocus();
+      isEditing = false;
+      actionBar.setHomeAsUpIndicator(activity.upArrow);
+      clearNotesItem.setVisible(true);
+      checklistModeItem.setVisible(true);
+      doneItem.setVisible(false);
+
+      List<String> revised = new ArrayList<>();
+      BufferedReader reader = new BufferedReader(new StringReader(memo.getText().toString()));
+      String line;
+      try {
+        while((line = reader.readLine()) != null) {
+          revised.add(line);
+        }
       }
-      case R.id.checklist_mode: {
+      catch(IOException e) {
+        Log.e("NotesEditModeFragment#onOptionsItemSelected", Log.getStackTraceString(e));
+      }
 
-        NotesEditModeFragment.item.setChecklistMode(true);
+      NotesEditModeFragment.item.clearNotesList();
+      int size = revised.size();
+      for(int i = 0; i < size; i++) {
+        String string = revised.get(i);
+        if(string.length() > 1 && string.endsWith(" *")) {
+          NotesEditModeFragment.item.addNotes(
+              new NotesAdapter(string.substring(0, string.length() - 2), true, i)
+          );
+        }
+        else {
+          NotesEditModeFragment.item.addNotes(new NotesAdapter(string, false, i));
+        }
+      }
+
+      notes = NotesEditModeFragment.item.getNotesString();
+
+      if(activity.isItemExists(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE)) {
         activity.updateDB(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE);
-        activity.showNotesFragment(NotesEditModeFragment.item);
-        return true;
       }
-      case R.id.done: {
+      else {
+        MainEditFragment.item.setNotesList(
+            new ArrayList<>(NotesEditModeFragment.item.getNotesList())
+        );
+      }
 
+      return true;
+    }
+    else if(itemId == android.R.id.home) {
+      if(isEditing) {
         memo.clearFocus();
+        memo.setText(notes);
         isEditing = false;
         actionBar.setHomeAsUpIndicator(activity.upArrow);
         clearNotesItem.setVisible(true);
         checklistModeItem.setVisible(true);
         doneItem.setVisible(false);
-
-        List<String> revised = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new StringReader(memo.getText().toString()));
-        String line;
-        try {
-          while((line = reader.readLine()) != null) {
-            revised.add(line);
-          }
-        }
-        catch(IOException e) {
-          Log.e("NotesEditFrag#onOptions", Log.getStackTraceString(e));
-        }
-
-        NotesEditModeFragment.item.clearNotesList();
-        int size = revised.size();
-        for(int i = 0; i < size; i++) {
-          String string = revised.get(i);
-          if(string.length() > 1 && string.endsWith(" *")) {
-            NotesEditModeFragment.item.addNotes(
-              new NotesAdapter(string.substring(0, string.length() - 2), true, i)
-            );
-          }
-          else {
-            NotesEditModeFragment.item.addNotes(new NotesAdapter(string, false, i));
-          }
-        }
-
-        notes = NotesEditModeFragment.item.getNotesString();
-
-        if(activity.isItemExists(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE)) {
-          activity.updateDB(NotesEditModeFragment.item, MyDatabaseHelper.TODO_TABLE);
-        }
-        else {
-          MainEditFragment.item.setNotesList(
-            new ArrayList<>(NotesEditModeFragment.item.getNotesList())
-          );
-        }
-
-        return true;
       }
-      case android.R.id.home: {
-
-        if(isEditing) {
-          memo.clearFocus();
-          memo.setText(notes);
-          isEditing = false;
-          actionBar.setHomeAsUpIndicator(activity.upArrow);
-          clearNotesItem.setVisible(true);
-          checklistModeItem.setVisible(true);
-          doneItem.setVisible(false);
-        }
-        else {
-          MainEditFragment.isNotesPopping = true;
-          FragmentManager manager = getFragmentManager();
-          requireNonNull(manager);
-          manager.popBackStack();
-        }
-
-        return true;
+      else {
+        MainEditFragment.isNotesPopping = true;
+        FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
+        requireNonNull(manager);
+        manager.popBackStack();
       }
+
+      return true;
     }
     return false;
   }

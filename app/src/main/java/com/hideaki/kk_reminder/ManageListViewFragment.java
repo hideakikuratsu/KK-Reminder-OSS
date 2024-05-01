@@ -10,9 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,8 +45,7 @@ public class ManageListViewFragment extends Fragment {
       activity.drawerLayout.closeDrawer(GravityCompat.START);
     }
     else {
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager
         .beginTransaction()
         .remove(this)
@@ -84,24 +81,21 @@ public class ManageListViewFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
 
-          if(ManageListAdapter.isSorting) {
-            new AlertDialog.Builder(activity)
-              .setTitle(R.string.is_sorting_title)
-              .setMessage(R.string.is_sorting_message)
-              .show();
+        if(ManageListAdapter.isSorting) {
+          new AlertDialog.Builder(activity)
+            .setTitle(R.string.is_sorting_title)
+            .setMessage(R.string.is_sorting_message)
+            .show();
 
-            return true;
-          }
+          return true;
         }
-
-        return false;
       }
+
+      return false;
     });
 
     activity.listView = view.findViewById(R.id.listView);
@@ -124,13 +118,7 @@ public class ManageListViewFragment extends Fragment {
     ((ViewGroup)activity.listView.getParent()).addView(linearLayout, 0, layoutParams);
     activity.listView.setEmptyView(linearLayout);
     activity.listView.setDragListener(activity.manageListAdapter.myDragListener);
-    activity.listView.post(new Runnable() {
-      @Override
-      public void run() {
-
-        activity.listView.setSelectionFromTop(position, offset);
-      }
-    });
+    activity.listView.post(() -> activity.listView.setSelectionFromTop(position, offset));
     activity.listView.setAdapter(activity.manageListAdapter);
     activity.listView.setTextFilterEnabled(true);
     activity.listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -164,13 +152,12 @@ public class ManageListViewFragment extends Fragment {
       }
     });
 
-    AdView adView = view.findViewById(R.id.adView);
-    if(activity.isPremium) {
-      adView.setVisibility(View.GONE);
-    }
-    else {
-      AdRequest adRequest = new AdRequest.Builder().build();
-      adView.loadAd(adRequest);
+    if(!activity.isPremium) {
+      LinearLayout adContainer = view.findViewById(R.id.ad_mob_view);
+      if(activity.adView.getParent() != null) {
+        ((ViewGroup)activity.adView.getParent()).removeView(activity.adView);
+      }
+      adContainer.addView(activity.adView);
     }
 
     return view;

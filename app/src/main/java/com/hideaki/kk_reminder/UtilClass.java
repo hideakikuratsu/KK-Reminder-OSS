@@ -13,9 +13,13 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.text.format.DateFormat;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.android.gms.ads.AdSize;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -75,23 +79,20 @@ class UtilClass {
   static final String DEFAULT_TEXT_SIZE = "DEFAULT_TEXT_SIZE";
   static final String SNOOZE_DEFAULT_HOUR = "SNOOZE_DEFAULT_HOUR";
   static final String SNOOZE_DEFAULT_MINUTE = "SNOOZE_DEFAULT_MINUTE";
+  static final String CUSTOM_SNOOZE_HOUR = "CUSTOM_SNOOZE_HOUR";
+  static final String CUSTOM_SNOOZE_MINUTE = "CUSTOM_SNOOZE_MINUTE";
   static final String MENU_POSITION = "MENU_POSITION";
   static final String SUBMENU_POSITION = "SUBMENU_POSITION";
   static final String CREATED = "CREATED";
   static final String DESTROYED = "DESTROYED";
-  //  static final String ATTACHED = "ATTACHED";
-//  static final String DETACHED = "DETACHED";
   static final String CHANGE_GRADE = "I am sceoppa100 developer";
   static final String COLLAPSE_GROUP = "COLLAPSE_GROUP";
-  //  static final String RESUMED = "RESUMED";
-//  static final String PAUSED = "PAUSED";
-//  static final String STARTED = "STARTED";
-//  static final String STOPPED = "STOPPED";
   static final String BOOLEAN_GENERAL = "BOOLEAN_GENERAL";
   static final String BOOLEAN_GENERAL_COPY = "BOOLEAN_GENERAL_COPY";
   static final String IS_COPIED_FROM_OLD_VERSION = "IS_COPIED_FROM_OLD_VERSION";
   static final String IS_QUERIED_PURCHASE_HISTORY = "IS_QUERIED_PURCHASE_HISTORY";
   static final String IS_RECREATED = "IS_RECREATED";
+  static final String IS_RECREATED_TWICE = "IS_RECREATED_TWICE";
   static final String IS_ID_TABLE_FLOOD = "IS_ID_TABLE_FLOOD";
   static final String IS_DARK_MODE = "IS_DARK_MODE";
   static final String IS_DARK_THEME_FOLLOW_SYSTEM = "IS_DARK_THEME_FOLLOW_SYSTEM";
@@ -107,7 +108,6 @@ class UtilClass {
   static final String CHILD_NOTIFICATION_ID = "CHILD_NOTIFICATION_ID";
   static final String LINE_SEPARATOR = System.getProperty("line.separator");
   static final String PRODUCT_ID_PREMIUM = "com.hideaki.premium";
-  static final int REQUEST_CODE_SIGN_IN = 1;
   static final long MINUTE = 60 * 1000;
   static final long HOUR = 60 * 60 * 1000;
   @SuppressWarnings("FieldNamingConvention")
@@ -129,7 +129,7 @@ class UtilClass {
       }
     }
     catch(IOException e) {
-      Log.e("readFileFromAssets", Log.getStackTraceString(e));
+      Log.e("UtilClass#readFileFromAssets", Log.getStackTraceString(e));
     }
 
     return text.toString();
@@ -306,7 +306,7 @@ class UtilClass {
       oos.close();
     }
     catch(IOException e) {
-      Log.e("serialize", Log.getStackTraceString(e));
+      Log.e("UtilClass#serialize", Log.getStackTraceString(e));
     }
 
     return baos.toByteArray();
@@ -327,7 +327,7 @@ class UtilClass {
         ois.close();
       }
       catch(IOException | ClassNotFoundException e) {
-        Log.e("deserialize", Log.getStackTraceString(e));
+        Log.e("UtilClass#deserialize", Log.getStackTraceString(e));
       }
 
       return data;
@@ -350,7 +350,7 @@ class UtilClass {
           context.startService(intent);
         }
         catch(IllegalStateException e) {
-          Log.e("copyDatabase", Log.getStackTraceString(e));
+          Log.e("UtilClass#copyDatabase", Log.getStackTraceString(e));
           copyDatabaseKernel(context, false);
         }
       }
@@ -370,7 +370,7 @@ class UtilClass {
           context.startService(intent);
         }
         catch(IllegalStateException e) {
-          Log.e("copySharedPreferences", Log.getStackTraceString(e));
+          Log.e("UtilClass#copySharedPreferences", Log.getStackTraceString(e));
           copySharedPreferencesKernel(context, false);
         }
       }
@@ -415,7 +415,7 @@ class UtilClass {
         os.flush();
       }
       catch(Exception e) {
-        Log.e("copyDatabaseKernel", Log.getStackTraceString(e));
+        Log.e("UtilClass#copyDatabaseKernel", Log.getStackTraceString(e));
       }
       finally {
         try {
@@ -427,7 +427,7 @@ class UtilClass {
           }
         }
         catch(Exception e) {
-          Log.e("copyDatabaseKernel", Log.getStackTraceString(e));
+          Log.e("UtilClass#copyDatabaseKernel", Log.getStackTraceString(e));
         }
       }
     }
@@ -479,7 +479,7 @@ class UtilClass {
           os.flush();
         }
         catch(Exception e) {
-          Log.e("copySharedPreKernel", Log.getStackTraceString(e));
+          Log.e("UtilClass#copySharedPreferencesKernel", Log.getStackTraceString(e));
         }
         finally {
           try {
@@ -491,7 +491,7 @@ class UtilClass {
             }
           }
           catch(Exception e) {
-            Log.e("copySharedPreKernel", Log.getStackTraceString(e));
+            Log.e("UtilClass#copySharedPreferencesKernel", Log.getStackTraceString(e));
           }
         }
       }
@@ -516,10 +516,42 @@ class UtilClass {
         label += DateFormat.format(" (yyyy年M月d日(E)まで)", timeLimit);
       }
       else {
-        label += DateFormat.format(" until yyyy/M/d (E)", timeLimit);
+        label += DateFormat.format(" until E, MMM d, yyyy", timeLimit);
       }
     }
 
     return label;
+  }
+
+  static boolean isUriExists(Context context, Uri uri) {
+
+    if(uri != null) {
+      try {
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        if(inputStream != null) {
+          inputStream.close();
+        }
+        return true;
+      }
+      catch(Exception e) {
+        Log.w("UtilClass#isUriExists", "File corresponding to the uri does not exist " + uri);
+      }
+    }
+
+    return false;
+  }
+
+  static AdSize getAdSize(MainActivity activity) {
+
+    Display display = activity.getWindowManager().getDefaultDisplay();
+    DisplayMetrics outMetrics = new DisplayMetrics();
+    display.getMetrics(outMetrics);
+
+    float widthPixels = outMetrics.widthPixels;
+    float density = outMetrics.density;
+
+    int adWidth = (int)(widthPixels / density);
+
+    return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, adWidth);
   }
 }

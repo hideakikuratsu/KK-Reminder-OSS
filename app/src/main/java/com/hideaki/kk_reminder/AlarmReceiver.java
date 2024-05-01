@@ -49,9 +49,10 @@ import static com.hideaki.kk_reminder.UtilClass.SNOOZE_DEFAULT_MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL_COPY;
 import static com.hideaki.kk_reminder.UtilClass.copySharedPreferences;
-import static com.hideaki.kk_reminder.UtilClass.getNow;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
+import static com.hideaki.kk_reminder.UtilClass.getNow;
 import static com.hideaki.kk_reminder.UtilClass.getVibrationPattern;
+import static com.hideaki.kk_reminder.UtilClass.isUriExists;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
 import static java.util.Objects.requireNonNull;
 
@@ -112,8 +113,9 @@ public class AlarmReceiver extends BroadcastReceiver {
       getIsDirectBootContext(context) ? BOOLEAN_GENERAL_COPY : BOOLEAN_GENERAL,
       MODE_PRIVATE
     );
-    Set<String> idTable =
-      stringPreferences.getStringSet(NOTIFICATION_ID_TABLE, new TreeSet<String>());
+    Set<String> idTable = new TreeSet<>(
+        stringPreferences.getStringSet(NOTIFICATION_ID_TABLE, new TreeSet<>())
+    );
     requireNonNull(idTable);
     boolean isIdTableFlood = booleanPreferences.getBoolean(IS_ID_TABLE_FLOOD, false);
     int parentId = intent.getIntExtra(PARENT_NOTIFICATION_ID, 0);
@@ -168,7 +170,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     Intent openActivity = new Intent(context, MainActivity.class);
     openActivity.setAction(BOOT_FROM_NOTIFICATION);
     PendingIntent sender = PendingIntent.getActivity(
-      context, (int)System.currentTimeMillis(), openActivity, PendingIntent.FLAG_UPDATE_CURRENT
+      context, (int)System.currentTimeMillis(), openActivity,
+      PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
     );
 
     // バイブレーションの設定
@@ -180,6 +183,9 @@ public class AlarmReceiver extends BroadcastReceiver {
     Uri sound = DEFAULT_URI_SOUND;
     if(uriString != null) {
       sound = Uri.parse(uriString);
+      if(!isUriExists(context, sound)) {
+        sound = DEFAULT_URI_SOUND;
+      }
     }
 
     // タスクごとに異なるNotificationChannelを利用して通知音を区別する
@@ -244,7 +250,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     doneIntent.putExtra(PARENT_NOTIFICATION_ID, parentId);
     doneIntent.putExtra(CHILD_NOTIFICATION_ID, childId);
     PendingIntent doneSender = PendingIntent.getBroadcast(
-      context, (int)item.getId(), doneIntent, PendingIntent.FLAG_UPDATE_CURRENT
+      context, (int)item.getId(), doneIntent,
+      PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
     );
     builder.addAction(R.mipmap.done, context.getString(R.string.done), doneSender);
 
@@ -275,7 +282,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     defaultSnoozeIntent.putExtra(PARENT_NOTIFICATION_ID, parentId);
     defaultSnoozeIntent.putExtra(CHILD_NOTIFICATION_ID, childId);
     PendingIntent defaultSnoozeSender = PendingIntent.getBroadcast(
-      context, (int)item.getId(), defaultSnoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
+      context, (int)item.getId(), defaultSnoozeIntent,
+      PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
     );
     builder.addAction(R.mipmap.update, summary, defaultSnoozeSender);
 
@@ -285,7 +293,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     advancedSnoozeIntent.putExtra(PARENT_NOTIFICATION_ID, parentId);
     advancedSnoozeIntent.putExtra(CHILD_NOTIFICATION_ID, childId);
     PendingIntent snoozeSender = PendingIntent.getActivity(
-      context, (int)item.getId(), advancedSnoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
+      context, (int)item.getId(), advancedSnoozeIntent,
+      PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
     );
     builder.addAction(
       R.mipmap.snooze,
@@ -317,7 +326,9 @@ public class AlarmReceiver extends BroadcastReceiver {
       recursiveAlarm.putExtra(CHILD_NOTIFICATION_ID, childId);
       recursiveAlarm.putExtra(CHANNEL_ID, channelId);
       PendingIntent recursiveSender = PendingIntent.getBroadcast(
-        context, (int)item.getId(), recursiveAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
+        context, (int)item.getId(), recursiveAlarm,
+        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+      );
 
       long resetSchedule = getNow().getTimeInMillis()
         + item.getNotifyInterval().getHour() * HOUR
@@ -353,7 +364,7 @@ public class AlarmReceiver extends BroadcastReceiver {
           Thread.sleep(10);
         }
         catch(InterruptedException ex) {
-          Log.e("querySettingsDB", Log.getStackTraceString(ex));
+          Log.e("AlarmReceiver#querySettingsDB", Log.getStackTraceString(ex));
         }
       }
     }

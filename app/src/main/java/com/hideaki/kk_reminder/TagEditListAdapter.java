@@ -1,6 +1,5 @@
 package com.hideaki.kk_reminder;
 
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.view.View;
@@ -77,139 +76,109 @@ public class TagEditListAdapter extends BaseAdapter {
         viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
       }
       else if(position != 0) {
-        switch(v.getId()) {
-
-          case R.id.tag_item: {
-
-            // ダイアログに表示するEditTextの設定
-            LinearLayout linearLayout = new LinearLayout(activity);
-            linearLayout.setOrientation(LinearLayout.VERTICAL);
-            final EditText editText = new EditText(activity);
-            setCursorDrawableColor(activity, editText);
-            editText.getBackground().mutate().setColorFilter(new PorterDuffColorFilter(
+        int id = v.getId();
+        if(id == R.id.tag_item) {// ダイアログに表示するEditTextの設定
+          LinearLayout linearLayout = new LinearLayout(activity);
+          linearLayout.setOrientation(LinearLayout.VERTICAL);
+          final EditText editText = new EditText(activity);
+          setCursorDrawableColor(activity, editText);
+          editText.getBackground().mutate().setColorFilter(new PorterDuffColorFilter(
               activity.accentColor,
               PorterDuff.Mode.SRC_IN
-            ));
-            editText.setText(tag.getName());
-            editText.setHint(R.string.tag_hint);
-            editText.setSelection(tag.getName().length());
-            editText.setLayoutParams(new LinearLayout.LayoutParams(
+          ));
+          editText.setText(tag.getName());
+          editText.setHint(R.string.tag_hint);
+          editText.setSelection(tag.getName().length());
+          editText.setLayoutParams(new LinearLayout.LayoutParams(
               LinearLayout.LayoutParams.MATCH_PARENT,
               LinearLayout.LayoutParams.WRAP_CONTENT
-            ));
-            linearLayout.addView(editText);
-            int paddingPx = getPxFromDp(activity, 20);
-            linearLayout.setPadding(paddingPx, 0, paddingPx, 0);
+          ));
+          linearLayout.addView(editText);
+          int paddingPx = getPxFromDp(activity, 20);
+          linearLayout.setPadding(paddingPx, 0, paddingPx, 0);
 
-            final AlertDialog dialog = new AlertDialog.Builder(activity)
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setTitle(R.string.name_tag)
               .setView(linearLayout)
-              .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+              .setPositiveButton(R.string.determine, (dialog1, which) -> {
 
-                  String name = editText.getText().toString();
-                  if(!name.equals("")) {
-                    tag.setName(name);
-                    activity.generalSettings.getTagList().get(position).setName(name);
-                    activity.updateSettingsDB();
-                  }
-                }
-              })
-              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-              })
-              .create();
-
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-              @Override
-              public void onShow(DialogInterface dialogInterface) {
-
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-              }
-            });
-
-            dialog.show();
-
-            // ダイアログ表示時にソフトキーボードを自動で表示
-            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-              @Override
-              public void onFocusChange(View v, boolean hasFocus) {
-
-                if(hasFocus) {
-                  Window dialogWindow = dialog.getWindow();
-                  requireNonNull(dialogWindow);
-
-                  dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                }
-              }
-            });
-            editText.requestFocus();
-
-            break;
-          }
-          case R.id.tag_pallet: {
-
-            ColorPickerListViewFragment.tagPosition = position;
-            activity.showColorPickerListViewFragment();
-            break;
-          }
-          case R.id.delete: {
-
-            final AlertDialog dialog = new AlertDialog.Builder(activity)
-              .setTitle(R.string.delete_tag_title)
-              .setMessage(R.string.delete_tag_message)
-              .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                  if(tag.getId() == checkedItemId) {
-                    if(order == 0 || order == 1 || order == 4) {
-                      MainEditFragment.item.setWhichTagBelongs(0);
-                    }
-                    else if(order == 3) {
-                      MainEditFragment.list.setWhichTagBelongs(0);
-                    }
-                    checkedItemId = 0;
-                  }
-
-                  activity.generalSettings.removeTag(position);
-                  List<TagAdapter> tagAdapterList = activity.generalSettings.getTagList();
-                  int size = tagAdapterList.size();
-                  for(int i = 0; i < size; i++) {
-                    tagAdapterList.get(i).setOrder(i);
-                  }
-                  tagList = new ArrayList<>(tagAdapterList);
-                  notifyDataSetChanged();
-
+                String name = editText.getText().toString();
+                if(!name.equals("")) {
+                  tag.setName(name);
+                  activity.generalSettings.getTagList().get(position).setName(name);
                   activity.updateSettingsDB();
                 }
               })
-              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+              .setNeutralButton(R.string.cancel, (dialog12, which) -> {
 
-                }
               })
               .create();
 
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-              @Override
-              public void onShow(DialogInterface dialogInterface) {
+          dialog.setOnShowListener(dialogInterface -> {
 
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-              }
-            });
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+          });
 
-            dialog.show();
+          dialog.show();
 
-            break;
-          }
+          // ダイアログ表示時にソフトキーボードを自動で表示
+          editText.setOnFocusChangeListener((v1, hasFocus) -> {
+
+            if(hasFocus) {
+              Window dialogWindow = dialog.getWindow();
+              requireNonNull(dialogWindow);
+
+              dialogWindow.setSoftInputMode(
+                  WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+              );
+            }
+          });
+          editText.requestFocus();
+        }
+        else if(id == R.id.tag_pallet) {
+          ColorPickerListViewFragment.tagPosition = position;
+          activity.showColorPickerListViewFragment();
+        }
+        else if(id == R.id.delete) {
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
+              .setTitle(R.string.delete_tag_title)
+              .setMessage(R.string.delete_tag_message)
+              .setPositiveButton(R.string.delete, (dialog13, which) -> {
+
+                if(tag.getId() == checkedItemId) {
+                  if(order == 0 || order == 1 || order == 4) {
+                    MainEditFragment.item.setWhichTagBelongs(0);
+                  }
+                  else if(order == 3) {
+                    MainEditFragment.list.setWhichTagBelongs(0);
+                  }
+                  checkedItemId = 0;
+                }
+
+                activity.generalSettings.removeTag(position);
+                List<TagAdapter> tagAdapterList = activity.generalSettings.getTagList();
+                int size = tagAdapterList.size();
+                for(int i = 0; i < size; i++) {
+                  tagAdapterList.get(i).setOrder(i);
+                }
+                tagList = new ArrayList<>(tagAdapterList);
+                notifyDataSetChanged();
+
+                activity.updateSettingsDB();
+              })
+              .setNeutralButton(R.string.cancel, (dialog14, which) -> {
+
+              })
+              .create();
+
+          dialog.setOnShowListener(dialogInterface -> {
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+          });
+
+          dialog.show();
         }
       }
     }

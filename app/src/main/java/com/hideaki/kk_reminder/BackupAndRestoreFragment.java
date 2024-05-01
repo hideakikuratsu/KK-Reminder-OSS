@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -25,8 +24,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -45,6 +42,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -61,7 +60,6 @@ import static com.hideaki.kk_reminder.MyDatabaseHelper.DATABASE;
 import static com.hideaki.kk_reminder.UtilClass.BOOLEAN_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
-import static com.hideaki.kk_reminder.UtilClass.REQUEST_CODE_SIGN_IN;
 import static com.hideaki.kk_reminder.UtilClass.STRING_GENERAL;
 import static com.hideaki.kk_reminder.UtilClass.SUBMENU_POSITION;
 import static java.util.Objects.requireNonNull;
@@ -86,6 +84,41 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
   private DriveServiceHelper driveServiceHelper;
   private BackupAndRestoreProgressBarDialogFragment backupAndRestoreDialog;
   private Map<String, String> backupFilesMap;
+  private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
+      new StartActivityForResult(), activityResult -> {
+
+        int resultCode = activityResult.getResultCode();
+        if(resultCode != Activity.RESULT_OK) {
+          Log.e(
+              "BackupAndRestoreFragment#ActivityResultCallback",
+              "resultCode = " + resultCode
+          );
+          Toast.makeText(activity, getString(R.string.error), Toast.LENGTH_LONG).show();
+          return;
+        }
+
+        Intent data = activityResult.getData();
+        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+
+        try {
+          signInAccount = task.getResult(ApiException.class);
+          preferenceCategory.addPreference(logout);
+
+          setDriveServiceHelper();
+          if(isBackup) {
+            backupToDrive();
+          }
+          else {
+            restoreFromDrive();
+          }
+        }
+        catch(ApiException e) {
+
+          Log.e("BackupAndRestoreFragment#ActivityResultCallback", Log.getStackTraceString(e));
+          Toast.makeText(activity, getString(R.string.error), Toast.LENGTH_LONG).show();
+        }
+      }
+  );
 
   public static BackupAndRestoreFragment newInstance() {
 
@@ -168,8 +201,7 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-    FragmentManager manager = getFragmentManager();
-    requireNonNull(manager);
+    FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
     manager.popBackStack();
     return super.onOptionsItemSelected(item);
   }
@@ -218,62 +250,52 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
 
       driveServiceHelper
         .queryFolder(ROOT_FOLDER_NAME)
-        .addOnSuccessListener(new OnSuccessListener<FileList>() {
-          @Override
-          public void onSuccess(FileList fileList) {
+        .addOnSuccessListener(fileList -> {
 
-            List<File> folderList = fileList.getFiles();
-            if(folderList.size() == 0) {
-              Toast
-                .makeText(activity, getString(R.string.backup_not_exists), Toast.LENGTH_LONG)
-                .show();
-            }
-            else {
-              // データベースのバックアップファイルの検索
-              driveServiceHelper
-                .queryFiles(MIME_TYPE_DATABASE)
-                .addOnSuccessListener(new OnSuccessListener<List<FileList>>() {
-                  @Override
-                  public void onSuccess(List<FileList> fileLists) {
+          List<File> folderList = fileList.getFiles();
+          if(folderList.size() == 0) {
+            Toast
+              .makeText(activity, getString(R.string.backup_not_exists), Toast.LENGTH_LONG)
+              .show();
+          }
+          else {
+            // データベースのバックアップファイルの検索
+            driveServiceHelper
+              .queryFiles(MIME_TYPE_DATABASE)
+              .addOnSuccessListener(fileLists -> {
 
-                    backupFilesMap = new LinkedHashMap<>();
-                    for(FileList list : fileLists) {
-                      for(File file : list.getFiles()) {
-                        backupFilesMap.put(file.getName(), file.getId());
-                      }
-                    }
-                    if(backupFilesMap.isEmpty()) {
-                      Toast.makeText(
-                        activity, getString(R.string.backup_not_exists), Toast.LENGTH_LONG
-                      ).show();
-                    }
-                    else {
-                      displayDialog();
-                    }
+                backupFilesMap = new LinkedHashMap<>();
+                for(FileList list : fileLists) {
+                  for(File file : list.getFiles()) {
+                    backupFilesMap.put(file.getName(), file.getId());
                   }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                  @Override
-                  public void onFailure(@NonNull Exception e) {
-
-                    Toast
-                      .makeText(
+                }
+                if(backupFilesMap.isEmpty()) {
+                  Toast.makeText(
+                    activity, getString(R.string.backup_not_exists), Toast.LENGTH_LONG
+                  ).show();
+                }
+                else {
+                  displayDialog();
+                }
+              })
+              .addOnFailureListener(e -> {
+                Log.e("BackupAndRestoreFragment#restoreFromDrive", Log.getStackTraceString(e));
+                Toast
+                    .makeText(
                         activity,
                         getString(R.string.fail_to_query),
                         Toast.LENGTH_LONG
-                      )
-                      .show();
-                  }
-                });
-            }
+                    )
+                    .show();
+              });
           }
         })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            Toast.makeText(activity, getString(R.string.fail_to_query), Toast.LENGTH_LONG).show();
-          }
+        .addOnFailureListener(e -> {
+          Log.e("BackupAndRestoreFragment#restoreFromDrive", Log.getStackTraceString(e));
+          Toast.makeText(
+              activity, getString(R.string.fail_to_query), Toast.LENGTH_LONG
+          ).show();
         });
     }
   }
@@ -304,163 +326,137 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
     final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
     final AlertDialog dialog = new AlertDialog.Builder(activity)
       .setTitle(R.string.choose_backup_data_message)
-      .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setSingleChoiceItems(adapter, 0, (dialog1, which) -> {
 
-        }
       })
-      .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setPositiveButton(R.string.determine, (dialog12, which) -> {
 
-          backupAndRestoreDialog =
-            new BackupAndRestoreProgressBarDialogFragment(false);
-          backupAndRestoreDialog.show(
-            activity.getSupportFragmentManager(), "restore_progress_bar"
-          );
+        backupAndRestoreDialog =
+          new BackupAndRestoreProgressBarDialogFragment(false);
+        backupAndRestoreDialog.show(
+          activity.getSupportFragmentManager(), "restore_progress_bar"
+        );
 
-          choice = SingleChoiceItemsAdapter.checkedPosition;
+        choice = SingleChoiceItemsAdapter.checkedPosition;
 
-          // SharedPreferencesファイルのクエリ
-          final String targetBackupDateStr = targetItemList.get(choice);
-          driveServiceHelper
-            .queryFiles(MIME_TYPE_XML)
-            .addOnSuccessListener(new OnSuccessListener<List<FileList>>() {
-              @Override
-              public void onSuccess(List<FileList> fileLists) {
+        // SharedPreferencesファイルのクエリ
+        final String targetBackupDateStr = targetItemList.get(choice);
+        driveServiceHelper
+          .queryFiles(MIME_TYPE_XML)
+          .addOnSuccessListener(fileLists -> {
 
-                for(FileList list : fileLists) {
-                  for(File file : list.getFiles()) {
-                    backupFilesMap.put(file.getName(), file.getId());
-                  }
-                }
-                backupAndRestoreDialog.setProgress(20);
-
-                List<bolts.Task<String>> tasks = new ArrayList<>();
-
-                for(String key : backupFilesMap.keySet()) {
-                  if(key.contains(targetBackupDateStr)) {
-                    if(key.contains(".db")) {
-                      // データベースファイルの復元
-                      String databasePath =
-                        activity.getDatabasePath(DATABASE).getAbsolutePath();
-                      tasks.add(readDriveFile(backupFilesMap.get(key), databasePath));
-                    }
-                    else {
-                      // SharedPreferencesファイルの復元
-                      final String sharedPreferencesDirectory =
-                        activity.getFilesDir().getParent() + "/shared_prefs/";
-                      final String[] sharedPreferencesFiles =
-                        {INT_GENERAL, BOOLEAN_GENERAL, STRING_GENERAL};
-                      for(String sharedPreferencesFile : sharedPreferencesFiles) {
-                        if(key.contains(sharedPreferencesFile)) {
-                          String sharedPreferencesPath =
-                            sharedPreferencesDirectory + sharedPreferencesFile + ".xml";
-
-                          tasks.add(readDriveFile(backupFilesMap.get(key), sharedPreferencesPath));
-                          break;
-                        }
-                      }
-                    }
-                  }
-                }
-
-                bolts.Task
-                  .whenAllResult(tasks)
-                  .onSuccess(new Continuation<List<String>, Void>() {
-                    @Override
-                    public Void then(bolts.Task<List<String>> task) {
-
-                      if(backupAndRestoreDialog.getProgress() != 100) {
-                        backupAndRestoreDialog.setProgress(100);
-                      }
-                      List<String> results = task.getResult();
-                      for(String result : results) {
-                        Log.i("readDriveFile", result);
-                      }
-
-                      Toast
-                        .makeText(
-                          activity,
-                          getString(R.string.success_to_restore),
-                          Toast.LENGTH_LONG
-                        )
-                        .show();
-
-                      return null;
-                    }
-                  })
-                  .continueWith(new Continuation<Void, Void>() {
-                    @Override
-                    public Void then(bolts.Task<Void> task) {
-
-                      if(task.isFaulted()) {
-                        backupAndRestoreDialog.dismiss();
-                        Toast
-                          .makeText(
-                            activity,
-                            getString(R.string.fail_to_restore),
-                            Toast.LENGTH_LONG
-                          )
-                          .show();
-
-                        activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
-                        activity.setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
-                        activity.menuItem = activity.menu.getItem(activity.whichMenuOpen);
-                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                          @Override
-                          public void run() {
-
-                            activity.navigationView.setCheckedItem(activity.menuItem);
-                            activity.recreate();
-                          }
-                        }, 3500);
-                      }
-                      return null;
-                    }
-                  });
+            for(FileList list : fileLists) {
+              for(File file : list.getFiles()) {
+                backupFilesMap.put(file.getName(), file.getId());
               }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception e) {
+            }
+            backupAndRestoreDialog.setProgress(20);
 
-                backupAndRestoreDialog.dismiss();
+            List<bolts.Task<String>> tasks = new ArrayList<>();
+
+            for(String key : backupFilesMap.keySet()) {
+              if(key.contains(targetBackupDateStr)) {
+                if(key.contains(".db")) {
+                  // データベースファイルの復元
+                  String databasePath =
+                    activity.getDatabasePath(DATABASE).getAbsolutePath();
+                  tasks.add(readDriveFile(backupFilesMap.get(key), databasePath));
+                }
+                else {
+                  // SharedPreferencesファイルの復元
+                  final String sharedPreferencesDirectory =
+                    activity.getFilesDir().getParent() + "/shared_prefs/";
+                  final String[] sharedPreferencesFiles =
+                    {INT_GENERAL, BOOLEAN_GENERAL, STRING_GENERAL};
+                  for(String sharedPreferencesFile : sharedPreferencesFiles) {
+                    if(key.contains(sharedPreferencesFile)) {
+                      String sharedPreferencesPath =
+                        sharedPreferencesDirectory + sharedPreferencesFile + ".xml";
+
+                      tasks.add(readDriveFile(backupFilesMap.get(key), sharedPreferencesPath));
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+
+            bolts.Task
+              .whenAllResult(tasks)
+              .onSuccess((Continuation<List<String>, Void>)task -> {
+
+                if(backupAndRestoreDialog.getProgress() != 100) {
+                  backupAndRestoreDialog.setProgress(100);
+                }
+                List<String> results = task.getResult();
+                for(String result : results) {
+                  Log.i("BackupAndRestoreFragment#readDriveFile", result);
+                }
+
                 Toast
                   .makeText(
                     activity,
-                    getString(R.string.fail_to_query),
+                    getString(R.string.success_to_restore),
                     Toast.LENGTH_LONG
                   )
                   .show();
-              }
-            });
-        }
-      })
-      .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
 
-          Toast.makeText(activity, getString(R.string.canceled), Toast.LENGTH_LONG).show();
-        }
-      })
-      .setOnCancelListener(new DialogInterface.OnCancelListener() {
-        @Override
-        public void onCancel(DialogInterface dialog) {
+                return null;
+              })
+              .continueWith((Continuation<Void, Void>)task -> {
 
-          Toast.makeText(activity, getString(R.string.canceled), Toast.LENGTH_LONG).show();
-        }
+                if(task.isFaulted()) {
+                  backupAndRestoreDialog.dismiss();
+                  Toast
+                    .makeText(
+                      activity,
+                      getString(R.string.fail_to_restore),
+                      Toast.LENGTH_LONG
+                    )
+                    .show();
+
+                  activity.setIntGeneralInSharedPreferences(MENU_POSITION, 0);
+                  activity.setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
+                  activity.menuItem = activity.menu.getItem(activity.whichMenuOpen);
+                  new Handler(Looper.getMainLooper()).postDelayed(() -> {
+
+                    activity.navigationView.setCheckedItem(activity.menuItem);
+                    activity.recreate();
+                  }, 3500);
+                }
+                return null;
+              });
+          })
+          .addOnFailureListener(e -> {
+
+            Log.e("BackupAndRestoreFragment#displayDialog", Log.getStackTraceString(e));
+            backupAndRestoreDialog.dismiss();
+            Toast
+              .makeText(
+                activity,
+                getString(R.string.fail_to_query),
+                Toast.LENGTH_LONG
+              )
+              .show();
+          });
       })
+      .setNeutralButton(
+          R.string.cancel,
+          (dialog13, which) -> Toast.makeText(
+              activity, getString(R.string.canceled), Toast.LENGTH_LONG
+          ).show()
+      )
+      .setOnCancelListener(
+          dialog14 -> Toast.makeText(
+              activity, getString(R.string.canceled), Toast.LENGTH_LONG
+          ).show()
+      )
       .create();
 
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
+    dialog.setOnShowListener(dialogInterface -> {
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-      }
+      dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+      dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
     });
 
     dialog.show();
@@ -474,39 +470,30 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
       java.io.File file = new java.io.File(path);
       driveServiceHelper
         .downloadFile(file, fileId)
-        .addOnSuccessListener(new OnSuccessListener<Void>() {
-          @Override
-          public void onSuccess(Void aVoid) {
+        .addOnSuccessListener(aVoid -> {
 
-            String resultStr;
-            if(path.contains(DATABASE)) {
-              resultStr = DATABASE;
-            }
-            else if(path.contains(INT_GENERAL)) {
-              resultStr = INT_GENERAL;
-            }
-            else if(path.contains(BOOLEAN_GENERAL)) {
-              resultStr = BOOLEAN_GENERAL;
-            }
-            else if(path.contains(STRING_GENERAL)) {
-              resultStr = STRING_GENERAL;
-            }
-            else {
-              throw new IllegalArgumentException("Arg path is fraud value: " + path);
-            }
-            resultStr += ": " + SUCCESS;
-
-            backupAndRestoreDialog.addProgress(20);
-            taskCompletionSource.setResult(resultStr);
+          String resultStr;
+          if(path.contains(DATABASE)) {
+            resultStr = DATABASE;
           }
+          else if(path.contains(INT_GENERAL)) {
+            resultStr = INT_GENERAL;
+          }
+          else if(path.contains(BOOLEAN_GENERAL)) {
+            resultStr = BOOLEAN_GENERAL;
+          }
+          else if(path.contains(STRING_GENERAL)) {
+            resultStr = STRING_GENERAL;
+          }
+          else {
+            throw new IllegalArgumentException("Arg path is fraud value: " + path);
+          }
+          resultStr += ": " + SUCCESS;
+
+          backupAndRestoreDialog.addProgress(20);
+          taskCompletionSource.setResult(resultStr);
         })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            taskCompletionSource.setError(new IllegalStateException());
-          }
-        });
+        .addOnFailureListener(taskCompletionSource::setError);
 
       return taskCompletionSource.getTask();
     }
@@ -521,47 +508,32 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
 
       driveServiceHelper
         .queryFolder(ROOT_FOLDER_NAME)
-        .addOnSuccessListener(new OnSuccessListener<FileList>() {
+        .addOnSuccessListener(fileList -> {
 
-          @Override
-          public void onSuccess(FileList fileList) {
+          List<File> folderList = fileList.getFiles();
+          if(folderList.size() == 0) {
 
-            List<File> folderList = fileList.getFiles();
-            if(folderList.size() == 0) {
-
-              driveServiceHelper
-                .createFolder(ROOT_FOLDER_NAME, null)
-                .addOnSuccessListener(new OnSuccessListener<File>() {
-                  @Override
-                  public void onSuccess(File file) {
-
-                    createBackupFolder(file.getId());
-                  }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                  @Override
-                  public void onFailure(@NonNull Exception e) {
-
-                    Toast.makeText(
-                      activity,
-                      getString(R.string.fail_to_make_backup_folder),
-                      Toast.LENGTH_LONG
-                    ).show();
-                  }
-                });
-            }
-            else {
-              createBackupFolder(folderList.get(0).getId());
-            }
+            driveServiceHelper
+              .createFolder(ROOT_FOLDER_NAME, null)
+              .addOnSuccessListener(file -> createBackupFolder(file.getId()))
+              .addOnFailureListener(e -> {
+                Log.e("BackupAndRestoreFragment#backupToDrive", Log.getStackTraceString(e));
+                Toast.makeText(
+                    activity,
+                    getString(R.string.fail_to_make_backup_folder),
+                    Toast.LENGTH_LONG
+                ).show();
+              });
+          }
+          else {
+            createBackupFolder(folderList.get(0).getId());
           }
         })
-        .addOnFailureListener(new OnFailureListener() {
-
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            Toast.makeText(activity, getString(R.string.fail_to_query), Toast.LENGTH_LONG).show();
-          }
+        .addOnFailureListener(e -> {
+          Log.e("BackupAndRestoreFragment#backupToDrive", Log.getStackTraceString(e));
+          Toast.makeText(
+              activity, getString(R.string.fail_to_query), Toast.LENGTH_LONG
+          ).show();
         });
     }
   }
@@ -578,106 +550,94 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
 
       driveServiceHelper
         .createFolder(backupFolderName, folderId)
-        .addOnSuccessListener(new OnSuccessListener<File>() {
-          @Override
-          public void onSuccess(final File file) {
+        .addOnSuccessListener(file -> {
 
-            backupAndRestoreDialog.setProgress(20);
+          backupAndRestoreDialog.setProgress(20);
 
-            List<bolts.Task<String>> tasks = new ArrayList<>();
+          List<bolts.Task<String>> tasks = new ArrayList<>();
 
-            // データベースファイルのバックアップ
-            String databasePath =
-              activity.getDatabasePath(DATABASE).getAbsolutePath();
+          // データベースファイルのバックアップ
+          String databasePath =
+            activity.getDatabasePath(DATABASE).getAbsolutePath();
+          tasks.add(
+            createBackupFile(file.getId(), backupFolderName, databasePath, MIME_TYPE_DATABASE)
+          );
+          // SharedPreferencesファイルのバックアップ
+          final String sharedPreferencesDirectory =
+            activity.getFilesDir().getParent() + "/shared_prefs/";
+          final String[] sharedPreferencesFiles = {INT_GENERAL, BOOLEAN_GENERAL, STRING_GENERAL};
+          for(String sharedPreferencesFile : sharedPreferencesFiles) {
+            String sharedPreferencesPath =
+              sharedPreferencesDirectory + sharedPreferencesFile + ".xml";
             tasks.add(
-              createBackupFile(file.getId(), backupFolderName, databasePath, MIME_TYPE_DATABASE)
-            );
-            // SharedPreferencesファイルのバックアップ
-            final String sharedPreferencesDirectory =
-              activity.getFilesDir().getParent() + "/shared_prefs/";
-            final String[] sharedPreferencesFiles = {INT_GENERAL, BOOLEAN_GENERAL, STRING_GENERAL};
-            for(String sharedPreferencesFile : sharedPreferencesFiles) {
-              String sharedPreferencesPath =
-                sharedPreferencesDirectory + sharedPreferencesFile + ".xml";
-              tasks.add(
-                createBackupFile(
-                  file.getId(),
-                  backupFolderName,
-                  sharedPreferencesPath,
-                  MIME_TYPE_XML
-                )
-              );
-            }
-
-            bolts.Task
-              .whenAllResult(tasks)
-              .onSuccess(new Continuation<List<String>, Void>() {
-                @Override
-                public Void then(bolts.Task<List<String>> task) {
-
-                  List<String> results = task.getResult();
-                  int size = results.size();
-                  for(int i = 0; i < size; i++) {
-                    String result = results.get(i);
-                    if(i == 0) {
-                      String resultStr = DATABASE + ": " + result;
-                      if(SUCCESS.equals(result)) {
-                        Log.i("createBackupFile", resultStr);
-                      }
-                      else if(NO_FILE.equals(result)) {
-                        Log.w("createBackupFile", resultStr);
-                        throw new IllegalStateException("Database file not exist");
-                      }
-                    }
-                    else {
-                      String resultStr = sharedPreferencesFiles[i - 1] + ": " + result;
-                      if(SUCCESS.equals(result)) {
-                        Log.i("createBackupFile", resultStr);
-                      }
-                      else if(NO_FILE.equals(result)) {
-                        Log.w("createBackupFile", resultStr);
-                      }
-                    }
-                  }
-
-                  Toast
-                    .makeText(activity, getString(R.string.create_new_backup), Toast.LENGTH_LONG)
-                    .show();
-                  return null;
-                }
-              })
-              .continueWith(new Continuation<Void, Void>() {
-                @Override
-                public Void then(bolts.Task<Void> task) {
-
-                  if(task.isFaulted()) {
-                    backupAndRestoreDialog.dismiss();
-                    Toast
-                      .makeText(
-                        activity,
-                        getString(R.string.fail_to_create_new_backup),
-                        Toast.LENGTH_LONG
-                      )
-                      .show();
-                  }
-                  return null;
-                }
-              });
-          }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            backupAndRestoreDialog.dismiss();
-            Toast
-              .makeText(
-                activity,
-                getString(R.string.fail_to_make_backup_folder),
-                Toast.LENGTH_LONG
+              createBackupFile(
+                file.getId(),
+                backupFolderName,
+                sharedPreferencesPath,
+                MIME_TYPE_XML
               )
-              .show();
+            );
           }
+
+          bolts.Task
+            .whenAllResult(tasks)
+            .onSuccess((Continuation<List<String>, Void>)task -> {
+
+              List<String> results = task.getResult();
+              int size = results.size();
+              for(int i = 0; i < size; i++) {
+                String result = results.get(i);
+                if(i == 0) {
+                  String resultStr = DATABASE + ": " + result;
+                  if(SUCCESS.equals(result)) {
+                    Log.i("BackupAndRestoreFragment#createBackupFile", resultStr);
+                  }
+                  else if(NO_FILE.equals(result)) {
+                    Log.w("BackupAndRestoreFragment#createBackupFile", resultStr);
+                    throw new IllegalStateException("Database file not exist");
+                  }
+                }
+                else {
+                  String resultStr = sharedPreferencesFiles[i - 1] + ": " + result;
+                  if(SUCCESS.equals(result)) {
+                    Log.i("BackupAndRestoreFragment#createBackupFile", resultStr);
+                  }
+                  else if(NO_FILE.equals(result)) {
+                    Log.w("BackupAndRestoreFragment#createBackupFile", resultStr);
+                  }
+                }
+              }
+
+              Toast
+                .makeText(activity, getString(R.string.create_new_backup), Toast.LENGTH_LONG)
+                .show();
+              return null;
+            })
+            .continueWith((Continuation<Void, Void>)task -> {
+
+              if(task.isFaulted()) {
+                backupAndRestoreDialog.dismiss();
+                Toast
+                  .makeText(
+                    activity,
+                    getString(R.string.fail_to_create_new_backup),
+                    Toast.LENGTH_LONG
+                  )
+                  .show();
+              }
+              return null;
+            });
+        })
+        .addOnFailureListener(e -> {
+          Log.e("BackupAndRestoreFragment#createBackupFolder", Log.getStackTraceString(e));
+          backupAndRestoreDialog.dismiss();
+          Toast
+            .makeText(
+              activity,
+              getString(R.string.fail_to_make_backup_folder),
+              Toast.LENGTH_LONG
+            )
+            .show();
         });
     }
   }
@@ -716,21 +676,12 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
       String fileName = backupFolderName + prefix;
       driveServiceHelper
         .createFile(fileName, fileContent, folderId)
-        .addOnSuccessListener(new OnSuccessListener<File>() {
-          @Override
-          public void onSuccess(File file) {
+        .addOnSuccessListener(file -> {
 
-            backupAndRestoreDialog.addProgress(20);
-            taskCompletionSource.setResult(SUCCESS);
-          }
+          backupAndRestoreDialog.addProgress(20);
+          taskCompletionSource.setResult(SUCCESS);
         })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            taskCompletionSource.setError(new IllegalStateException());
-          }
-        });
+        .addOnFailureListener(taskCompletionSource::setError);
 
       return taskCompletionSource.getTask();
     }
@@ -747,7 +698,7 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
         .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
         .build();
     signInClient = GoogleSignIn.getClient(activity, signInOptions);
-    startActivityForResult(signInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+    signInLauncher.launch(signInClient.getSignInIntent());
   }
 
   private void signOut() {
@@ -755,62 +706,24 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
     if(signInClient != null) {
 
       signInClient.signOut()
-        .addOnSuccessListener(new OnSuccessListener<Void>() {
-          @Override
-          public void onSuccess(Void aVoid) {
+        .addOnSuccessListener(aVoid -> {
 
-            preferenceCategory.removePreference(logout);
-            signInAccount = null;
-            signInClient = null;
-            Toast.makeText(activity, getString(R.string.logout_done), Toast.LENGTH_LONG).show();
-          }
+          preferenceCategory.removePreference(logout);
+          signInAccount = null;
+          signInClient = null;
+          Toast.makeText(activity, getString(R.string.logout_done), Toast.LENGTH_LONG).show();
         })
-        .addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-
-            Toast
-              .makeText(activity, getString(R.string.fail_to_logout), Toast.LENGTH_LONG)
-              .show();
-          }
+        .addOnFailureListener(e -> {
+          Log.e("BackupAndRestoreFragment#signOut", Log.getStackTraceString(e));
+          Toast
+            .makeText(activity, getString(R.string.fail_to_logout), Toast.LENGTH_LONG)
+            .show();
         });
     }
     else {
       preferenceCategory.removePreference(logout);
       signInAccount = null;
       Toast.makeText(activity, getString(R.string.logout_done), Toast.LENGTH_LONG).show();
-    }
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-    super.onActivityResult(requestCode, resultCode, data);
-
-    if(requestCode == REQUEST_CODE_SIGN_IN) {
-      if(resultCode != Activity.RESULT_OK) {
-        return;
-      }
-
-      Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-
-      try {
-        signInAccount = task.getResult(ApiException.class);
-        preferenceCategory.addPreference(logout);
-
-        setDriveServiceHelper();
-        if(isBackup) {
-          backupToDrive();
-        }
-        else {
-          restoreFromDrive();
-        }
-      }
-      catch(ApiException e) {
-
-        Log.e("BackupFrag#onActResult", Log.getStackTraceString(e));
-        Toast.makeText(activity, getString(R.string.error), Toast.LENGTH_LONG).show();
-      }
     }
   }
 

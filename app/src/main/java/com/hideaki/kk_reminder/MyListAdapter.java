@@ -2,7 +2,6 @@ package com.hideaki.kk_reminder;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Handler;
@@ -98,17 +97,16 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     public void onClick(View v) {
 
       activity.actionBarFragment.searchView.clearFocus();
-      switch(v.getId()) {
-        case R.id.item_card: {
-
-          if(actionMode == null) {
-            if(viewHolder.controlPanel.getVisibility() == View.GONE) {
-              if(item.getId() != panelLockId) {
-                hasPanel = item.getId();
-                View cardView = (View)viewHolder.controlPanel.getParent().getParent();
-                cardView.setTranslationY(-30.0f);
-                cardView.setAlpha(0.0f);
-                cardView
+      int id = v.getId();
+      if(id == R.id.item_card) {
+        if(actionMode == null) {
+          if(viewHolder.controlPanel.getVisibility() == View.GONE) {
+            if(item.getId() != panelLockId) {
+              hasPanel = item.getId();
+              View cardView = (View)viewHolder.controlPanel.getParent().getParent();
+              cardView.setTranslationY(-30.0f);
+              cardView.setAlpha(0.0f);
+              cardView
                   .animate()
                   .translationY(0.0f)
                   .alpha(1.0f)
@@ -127,18 +125,18 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                         final TableLayout panel = visibleView.findViewById(R.id.control_panel);
                         if(panel != null && panel.getVisibility() == View.VISIBLE) {
                           ((View)panel.getParent().getParent())
-                            .animate()
-                            .translationY(-30.0f)
-                            .alpha(0.0f)
-                            .setDuration(150)
-                            .setListener(new AnimatorListenerAdapter() {
-                              @Override
-                              public void onAnimationEnd(Animator animation) {
+                              .animate()
+                              .translationY(-30.0f)
+                              .alpha(0.0f)
+                              .setDuration(150)
+                              .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
 
-                                super.onAnimationEnd(animation);
-                                panel.setVisibility(View.GONE);
-                              }
-                            });
+                                  super.onAnimationEnd(animation);
+                                  panel.setVisibility(View.GONE);
+                                }
+                              });
                           break;
                         }
                       }
@@ -146,11 +144,11 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                       viewHolder.controlPanel.setVisibility(View.VISIBLE);
                     }
                   });
-              }
             }
-            else {
-              hasPanel = 0;
-              ((View)viewHolder.controlPanel.getParent().getParent())
+          }
+          else {
+            hasPanel = 0;
+            ((View)viewHolder.controlPanel.getParent().getParent())
                 .animate()
                 .translationY(-30.0f)
                 .alpha(0.0f)
@@ -163,25 +161,21 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                     viewHolder.controlPanel.setVisibility(View.GONE);
                   }
                 });
-            }
           }
-          else {
-            viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
-          }
-          break;
         }
-        case R.id.edit: {
-          activity.listView.clearTextFilter();
-          activity.showMainEditFragment(item);
-          hasPanel = 0;
-          viewHolder.controlPanel.setVisibility(View.GONE);
-          break;
+        else {
+          viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
         }
-        case R.id.notes: {
-          activity.listView.clearTextFilter();
-          activity.showNotesFragment(item);
-          break;
-        }
+      }
+      else if(id == R.id.edit) {
+        activity.listView.clearTextFilter();
+        activity.showMainEditFragment(item);
+        hasPanel = 0;
+        viewHolder.controlPanel.setVisibility(View.GONE);
+      }
+      else if(id == R.id.notes) {
+        activity.listView.clearTextFilter();
+        activity.showNotesFragment(item);
       }
     }
 
@@ -246,21 +240,18 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
                   MyListAdapter.panelLockId = 0;
                 }
               })
-              .setAction(R.string.undo, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+              .setAction(R.string.undo, v -> {
 
-                  if(isClosed) {
-                    hasPanel = item.getId();
-                    isClosed = false;
-                  }
-                  itemList.add(item);
-                  Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
-                  notifyDataSetChanged();
-
-                  activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
-                  activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
+                if(isClosed) {
+                  hasPanel = item.getId();
+                  isClosed = false;
                 }
+                itemList.add(item);
+                Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
+                notifyDataSetChanged();
+
+                activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
               })
               .show();
           }
@@ -321,279 +312,233 @@ public class MyListAdapter extends BaseAdapter implements Filterable {
     @Override
     public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
 
-      switch(menuItem.getItemId()) {
-        case R.id.delete: {
-
-          itemListToMove = new ArrayList<>();
-          for(ItemAdapter item : itemList) {
-            if(item.isSelected()) {
-              itemListToMove.add(0, item);
-            }
+      int itemId = menuItem.getItemId();
+      if(itemId == R.id.delete) {
+        itemListToMove = new ArrayList<>();
+        for(ItemAdapter item : itemList) {
+          if(item.isSelected()) {
+            itemListToMove.add(0, item);
           }
+        }
 
-          String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
+        String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
             itemListToMove.size(), itemListToMove.size()
-          ) + " (" + activity.getString(R.string.delete_dialog_message) + ")";
-          final AlertDialog dialog = new AlertDialog.Builder(activity)
+        ) + " (" + activity.getString(R.string.delete_dialog_message) + ")";
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setTitle(R.string.cab_delete)
             .setMessage(message)
-            .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setPositiveButton(R.string.delete, (dialog1, which) -> {
 
-                for(ItemAdapter item : itemListToMove) {
-                  activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
-                }
-                itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
-
-                actionMode.finish();
+              for(ItemAdapter item : itemListToMove) {
+                activity.deleteDB(item, MyDatabaseHelper.TODO_TABLE);
               }
+              itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+
+              actionMode.finish();
             })
-            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setNeutralButton(R.string.cancel, (dialog12, which) -> {
 
-              }
             })
             .create();
 
-          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
+        dialog.setOnShowListener(dialogInterface -> {
 
-              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-            }
-          });
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+        });
 
-          dialog.show();
+        dialog.show();
 
-          return true;
+        return true;
+      }
+      else if(itemId == R.id.move_task_between_list) {
+        itemListToMove = new ArrayList<>();
+        for(ItemAdapter item : itemList) {
+          if(item.isSelected()) {
+            itemListToMove.add(0, item);
+          }
         }
-        case R.id.move_task_between_list: {
 
-          itemListToMove = new ArrayList<>();
-          for(ItemAdapter item : itemList) {
-            if(item.isSelected()) {
-              itemListToMove.add(0, item);
-            }
+        int j = 1;
+        int size = ManageListAdapter.nonScheduledLists.size();
+        String[] items = new String[size];
+        items[0] = activity.menu.findItem(R.id.scheduled_list).getTitle().toString();
+        for(int i = 0; i < size; i++) {
+          if(activity.whichMenuOpen - 1 != i) {
+            items[i + j] = ManageListAdapter.nonScheduledLists.get(i).getTitle();
           }
-
-          int j = 1;
-          int size = ManageListAdapter.nonScheduledLists.size();
-          String[] items = new String[size];
-          items[0] = activity.menu.findItem(R.id.scheduled_list).getTitle().toString();
-          for(int i = 0; i < size; i++) {
-            if(activity.whichMenuOpen - 1 != i) {
-              items[i + j] = ManageListAdapter.nonScheduledLists.get(i).getTitle();
-            }
-            else {
-              j = 0;
-            }
+          else {
+            j = 0;
           }
+        }
 
-          String title = activity.getResources().getQuantityString(R.plurals.cab_selected_task_num,
+        String title = activity.getResources().getQuantityString(R.plurals.cab_selected_task_num,
             itemListToMove.size(), itemListToMove.size()
-          ) + activity.getString(R.string.cab_move_task_message);
-          final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
-          final AlertDialog dialog = new AlertDialog.Builder(activity)
+        ) + activity.getString(R.string.cab_move_task_message);
+        final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setTitle(title)
-            .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setSingleChoiceItems(adapter, 0, (dialog13, which) -> {
 
-              }
             })
-            .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setPositiveButton(R.string.determine, (dialog14, which) -> {
 
-                int position = SingleChoiceItemsAdapter.checkedPosition;
-                if(position >= activity.whichMenuOpen) {
-                  whichList = position + 1;
-                }
-                else {
-                  whichList = position;
-                }
-
-                if(whichList == 0) {
-                  for(ItemAdapter item : itemListToMove) {
-                    item.setSelected(false);
-                  }
-                  MainEditFragment.checkedItemNum = checkedItemNum;
-                  MainEditFragment.itemListToMove = new ArrayList<>(itemListToMove);
-                  activity.showMainEditFragment(
-                    itemListToMove.get(itemListToMove.size() - 1)
-                  );
-                }
-                else {
-                  long listId =
-                    activity.generalSettings.getNonScheduledLists().get(whichList - 1).getId();
-                  itemList = new ArrayList<>();
-                  for(ItemAdapter item : activity.queryAllDB(MyDatabaseHelper.TODO_TABLE)) {
-                    if(item.getWhichListBelongs() == listId) {
-                      itemList.add(item);
-                    }
-                  }
-                  Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
-
-                  for(ItemAdapter item : itemListToMove) {
-
-                    item.setSelected(false);
-
-                    // リストのIDをitemに登録する
-                    item.setWhichListBelongs(listId);
-
-                    itemList.add(0, item);
-                  }
-
-                  int size = itemList.size();
-                  for(int i = 0; i < size; i++) {
-                    ItemAdapter item = itemList.get(i);
-                    item.setOrder(i);
-                    activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-                  }
-
-                  itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
-                  notifyDataSetChanged();
-                }
-
-                actionMode.finish();
+              int position = SingleChoiceItemsAdapter.checkedPosition;
+              if(position >= activity.whichMenuOpen) {
+                whichList = position + 1;
               }
-            })
-            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-
+              else {
+                whichList = position;
               }
-            })
-            .create();
 
-          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-
-              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-            }
-          });
-
-          dialog.show();
-
-          return true;
-        }
-        case R.id.clone: {
-
-          itemListToMove = new ArrayList<>();
-          for(ItemAdapter item : itemList) {
-            if(item.isSelected()) {
-              itemListToMove.add(0, item);
-            }
-          }
-
-          String message = activity.getResources().getQuantityString(R.plurals.cab_clone_message,
-            itemListToMove.size(), itemListToMove.size()
-          );
-          final AlertDialog dialog = new AlertDialog.Builder(activity)
-            .setTitle(R.string.cab_clone)
-            .setMessage(message)
-            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-
+              if(whichList == 0) {
+                for(ItemAdapter item : itemListToMove) {
+                  item.setSelected(false);
+                }
                 MainEditFragment.checkedItemNum = checkedItemNum;
                 MainEditFragment.itemListToMove = new ArrayList<>(itemListToMove);
-                MainEditFragment.isCloningTask = true;
-                itemListToMove.get(itemListToMove.size() - 1).setSelected(false);
-                ItemAdapter cloneItem = itemListToMove.get(itemListToMove.size() - 1).clone();
-                cloneItem.setId(Calendar.getInstance().getTimeInMillis());
-                activity.showMainEditFragment(cloneItem);
-
-                actionMode.finish();
+                activity.showMainEditFragment(
+                    itemListToMove.get(itemListToMove.size() - 1)
+                );
               }
+              else {
+                long listId =
+                    activity.generalSettings.getNonScheduledLists().get(whichList - 1).getId();
+                itemList = new ArrayList<>();
+                for(ItemAdapter item : activity.queryAllDB(MyDatabaseHelper.TODO_TABLE)) {
+                  if(item.getWhichListBelongs() == listId) {
+                    itemList.add(item);
+                  }
+                }
+                Collections.sort(itemList, NON_SCHEDULED_ITEM_COMPARATOR);
+
+                for(ItemAdapter item : itemListToMove) {
+
+                  item.setSelected(false);
+
+                  // リストのIDをitemに登録する
+                  item.setWhichListBelongs(listId);
+
+                  itemList.add(0, item);
+                }
+
+                int size1 = itemList.size();
+                for(int i = 0; i < size1; i++) {
+                  ItemAdapter item = itemList.get(i);
+                  item.setOrder(i);
+                  activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+                }
+
+                itemList = activity.getNonScheduledItem(MyDatabaseHelper.TODO_TABLE);
+                notifyDataSetChanged();
+              }
+
+              actionMode.finish();
             })
-            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setNeutralButton(R.string.cancel, (dialog15, which) -> {
 
-              }
             })
             .create();
 
-          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
+        dialog.setOnShowListener(dialogInterface -> {
 
-              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-            }
-          });
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+        });
 
-          dialog.show();
+        dialog.show();
 
-          return true;
-        }
-        case R.id.share: {
-
-          itemListToMove = new ArrayList<>();
-          for(ItemAdapter item : itemList) {
-            if(item.isSelected()) {
-              itemListToMove.add(0, item);
-            }
+        return true;
+      }
+      else if(itemId == R.id.clone) {
+        itemListToMove = new ArrayList<>();
+        for(ItemAdapter item : itemList) {
+          if(item.isSelected()) {
+            itemListToMove.add(0, item);
           }
+        }
 
-          String message = activity.getResources().getQuantityString(R.plurals.cab_share_message,
+        String message = activity.getResources().getQuantityString(R.plurals.cab_clone_message,
             itemListToMove.size(), itemListToMove.size()
-          );
-          final AlertDialog dialog = new AlertDialog.Builder(activity)
+        );
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
+            .setTitle(R.string.cab_clone)
+            .setMessage(message)
+            .setPositiveButton(R.string.yes, (dialog16, which) -> {
+
+              MainEditFragment.checkedItemNum = checkedItemNum;
+              MainEditFragment.itemListToMove = new ArrayList<>(itemListToMove);
+              MainEditFragment.isCloningTask = true;
+              itemListToMove.get(itemListToMove.size() - 1).setSelected(false);
+              ItemAdapter cloneItem = itemListToMove.get(itemListToMove.size() - 1).clone();
+              cloneItem.setId(Calendar.getInstance().getTimeInMillis());
+              activity.showMainEditFragment(cloneItem);
+
+              actionMode.finish();
+            })
+            .setNeutralButton(R.string.cancel, (dialog17, which) -> {
+
+            })
+            .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+        });
+
+        dialog.show();
+
+        return true;
+      }
+      else if(itemId == R.id.share) {
+        itemListToMove = new ArrayList<>();
+        for(ItemAdapter item : itemList) {
+          if(item.isSelected()) {
+            itemListToMove.add(0, item);
+          }
+        }
+
+        String message = activity.getResources().getQuantityString(R.plurals.cab_share_message,
+            itemListToMove.size(), itemListToMove.size()
+        );
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setTitle(R.string.cab_share)
             .setMessage(message)
-            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setPositiveButton(R.string.yes, (dialog18, which) -> {
 
-                for(ItemAdapter item : itemListToMove) {
-                  String sendContent =
+              for(ItemAdapter item : itemListToMove) {
+                String sendContent =
                     activity.getString(R.string.detail) + ": " + item.getDetail()
-                      + LINE_SEPARATOR
-                      + activity.getString(R.string.memo) + ": " + item.getNotesString();
+                        + LINE_SEPARATOR
+                        + activity.getString(R.string.memo) + ": " + item.getNotesString();
 
-                  Intent intent = new Intent()
+                Intent intent = new Intent()
                     .setAction(Intent.ACTION_SEND)
                     .setType("text/plain")
                     .putExtra(Intent.EXTRA_TEXT, sendContent);
-                  activity.startActivity(intent);
-                }
-
-                actionMode.finish();
+                activity.startActivity(intent);
               }
+
+              actionMode.finish();
             })
-            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setNeutralButton(R.string.cancel, (dialog19, which) -> {
 
-              }
             })
             .create();
 
-          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
+        dialog.setOnShowListener(dialogInterface -> {
 
-              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-            }
-          });
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+        });
 
-          dialog.show();
+        dialog.show();
 
-          return true;
-        }
-        default: {
-          actionMode.finish();
-          return true;
-        }
+        return true;
       }
+      actionMode.finish();
+      return true;
     }
 
     @Override

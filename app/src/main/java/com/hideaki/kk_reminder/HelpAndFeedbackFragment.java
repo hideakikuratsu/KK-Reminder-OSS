@@ -42,8 +42,7 @@ public class HelpAndFeedbackFragment extends BasePreferenceFragmentCompat
       activity.drawerLayout.closeDrawer(GravityCompat.START);
     }
     else {
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager
         .beginTransaction()
         .remove(this)

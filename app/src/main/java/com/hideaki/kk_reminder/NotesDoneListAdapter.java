@@ -62,13 +62,7 @@ public class NotesDoneListAdapter extends BaseAdapter {
       if(!checked) {
         isFirst = false;
         final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-
-            onChangeProcessor();
-          }
-        }, 400);
+        handler.postDelayed(this::onChangeProcessor, 400);
       }
     }
 

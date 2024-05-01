@@ -1,0 +1,14 @@
+・Support for Android 12
+・Enabled access to sounds on external storage
+・Enabled to save custom snooze duration automatically when operating custom snooze from notification action
+・Enabled ad layout to fit in appropriate size according to device layout
+・Enabled sharing and applying of date and time in strings on other app to tasks on KK reminder
+・Fixed date/time expression
+・Fixed sluggish startup with dark mode on some devices
+・Fixed a serious crash error occurring rarely on startup
+・Fixed failing to notify or crash by notification sound not found error after transferring data from old to new device
+・Fixed failing to login google account sometimes on backup/restore
+・Fixed displayed texts of past tasks are incorrect
+・Fixed broken layout when transitioning from other app via share action
+・Ended support for backup/restore functions on OS version <= 6.0 (Marshmallow/API23)
+・Various bug fixes

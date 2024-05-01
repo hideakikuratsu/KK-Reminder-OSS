@@ -103,7 +103,7 @@ public class ManuallySnoozeListAdapter extends BaseAdapter {
           activity.title.setText(title);
         }
         else if(position == snoozeList.size() - 1) {
-          title = activity.summary;
+          title = activity.customSnoozeSummary;
           if(title == null || title.equals("")) {
 
             title = "";

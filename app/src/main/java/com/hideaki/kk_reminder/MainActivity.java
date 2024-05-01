@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -46,24 +45,29 @@ import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
-import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -85,6 +89,7 @@ import bolts.Continuation;
 import bolts.Task;
 import bolts.TaskCompletionSource;
 
+import static android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.hideaki.kk_reminder.MyDatabaseHelper.TODO_TABLE;
 import static com.hideaki.kk_reminder.StartupReceiver.getDynamicContext;
@@ -118,6 +123,7 @@ import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
 import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
 import static com.hideaki.kk_reminder.UtilClass.IS_QUERIED_PURCHASE_HISTORY;
 import static com.hideaki.kk_reminder.UtilClass.IS_RECREATED;
+import static com.hideaki.kk_reminder.UtilClass.IS_RECREATED_TWICE;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
@@ -133,6 +139,7 @@ import static com.hideaki.kk_reminder.UtilClass.copyDatabase;
 import static com.hideaki.kk_reminder.UtilClass.copySharedPreferences;
 import static com.hideaki.kk_reminder.UtilClass.deserialize;
 import static com.hideaki.kk_reminder.UtilClass.generateUniqueId;
+import static com.hideaki.kk_reminder.UtilClass.getAdSize;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 import static com.hideaki.kk_reminder.UtilClass.readFileFromAssets;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
@@ -148,7 +155,7 @@ public class MainActivity extends AppCompatActivity
   static String IS_FIRST_USE = "";
 
   private Timer timer;
-  private Handler handler;
+  Handler handler;
   private Runnable runnable;
   private DBAccessor accessor = null;
   int minusTime1Hour;
@@ -193,9 +200,8 @@ public class MainActivity extends AppCompatActivity
   int accentColor;
   int secondaryTextColor;
   int order;
-  String detail;
+  private String detail;
   private int whichList;
-  private boolean isInOnCreate;
   boolean isBootFromNotification;
   private int tryCount;
   private BillingClient billingClient;
@@ -225,9 +231,46 @@ public class MainActivity extends AppCompatActivity
   int secondaryTextMaterialDarkColor;
   private AlertDialog updateInfoMessageDialog = null;
   private boolean isRecreated;
+  private boolean isRecreatedTwice;
   private List<SkuDetails> skuDetailsList = null;
   List<ItemAdapter> todoItemList;
   boolean isCopiedFromOldVersion;
+  AdView adView;
+  private boolean dateSet;
+  private static final Map<String, Integer> DAY_OF_WEEK_MAP_JP = new HashMap<>();
+  private static final Map<String, Integer> DAY_OF_WEEK_MAP_EN = new HashMap<>();
+  private static final Map<String, Integer> MONTH_MAP = new HashMap<>();
+  static {
+    DAY_OF_WEEK_MAP_JP.put("日", 1);
+    DAY_OF_WEEK_MAP_JP.put("月", 2);
+    DAY_OF_WEEK_MAP_JP.put("火", 3);
+    DAY_OF_WEEK_MAP_JP.put("水", 4);
+    DAY_OF_WEEK_MAP_JP.put("木", 5);
+    DAY_OF_WEEK_MAP_JP.put("金", 6);
+    DAY_OF_WEEK_MAP_JP.put("土", 7);
+
+    DAY_OF_WEEK_MAP_EN.put("Sun", 1);
+    DAY_OF_WEEK_MAP_EN.put("Mon", 2);
+    DAY_OF_WEEK_MAP_EN.put("Tu", 3);
+    DAY_OF_WEEK_MAP_EN.put("Wed", 4);
+    DAY_OF_WEEK_MAP_EN.put("Th", 5);
+    DAY_OF_WEEK_MAP_EN.put("Fri", 6);
+    DAY_OF_WEEK_MAP_EN.put("Sat", 7);
+
+    MONTH_MAP.put("Jan", 0);
+    MONTH_MAP.put("Feb", 1);
+    MONTH_MAP.put("Mar", 2);
+    MONTH_MAP.put("Apr", 3);
+    MONTH_MAP.put("May", 4);
+    MONTH_MAP.put("Jun", 5);
+    MONTH_MAP.put("Jul", 6);
+    MONTH_MAP.put("Aug", 7);
+    MONTH_MAP.put("Sep", 8);
+    MONTH_MAP.put("Oct", 9);
+    MONTH_MAP.put("Nov", 10);
+    MONTH_MAP.put("Dec", 11);
+  }
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -237,6 +280,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     super.onCreate(savedInstanceState);
+    System.out.println("onCreate");
 
     handler = new Handler(getMainLooper());
     accessor = new DBAccessor(this, false);
@@ -283,6 +327,7 @@ public class MainActivity extends AppCompatActivity
     isQueriedPurchaseHistory =
       booleanPreferences.getBoolean(IS_QUERIED_PURCHASE_HISTORY, false);
     isRecreated = booleanPreferences.getBoolean(IS_RECREATED, false);
+    isRecreatedTwice = booleanPreferences.getBoolean(IS_RECREATED_TWICE, false);
     isFirstUse = booleanPreferences.getBoolean(IS_FIRST_USE, true);
     isDarkMode = booleanPreferences.getBoolean(IS_DARK_MODE, false);
     isDarkThemeFollowSystem =
@@ -291,13 +336,52 @@ public class MainActivity extends AppCompatActivity
     isExpandableTodo = booleanPreferences.getBoolean(IS_EXPANDABLE_TODO, true);
     isPremium = booleanPreferences.getBoolean(IS_PREMIUM, false);
 
-    // 広告読み出し機能のセットアップ
-    MobileAds.initialize(this, new OnInitializationCompleteListener() {
-      @Override
-      public void onInitializationComplete(InitializationStatus initializationStatus) {
-
+    // ダークモードの設定
+    int currentNightMode =
+        getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+    if(!isDarkThemeFollowSystem) {
+      if(isDarkMode && currentNightMode != Configuration.UI_MODE_NIGHT_YES) {
+        setBooleanGeneralInSharedPreferences(IS_RECREATED, true);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        return;
       }
-    });
+      else if(!isDarkMode && currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+        setBooleanGeneralInSharedPreferences(IS_RECREATED, true);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        return;
+      }
+    }
+    else {
+      if(isDarkMode && currentNightMode != Configuration.UI_MODE_NIGHT_YES) {
+        setBooleanGeneralInSharedPreferences(IS_RECREATED, true);
+        setBooleanGeneralInSharedPreferences(IS_DARK_MODE, false);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        recreate();
+        return;
+      }
+      else if(!isDarkMode && currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+        setBooleanGeneralInSharedPreferences(IS_RECREATED, true);
+        setBooleanGeneralInSharedPreferences(IS_DARK_MODE, true);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        recreate();
+        return;
+      }
+    }
+    if(isRecreated) {
+      setBooleanGeneralInSharedPreferences(IS_RECREATED_TWICE, true);
+      System.out.println("Recreated");
+      return;
+    }
+    System.out.println("onCreateComplete");
+
+    // 広告読み出し機能のセットアップ
+    MobileAds.initialize(this, initializationStatus -> {});
+    AdSize adSize = getAdSize(this);
+    adView = new AdView(this);
+    adView.setAdSize(adSize);
+    adView.setAdUnitId(this.getString(R.string.ad_unit_id));
+    AdRequest adRequest = new AdRequest.Builder().build();
+    adView.loadAd(adRequest);
 
     if(!isPremium) {
 
@@ -313,23 +397,6 @@ public class MainActivity extends AppCompatActivity
       updateInfoMessageDialog = createUpdateInfoMessageDialog();
       if(updateInfoMessageDialog != null) {
         updateInfoMessageDialog.show();
-      }
-    }
-
-    // ダークモードの設定
-    int currentNightMode =
-      getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-    if(!isDarkThemeFollowSystem && !generalSettings.isCopiedFromOldVersion()) {
-      if(isDarkMode && currentNightMode != Configuration.UI_MODE_NIGHT_YES) {
-        setBooleanGeneralInSharedPreferences(IS_RECREATED, true);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-      }
-      else if(!isDarkMode && currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-        setBooleanGeneralInSharedPreferences(IS_RECREATED, true);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-      }
-      else {
-        setBooleanGeneralInSharedPreferences(IS_RECREATED, false);
       }
     }
 
@@ -438,7 +505,6 @@ public class MainActivity extends AppCompatActivity
     doneListAdapter = new DoneListAdapter(this);
 
     // Intentが送られている場合はonNewIntent()に渡す(送られていない場合は通常の初期化処理を行う)
-    isInOnCreate = true;
     onNewIntent(getIntent());
 
     // 画面がフォアグラウンドの状態におけるDefaultManuallySnoozeReceiverからのインテントを待ち受ける
@@ -446,13 +512,145 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
+  protected void onPostCreate(Bundle savedInstanceState) {
+
+    super.onPostCreate(savedInstanceState);
+    System.out.println("onPostCreate");
+    if(!isRecreated) {
+      drawerToggle.syncState();
+    }
+  }
+
+  @Override
+  protected void onResume() {
+
+    super.onResume();
+    System.out.println("onResume");
+
+    if(!isRecreated) {
+      // Exact Alarm Permissionがない場合はアプリの使用を許可しない
+      AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      requireNonNull(alarmManager);
+      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if(!alarmManager.canScheduleExactAlarms()) {
+          final AlertDialog getExactAlarmsPermissionDialog = new AlertDialog.Builder(this)
+              .setTitle(R.string.permission_exact_alarm_rationale_title)
+              .setMessage(R.string.permission_exact_alarm_rationale_message)
+              .setPositiveButton(R.string.yes, (dialog15, which12) ->
+                  startActivity(new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+              )
+              .setNegativeButton(R.string.no, (dialog1, which1) -> finish())
+              .setOnCancelListener(dialog1 -> finish())
+              .create();
+
+          getExactAlarmsPermissionDialog.setOnShowListener(dialogInterface -> {
+            getExactAlarmsPermissionDialog
+                .getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(accentColor);
+            getExactAlarmsPermissionDialog
+                .getButton(AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(accentColor);
+          });
+
+          getExactAlarmsPermissionDialog.show();
+        }
+      }
+
+      if(isFirstUse) {
+        setBooleanGeneralInSharedPreferences(IS_FIRST_USE, false);
+      }
+
+      // generalSettingsにおいて旧バージョンからの移行処理が行われた場合は、まだデータベース全体の
+      // 移行処理が行われていないものとしてデータベースを更新する。
+      // ダークモード切り替えによるActivityのrecreate()が発生した場合は処理が中断してしまうので
+      // !isRecreatedの条件により、確実に1回だけ実行されるようにしてある。
+      if(generalSettings.isCopiedFromOldVersion()) {
+        setBooleanGeneralInSharedPreferences(IS_COPIED_FROM_OLD_VERSION, true);
+        generalSettings.setIsCopiedFromOldVersion(false);
+      }
+      if(isCopiedFromOldVersion) {
+        CopyFromOldVersionProgressBarDialogFragment dialog =
+            new CopyFromOldVersionProgressBarDialogFragment();
+        dialog.show(getSupportFragmentManager(), "copy_from_old_version_progress_bar");
+      }
+
+      // すべての通知を既読し、通知チャネルを削除する
+      clearAllNotification();
+
+      if(!isPremium) {
+
+        // ビリングサービスのセットアップ
+        setupBillingServices();
+      }
+
+      Fragment mainFragment =
+          getSupportFragmentManager().findFragmentByTag(ExpandableListViewFragment.TAG);
+      if(mainFragment != null) {
+        MyExpandableListAdapter.isLockBlockNotifyChange = true;
+        MyExpandableListAdapter.isBlockNotifyChange = true;
+        updateListTask(null, -1, true, false);
+        setUpdateListTimerTask(true);
+      }
+
+      isScreenOn = true;
+    }
+
+    // 端末によってはシステム設定と異なるダークモード設定を行うとダークモード切り替え時(アプリ起動時)
+    // アプリの再起動が二重で発生してしまう端末が存在する。そのため基本的には二重に再起動させることを
+    // 前提とし、二重再起動が発生しない端末については以下のように二重再起動を強制させる。また二重再起動
+    // が自然に発生する端末についてはrecreate()を行うかどうかの判定を描画処理キューの最後に置いておく
+    // ことで、強制再起動発動までに発生した再起動を優先させる。
+    handler.post(() -> {
+      if(isRecreatedTwice) {
+        recreate();
+      }
+    });
+  }
+
+  @Override
+  protected void onPause() {
+
+    super.onPause();
+    System.out.println("onPause");
+
+    if(!isRecreated) {
+      if(updateInfoMessageDialog != null) {
+        updateInfoMessageDialog.cancel();
+        updateInfoMessageDialog = null;
+      }
+
+      // ExpandableListViewの自動更新を止める
+      setUpdateListTimerTask(false);
+
+      // DirectBootモードからMainActivityを起動すると何故かonResume()が呼ばれた後に一度onPause()が
+      // 呼ばれ、再びonResume()が呼ばれるが、そうなっても良いようにonPause()側で端末暗号化ストレージ
+      // へのコピー処理にgetIsDirectBootContext()を使って条件を設けている。
+      if(!getIsDirectBootContext(this)) {
+        // データベースを端末暗号化ストレージへコピーする
+        copyDatabase(this, false);
+        copySharedPreferences(this, false);
+      }
+
+      isScreenOn = false;
+    }
+  }
+
+  @Override
   protected void onDestroy() {
 
     super.onDestroy();
-    if(billingClient != null) {
-      billingClient.endConnection();
+    System.out.println("onDestroy");
+    if(!isRecreated) {
+      if(billingClient != null) {
+        billingClient.endConnection();
+      }
+      unregisterReceiver(defaultSnoozeReceiver);
     }
-    unregisterReceiver(defaultSnoozeReceiver);
+
+    if(isRecreatedTwice) {
+      setBooleanGeneralInSharedPreferences(IS_RECREATED, false);
+      setBooleanGeneralInSharedPreferences(IS_RECREATED_TWICE, false);
+    }
   }
 
   private AlertDialog createUpdateInfoMessageDialog() {
@@ -489,21 +687,15 @@ public class MainActivity extends AppCompatActivity
         .setCancelable(false)
         .setCustomTitle(customTitle)
         .setMessage(message)
-        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i) {
+        .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
 
-          }
         })
         .create();
 
-      updateInfoMessageDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-        @Override
-        public void onShow(DialogInterface dialogInterface) {
+      updateInfoMessageDialog.setOnShowListener(dialogInterface -> {
 
-          updateInfoMessageDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accentColor);
-          updateInfoMessageDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
-        }
+        updateInfoMessageDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accentColor);
+        updateInfoMessageDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
       });
 
       return updateInfoMessageDialog;
@@ -518,28 +710,16 @@ public class MainActivity extends AppCompatActivity
     promotionDialog = new AlertDialog.Builder(this)
       .setTitle(R.string.disable_ads)
       .setMessage(R.string.disable_ads_promotion)
-      .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
+      .setPositiveButton(R.string.yes, (dialog, which) -> onBuyButtonClicked())
+      .setNeutralButton(R.string.cancel, (dialog, which) -> {
 
-          onBuyButtonClicked();
-        }
-      })
-      .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-
-        }
       })
       .create();
 
-    promotionDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialogInterface) {
+    promotionDialog.setOnShowListener(dialogInterface -> {
 
-        promotionDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accentColor);
-        promotionDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
-      }
+      promotionDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accentColor);
+      promotionDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
     });
   }
 
@@ -567,7 +747,7 @@ public class MainActivity extends AppCompatActivity
               billingClient.startConnection(this);
             }
             else {
-              Log.e("onBillingSetup", "Cannot start connection");
+              Log.e("MainActivity#onBillingSetupFinished", "Cannot start connection");
             }
           }
         }
@@ -580,7 +760,7 @@ public class MainActivity extends AppCompatActivity
             billingClient.startConnection(this);
           }
           else {
-            Log.e("onBillingSetup", "Cannot start connection");
+            Log.e("MainActivity#onBillingSetupFinished", "Cannot start connection");
           }
         }
       });
@@ -592,26 +772,27 @@ public class MainActivity extends AppCompatActivity
 
   private void checkIsPremium() {
 
-    Purchase.PurchasesResult purchasesResult =
-      billingClient.queryPurchases(BillingClient.SkuType.INAPP);
-    int responseCode = purchasesResult.getResponseCode();
-    if(responseCode == BillingResponseCode.OK) {
-      Log.i("checkIsPremium", getResponseCodeString(responseCode));
-      List<Purchase> purchaseList = purchasesResult.getPurchasesList();
-      if(purchaseList == null || purchaseList.isEmpty()) {
-        if(!isQueriedPurchaseHistory) {
-          queryPurchaseHistory();
+    billingClient.queryPurchasesAsync(
+        BillingClient.SkuType.INAPP, (billingResult, purchaseList) -> {
+
+      int responseCode = billingResult.getResponseCode();
+      if(responseCode == BillingResponseCode.OK) {
+        Log.i("MainActivity#checkIsPremium", getResponseCodeString(responseCode));
+        if(purchaseList.isEmpty()) {
+          if(!isQueriedPurchaseHistory) {
+            queryPurchaseHistory();
+          }
+        }
+        else {
+          for(Purchase purchase : purchaseList) {
+            checkPurchaseState(purchase);
+          }
         }
       }
       else {
-        for(Purchase purchase : purchaseList) {
-          checkPurchaseState(purchase);
-        }
+        Log.w("MainActivity#checkIsPremium", getResponseCodeString(responseCode));
       }
-    }
-    else {
-      Log.w("checkIsPremium", getResponseCodeString(responseCode));
-    }
+    });
   }
 
   // 購入履歴を問い合わせる(ネットワークアクセス処理)
@@ -619,24 +800,22 @@ public class MainActivity extends AppCompatActivity
 
     billingClient.queryPurchaseHistoryAsync(
       BillingClient.SkuType.INAPP,
-      new PurchaseHistoryResponseListener() {
-        @Override
-        public void onPurchaseHistoryResponse(
-          @NonNull BillingResult billingResult,
-          List<PurchaseHistoryRecord> purchasesList
-        ) {
+        (billingResult, purchasesList) -> {
 
           int responseCode = billingResult.getResponseCode();
           if(responseCode == BillingResponseCode.OK) {
-            Log.i("queryPurchaseHistory", getResponseCodeString(responseCode));
+            Log.i("MainActivity#queryPurchaseHistory", getResponseCodeString(responseCode));
             setBooleanGeneralInSharedPreferences(IS_QUERIED_PURCHASE_HISTORY, true);
             if(purchasesList == null || purchasesList.isEmpty()) {
-              Log.w("queryPurchaseHistory", "No History");
+              Log.w("MainActivity#queryPurchaseHistory", "No History");
             }
             else {
               for(PurchaseHistoryRecord purchase : purchasesList) {
-                if(PRODUCT_ID_PREMIUM.equals(purchase.getSku())) {
-                  Log.i("queryPurchaseHistory", purchase.getSku() + ": Purchased");
+                if(purchase.getSkus().contains(PRODUCT_ID_PREMIUM)) {
+                  Log.i(
+                      "MainActivity#queryPurchaseHistory",
+                      purchase.getSkus().get(0) + ": Purchased"
+                  );
                   Toast
                     .makeText(
                       MainActivity.this,
@@ -653,10 +832,9 @@ public class MainActivity extends AppCompatActivity
             }
           }
           else {
-            Log.w("queryPurchaseHistory", getResponseCodeString(responseCode));
+            Log.w("MainActivity#queryPurchaseHistory", getResponseCodeString(responseCode));
           }
         }
-      }
     );
   }
 
@@ -666,26 +844,26 @@ public class MainActivity extends AppCompatActivity
     int responseCode = billingResult.getResponseCode();
     if(responseCode == BillingResponseCode.OK) {
       if(purchases == null || purchases.isEmpty()) {
-        Log.e("onPurchasesUpdated", "purchases is null or empty");
+        Log.e("MainActivity#onPurchasesUpdated", "purchases is null or empty");
         Toast
           .makeText(MainActivity.this, getString(R.string.error_occurred), Toast.LENGTH_LONG)
           .show();
       }
       else {
-        Log.i("onPurchasesUpdated", getResponseCodeString(responseCode));
+        Log.i("MainActivity#onPurchasesUpdated", getResponseCodeString(responseCode));
         for(Purchase purchase : purchases) {
           checkPurchaseState(purchase);
         }
       }
     }
     else if(responseCode == BillingResponseCode.USER_CANCELED) {
-      Log.w("onPurchasesUpdated", getResponseCodeString(responseCode));
+      Log.w("MainActivity#onPurchasesUpdated", getResponseCodeString(responseCode));
       Toast
         .makeText(MainActivity.this, getString(R.string.cancel_to_buy), Toast.LENGTH_LONG)
         .show();
     }
     else {
-      Log.e("onPurchasesUpdated", getResponseCodeString(responseCode));
+      Log.e("MainActivity#onPurchasesUpdated", getResponseCodeString(responseCode));
       Toast
         .makeText(MainActivity.this, getString(R.string.error_occurred), Toast.LENGTH_LONG)
         .show();
@@ -697,10 +875,10 @@ public class MainActivity extends AppCompatActivity
     String purchaseState = handlePurchase(purchase);
     if("purchased".equals(purchaseState)) {
       Log.i(
-        "checkPurchaseState",
-        "Sku: " + purchase.getSku() + ", State: " + purchaseState
+        "MainActivity#checkPurchaseState",
+        "Sku: " + purchase.getSkus().get(0) + ", State: " + purchaseState
       );
-      if(PRODUCT_ID_PREMIUM.equals(purchase.getSku())) {
+      if(purchase.getSkus().contains(PRODUCT_ID_PREMIUM)) {
         Toast
           .makeText(
             this,
@@ -716,8 +894,8 @@ public class MainActivity extends AppCompatActivity
     }
     else {
       Log.w(
-        "checkPurchaseState",
-        "Sku: " + purchase.getSku() + ", State: " + purchaseState
+        "MainActivity#checkPurchaseState",
+        "Sku: " + purchase.getSkus().get(0) + ", State: " + purchaseState
       );
     }
   }
@@ -757,35 +935,32 @@ public class MainActivity extends AppCompatActivity
 
     int responseCode = billingResult.getResponseCode();
     if(responseCode != BillingResponseCode.OK) {
-      Log.e("onAcknowledgePurchase", getResponseCodeString(responseCode));
+      Log.e("MainActivity#onAcknowledgePurchaseResponse", getResponseCodeString(responseCode));
     }
   }
 
   private void onBuyButtonClicked() {
 
-    getSkuDetails(PRODUCT_ID_PREMIUM).onSuccess(new Continuation<SkuDetails, Void>() {
-      @Override
-      public Void then(Task<SkuDetails> task) {
+    getSkuDetails(PRODUCT_ID_PREMIUM).onSuccess((Continuation<SkuDetails, Void>)task -> {
 
-        SkuDetails skuDetails = task.getResult();
-        BillingFlowParams flowParams = BillingFlowParams
-          .newBuilder()
-          .setSkuDetails(skuDetails)
-          .build();
+      SkuDetails skuDetails = task.getResult();
+      BillingFlowParams flowParams = BillingFlowParams
+        .newBuilder()
+        .setSkuDetails(skuDetails)
+        .build();
 
-        BillingResult billingResult =
-          billingClient.launchBillingFlow(MainActivity.this, flowParams);
+      BillingResult billingResult =
+        billingClient.launchBillingFlow(MainActivity.this, flowParams);
 
-        int responseCode = billingResult.getResponseCode();
-        if(responseCode == BillingResponseCode.OK) {
-          Log.i("onBuyButtonClicked", getResponseCodeString(responseCode));
-        }
-        else {
-          Log.e("onBuyButtonClicked", getResponseCodeString(responseCode));
-        }
-
-        return null;
+      int responseCode = billingResult.getResponseCode();
+      if(responseCode == BillingResponseCode.OK) {
+        Log.i("MainActivity#onBuyButtonClicked", getResponseCodeString(responseCode));
       }
+      else {
+        Log.e("MainActivity#onBuyButtonClicked", getResponseCodeString(responseCode));
+      }
+
+      return null;
     });
   }
 
@@ -794,35 +969,32 @@ public class MainActivity extends AppCompatActivity
 
     // continueWith()もcontinueWithTask()もクライアントの渡したContinuationインスタンス内で定義される
     // then()は非同期で処理されるが、continueWith()と異なりcontinueWithTask()はthen()内でさらなる
-    // 非同期処理が行われることを前提としている。例えば、非同期処理を行うメソッドとして、引数に文字列を受け取り、
-    // 特定の時間停止した後、受け取った文字列をそのまま返す処理を別スレッドで行うasyncTask()を仮定すると、
-    // asyncTask("foo").continueWith()として、then()内でreturn asyncTask(task.getResult() + "bar")
-    // し、さらに.continueWith()を続けると、前のthen()内の処理であるasyncTask()内でsetResult()が呼び出され
-    // ていない(処理が完了していない)限り、そのcontinueWith()内のthen()ではtask.getResult()の値が不定となる。
-    // これはcontinueWith()の実装において、単にユーザの渡したContinuationインスタンスのthen()内の処理が
-    // 完了することが次の.continue*()メソッドの処理を開始する条件となっているためである。一方
-    // continueWithTask()では、Continuationインスタンスのthen()内に非同期処理を行うメソッドが存在する場合、
-    // そのメソッドにTask APIを実装することで、そのメソッドが返すTaskが完了することが次の.continue*()メソッド
-    // の処理を開始する条件となっているので、非同期で処理されるthen()内にさらに非同期処理が存在していても処理結果
-    // の整合性を保つことができる。onSuccess()とonSuccessTask()も全く同じ関係であり、continueWith()は、
-    // 前のTaskが完了していればそのTaskがfailed, canceled, succeededのいずれであってもthen()内の処理を行う
-    // が、onSuccess()は、前のTaskがsucceededのときのみthen()内の処理を行う。
-
-    final TaskCompletionSource<SkuDetails> taskCompletionSource =
-      new TaskCompletionSource<>();
+    // 非同期処理が行われることを前提としている。例えば、非同期処理を行うメソッドとして、引数に文字列を
+    // 受け取り、特定の時間停止した後、受け取った文字列をそのまま返す処理を別スレッドで行うasyncTask()
+    // を仮定すると、asyncTask("foo").continueWith()として、then()内で
+    // return asyncTask(task.getResult() + "bar")し、さらに.continueWith()を続けると、
+    // 前のthen()内の処理であるasyncTask()内でsetResult()が呼び出されていない(処理が完了していない)
+    // 限り、そのcontinueWith()内のthen()ではtask.getResult()の値が不定となる。これはcontinueWith()
+    // の実装において、単にユーザの渡したContinuationインスタンスのthen()内の処理が完了することが
+    // 次の.continue*()メソッドの処理を開始する条件となっているためである。一方continueWithTask()では、
+    // Continuationインスタンスのthen()内に非同期処理を行うメソッドが存在する場合、そのメソッドに
+    // Task APIを実装することで、そのメソッドが返すTaskが完了することが次の.continue*()メソッド
+    // の処理を開始する条件となっているので、非同期で処理されるthen()内にさらに非同期処理が存在して
+    // いても処理結果の整合性を保つことができる。onSuccess()とonSuccessTask()も全く同じ関係であり、
+    // continueWith()は、前のTaskが完了していればそのTaskがfailed, canceled, succeededのいずれ
+    // であってもthen()内の処理を行うが、onSuccess()は、前のTaskがsucceededのときのみthen()
+    // 内の処理を行う。
+    final TaskCompletionSource<SkuDetails> taskCompletionSource = new TaskCompletionSource<>();
     if(skuDetailsList == null) {
-      querySkuDetailsList().onSuccess(new Continuation<List<SkuDetails>, Void>() {
-        @Override
-        public Void then(Task<List<SkuDetails>> task) {
+      querySkuDetailsList().onSuccess((Continuation<List<SkuDetails>, Void>)task -> {
 
-          skuDetailsList = task.getResult();
-          getSkuDetailsFromListAndSetTaskCompletionSource(
-            sku,
-            skuDetailsList,
-            taskCompletionSource
-          );
-          return null;
-        }
+        skuDetailsList = task.getResult();
+        getSkuDetailsFromListAndSetTaskCompletionSource(
+          sku,
+          skuDetailsList,
+          taskCompletionSource
+        );
+        return null;
       });
     }
     else {
@@ -840,14 +1012,20 @@ public class MainActivity extends AppCompatActivity
 
     for(SkuDetails skuDetails : skuDetailsList) {
       if(sku.equals(skuDetails.getSku())) {
-        Log.i("getSkuDetailsFromList", sku + " found");
+        Log.i(
+            "MainActivity#getSkuDetailsFromListAndSetTaskCompletionSource",
+            sku + " found"
+        );
         taskCompletionSource.setResult(skuDetails);
         return;
       }
     }
 
     taskCompletionSource.setError(new IllegalStateException());
-    Log.e("getSkuDetailsFromList", sku + " not found");
+    Log.e(
+        "MainActivity#getSkuDetailsFromListAndSetTaskCompletionSource",
+        sku + " not found"
+    );
     Toast
       .makeText(
         this,
@@ -871,44 +1049,12 @@ public class MainActivity extends AppCompatActivity
       .setType(BillingClient.SkuType.INAPP)
       .build();
 
-    billingClient.querySkuDetailsAsync(params, new SkuDetailsResponseListener() {
+    billingClient.querySkuDetailsAsync(params, (billingResult, list) -> {
 
-      @Override
-      public void onSkuDetailsResponse(
-        @NonNull BillingResult billingResult, List<SkuDetails> list
-      ) {
-
-        int responseCode = billingResult.getResponseCode();
-        if(responseCode == BillingResponseCode.OK) {
-          if(list == null || list.isEmpty()) {
-            Log.e("querySkuDetailsList", "list is null or empty");
-            taskCompletionSource.setError(new IllegalStateException());
-            Toast
-              .makeText(
-                MainActivity.this,
-                getString(R.string.error_occurred),
-                Toast.LENGTH_LONG
-              )
-              .show();
-          }
-          else {
-            Log.i("querySkuDetailsList", getResponseCodeString(responseCode));
-            taskCompletionSource.setResult(list);
-          }
-        }
-        else if(responseCode == BillingResponseCode.USER_CANCELED) {
-          Log.w("querySkuDetailsList", getResponseCodeString(responseCode));
-          taskCompletionSource.setCancelled();
-          Toast
-            .makeText(
-              MainActivity.this,
-              getString(R.string.cancel_to_buy),
-              Toast.LENGTH_LONG
-            )
-            .show();
-        }
-        else {
-          Log.e("querySkuDetailsList", getResponseCodeString(responseCode));
+      int responseCode = billingResult.getResponseCode();
+      if(responseCode == BillingResponseCode.OK) {
+        if(list == null || list.isEmpty()) {
+          Log.e("MainActivity#querySkuDetailsList", "list is null or empty");
           taskCompletionSource.setError(new IllegalStateException());
           Toast
             .makeText(
@@ -918,6 +1064,32 @@ public class MainActivity extends AppCompatActivity
             )
             .show();
         }
+        else {
+          Log.i("MainActivity#querySkuDetailsList", getResponseCodeString(responseCode));
+          taskCompletionSource.setResult(list);
+        }
+      }
+      else if(responseCode == BillingResponseCode.USER_CANCELED) {
+        Log.w("MainActivity#querySkuDetailsList", getResponseCodeString(responseCode));
+        taskCompletionSource.setCancelled();
+        Toast
+          .makeText(
+            MainActivity.this,
+            getString(R.string.cancel_to_buy),
+            Toast.LENGTH_LONG
+          )
+          .show();
+      }
+      else {
+        Log.e("MainActivity#querySkuDetailsList", getResponseCodeString(responseCode));
+        taskCompletionSource.setError(new IllegalStateException());
+        Toast
+          .makeText(
+            MainActivity.this,
+            getString(R.string.error_occurred),
+            Toast.LENGTH_LONG
+          )
+          .show();
       }
     });
 
@@ -989,12 +1161,8 @@ public class MainActivity extends AppCompatActivity
           menuItem.setChecked(false);
         }
       }
-
-      showList();
-      isInOnCreate = false;
     }
     else {
-
       List<NonScheduledListAdapter> nonScheduledListList =
         generalSettings.getNonScheduledLists();
       int size = nonScheduledListList.size();
@@ -1004,63 +1172,275 @@ public class MainActivity extends AppCompatActivity
         items[i + 1] = nonScheduledListList.get(i).getTitle();
       }
 
+      TextView customTitle = new TextView(this);
+      int leftPadding = getPxFromDp(this, 20);
+      int topPadding = getPxFromDp(this, 20);
+      int rightPadding = getPxFromDp(this, 20);
+      int bottomPadding = getPxFromDp(this, 0);
+      customTitle.setPadding(leftPadding, topPadding, rightPadding, bottomPadding);
+      customTitle.setTextSize(getPxFromDp(this, 6));
+      customTitle.setText(R.string.action_send_booted_dialog_title);
+      if(this.isDarkMode) {
+        customTitle.setTextColor(
+            ContextCompat.getColor(this, R.color.primaryTextMaterialDark)
+        );
+      }
+      else {
+        customTitle.setTextColor(ContextCompat.getColor(this, android.R.color.black));
+      }
+      customTitle.setGravity(Gravity.CENTER);
+
       final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
       final AlertDialog dialog = new AlertDialog.Builder(this)
-        .setTitle(R.string.action_send_booted_dialog_title)
-        .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
+        .setCustomTitle(customTitle)
+        .setSingleChoiceItems(adapter, 0, (dialog1, which) -> {})
+        .setPositiveButton(R.string.determine, (dialog12, which) -> {
 
-          }
-        })
-        .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
+          whichList = SingleChoiceItemsAdapter.checkedPosition;
 
-            whichList = SingleChoiceItemsAdapter.checkedPosition;
+          setIntGeneralInSharedPreferences(MENU_POSITION, whichList);
+          setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
 
-            setIntGeneralInSharedPreferences(MENU_POSITION, whichList);
-            setIntGeneralInSharedPreferences(SUBMENU_POSITION, 0);
-
-            showList();
-            isInOnCreate = false;
-          }
-        })
-        .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-
-            detail = null;
-            if(isInOnCreate) {
-              showList();
+          int menuSize = menu.size();
+          for(int i = 0; i < menuSize; i++) {
+            MenuItem menuItem = menu.getItem(i);
+            menuItem.setChecked(false);
+            if(menuItem.hasSubMenu()) {
+              SubMenu subMenu = menuItem.getSubMenu();
+              int subSize = subMenu.size();
+              for(int j = 0; j < subSize; j++) {
+                MenuItem subMenuItem = subMenu.getItem(j);
+                subMenuItem.setChecked(false);
+              }
             }
-            isInOnCreate = false;
           }
-        })
-        .setOnCancelListener(new DialogInterface.OnCancelListener() {
-          @Override
-          public void onCancel(DialogInterface dialog) {
 
-            detail = null;
-            if(isInOnCreate) {
-              showList();
+          showList();
+          if(order == 0) {
+            Calendar extractedCal = getCalendarFromString();
+            if(extractedCal != null) {
+              final AlertDialog useDateDialog = new AlertDialog.Builder(this)
+                  .setTitle(R.string.date_and_time_detected_title)
+                  .setMessage(R.string.date_and_time_detected_message)
+                  .setPositiveButton(R.string.yes, (dialog15, which12) -> {
+                    handler.post(() -> showMainEditFragment(extractedCal));
+                    detail = null;
+                  })
+                  .setNegativeButton(R.string.no, (dialog1, which1) ->
+                      handler.post(() -> showMainEditFragment(detail))
+                  )
+                  .setOnCancelListener(dialog1 ->
+                      handler.post(() -> showMainEditFragment(detail))
+                  )
+                  .create();
+
+              useDateDialog.setOnShowListener(dialogInterface -> {
+                useDateDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accentColor);
+                useDateDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(accentColor);
+              });
+
+              useDateDialog.show();
             }
-            isInOnCreate = false;
+            else {
+              handler.post(() -> showMainEditFragment(detail));
+            }
+          }
+          else {
+            handler.post(() -> showMainEditFragment(detail));
           }
         })
+        .setNeutralButton(R.string.cancel, (dialog13, which) -> detail = null)
+        .setOnCancelListener(dialog14 -> detail = null)
         .create();
 
-      dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-        @Override
-        public void onShow(DialogInterface dialogInterface) {
+      dialog.setOnShowListener(dialogInterface -> {
 
-          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accentColor);
-          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
-        }
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accentColor);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
       });
 
       dialog.show();
     }
+
+    showList();
+  }
+
+  private Calendar getCalendarFromString() {
+
+    dateSet = false;
+    String detailOrg = detail;
+    Calendar now = Calendar.getInstance();
+    now.set(Calendar.HOUR_OF_DAY, 0);
+    now.set(Calendar.MINUTE, 0);
+    now.set(Calendar.SECOND, 0);
+    now.set(Calendar.MILLISECOND, 0);
+
+    setMultiMatchedFieldsInCalender(
+        now, new int[]{Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH},
+        new String[]{"(\\d{4})[-/.](\\d{1,2})[-/.](\\d{1,2})"}
+    );
+    setMultiMatchedFieldsInCalender(
+        now, new int[]{Calendar.MONTH, Calendar.DAY_OF_MONTH},
+        new String[]{"(\\d{1,2})[-/.](\\d{1,2})"}
+    );
+    setMultiMatchedFieldsInCalender(
+        now, new int[]{Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.YEAR},
+        new String[]{"(\\d{1,2})[-/.](\\d{1,2})[-/.](\\d{4})"}
+    );
+    setMultiMatchedFieldsInCalender(
+        now, new int[]{Calendar.YEAR, Calendar.MONTH},
+        new String[]{"(\\d{4})[-/.](\\d{1,2})"}
+    );
+    setMultiMatchedFieldsInCalender(
+        now, new int[]{Calendar.MONTH, Calendar.YEAR},
+        new String[]{"(\\d{1,2})[-/.](\\d{4})"}
+    );
+    setMultiMatchedFieldsInCalender(
+        now, new int[]{Calendar.HOUR_OF_DAY, Calendar.MINUTE}, new String[]{
+            "(午[前後]) *(\\d{1,2}):(\\d{1,2})",
+            "(am|a\\.m\\.|AM|A\\.M\\.|pm|p\\.m\\.|PM|P\\.M\\.) *(\\d{1,2}):(\\d{1,2})",
+            "(\\d{1,2}):(\\d{1,2}) *(am|a\\.m\\.|AM|A\\.M\\.|pm|p\\.m\\.|PM|P\\.M\\.)",
+            "(\\d{1,2}):(\\d{1,2})"
+        }
+    );
+    setMatchedFieldInCalender(now, Calendar.YEAR, new String[]{"(\\d{4})年", "(\\d{4})"});
+    setMatchedFieldInCalender(now, Calendar.MONTH, new String[]{
+        "(\\d{1,2})月", "(Jan)", "(Feb)", "(Mar)", "(Apr)", "(May)", "(Jun)", "(Jul)", "(Aug)",
+        "(Sep)", "(Oct)", "(Nov)", "(Dec)"
+    });
+    setMatchedFieldInCalender(now, Calendar.HOUR_OF_DAY, new String[]{
+        "(午[前後]) *(\\d{1,2})時",
+        "(am|a\\.m\\.|AM|A\\.M\\.|pm|p\\.m\\.|PM|P\\.M\\.) *(\\d{1,2})時", "(\\d{1,2})時",
+        "(\\d{1,2}) *(am|a\\.m\\.|AM|A\\.M\\.|pm|p\\.m\\.|PM|P\\.M\\.)",
+        "at *(\\d{1,2})", "(\\d{1,2}) *o'clock"
+    });
+    setMatchedFieldInCalender(now, Calendar.MINUTE, new String[]{
+        "(\\d{1,2})分"
+    });
+    // DAY_OF_MONTHを最後の方に置いた理由は、"(\\d{1,2})"を、同じ正規表現を含む複合表現
+    // ("(\\d{1,2})時"など)の一番後ろに置きたかったため(一番広くマッチするから)。
+    setMatchedFieldInCalender(now, Calendar.DAY_OF_MONTH, new String[]{
+        "(\\d{1,2})日", "(\\d{1,2})(st|nd|rd|th)", "(\\d{1,2})"
+    });
+    setMatchedFieldInCalender(now, Calendar.DAY_OF_WEEK, new String[]{
+        "(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)",
+        "(Sun)", "(Mon)", "(Tu)", "(Wed)", "(Th)", "(Fri)", "(Sat)"
+    });
+
+    detail = detailOrg;
+    return dateSet? now : null;
+  }
+
+  private void setMultiMatchedFieldsInCalender(
+      Calendar targetCal, int[] targetFields, String[] targetStrings
+  ) {
+
+    for(String targetString : targetStrings) {
+      int[] fields = getMultiMatchedFieldsInCalender(
+          targetString, ArrayUtils.contains(targetFields, Calendar.HOUR_OF_DAY)
+      );
+      if(!Arrays.equals(fields, new int[]{-1, -1, -1})) {
+        for(int i = 0; i < targetFields.length; i++) {
+          int monthOffset = targetFields[i] == Calendar.MONTH? 1 : 0;
+          targetCal.set(targetFields[i], fields[i] - monthOffset);
+          targetCal.getTime();
+        }
+        dateSet = true;
+        return;
+      }
+    }
+  }
+
+  private int[] getMultiMatchedFieldsInCalender(String targetString, boolean isHour) {
+
+    int[] fields = new int[]{-1, -1, -1};
+    Pattern pattern = Pattern.compile(targetString);
+    Matcher matcher = pattern.matcher(detail);
+    if(matcher.find()) {
+      int size = matcher.groupCount();
+      int hourAdd = 0;
+      int offset = 0;
+      for(int i = 0; i < size; i++) {
+        int j = i - offset;
+        String group = requireNonNull(matcher.group(i + 1));
+        if(isHour && Pattern.compile("[午mM]").matcher(group).find()) {
+          if(Pattern.compile("[後pP]").matcher(group).find()) {
+            hourAdd = 12;
+          }
+          offset = 1;
+          continue;
+        }
+        fields[j] = Integer.parseInt(group);
+        if(hourAdd != 0) {
+          fields[j] += hourAdd;
+          hourAdd = 0;
+        }
+      }
+      if(hourAdd != 0) {
+        fields[0] += hourAdd;
+      }
+      detail = detail.replace(requireNonNull(matcher.group()), "");
+    }
+
+    return fields;
+  }
+
+  private void setMatchedFieldInCalender(
+      Calendar targetCal, int targetField, String[] targetStrings
+  ) {
+
+    for(String targetString : targetStrings) {
+      int field = getMatchedFieldInCalender(
+          targetString, targetField == Calendar.MONTH,
+          targetField == Calendar.HOUR_OF_DAY
+      );
+      if(field != -1) {
+        targetCal.set(targetField, field);
+        targetCal.getTime();
+        dateSet = true;
+        return;
+      }
+    }
+  }
+
+  private int getMatchedFieldInCalender(String targetString, boolean isMonth, boolean isHour) {
+
+    Integer field = -1;
+    Pattern pattern = Pattern.compile(targetString);
+    Matcher matcher = pattern.matcher(detail);
+    if(matcher.find()) {
+      String group = requireNonNull(matcher.group(1));
+      field = DAY_OF_WEEK_MAP_JP.get(group);
+      if(field == null) {
+        field = DAY_OF_WEEK_MAP_EN.get(group);
+      }
+      if(field == null) {
+        field = MONTH_MAP.get(group);
+      }
+      if(field == null) {
+        int hourAdd = 0;
+        int monthOffset = isMonth? 1 : 0;
+        String targetGroup = group;
+        if(isHour) {
+          int size = matcher.groupCount();
+          for(int i = 0; i < size; i++) {
+            group = requireNonNull(matcher.group(i + 1));
+            if(Pattern.compile("[午mM]").matcher(group).find()) {
+              if(Pattern.compile("[後pP]").matcher(group).find()) {
+                hourAdd = 12;
+              }
+            }
+            else {
+              targetGroup = group;
+            }
+          }
+        }
+        field = Integer.parseInt(targetGroup) + hourAdd - monthOffset;
+      }
+      detail = detail.replace(matcher.group(), "");
+    }
+
+    return field;
   }
 
   private void showList() {
@@ -1110,96 +1490,6 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  protected void onResume() {
-
-    super.onResume();
-
-    int currentNightMode =
-      getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-    if(isDarkThemeFollowSystem) {
-      if(isDarkMode && currentNightMode != Configuration.UI_MODE_NIGHT_YES) {
-        setBooleanGeneralInSharedPreferences(IS_RECREATED, true);
-        setBooleanGeneralInSharedPreferences(IS_DARK_MODE, false);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        recreate();
-      }
-      else if(!isDarkMode && currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-        setBooleanGeneralInSharedPreferences(IS_RECREATED, true);
-        setBooleanGeneralInSharedPreferences(IS_DARK_MODE, true);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        recreate();
-      }
-      else {
-        setBooleanGeneralInSharedPreferences(IS_RECREATED, false);
-      }
-    }
-
-    if(isFirstUse && !isRecreated) {
-      setBooleanGeneralInSharedPreferences(IS_FIRST_USE, false);
-    }
-
-
-    // generalSettingsにおいて旧バージョンからの移行処理が行われた場合は、まだデータベース全体の
-    // 移行処理が行われていないものとしてデータベースを更新する。
-    // ダークモード切り替えによるActivityのrecreate()が発生した場合は処理が中断してしまうので
-    // !isRecreatedの条件により、確実に1回だけ実行されるようにしてある。
-    if(generalSettings.isCopiedFromOldVersion()) {
-      setBooleanGeneralInSharedPreferences(IS_COPIED_FROM_OLD_VERSION, true);
-      generalSettings.setIsCopiedFromOldVersion(false);
-    }
-    if(!isRecreated && isCopiedFromOldVersion) {
-      CopyFromOldVersionProgressBarDialogFragment dialog =
-        new CopyFromOldVersionProgressBarDialogFragment();
-      dialog.show(getSupportFragmentManager(), "copy_from_old_version_progress_bar");
-    }
-
-    // すべての通知を既読し、通知チャネルを削除する
-    clearAllNotification();
-
-    if(!isPremium) {
-
-      // ビリングサービスのセットアップ
-      setupBillingServices();
-    }
-
-    Fragment mainFragment =
-      getSupportFragmentManager().findFragmentByTag(ExpandableListViewFragment.TAG);
-    if(mainFragment != null) {
-      MyExpandableListAdapter.isLockBlockNotifyChange = true;
-      MyExpandableListAdapter.isBlockNotifyChange = true;
-      updateListTask(null, -1, true, false);
-      setUpdateListTimerTask(true);
-    }
-
-    isScreenOn = true;
-  }
-
-  @Override
-  protected void onPause() {
-
-    super.onPause();
-
-    if(updateInfoMessageDialog != null) {
-      updateInfoMessageDialog.cancel();
-      updateInfoMessageDialog = null;
-    }
-
-    // ExpandableListViewの自動更新を止める
-    setUpdateListTimerTask(false);
-
-    // DirectBootモードからMainActivityを起動すると何故かonResume()が呼ばれた後に一度onPause()が
-    // 呼ばれ、再びonResume()が呼ばれるが、そうなっても良いようにonPause()側で端末暗号化ストレージ
-    // へのコピー処理にgetIsDirectBootContext()を使って条件を設けている。
-    if(!getIsDirectBootContext(this)) {
-      // データベースを端末暗号化ストレージへコピーする
-      copyDatabase(this, false);
-      copySharedPreferences(this, false);
-    }
-
-    isScreenOn = false;
-  }
-
-  @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
     return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
@@ -1214,13 +1504,6 @@ public class MainActivity extends AppCompatActivity
     else {
       super.onBackPressed();
     }
-  }
-
-  @Override
-  protected void onPostCreate(Bundle savedInstanceState) {
-
-    super.onPostCreate(savedInstanceState);
-    drawerToggle.syncState();
   }
 
   @Override
@@ -1326,103 +1609,91 @@ public class MainActivity extends AppCompatActivity
       final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
         .setTitle(R.string.add_list)
         .setView(linearLayout)
-        .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
+        .setPositiveButton(R.string.add, (dialog1, which) -> {
 
-            // GeneralSettingsとManageListAdapterへの反映
-            String name = editText.getText().toString();
-            if(name.equals("")) {
-              name = getString(R.string.default_list);
+          // GeneralSettingsとManageListAdapterへの反映
+          String name = editText.getText().toString();
+          if(name.equals("")) {
+            name = getString(R.string.default_list);
+          }
+          generalSettings.addNonScheduledList(0, new NonScheduledListAdapter(name));
+          List<NonScheduledListAdapter> nonScheduledListList =
+            generalSettings.getNonScheduledLists();
+          int size = nonScheduledListList.size();
+          for(int i = 0; i < size; i++) {
+            nonScheduledListList.get(i).setOrder(i);
+          }
+          ManageListAdapter.nonScheduledLists =
+            new ArrayList<>(nonScheduledListList);
+          manageListAdapter.notifyDataSetChanged();
+
+          // 一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
+
+          // デフォルトアイテムのリストア
+          menu.removeGroup(R.id.reminder_list);
+          menu.add(R.id.reminder_list, R.id.scheduled_list, 0, R.string.nav_scheduled_item)
+            .setIcon(R.drawable.ic_time)
+            .setCheckable(true);
+          menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
+            .setIcon(R.drawable.ic_add_24dp)
+            .setCheckable(false);
+
+          // 新しく追加したリストのリストア
+          for(NonScheduledListAdapter list : nonScheduledListList) {
+            Drawable drawable =
+              ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_my_list_24dp);
+            requireNonNull(drawable);
+            drawable = drawable.mutate();
+            if(list.getColor() != 0) {
+              drawable.setColorFilter(new PorterDuffColorFilter(
+                list.getColor(),
+                PorterDuff.Mode.SRC_IN
+              ));
             }
-            generalSettings.addNonScheduledList(0, new NonScheduledListAdapter(name));
-            List<NonScheduledListAdapter> nonScheduledListList =
-              generalSettings.getNonScheduledLists();
-            int size = nonScheduledListList.size();
-            for(int i = 0; i < size; i++) {
-              nonScheduledListList.get(i).setOrder(i);
+            else {
+              drawable.setColorFilter(new PorterDuffColorFilter(
+                ContextCompat.getColor(MainActivity.this, R.color.iconGray),
+                PorterDuff.Mode.SRC_IN
+              ));
             }
-            ManageListAdapter.nonScheduledLists =
-              new ArrayList<>(nonScheduledListList);
-            manageListAdapter.notifyDataSetChanged();
-
-            // 一旦reminder_listグループ内のアイテムをすべて消してから元に戻すことで新しく追加したリストの順番を追加した順に並び替える
-
-            // デフォルトアイテムのリストア
-            menu.removeGroup(R.id.reminder_list);
-            menu.add(R.id.reminder_list, R.id.scheduled_list, 0, R.string.nav_scheduled_item)
-              .setIcon(R.drawable.ic_time)
+            menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
+              .setIcon(drawable)
               .setCheckable(true);
-            menu.add(R.id.reminder_list, R.id.add_list, 2, R.string.add_list)
-              .setIcon(R.drawable.ic_add_24dp)
-              .setCheckable(false);
-
-            // 新しく追加したリストのリストア
-            for(NonScheduledListAdapter list : nonScheduledListList) {
-              Drawable drawable =
-                ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_my_list_24dp);
-              requireNonNull(drawable);
-              drawable = drawable.mutate();
-              if(list.getColor() != 0) {
-                drawable.setColorFilter(new PorterDuffColorFilter(
-                  list.getColor(),
-                  PorterDuff.Mode.SRC_IN
-                ));
-              }
-              else {
-                drawable.setColorFilter(new PorterDuffColorFilter(
-                  ContextCompat.getColor(MainActivity.this, R.color.iconGray),
-                  PorterDuff.Mode.SRC_IN
-                ));
-              }
-              menu.add(R.id.reminder_list, generateUniqueId(), 1, list.getTitle())
-                .setIcon(drawable)
-                .setCheckable(true);
-            }
-
-            if(order != 0) {
-              setIntGeneralInSharedPreferences(
-                MENU_POSITION,
-                whichMenuOpen + 1
-              );
-              MainActivity.this.menuItem = menu.getItem(whichMenuOpen);
-            }
-            navigationView.setCheckedItem(MainActivity.this.menuItem);
-
-            // データベースへの反映
-            updateSettingsDB();
           }
+
+          if(order != 0) {
+            setIntGeneralInSharedPreferences(
+              MENU_POSITION,
+              whichMenuOpen + 1
+            );
+            MainActivity.this.menuItem = menu.getItem(whichMenuOpen);
+          }
+          navigationView.setCheckedItem(MainActivity.this.menuItem);
+
+          // データベースへの反映
+          updateSettingsDB();
         })
-        .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
+        .setNeutralButton(R.string.cancel, (dialog12, which) -> {
 
-          }
         })
         .create();
 
-      dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-        @Override
-        public void onShow(DialogInterface dialogInterface) {
+      dialog.setOnShowListener(dialogInterface -> {
 
-          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accentColor);
-          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
-        }
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(accentColor);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
       });
 
       dialog.show();
 
       // ダイアログ表示時にソフトキーボードを自動で表示
-      editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
+      editText.setOnFocusChangeListener((v, hasFocus) -> {
 
-          if(hasFocus) {
-            Window dialogWindow = dialog.getWindow();
-            requireNonNull(dialogWindow);
+        if(hasFocus) {
+          Window dialogWindow = dialog.getWindow();
+          requireNonNull(dialogWindow);
 
-            dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-          }
+          dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
       });
       editText.requestFocus();
@@ -1532,15 +1803,12 @@ public class MainActivity extends AppCompatActivity
           handler.removeCallbacks(runnable);
         }
         else {
-          runnable = new Runnable() {
-            @Override
-            public void run() {
+          runnable = () -> {
 
-              updateListTask(
-                  null, -1, false, false
-              );
-              runnable = null;
-            }
+            updateListTask(
+                null, -1, false, false
+            );
+            runnable = null;
           };
         }
         handler.postDelayed(runnable, 2 * MINUTE);
@@ -1565,91 +1833,88 @@ public class MainActivity extends AppCompatActivity
             MyExpandableListAdapter.panelLockId = 0;
           }
         })
-        .setAction(R.string.undo, new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
+        .setAction(R.string.undo, v -> {
 
-            MyExpandableListAdapter.isLockBlockNotifyChange = true;
-            MyExpandableListAdapter.isBlockNotifyChange = true;
+          MyExpandableListAdapter.isLockBlockNotifyChange = true;
+          MyExpandableListAdapter.isBlockNotifyChange = true;
 
-            if(MyExpandableListAdapter.isClosed) {
-              MyExpandableListAdapter.hasPanel = snackBarItem.getId();
-              MyExpandableListAdapter.isClosed = false;
+          if(MyExpandableListAdapter.isClosed) {
+            MyExpandableListAdapter.hasPanel = snackBarItem.getId();
+            MyExpandableListAdapter.isClosed = false;
+          }
+          if(
+              (snackBarItem.getDayRepeat().getWhichSet() != 0 ||
+                  snackBarItem.getMinuteRepeat().getWhichSet() != 0) &&
+              !exceedsTimeLimit
+          ) {
+            snackBarItem.setAlarmStopped(snackBarItem.isOrgIsAlarmStopped());
+            snackBarItem.setAlteredTime(snackBarItem.getOrgAlteredTime());
+            if((snackBarItem.getMinuteRepeat().getWhichSet() & 1) != 0) {
+              snackBarItem
+                .getMinuteRepeat()
+                .setCount(snackBarItem.getMinuteRepeat().getOrgCount2());
             }
-            if(
-                (snackBarItem.getDayRepeat().getWhichSet() != 0 ||
-                    snackBarItem.getMinuteRepeat().getWhichSet() != 0) &&
-                !exceedsTimeLimit
-            ) {
-              snackBarItem.setAlarmStopped(snackBarItem.isOrgIsAlarmStopped());
-              snackBarItem.setAlteredTime(snackBarItem.getOrgAlteredTime());
-              if((snackBarItem.getMinuteRepeat().getWhichSet() & 1) != 0) {
-                snackBarItem
+            else if((snackBarItem.getMinuteRepeat().getWhichSet() & (1 << 1)) != 0) {
+              snackBarItem
+                .getMinuteRepeat()
+                .setDuration(snackBarItem.getMinuteRepeat().getOrgDuration2());
+            }
+
+            snackBarItem.getDate().setTimeInMillis(
+                MyExpandableListAdapter.backupDate.getTimeInMillis()
+            );
+
+            Collections.sort(
+              MyExpandableListAdapter.children.get(groupPosition),
+              SCHEDULED_ITEM_COMPARATOR
+            );
+            expandableListAdapter.notifyDataSetChanged();
+
+            deleteAlarm(snackBarItem);
+            if(!snackBarItem.isAlarmStopped()) {
+              setAlarm(snackBarItem);
+            }
+            updateDB(snackBarItem, MyDatabaseHelper.TODO_TABLE);
+          }
+          else {
+            if(MyExpandableListAdapter.refilledWhichSetInfo == 1) {
+              snackBarItem
                   .getMinuteRepeat()
                   .setCount(snackBarItem.getMinuteRepeat().getOrgCount2());
-              }
-              else if((snackBarItem.getMinuteRepeat().getWhichSet() & (1 << 1)) != 0) {
-                snackBarItem
+            }
+            else if(MyExpandableListAdapter.refilledWhichSetInfo == 1 << 1) {
+              snackBarItem
                   .getMinuteRepeat()
                   .setDuration(snackBarItem.getMinuteRepeat().getOrgDuration2());
-              }
-
-              snackBarItem.getDate().setTimeInMillis(
-                  MyExpandableListAdapter.backupDate.getTimeInMillis()
-              );
-
-              Collections.sort(
-                MyExpandableListAdapter.children.get(groupPosition),
-                SCHEDULED_ITEM_COMPARATOR
-              );
-              expandableListAdapter.notifyDataSetChanged();
-
-              deleteAlarm(snackBarItem);
-              if(!snackBarItem.isAlarmStopped()) {
-                setAlarm(snackBarItem);
-              }
-              updateDB(snackBarItem, MyDatabaseHelper.TODO_TABLE);
-            }
-            else {
-              if(MyExpandableListAdapter.refilledWhichSetInfo == 1) {
-                snackBarItem
-                    .getMinuteRepeat()
-                    .setCount(snackBarItem.getMinuteRepeat().getOrgCount2());
-              }
-              else if(MyExpandableListAdapter.refilledWhichSetInfo == 1 << 1) {
-                snackBarItem
-                    .getMinuteRepeat()
-                    .setDuration(snackBarItem.getMinuteRepeat().getOrgDuration2());
-              }
-
-              if(MyExpandableListAdapter.deletedWhichSetInfo == 1) {
-                snackBarItem.getMinuteRepeat().setWhichSet(1);
-              }
-              else if(MyExpandableListAdapter.deletedWhichSetInfo == 1 << 1) {
-                snackBarItem.getMinuteRepeat().setWhichSet(1 << 1);
-              }
-
-              snackBarItem.getDate().setTimeInMillis(
-                  MyExpandableListAdapter.backupDate.getTimeInMillis()
-              );
-
-              MyExpandableListAdapter.children.get(groupPosition).add(snackBarItem);
-              for(List<ItemAdapter> itemList : MyExpandableListAdapter.children) {
-                Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
-              }
-              expandableListAdapter.notifyDataSetChanged();
-
-              if(!snackBarItem.isAlarmStopped()) {
-                setAlarm(snackBarItem);
-              }
-              insertDB(snackBarItem, MyDatabaseHelper.TODO_TABLE);
-              deleteDB(snackBarItem, MyDatabaseHelper.DONE_TABLE);
             }
 
-            updateListTask(
-                null, -1, true, false
+            if(MyExpandableListAdapter.deletedWhichSetInfo == 1) {
+              snackBarItem.getMinuteRepeat().setWhichSet(1);
+            }
+            else if(MyExpandableListAdapter.deletedWhichSetInfo == 1 << 1) {
+              snackBarItem.getMinuteRepeat().setWhichSet(1 << 1);
+            }
+
+            snackBarItem.getDate().setTimeInMillis(
+                MyExpandableListAdapter.backupDate.getTimeInMillis()
             );
+
+            MyExpandableListAdapter.children.get(groupPosition).add(snackBarItem);
+            for(List<ItemAdapter> itemList : MyExpandableListAdapter.children) {
+              Collections.sort(itemList, SCHEDULED_ITEM_COMPARATOR);
+            }
+            expandableListAdapter.notifyDataSetChanged();
+
+            if(!snackBarItem.isAlarmStopped()) {
+              setAlarm(snackBarItem);
+            }
+            insertDB(snackBarItem, MyDatabaseHelper.TODO_TABLE);
+            deleteDB(snackBarItem, MyDatabaseHelper.DONE_TABLE);
           }
+
+          updateListTask(
+              null, -1, true, false
+          );
         })
         .show();
     }
@@ -1667,8 +1932,8 @@ public class MainActivity extends AppCompatActivity
       tomorrow = DateFormat.format(" - yyyy年M月d日(E)", tomorrowCal);
     }
     else {
-      today = DateFormat.format(" - yyyy/M/d (E)", now);
-      tomorrow = DateFormat.format(" - yyyy/M/d (E)", tomorrowCal);
+      today = DateFormat.format(" - E, MMM d, yyyy", now);
+      tomorrow = DateFormat.format(" - E, MMM d, yyyy", tomorrowCal);
     }
     MyExpandableListAdapter.groups.set(1, getString(R.string.today) + today);
     MyExpandableListAdapter.groups.set(2, getString(R.string.tomorrow) + tomorrow);
@@ -1685,16 +1950,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void run() {
 
-      handler.post(new Runnable() {
-        @Override
-        public void run() {
+      handler.post(() -> {
 
-          int second = Calendar.getInstance().get(Calendar.SECOND);
-          if(!MyExpandableListAdapter.isBlockNotifyChange && second == 0) {
-            updateListTask(
-                null, -1, false, false
-            );
-          }
+        int second = Calendar.getInstance().get(Calendar.SECOND);
+        if(!MyExpandableListAdapter.isBlockNotifyChange && second == 0) {
+          updateListTask(
+              null, -1, false, false
+          );
         }
       });
     }
@@ -1846,10 +2108,13 @@ public class MainActivity extends AppCompatActivity
 
     if(whichMenuOpen > 0) {
       long listId = generalSettings.getNonScheduledLists().get(whichMenuOpen - 1).getId();
-      Log.i("getNonScheduledItem", "listId: " + listId);
+      Log.i("MainActivity#getNonScheduledItem", "listId: " + listId);
       List<ItemAdapter> itemList = new ArrayList<>();
       for(ItemAdapter item : queryAllDB(table)) {
-        Log.i("getNonScheduledItem", "item.getWhichListBelongs(): " + item.getWhichListBelongs());
+        Log.i(
+            "MainActivity#getNonScheduledItem",
+            "item.getWhichListBelongs(): " + item.getWhichListBelongs()
+        );
         if(item.getWhichListBelongs() == listId) {
           itemList.add(item);
         }
@@ -2043,7 +2308,7 @@ public class MainActivity extends AppCompatActivity
           Thread.sleep(10);
         }
         catch(InterruptedException ex) {
-          Log.e("queryAllDB", Log.getStackTraceString(ex));
+          Log.e("MainActivity#queryAllDB", Log.getStackTraceString(ex));
         }
       }
     }
@@ -2096,7 +2361,7 @@ public class MainActivity extends AppCompatActivity
           Thread.sleep(10);
         }
         catch(InterruptedException ex) {
-          Log.e("querySettingsDB", Log.getStackTraceString(ex));
+          Log.e("MainActivity#querySettingsDB", Log.getStackTraceString(ex));
         }
       }
     }
@@ -2209,6 +2474,10 @@ public class MainActivity extends AppCompatActivity
         isRecreated = value;
         break;
       }
+      case IS_RECREATED_TWICE: {
+        isRecreatedTwice = value;
+        break;
+      }
       case IS_DARK_MODE: {
         isDarkMode = value;
         break;
@@ -2261,13 +2530,29 @@ public class MainActivity extends AppCompatActivity
       byte[] obArray = serialize(item.getItem());
       intent.putExtra(ITEM, obArray);
       PendingIntent sender = PendingIntent.getBroadcast(
-        this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        this, (int)item.getId(), intent,
+        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+      );
 
       AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       requireNonNull(alarmManager);
 
-      alarmManager.setAlarmClock(
-        new AlarmManager.AlarmClockInfo(item.getDate().getTimeInMillis(), null), sender);
+      if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if(alarmManager.canScheduleExactAlarms()) {
+          alarmManager.setAlarmClock(
+              new AlarmManager.AlarmClockInfo(
+                  item.getDate().getTimeInMillis(), null
+              ), sender
+          );
+        }
+      }
+      else {
+        alarmManager.setAlarmClock(
+            new AlarmManager.AlarmClockInfo(
+                item.getDate().getTimeInMillis(), null
+            ), sender
+        );
+      }
     }
   }
 
@@ -2276,7 +2561,9 @@ public class MainActivity extends AppCompatActivity
     if(isAlarmSet(item)) {
       Intent intent = new Intent(this, AlarmReceiver.class);
       PendingIntent sender = PendingIntent.getBroadcast(
-        this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        this, (int)item.getId(), intent,
+        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+      );
 
       AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       requireNonNull(alarmManager);
@@ -2290,7 +2577,9 @@ public class MainActivity extends AppCompatActivity
 
     Intent intent = new Intent(this, AlarmReceiver.class);
     PendingIntent sender = PendingIntent.getBroadcast(
-      this, (int)item.getId(), intent, PendingIntent.FLAG_NO_CREATE);
+      this, (int)item.getId(), intent,
+      PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_NO_CREATE
+    );
 
     return sender != null;
   }
@@ -2500,12 +2789,21 @@ public class MainActivity extends AppCompatActivity
     );
   }
 
+  public void showMainEditFragment(Calendar cal) {
+
+    MainEditFragment.isMainPopping = false;
+    showFragment(MainEditFragment.TAG, MainEditFragment.newInstance(cal),
+        null, null, true
+    );
+  }
+
   public void showMainEditFragment(String detail) {
 
     MainEditFragment.isMainPopping = false;
     showFragment(MainEditFragment.TAG, MainEditFragment.newInstance(detail),
       null, null, true
     );
+    this.detail = null;
   }
 
   public void showMainEditFragment(ItemAdapter item) {

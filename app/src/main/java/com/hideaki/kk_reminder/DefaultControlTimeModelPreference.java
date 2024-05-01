@@ -57,18 +57,10 @@ public class DefaultControlTimeModelPreference extends Preference {
       setTime = (String)DateFormat.format("M月d日(E) k:mm", now);
     }
     else {
-      setTime = (String)DateFormat.format("M/d (E) k:mm", now);
+      setTime = (String)DateFormat.format("E, MMM d 'at' h:mma", now);
     }
 
-    setTime += " (";
-    if(!LOCALE.equals(Locale.JAPAN)) {
-      setTime += " ";
-    }
-    setTime += activity.getString(R.string.within_one_minute);
-    if(!LOCALE.equals(Locale.JAPAN)) {
-      setTime += " ";
-    }
-    setTime += ")";
+    setTime += " (" + activity.getString(R.string.within_one_minute) + ")";
 
     // 各種初期設定
     if(activity.isDarkMode) {
@@ -99,70 +91,52 @@ public class DefaultControlTimeModelPreference extends Preference {
     plusTime2.setText(activity.getControlTimeText(false, 2));
     plusTime3.setText(activity.getControlTimeText(false, 3));
 
-    minusTime1.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    minusTime1.setOnClickListener(v -> {
 
-        DefaultControlTimePickerDialogFragment dialog =
-          new DefaultControlTimePickerDialogFragment();
-        dialog.setWhichTimeController((TextView)v, true, 1);
-        dialog.show(activity.getSupportFragmentManager(), "minus_control_time_picker1");
-      }
+      DefaultControlTimePickerDialogFragment dialog =
+        new DefaultControlTimePickerDialogFragment();
+      dialog.setWhichTimeController((TextView)v, true, 1);
+      dialog.show(activity.getSupportFragmentManager(), "minus_control_time_picker1");
     });
 
-    minusTime2.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    minusTime2.setOnClickListener(v -> {
 
-        DefaultControlTimePickerDialogFragment dialog =
-          new DefaultControlTimePickerDialogFragment();
-        dialog.setWhichTimeController((TextView)v, true, 2);
-        dialog.show(activity.getSupportFragmentManager(), "minus_control_time_picker2");
-      }
+      DefaultControlTimePickerDialogFragment dialog =
+        new DefaultControlTimePickerDialogFragment();
+      dialog.setWhichTimeController((TextView)v, true, 2);
+      dialog.show(activity.getSupportFragmentManager(), "minus_control_time_picker2");
     });
 
-    minusTime3.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    minusTime3.setOnClickListener(v -> {
 
-        DefaultControlTimePickerDialogFragment dialog =
-          new DefaultControlTimePickerDialogFragment();
-        dialog.setWhichTimeController((TextView)v, true, 3);
-        dialog.show(activity.getSupportFragmentManager(), "minus_control_time_picker3");
-      }
+      DefaultControlTimePickerDialogFragment dialog =
+        new DefaultControlTimePickerDialogFragment();
+      dialog.setWhichTimeController((TextView)v, true, 3);
+      dialog.show(activity.getSupportFragmentManager(), "minus_control_time_picker3");
     });
 
-    plusTime1.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    plusTime1.setOnClickListener(v -> {
 
-        DefaultControlTimePickerDialogFragment dialog =
-          new DefaultControlTimePickerDialogFragment();
-        dialog.setWhichTimeController((TextView)v, false, 1);
-        dialog.show(activity.getSupportFragmentManager(), "plus_control_time_picker1");
-      }
+      DefaultControlTimePickerDialogFragment dialog =
+        new DefaultControlTimePickerDialogFragment();
+      dialog.setWhichTimeController((TextView)v, false, 1);
+      dialog.show(activity.getSupportFragmentManager(), "plus_control_time_picker1");
     });
 
-    plusTime2.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    plusTime2.setOnClickListener(v -> {
 
-        DefaultControlTimePickerDialogFragment dialog =
-          new DefaultControlTimePickerDialogFragment();
-        dialog.setWhichTimeController((TextView)v, false, 2);
-        dialog.show(activity.getSupportFragmentManager(), "plus_control_time_picker2");
-      }
+      DefaultControlTimePickerDialogFragment dialog =
+        new DefaultControlTimePickerDialogFragment();
+      dialog.setWhichTimeController((TextView)v, false, 2);
+      dialog.show(activity.getSupportFragmentManager(), "plus_control_time_picker2");
     });
 
-    plusTime3.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
+    plusTime3.setOnClickListener(v -> {
 
-        DefaultControlTimePickerDialogFragment dialog =
-          new DefaultControlTimePickerDialogFragment();
-        dialog.setWhichTimeController((TextView)v, false, 3);
-        dialog.show(activity.getSupportFragmentManager(), "plus_control_time_picker3");
-      }
+      DefaultControlTimePickerDialogFragment dialog =
+        new DefaultControlTimePickerDialogFragment();
+      dialog.setWhichTimeController((TextView)v, false, 3);
+      dialog.show(activity.getSupportFragmentManager(), "plus_control_time_picker3");
     });
   }
 }

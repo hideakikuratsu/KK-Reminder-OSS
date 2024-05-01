@@ -33,6 +33,8 @@ import static com.hideaki.kk_reminder.UtilClass.BOOLEAN_GENERAL_COPY;
 import static com.hideaki.kk_reminder.UtilClass.BOOT_FROM_NOTIFICATION;
 import static com.hideaki.kk_reminder.UtilClass.CHILD_NOTIFICATION_ID;
 import static com.hideaki.kk_reminder.UtilClass.CREATED;
+import static com.hideaki.kk_reminder.UtilClass.CUSTOM_SNOOZE_HOUR;
+import static com.hideaki.kk_reminder.UtilClass.CUSTOM_SNOOZE_MINUTE;
 import static com.hideaki.kk_reminder.UtilClass.DESTROYED;
 import static com.hideaki.kk_reminder.UtilClass.HOUR;
 import static com.hideaki.kk_reminder.UtilClass.INT_GENERAL;
@@ -66,12 +68,11 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
   int snoozeDefaultMinute;
   int customHour;
   int customMinute;
-  String summary;
+  String customSnoozeSummary;
   boolean isDarkMode;
   TextView time;
   int primaryTextMaterialDarkColor;
   int secondaryTextMaterialDarkColor;
-  private boolean isDarkThemeFollowSystem;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,7 +91,9 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
         MODE_PRIVATE
       );
     isDarkMode = booleanPreferences.getBoolean(IS_DARK_MODE, false);
-    isDarkThemeFollowSystem = booleanPreferences.getBoolean(IS_DARK_THEME_FOLLOW_SYSTEM, true);
+    boolean isDarkThemeFollowSystem = booleanPreferences.getBoolean(
+        IS_DARK_THEME_FOLLOW_SYSTEM, true
+    );
 
     // SharedPreferencesからデフォルトのスヌーズ時間を取得
     SharedPreferences intPreferences =
@@ -100,6 +103,8 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
       );
     snoozeDefaultHour = intPreferences.getInt(SNOOZE_DEFAULT_HOUR, 0);
     snoozeDefaultMinute = intPreferences.getInt(SNOOZE_DEFAULT_MINUTE, 15);
+    customHour = intPreferences.getInt(CUSTOM_SNOOZE_HOUR, snoozeDefaultHour);
+    customMinute = intPreferences.getInt(CUSTOM_SNOOZE_MINUTE, snoozeDefaultMinute);
 
     // 通知を既読する
     SharedPreferences stringPreferences =
@@ -107,8 +112,9 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
         getIsDirectBootContext(this) ? STRING_GENERAL_COPY : STRING_GENERAL,
         MODE_PRIVATE
       );
-    Set<String> idTable =
-      stringPreferences.getStringSet(NOTIFICATION_ID_TABLE, new TreeSet<String>());
+    Set<String> idTable = new TreeSet<>(
+        stringPreferences.getStringSet(NOTIFICATION_ID_TABLE, new TreeSet<>())
+    );
     int parentId = intent.getIntExtra(PARENT_NOTIFICATION_ID, 0);
     int childId = intent.getIntExtra(CHILD_NOTIFICATION_ID, 0);
     NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -139,6 +145,18 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
       }
     }
+    else {
+      if(isDarkMode && currentNightMode != Configuration.UI_MODE_NIGHT_YES) {
+        setIsDarkModeInSharedPreferences(false);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        recreate();
+      }
+      else if(!isDarkMode && currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+        setIsDarkModeInSharedPreferences(true);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        recreate();
+      }
+    }
 
     // 色の設定
     int primaryDarkMaterialDarkColor =
@@ -158,21 +176,16 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
 
     // customレイアウトとして表示するfooterの設定
     footer = View.inflate(this, R.layout.manually_snooze_custom_layout, null);
-    customHour = snoozeDefaultHour;
-    customMinute = snoozeDefaultMinute;
     time = footer.findViewById(R.id.time);
     TextView description = footer.findViewById(R.id.description);
     // ダークモードでないときも背景が濃い色で白色が最も見やすかったため、
     // ダークモード時のテキストカラーと同じ色を設定した。
     time.setTextColor(primaryTextMaterialDarkColor);
     description.setTextColor(primaryTextMaterialDarkColor);
-    time.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+    time.setOnClickListener(view -> {
 
-        ManuallySnoozePickerDialogFragment dialog = new ManuallySnoozePickerDialogFragment();
-        dialog.show(getSupportFragmentManager(), "manually_snooze_picker");
-      }
+      ManuallySnoozePickerDialogFragment dialog = new ManuallySnoozePickerDialogFragment();
+      dialog.show(getSupportFragmentManager(), "manually_snooze_picker");
     });
 
     // listView以外のレイアウトの設定
@@ -192,25 +205,45 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     }
 
     // タイトルの設定
-    summary = "";
-    if(customHour != 0) {
-      summary += getResources().getQuantityString(R.plurals.hour, customHour, customHour);
+    String summary = "";
+    if(snoozeDefaultHour != 0) {
+      summary += getResources().getQuantityString(
+          R.plurals.hour, snoozeDefaultHour, snoozeDefaultHour
+      );
       if(!LOCALE.equals(Locale.JAPAN)) {
         summary += " ";
       }
     }
-    if(customMinute != 0) {
-      summary += getResources().getQuantityString(R.plurals.minute, customMinute, customMinute);
+    if(snoozeDefaultMinute != 0) {
+      summary += getResources().getQuantityString(
+          R.plurals.minute, snoozeDefaultMinute, snoozeDefaultMinute
+      );
       if(!LOCALE.equals(Locale.JAPAN)) {
         summary += " ";
       }
     }
     summary += getString(R.string.snooze);
+
+    customSnoozeSummary = "";
+    if(customHour != 0) {
+      customSnoozeSummary += getResources().getQuantityString(R.plurals.hour, customHour, customHour);
+      if(!LOCALE.equals(Locale.JAPAN)) {
+        customSnoozeSummary += " ";
+      }
+    }
+    if(customMinute != 0) {
+      customSnoozeSummary += getResources().getQuantityString(R.plurals.minute, customMinute, customMinute);
+      if(!LOCALE.equals(Locale.JAPAN)) {
+        customSnoozeSummary += " ";
+      }
+    }
+    customSnoozeSummary += getString(R.string.snooze);
+
     // ダークモードでないときも背景が濃い色で白色が最も見やすかったため、
     // ダークモード時のテキストカラーと同じ色を設定した。
     title.setTextColor(primaryTextMaterialDarkColor);
     title.setText(summary);
-    time.setText(summary);
+    time.setText(customSnoozeSummary);
 
     backArrow.setOnClickListener(this);
     launchActivity.setOnClickListener(this);
@@ -221,20 +254,33 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
   protected void onResume() {
 
     super.onResume();
+  }
 
-    int currentNightMode =
-      getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-    if(isDarkThemeFollowSystem) {
-      if(isDarkMode && currentNightMode != Configuration.UI_MODE_NIGHT_YES) {
-        setIsDarkModeInSharedPreferences(false);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        recreate();
+  public void setCustomSnoozeDuration() {
+
+    for(String tag : new String[]{CUSTOM_SNOOZE_HOUR, CUSTOM_SNOOZE_MINUTE}) {
+      int value;
+      switch(tag) {
+        case CUSTOM_SNOOZE_HOUR: {
+          value = customHour;
+          break;
+        }
+        case CUSTOM_SNOOZE_MINUTE: {
+          value = customMinute;
+          break;
+        }
+        default: {
+          throw new IllegalArgumentException(tag);
+        }
       }
-      else if(!isDarkMode && currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-        setIsDarkModeInSharedPreferences(true);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        recreate();
-      }
+      getDynamicContext(this)
+          .getSharedPreferences(
+              getIsDirectBootContext(this) ? INT_GENERAL_COPY : INT_GENERAL,
+              Context.MODE_PRIVATE
+          )
+          .edit()
+          .putInt(tag, value)
+          .apply();
     }
   }
 
@@ -262,7 +308,9 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
       byte[] obArray = serialize(item.getItem());
       intent.putExtra(ITEM, obArray);
       PendingIntent sender = PendingIntent.getBroadcast(
-        this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        this, (int)item.getId(), intent,
+        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+      );
 
       AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       requireNonNull(alarmManager);
@@ -282,7 +330,9 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
     if(isAlarmSet(item)) {
       Intent intent = new Intent(this, AlarmReceiver.class);
       PendingIntent sender = PendingIntent.getBroadcast(
-        this, (int)item.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        this, (int)item.getId(), intent,
+        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+      );
 
       AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       requireNonNull(alarmManager);
@@ -296,7 +346,9 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
 
     Intent intent = new Intent(this, AlarmReceiver.class);
     PendingIntent sender = PendingIntent.getBroadcast(
-      this, (int)item.getId(), intent, PendingIntent.FLAG_NO_CREATE);
+      this, (int)item.getId(), intent,
+      PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_NO_CREATE
+    );
 
     return sender != null;
   }
@@ -310,28 +362,21 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
   @Override
   public void onClick(View v) {
 
-    switch(v.getId()) {
+    int id = v.getId();
+    if(id == R.id.back_arrow) {
+      this.finish();
+    }
+    else if(id == R.id.launch_activity) {
+      Intent intent = new Intent(this, MainActivity.class);
+      intent.setAction(BOOT_FROM_NOTIFICATION);
+      startActivity(intent);
+    }
+    else if(id == R.id.done) {// チェックされた項目に応じた時間スヌーズする
+      int checkedPosition = ManuallySnoozeListAdapter.checkedPosition;
 
-      case R.id.back_arrow: {
-
-        this.finish();
-        break;
-      }
-      case R.id.launch_activity: {
-
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setAction(BOOT_FROM_NOTIFICATION);
-        startActivity(intent);
-        break;
-      }
-      case R.id.done: {
-
-        // チェックされた項目に応じた時間スヌーズする
-        int checkedPosition = ManuallySnoozeListAdapter.checkedPosition;
-
-        long defaultSnooze = snoozeDefaultHour * HOUR + snoozeDefaultMinute * MINUTE;
-        long customSnooze = customHour * HOUR + customMinute * MINUTE;
-        long[] howLong = {
+      long defaultSnooze = snoozeDefaultHour * HOUR + snoozeDefaultMinute * MINUTE;
+      long customSnooze = customHour * HOUR + customMinute * MINUTE;
+      long[] howLong = {
           defaultSnooze,
           15 * MINUTE,
           30 * MINUTE,
@@ -340,40 +385,38 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
           10 * HOUR,
           24 * HOUR,
           customSnooze
-        };
+      };
 
-        if(item.getAlteredTime() == 0) {
-          item.setOrgDate((Calendar)item.getDate().clone());
-        }
-        item.getDate().setTimeInMillis(getNow().getTimeInMillis() + howLong[checkedPosition]);
-        item.addAlteredTime(howLong[checkedPosition]);
-
-        // 更新
-        deleteAlarm(item);
-        setAlarm(item);
-        accessor =
-          new DBAccessor(getDynamicContext(this), getIsDirectBootContext(this));
-        updateDB(item, MyDatabaseHelper.TODO_TABLE);
-
-        // データベースを端末暗号化ストレージへコピーする
-        if(!getIsDirectBootContext(this)) {
-          copyDatabase(this, false);
-        }
-
-        SharedPreferences preferences =
-          getDynamicContext(this).getSharedPreferences(
-            getIsDirectBootContext(this) ? INT_GENERAL_COPY : INT_GENERAL,
-            MODE_PRIVATE
-          );
-        int created = preferences.getInt(CREATED, -1);
-        int destroyed = preferences.getInt(DESTROYED, -1);
-        if(created > destroyed) {
-          sendBroadcast(new Intent(ACTION_IN_NOTIFICATION));
-        }
-
-        this.finish();
-        break;
+      if(item.getAlteredTime() == 0) {
+        item.setOrgDate((Calendar)item.getDate().clone());
       }
+      item.getDate().setTimeInMillis(getNow().getTimeInMillis() + howLong[checkedPosition]);
+      item.addAlteredTime(howLong[checkedPosition]);
+
+      // 更新
+      deleteAlarm(item);
+      setAlarm(item);
+      accessor =
+          new DBAccessor(getDynamicContext(this), getIsDirectBootContext(this));
+      updateDB(item, MyDatabaseHelper.TODO_TABLE);
+
+      // データベースを端末暗号化ストレージへコピーする
+      if(!getIsDirectBootContext(this)) {
+        copyDatabase(this, false);
+      }
+
+      SharedPreferences preferences =
+          getDynamicContext(this).getSharedPreferences(
+              getIsDirectBootContext(this) ? INT_GENERAL_COPY : INT_GENERAL,
+              MODE_PRIVATE
+          );
+      int created = preferences.getInt(CREATED, -1);
+      int destroyed = preferences.getInt(DESTROYED, -1);
+      if(created > destroyed) {
+        sendBroadcast(new Intent(ACTION_IN_NOTIFICATION));
+      }
+
+      this.finish();
     }
   }
 }

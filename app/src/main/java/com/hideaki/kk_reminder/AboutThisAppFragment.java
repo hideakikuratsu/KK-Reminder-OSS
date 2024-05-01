@@ -95,8 +95,7 @@ public class AboutThisAppFragment extends Fragment {
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-    FragmentManager manager = getFragmentManager();
-    requireNonNull(manager);
+    FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
     manager.popBackStack();
     return super.onOptionsItemSelected(item);
   }

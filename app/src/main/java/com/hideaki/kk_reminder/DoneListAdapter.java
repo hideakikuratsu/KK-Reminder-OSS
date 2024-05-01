@@ -1,6 +1,5 @@
 package com.hideaki.kk_reminder;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.format.DateFormat;
@@ -85,92 +84,72 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     public void onClick(View v) {
 
       activity.actionBarFragment.searchView.clearFocus();
-      switch(v.getId()) {
-        case R.id.child_card:
-        case R.id.item_card: {
+      int id = v.getId();
+      if(id == R.id.child_card || id == R.id.item_card) {
+        if(actionMode == null) {
+          final String[] items = new String[3];
+          if(order == 0) {
+            Calendar now = getNow();
 
-          if(actionMode == null) {
-            final String[] items = new String[3];
-            if(order == 0) {
-              Calendar now = getNow();
-
-              tmp = (Calendar)now.clone();
-              tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
-              tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
-              if(tmp.before(now)) {
-                tmp.add(Calendar.DAY_OF_MONTH, 1);
-              }
-              if(LOCALE.equals(Locale.JAPAN)) {
-                items[0] = DateFormat.format("yyyy年M月d日(E) k時m分", tmp).toString() +
+            tmp = (Calendar)now.clone();
+            tmp.set(Calendar.HOUR_OF_DAY, item.getDate().get(Calendar.HOUR_OF_DAY));
+            tmp.set(Calendar.MINUTE, item.getDate().get(Calendar.MINUTE));
+            if(tmp.before(now)) {
+              tmp.add(Calendar.DAY_OF_MONTH, 1);
+            }
+            if(LOCALE.equals(Locale.JAPAN)) {
+              items[0] = DateFormat.format("yyyy年M月d日(E) k時m分", tmp).toString() +
                   "に" + activity.getString(R.string.recycle_task);
-              }
-              else {
-                items[0] = activity.getString(R.string.recycle_task) +
-                  " at " + DateFormat.format("yyyy/M/d (E) k:mm", tmp).toString();
-              }
             }
-            else if(order == 1) {
-              items[0] = activity.getString(R.string.recycle_task);
+            else {
+              items[0] = activity.getString(R.string.recycle_task) +
+                  " on " + DateFormat.format("E, MMM d, yyyy 'at' h:mma", tmp).toString();
             }
-            items[1] = activity.getString(R.string.recycle_and_edit_task);
-            items[2] = activity.getString(R.string.delete_task);
+          }
+          else if(order == 1) {
+            items[0] = activity.getString(R.string.recycle_task);
+          }
+          items[1] = activity.getString(R.string.recycle_and_edit_task);
+          items[2] = activity.getString(R.string.delete_task);
 
-            final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
-            final AlertDialog dialog = new AlertDialog.Builder(activity)
+          final SingleChoiceItemsAdapter adapter = new SingleChoiceItemsAdapter(items);
+          final AlertDialog dialog = new AlertDialog.Builder(activity)
               .setTitle(R.string.done_task_click_title)
-              .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+              .setSingleChoiceItems(adapter, 0, (dialog13, which) -> {})
+              .setPositiveButton(R.string.determine, (dialog12, which) -> {
 
-                }
-              })
-              .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+                whichList = SingleChoiceItemsAdapter.checkedPosition;
 
-                  whichList = SingleChoiceItemsAdapter.checkedPosition;
+                itemList.remove(position);
+                notifyDataSetChanged();
+                activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
 
-                  itemList.remove(position);
-                  notifyDataSetChanged();
-                  activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
-
-                  if(whichList == 0) {
-                    if(order == 0) {
-                      item.setDate((Calendar)tmp.clone());
-                      item.setAlarmStopped(false);
-                      activity.setAlarm(item);
-                    }
-                    activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                if(whichList == 0) {
+                  if(order == 0) {
+                    item.setDate((Calendar)tmp.clone());
+                    item.setAlarmStopped(false);
+                    activity.setAlarm(item);
                   }
-                  else if(whichList == 1) {
-                    activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
-                    activity.showMainEditFragment(item);
-                  }
+                  activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                }
+                else if(whichList == 1) {
+                  activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                  activity.showMainEditFragment(item);
                 }
               })
-              .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-              })
+              .setNeutralButton(R.string.cancel, (dialog1, which) -> {})
               .create();
 
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-              @Override
-              public void onShow(DialogInterface dialogInterface) {
+          dialog.setOnShowListener(dialogInterface -> {
 
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-              }
-            });
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+          });
 
-            dialog.show();
-          }
-          else {
-            viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
-          }
-          break;
+          dialog.show();
+        }
+        else {
+          viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
         }
       }
     }
@@ -236,201 +215,179 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
     @Override
     public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
 
-      switch(menuItem.getItemId()) {
-        case R.id.delete: {
-
-          itemListToMove = new ArrayList<>();
-          for(ItemAdapter item : itemList) {
-            if(item.isSelected()) {
-              itemListToMove.add(0, item);
-            }
+      int itemId = menuItem.getItemId();
+      if(itemId == R.id.delete) {
+        itemListToMove = new ArrayList<>();
+        for(ItemAdapter item : itemList) {
+          if(item.isSelected()) {
+            itemListToMove.add(0, item);
           }
+        }
 
-          String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
+        String message = activity.getResources().getQuantityString(R.plurals.cab_delete_message,
             itemListToMove.size(), itemListToMove.size()
-          ) + " (" + activity.getString(R.string.delete_dialog_message) + ")";
-          final AlertDialog dialog = new AlertDialog.Builder(activity)
+        ) + " (" + activity.getString(R.string.delete_dialog_message) + ")";
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setTitle(R.string.cab_delete)
             .setMessage(message)
-            .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setPositiveButton(R.string.delete, (dialog16, which) -> {
 
-                for(ItemAdapter item : itemListToMove) {
-                  activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
-                }
-                itemList = activity.getDoneItem();
-                notifyDataSetChanged();
-
-                actionMode.finish();
+              for(ItemAdapter item : itemListToMove) {
+                activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
               }
+              itemList = activity.getDoneItem();
+              notifyDataSetChanged();
+
+              actionMode.finish();
             })
-            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setNeutralButton(R.string.cancel, (dialog15, which) -> {
 
-              }
             })
             .create();
 
-          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
+        dialog.setOnShowListener(dialogInterface -> {
 
-              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-            }
-          });
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+        });
 
-          dialog.show();
+        dialog.show();
 
-          return true;
-        }
-        case R.id.move_task_between_list: {
-
-          itemListToMove = new ArrayList<>();
-          for(ItemAdapter item : itemList) {
-            if(item.isSelected()) {
-              itemListToMove.add(0, item);
-            }
+        return true;
+      }
+      else if(itemId == R.id.move_task_between_list) {
+        itemListToMove = new ArrayList<>();
+        for(ItemAdapter item : itemList) {
+          if(item.isSelected()) {
+            itemListToMove.add(0, item);
           }
+        }
 
-          String message =
+        String message =
             activity.getResources().getQuantityString(R.plurals.cab_recycle_task_message,
-              itemListToMove.size(), itemListToMove.size()
+                itemListToMove.size(), itemListToMove.size()
             );
-          final AlertDialog dialog = new AlertDialog.Builder(activity)
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setTitle(R.string.cab_recycle_task_title)
             .setMessage(message)
-            .setPositiveButton(R.string.determine, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setPositiveButton(R.string.determine, (dialog13, which) -> {
 
-                if(order == 0) {
-                  for(ItemAdapter item : itemListToMove) {
+              if(order == 0) {
+                for(ItemAdapter item : itemListToMove) {
 
-                    item.setSelected(false);
+                  item.setSelected(false);
 
-                    activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
-                    activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
-                  }
+                  activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                  activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
                 }
-                else if(order == 1) {
-                  for(ItemAdapter item : itemListToMove) {
-
-                    item.setSelected(false);
-
-                    MyListAdapter.itemList.add(0, item);
-                    activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
-                    activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
-                  }
-
-                  int size = MyListAdapter.itemList.size();
-                  for(int i = 0; i < size; i++) {
-                    ItemAdapter item = MyListAdapter.itemList.get(i);
-                    item.setOrder(i);
-                    activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
-                  }
-                }
-
-                itemList = activity.getDoneItem();
-                notifyDataSetChanged();
-
-                actionMode.finish();
               }
+              else if(order == 1) {
+                for(ItemAdapter item : itemListToMove) {
+
+                  item.setSelected(false);
+
+                  MyListAdapter.itemList.add(0, item);
+                  activity.insertDB(item, MyDatabaseHelper.TODO_TABLE);
+                  activity.deleteDB(item, MyDatabaseHelper.DONE_TABLE);
+                }
+
+                int size = MyListAdapter.itemList.size();
+                for(int i = 0; i < size; i++) {
+                  ItemAdapter item = MyListAdapter.itemList.get(i);
+                  item.setOrder(i);
+                  activity.updateDB(item, MyDatabaseHelper.TODO_TABLE);
+                }
+              }
+
+              itemList = activity.getDoneItem();
+              notifyDataSetChanged();
+
+              actionMode.finish();
             })
-            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setNeutralButton(R.string.cancel, (dialog14, which) -> {
 
-              }
             })
             .create();
 
-          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
+        dialog.setOnShowListener(dialogInterface -> {
 
-              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-            }
-          });
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+        });
 
-          dialog.show();
+        dialog.show();
 
-          return true;
-        }
-        case R.id.share: {
-
-          itemListToMove = new ArrayList<>();
-          for(ItemAdapter item : itemList) {
-            if(item.isSelected()) {
-              itemListToMove.add(0, item);
-            }
+        return true;
+      }
+      else if(itemId == R.id.share) {
+        itemListToMove = new ArrayList<>();
+        for(ItemAdapter item : itemList) {
+          if(item.isSelected()) {
+            itemListToMove.add(0, item);
           }
+        }
 
-          String message = activity.getResources().getQuantityString(R.plurals.cab_share_message,
+        String message = activity.getResources().getQuantityString(R.plurals.cab_share_message,
             itemListToMove.size(), itemListToMove.size()
-          );
-          final AlertDialog dialog = new AlertDialog.Builder(activity)
+        );
+        final AlertDialog dialog = new AlertDialog.Builder(activity)
             .setTitle(R.string.cab_share)
             .setMessage(message)
-            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setPositiveButton(R.string.yes, (dialog12, which) -> {
 
-                for(ItemAdapter item : itemListToMove) {
-                  String sendContent = "";
-                  if(order == 0) {
-                    sendContent = activity.getString(R.string.due_date) + ": "
-                      + DateFormat.format("yyyy/M/d k:mm", item.getDate())
+              for(ItemAdapter item : itemListToMove) {
+                String sendContent = "";
+                if(order == 0) {
+                  String dueDate;
+                  if(LOCALE.equals(Locale.JAPAN)) {
+                    dueDate = (String)DateFormat.format(
+                        "yyyy/M/d k:mm", item.getDate()
+                    );
+                  }
+                  else {
+                    dueDate = (String)DateFormat.format(
+                        "E, MMM d, yyyy 'at' h:mma", item.getDate()
+                    );
+                  }
+                  sendContent = activity.getString(R.string.due_date) + ": "
+                      + dueDate
                       + LINE_SEPARATOR
                       + activity.getString(R.string.detail) + ": " + item.getDetail()
                       + LINE_SEPARATOR
                       + activity.getString(R.string.memo) + ": " + item.getNotesString();
-                  }
-                  else if(order == 1) {
-                    sendContent = activity.getString(R.string.detail) + ": " + item.getDetail()
+                }
+                else if(order == 1) {
+                  sendContent = activity.getString(R.string.detail) + ": " + item.getDetail()
                       + LINE_SEPARATOR
                       + activity.getString(R.string.memo) + ": " + item.getNotesString();
-                  }
+                }
 
-                  Intent intent = new Intent()
+                Intent intent = new Intent()
                     .setAction(Intent.ACTION_SEND)
                     .setType("text/plain")
                     .putExtra(Intent.EXTRA_TEXT, sendContent);
-                  activity.startActivity(intent);
-                }
-
-                actionMode.finish();
+                activity.startActivity(intent);
               }
+
+              actionMode.finish();
             })
-            .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
+            .setNeutralButton(R.string.cancel, (dialog1, which) -> {
 
-              }
             })
             .create();
 
-          dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
+        dialog.setOnShowListener(dialogInterface -> {
 
-              dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
-              dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
-            }
-          });
+          dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(activity.accentColor);
+          dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(activity.accentColor);
+        });
 
-          dialog.show();
+        dialog.show();
 
-          return true;
-        }
-        default: {
-          actionMode.finish();
-          return true;
-        }
+        return true;
       }
+      actionMode.finish();
+      return true;
     }
 
     @Override
@@ -623,7 +580,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
           setTime = (String)DateFormat.format("M月d日(E) k:mm", item.getDate());
         }
         else {
-          setTime = (String)DateFormat.format("M/d (E) k:mm", item.getDate());
+          setTime = (String)DateFormat.format("E, MMM d 'at' h:mma", item.getDate());
         }
       }
       else {
@@ -631,7 +588,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
           setTime = (String)DateFormat.format("yyyy年M月d日(E) k:mm", item.getDate());
         }
         else {
-          setTime = (String)DateFormat.format("yyyy/M/d (E) k:mm", item.getDate());
+          setTime = (String)DateFormat.format("E, MMM d, yyyy 'at' h:mma", item.getDate());
         }
       }
       viewHolder.time.setText(setTime);
@@ -668,7 +625,7 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
       int template = item.getDayRepeat().getWhichTemplate();
       if(LOCALE.equals(Locale.JAPAN)) {
         if(item.getDayRepeat().getTimeLimit() != null) {
-          String targetString = " \\(\\d{4}年\\d{1,2}月\\d{1,2}日\\(.\\)まで\\)$";
+          String targetString = " \\(.*まで\\)$";
           Pattern pattern = Pattern.compile(targetString);
           Matcher matcher = pattern.matcher(repeatStr);
           if(matcher.find()) {

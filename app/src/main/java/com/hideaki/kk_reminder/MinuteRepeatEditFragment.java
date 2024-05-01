@@ -94,22 +94,19 @@ public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener(new View.OnKeyListener() {
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    view.setOnKeyListener((v, keyCode, event) -> {
 
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-          if(MainEditFragment.minuteRepeat.getInterval() >
-            MainEditFragment.minuteRepeat.getOrgDuration()
-            && duration.isChecked()) {
-            new AlertDialog.Builder(activity)
-              .setMessage(R.string.repeat_minute_illegal_dialog)
-              .show();
-            return true;
-          }
+      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+        if(MainEditFragment.minuteRepeat.getInterval() >
+          MainEditFragment.minuteRepeat.getOrgDuration()
+          && duration.isChecked()) {
+          new AlertDialog.Builder(activity)
+            .setMessage(R.string.repeat_minute_illegal_dialog)
+            .show();
+          return true;
         }
-        return false;
       }
+      return false;
     });
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);
@@ -221,8 +218,7 @@ public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat
         .show();
     }
     else {
-      FragmentManager manager = getFragmentManager();
-      requireNonNull(manager);
+      FragmentManager manager = requireNonNull(activity.getSupportFragmentManager());
       manager.popBackStack();
     }
     return super.onOptionsItemSelected(item);
