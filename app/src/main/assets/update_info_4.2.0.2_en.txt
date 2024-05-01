@@ -1,3 +1,5 @@
+・Added notice about a bug on Android 12 (ver. 4.2.0.2)
+(Update about ver. 4.2.0.0)
 ・Support for Android 12
 ・Enabled access to sounds on external storage
 ・Enabled to save custom snooze duration automatically when operating custom snooze from notification action
