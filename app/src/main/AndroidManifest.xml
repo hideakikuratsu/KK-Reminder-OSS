@@ -91,16 +91,6 @@
             android:name=".DoneReceiver"
             android:directBootAware="true"/>
 
-        <service android:name=".DeleteDoneListService"/>
-
-        <service
-            android:name=".CopyDatabaseService"
-            android:directBootAware="true"/>
-
-        <service
-            android:name=".CopySharedPreferencesService"
-            android:directBootAware="true"/>
-
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/app_id"/>

@@ -2,7 +2,6 @@ package com.hideaki.kk_reminder;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -24,10 +23,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
-import static com.hideaki.kk_reminder.UtilClass.ITEM;
+import static com.hideaki.kk_reminder.UtilClass.ITEM_IDS;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
-import static com.hideaki.kk_reminder.UtilClass.serialize;
 import static java.util.Objects.requireNonNull;
 
 public class DoneListViewFragment extends Fragment {
@@ -138,11 +140,19 @@ public class DoneListViewFragment extends Fragment {
 
       DoneListAdapter.itemList = nonDeleteItemList;
 
+      List<Long> idListToBeDeleted = new ArrayList<>();
       for(int i = size / 2; i < size; i++) {
-        Intent intent = new Intent(activity, DeleteDoneListService.class);
-        intent.putExtra(ITEM, serialize(itemList.get(i).getItem()));
-        activity.startService(intent);
+        idListToBeDeleted.add(itemList.get(i).getId());
       }
+      WorkRequest workRequest = new OneTimeWorkRequest.Builder(DeleteDoneListWorker.class)
+          .setInputData(
+              new Data.Builder()
+                  .putLongArray(ITEM_IDS, idListToBeDeleted.stream().mapToLong(l -> l).toArray())
+                  .build()
+          )
+          .build();
+      WorkManager.getInstance(activity)
+          .enqueue(workRequest);
     }
     else {
       DoneListAdapter.itemList = itemList;

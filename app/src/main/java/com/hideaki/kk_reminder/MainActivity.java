@@ -21,6 +21,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -585,6 +586,7 @@ public class MainActivity extends AppCompatActivity
   protected void onResume() {
 
     super.onResume();
+    System.out.println("onResume");
 
     if(!isRecreated) {
       // SDK VER.33以上はアプリの通知送信にPOST_NOTIFICATIONの権限が必要
@@ -631,8 +633,11 @@ public class MainActivity extends AppCompatActivity
           final AlertDialog dialog = new AlertDialog.Builder(this)
               .setTitle(R.string.permission_exact_alarm_rationale_title)
               .setMessage(R.string.permission_exact_alarm_rationale_message)
-              .setPositiveButton(R.string.permit, (dialog15, which12) ->
-                startActivity(new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+              .setPositiveButton(R.string.permit, (dialog15, which12) -> {
+                  Intent intent = new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                      .setData(Uri.parse("package:" + getPackageName()));
+                  startActivity(intent);
+                }
               )
               .setNegativeButton(R.string.deny, (dialog1, which1) -> processExactAlarmPermissionDenial())
               .setNeutralButton(R.string.cancel, (dialog13, which) -> processExactAlarmPermissionDenial())
@@ -1876,7 +1881,9 @@ public class MainActivity extends AppCompatActivity
           .setMessage(R.string.notice_message)
           .setPositiveButton(R.string.ok, (dialog15, which12) -> {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-              startActivity(new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM));
+              Intent intent = new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                  .setData(Uri.parse("package:" + getPackageName()));
+              startActivity(intent);
             }
           })
           .setOnCancelListener(dialog1 -> {})

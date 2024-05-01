@@ -7,7 +7,7 @@ android {
         applicationId "com.hideaki.kk_reminder"
         minSdk 24
         compileSdk 34
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 40200004
         versionName "4.2.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

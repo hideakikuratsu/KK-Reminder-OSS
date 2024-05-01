@@ -2,7 +2,6 @@ package com.hideaki.kk_reminder;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -40,6 +39,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 class UtilClass {
 
@@ -55,10 +56,12 @@ class UtilClass {
   static final NotesComparator NOTES_COMPARATOR = new NotesComparator();
   static final Uri DEFAULT_URI_SOUND =
     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-  static final String ACTION_IN_NOTIFICATION = "ACTION_IN_NOTIFICATION";
-  static final String BOOT_FROM_NOTIFICATION = "BOOT_FROM_NOTIFICATION";
+  static final String ACTION_IN_NOTIFICATION = "com.hideaki.kk_reminder.ACTION_IN_NOTIFICATION";
+  static final String BOOT_FROM_NOTIFICATION = "com.hideaki.kk_reminder.BOOT_FROM_NOTIFICATION";
   static final int REQUEST_CODE_RINGTONE_PICKER = 0;
   static final String ITEM = "ITEM";
+
+  static final String ITEM_IDS = "ITEM_IDS";
   static final String LIST = "LIST";
   static final String INT_GENERAL = "INT_GENERAL";
   static final String INT_GENERAL_COPY = "INT_GENERAL_COPY";
@@ -337,19 +340,13 @@ class UtilClass {
 
     // 引数のcontextは必ず通常の(directBootContextでない)Contextを指定すること
     // NormalContext上でコピーする場合はアプリに負荷をかけないようにするため非同期の
-    // IntentServiceを利用し、DirectBootContext上でコピーする場合は同期で実行させて
+    // WorkManagerを利用し、DirectBootContext上でコピーする場合は同期で実行させて
     // sendBroadcast()を発行し、アプリ起動時のタスクの情報を最も直近に行われた
     // Transactionに同期させる。(実際には仕様上、アプリのMainActivityがフォアグラウンド
     // にあるときのみ非同期でコピーを行っている。)
     if(!isFromDirectBootContext && MainActivity.isScreenOn) {
-      Intent intent = new Intent(context, CopyDatabaseService.class);
-      try {
-        context.startService(intent);
-      }
-      catch(IllegalStateException e) {
-        Log.e("UtilClass#copyDatabase", Log.getStackTraceString(e));
-        copyDatabaseKernel(context, false);
-      }
+      WorkManager.getInstance(context)
+          .enqueue(OneTimeWorkRequest.from(CopyDatabaseWorker.class));
     }
     else {
       copyDatabaseKernel(context, isFromDirectBootContext);
@@ -360,14 +357,8 @@ class UtilClass {
   static void copySharedPreferences(Context context, boolean isFromDirectBootContext) {
 
     if(!isFromDirectBootContext && MainActivity.isScreenOn) {
-      Intent intent = new Intent(context, CopySharedPreferencesService.class);
-      try {
-        context.startService(intent);
-      }
-      catch(IllegalStateException e) {
-        Log.e("UtilClass#copySharedPreferences", Log.getStackTraceString(e));
-        copySharedPreferencesKernel(context, false);
-      }
+      WorkManager.getInstance(context)
+          .enqueue(OneTimeWorkRequest.from(CopySharedPreferencesWorker.class));
     }
     else {
       copySharedPreferencesKernel(context, isFromDirectBootContext);

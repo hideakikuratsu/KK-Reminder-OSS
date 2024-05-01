@@ -43,7 +43,7 @@ public class StartupReceiver extends BroadcastReceiver {
       // DirectBoot終了時にDirectBootContextでの変更点をNormalContextに反映する
       copyDatabase(context, true);
       copySharedPreferences(context, true);
-      context.sendBroadcast(new Intent(ACTION_IN_NOTIFICATION));
+      context.sendBroadcast(new Intent(ACTION_IN_NOTIFICATION).setPackage(context.getPackageName()));
     }
   }
 
