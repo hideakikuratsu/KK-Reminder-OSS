@@ -5,11 +5,11 @@ android {
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
         applicationId "com.hideaki.kk_reminder"
-        minSdk 24
+        minSdk 28
         compileSdk 35
         targetSdkVersion 35
-        versionCode 40300000
-        versionName "4.3.0.0"
+        versionCode 40301000
+        versionName "4.3.1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

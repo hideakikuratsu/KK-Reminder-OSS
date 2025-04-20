@@ -131,5 +131,5 @@ public class StartupReceiver extends BroadcastReceiver {
     // 引数のnormalContextはDirectBootContextではなく必ず通常のContextを渡すこと
     return getIsDirectBootContext(normalContext) ?
         normalContext.createDeviceProtectedStorageContext() : normalContext;
-}
+  }
 }
