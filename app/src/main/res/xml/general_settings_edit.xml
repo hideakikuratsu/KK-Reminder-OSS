@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
-        android:title="@string/default_settings">
+        android:title="@string/default_settings"
+        app:iconSpaceReserved="false">
 
         <PreferenceScreen
             android:title="@string/default_control_time"
@@ -35,7 +38,8 @@
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:key="ads_category"
-        android:title="@string/ads">
+        android:title="@string/ads"
+        app:iconSpaceReserved="false">
 
         <PreferenceScreen
             android:key="disable_ads"
@@ -43,7 +47,8 @@
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
-        android:title="@string/theme">
+        android:title="@string/theme"
+        app:iconSpaceReserved="false">
 
         <PreferenceScreen
             android:title="@string/pick_primary_color"
@@ -67,7 +72,8 @@
 
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
-        android:title="@string/backup">
+        android:title="@string/backup"
+        app:iconSpaceReserved="false">
 
         <PreferenceScreen
             android:title="@string/backup_and_restore"
@@ -75,7 +81,8 @@
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
-        android:title="@string/about">
+        android:title="@string/about"
+        app:iconSpaceReserved="false">
 
         <PreferenceScreen
             android:title="@string/version"

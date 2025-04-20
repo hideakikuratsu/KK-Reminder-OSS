@@ -141,7 +141,7 @@ public class SetAllFragment
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.pick_alarm);
     addPreferencesFromResource(R.xml.vibration);

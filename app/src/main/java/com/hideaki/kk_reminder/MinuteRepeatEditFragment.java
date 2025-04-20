@@ -53,26 +53,26 @@ public class MinuteRepeatEditFragment extends BasePreferenceFragmentCompat
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.minute_repeat_edit);
     setHasOptionsMenu(true);
 
     rootPreferenceScreen = getPreferenceScreen();
-    label = (PreferenceScreen)findPreference("label");
-    interval = (PreferenceScreen)findPreference("interval");
+    label = findPreference("label");
+    interval = findPreference("interval");
     interval.setOnPreferenceClickListener(this);
-    never = (CheckBoxPreference)findPreference("never");
+    never = findPreference("never");
     ((MyCheckBoxPreference)never).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
-    count = (CheckBoxPreference)findPreference("count");
+    count = findPreference("count");
     ((MyCheckBoxPreference)count).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     count.setOnPreferenceClickListener(this);
-    duration = (CheckBoxPreference)findPreference("duration");
+    duration = findPreference("duration");
     ((MyCheckBoxPreference)duration).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     duration.setOnPreferenceClickListener(this);
-    countPicker = (PreferenceScreen)findPreference("count_picker");
+    countPicker = findPreference("count_picker");
     countPicker.setOnPreferenceClickListener(this);
-    durationPicker = (PreferenceScreen)findPreference("duration_picker");
+    durationPicker = findPreference("duration_picker");
     durationPicker.setOnPreferenceClickListener(this);
   }
 

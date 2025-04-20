@@ -2,7 +2,6 @@ package com.hideaki.kk_reminder;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.widget.TextView;
@@ -17,19 +16,19 @@ public class NotesPreference extends Preference {
   public NotesPreference(Context context, AttributeSet attrs, int defStyleAttr) {
 
     super(context, attrs, defStyleAttr);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+    activity = MainActivity.unwrap(context);
   }
 
   public NotesPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+    activity = MainActivity.unwrap(context);
   }
 
   public NotesPreference(Context context) {
 
     super(context);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+    activity = MainActivity.unwrap(context);
   }
 
   @SuppressLint("ClickableViewAccessibility")

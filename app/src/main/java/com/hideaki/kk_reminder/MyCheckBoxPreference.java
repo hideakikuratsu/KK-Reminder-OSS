@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
@@ -25,21 +24,21 @@ public class MyCheckBoxPreference extends CheckBoxPreference {
   MyCheckBoxPreference(Context context) {
 
     super(context);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+    activity = MainActivity.unwrap(context);
     setLayoutResource(R.layout.my_checkbox_preference_layout);
   }
 
   public MyCheckBoxPreference(Context context, AttributeSet attrs) {
 
     super(context, attrs);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+    activity = MainActivity.unwrap(context);
     setLayoutResource(R.layout.my_checkbox_preference_layout);
   }
 
   public MyCheckBoxPreference(Context context, AttributeSet attrs, int defStyleAttr) {
 
     super(context, attrs, defStyleAttr);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+    activity = MainActivity.unwrap(context);
     setLayoutResource(R.layout.my_checkbox_preference_layout);
   }
 

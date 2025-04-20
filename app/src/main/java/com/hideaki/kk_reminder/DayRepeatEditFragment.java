@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -22,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.CheckBoxPreference;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 import androidx.transition.Fade;
 import androidx.transition.Transition;
@@ -65,20 +65,20 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.repeat_edit);
     setHasOptionsMenu(true);
 
-    never = (CheckBoxPreference)findPreference("never");
-    everyday = (CheckBoxPreference)findPreference("everyday");
-    everyWeekday = (CheckBoxPreference)findPreference("every_weekday");
-    everyWeek = (CheckBoxPreference)findPreference("every_week");
-    everyMonth = (CheckBoxPreference)findPreference("every_month");
-    everyYear = (CheckBoxPreference)findPreference("every_year");
-    custom = (CheckBoxPreference)findPreference("custom");
-    timeLimit = (CheckBoxPreference)findPreference("time_limit");
-    label = (PreferenceScreen)findPreference("label");
+    never = findPreference("never");
+    everyday = findPreference("everyday");
+    everyWeekday = findPreference("every_weekday");
+    everyWeek = findPreference("every_week");
+    everyMonth = findPreference("every_month");
+    everyYear = findPreference("every_year");
+    custom = findPreference("custom");
+    timeLimit = findPreference("time_limit");
+    label = findPreference("label");
 
     ((MyCheckBoxPreference)never).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     ((MyCheckBoxPreference)everyday).setOnMyCheckBoxPreferenceCheckedChangeListener(this);

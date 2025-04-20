@@ -67,25 +67,25 @@ public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.repeat_custom_item);
     setHasOptionsMenu(true);
 
     rootPreferenceScreen = getPreferenceScreen();
-    picker = (PreferenceScreen)findPreference("picker");
+    picker = findPreference("picker");
     picker.setOnPreferenceClickListener(this);
     week = findPreference("week");
-    daysOfMonth = (CheckBoxPreference)findPreference("days_of_month");
+    daysOfMonth = findPreference("days_of_month");
     ((MyCheckBoxPreference)daysOfMonth).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     daysOfMonth.setChecked(MainEditFragment.dayRepeat.isDaysOfMonthSet());
     daysOfMonth.setOnPreferenceClickListener(this);
     daysOfMonthPicker = findPreference("days_of_month_picker");
-    onTheMonth = (CheckBoxPreference)findPreference("on_the_month");
+    onTheMonth = findPreference("on_the_month");
     ((MyCheckBoxPreference)onTheMonth).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     onTheMonth.setChecked(!MainEditFragment.dayRepeat.isDaysOfMonthSet());
     onTheMonth.setOnPreferenceClickListener(this);
-    onTheMonthPicker = (PreferenceScreen)findPreference("on_the_month_picker");
+    onTheMonthPicker = findPreference("on_the_month_picker");
     onTheMonthPicker.setOnPreferenceClickListener(this);
     year = findPreference("year");
     rootPreferenceScreen.removeAll();

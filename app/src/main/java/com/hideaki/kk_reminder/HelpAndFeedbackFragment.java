@@ -51,13 +51,13 @@ public class HelpAndFeedbackFragment extends BasePreferenceFragmentCompat
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.help_and_feedback);
 
-    PreferenceScreen contact = (PreferenceScreen)findPreference("contact");
-    PreferenceScreen feedback = (PreferenceScreen)findPreference("feedback");
-    PreferenceScreen request = (PreferenceScreen)findPreference("request");
+    PreferenceScreen contact = findPreference("contact");
+    PreferenceScreen feedback = findPreference("feedback");
+    PreferenceScreen request = findPreference("request");
 
     contact.setOnPreferenceClickListener(this);
     feedback.setOnPreferenceClickListener(this);

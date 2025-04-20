@@ -38,12 +38,12 @@ public class DefaultManuallySnoozeFragment extends BasePreferenceFragmentCompat 
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.default_manually_snooze);
     setHasOptionsMenu(true);
 
-    label = (PreferenceScreen)findPreference("label");
+    label = findPreference("label");
     label.setOnPreferenceClickListener(preference -> {
 
       DefaultManuallySnoozePickerDialogFragment dialog =

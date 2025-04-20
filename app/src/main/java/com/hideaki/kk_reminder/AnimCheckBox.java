@@ -56,7 +56,7 @@ public class AnimCheckBox extends View implements Checkable {
       manuallySnoozeActivity = (ManuallySnoozeActivity)context;
     }
     else if(context instanceof ContextWrapper) {
-      activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+      activity = MainActivity.unwrap(context);
     }
     isAnimation = true;
   }
@@ -71,7 +71,7 @@ public class AnimCheckBox extends View implements Checkable {
       manuallySnoozeActivity = (ManuallySnoozeActivity)context;
     }
     else if(context instanceof ContextWrapper) {
-      activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+      activity = MainActivity.unwrap(context);
     }
     init(attrs);
     isAnimation = true;

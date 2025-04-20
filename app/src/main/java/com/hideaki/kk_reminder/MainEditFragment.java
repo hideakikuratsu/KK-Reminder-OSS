@@ -23,12 +23,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.takisoft.fix.support.v7.preference.EditTextPreference;
-import com.takisoft.fix.support.v7.preference.PreferenceCategory;
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,7 +42,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 import androidx.transition.Fade;
 import androidx.transition.Transition;
@@ -60,6 +59,7 @@ import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.REQUEST_CODE_RINGTONE_PICKER;
 import static com.hideaki.kk_reminder.UtilClass.generateUniqueId;
+import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
 import static java.util.Objects.requireNonNull;
 
 public class MainEditFragment extends BasePreferenceFragmentCompat
@@ -311,7 +311,7 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     if(activity.generalSettings != null) {
       isDestroyed = false;
@@ -348,50 +348,60 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
       PreferenceScreen rootPreferenceScreen = getPreferenceScreen();
 
       // titleセクション
-      PreferenceCategory title = (PreferenceCategory)findPreference("title");
+      PreferenceCategory title = findPreference("title");
 
       // detailセクション
-      detail = (EditTextPreference)findPreference("detail");
+      detail = findPreference("detail");
       detail.setText(detailStr);
       detail.setTitle(detailStr);
       detail.setOnPreferenceClickListener(this);
       detail.setOnPreferenceChangeListener(this);
+      detail.setOnBindEditTextListener(editText -> {
+        setCursorDrawableColor(activity, editText);
+        editText.getBackground().mutate().setColorFilter(new PorterDuffColorFilter(
+            activity.accentColor,
+            PorterDuff.Mode.SRC_IN
+        ));
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
+        editText.setHint(R.string.detail_hint);
+      });
 
       // scheduleセクション
-      PreferenceCategory schedule = (PreferenceCategory)findPreference("schedule");
-      datePicker = (PreferenceScreen)findPreference("date_picker");
+      PreferenceCategory schedule = findPreference("schedule");
+      datePicker = findPreference("date_picker");
       datePicker.setOnPreferenceClickListener(this);
-      timePicker = (PreferenceScreen)findPreference("time_picker");
+      timePicker = findPreference("time_picker");
       timePicker.setOnPreferenceClickListener(this);
 
       // colorセクション
-      PreferenceCategory colorCategory = (PreferenceCategory)findPreference("color");
-      PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
+      PreferenceCategory colorCategory = findPreference("color");
+      PreferenceScreen primaryColor = findPreference("primary_color");
       primaryColor.setOnPreferenceClickListener(this);
-      PreferenceScreen secondaryColor = (PreferenceScreen)findPreference("secondary_color");
+      PreferenceScreen secondaryColor = findPreference("secondary_color");
       secondaryColor.setOnPreferenceClickListener(this);
 
       // tagセクション
-      PreferenceCategory tagCategory = (PreferenceCategory)findPreference("tag_category");
-      tag = (PreferenceScreen)findPreference("tag");
+      PreferenceCategory tagCategory = findPreference("tag_category");
+      tag = findPreference("tag");
       tag.setOnPreferenceClickListener(this);
 
       // notificationセクション
-      intervalItem = (PreferenceScreen)findPreference("interval");
+      intervalItem = findPreference("interval");
       intervalItem.setOnPreferenceClickListener(this);
       pickAlarm = findPreference("pick_alarm");
       pickAlarm.setOnPreferenceClickListener(this);
-      vibration = (PreferenceScreen)findPreference("vibration");
+      vibration = findPreference("vibration");
       vibration.setOnPreferenceClickListener(this);
 
       // repeatセクション
-      dayRepeatItem = (PreferenceScreen)findPreference("repeat_day_unit");
+      dayRepeatItem = findPreference("repeat_day_unit");
       dayRepeatItem.setOnPreferenceClickListener(this);
-      minuteRepeatItem = (PreferenceScreen)findPreference("repeat_minute_unit");
+      minuteRepeatItem = findPreference("repeat_minute_unit");
       minuteRepeatItem.setOnPreferenceClickListener(this);
 
       // notesセクション
-      PreferenceCategory notesCategory = (PreferenceCategory)findPreference("notes_category");
+      PreferenceCategory notesCategory = findPreference("notes_category");
       notes = findPreference("notes");
       notes.setOnPreferenceClickListener(this);
 
@@ -878,12 +888,6 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
       case "detail": {
 
-        EditText editText = detail.getEditText();
-        if(editText != null) {
-          editText.requestFocus();
-          editText.setSelection(editText.getText().length());
-          editText.setHint(R.string.detail_hint);
-        }
         return true;
       }
       case "date_picker": {

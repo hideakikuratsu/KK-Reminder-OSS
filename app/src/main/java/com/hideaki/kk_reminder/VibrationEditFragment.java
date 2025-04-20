@@ -52,13 +52,13 @@ public class VibrationEditFragment extends BasePreferenceFragmentCompat {
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.vibration);
     setHasOptionsMenu(true);
 
     vibrationStr = MainEditFragment.item.getVibrationPattern();
-    label = (PreferenceScreen)findPreference("label");
+    label = findPreference("label");
     label.setOnPreferenceClickListener(preference -> {
 
       // ダイアログに表示するEditTextの設定

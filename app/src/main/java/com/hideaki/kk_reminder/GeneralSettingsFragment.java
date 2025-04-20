@@ -11,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.takisoft.fix.support.v7.preference.PreferenceCategory;
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +22,8 @@ import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 import androidx.transition.Fade;
 import androidx.transition.Transition;
@@ -67,24 +67,24 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.general_settings_edit);
 
-    PreferenceScreen defaultControlTime = (PreferenceScreen)findPreference("control_time");
-    PreferenceScreen defaultTextSize = (PreferenceScreen)findPreference("text_size");
-    PreferenceScreen defaultNewTask = (PreferenceScreen)findPreference("new_task");
-    PreferenceScreen setAll = (PreferenceScreen)findPreference("set_all");
-    PreferenceScreen manuallySnooze = (PreferenceScreen)findPreference("manually_snooze");
-    animation = (CheckBoxPreference)findPreference("animation");
-    PreferenceCategory adsCategory = (PreferenceCategory)findPreference("ads_category");
-    PreferenceScreen disableAds = (PreferenceScreen)findPreference("disable_ads");
-    PreferenceScreen primaryColor = (PreferenceScreen)findPreference("primary_color");
-    PreferenceScreen secondaryColor = (PreferenceScreen)findPreference("secondary_color");
-    darkTheme = (CheckBoxPreference)findPreference("dark_theme");
-    darkThemeFollowSystem = (CheckBoxPreference)findPreference("dark_theme_follow_system");
-    PreferenceScreen backup = (PreferenceScreen)findPreference("backup");
-    PreferenceScreen about = (PreferenceScreen)findPreference("this_app");
+    PreferenceScreen defaultControlTime = findPreference("control_time");
+    PreferenceScreen defaultTextSize = findPreference("text_size");
+    PreferenceScreen defaultNewTask = findPreference("new_task");
+    PreferenceScreen setAll = findPreference("set_all");
+    PreferenceScreen manuallySnooze = findPreference("manually_snooze");
+    animation = findPreference("animation");
+    PreferenceCategory adsCategory = findPreference("ads_category");
+    PreferenceScreen disableAds = findPreference("disable_ads");
+    PreferenceScreen primaryColor = findPreference("primary_color");
+    PreferenceScreen secondaryColor = findPreference("secondary_color");
+    darkTheme = findPreference("dark_theme");
+    darkThemeFollowSystem = findPreference("dark_theme_follow_system");
+    PreferenceScreen backup = findPreference("backup");
+    PreferenceScreen about = findPreference("this_app");
 
     defaultControlTime.setOnPreferenceClickListener(this);
     defaultTextSize.setOnPreferenceClickListener(this);

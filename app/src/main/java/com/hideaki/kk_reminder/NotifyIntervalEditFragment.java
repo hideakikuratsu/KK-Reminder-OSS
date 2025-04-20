@@ -56,25 +56,25 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.notify_interval_edit);
     setHasOptionsMenu(true);
 
     rootPreferenceScreen = getPreferenceScreen();
-    none = (CheckBoxPreference)findPreference("none");
-    defaultNotify = (CheckBoxPreference)findPreference("default");
-    everyMinute = (CheckBoxPreference)findPreference("every_minute");
-    everyFiveMinutes = (CheckBoxPreference)findPreference("every_five_minutes");
-    everyFifteenMinutes = (CheckBoxPreference)findPreference("every_fifteen_minutes");
-    everyThirtyMinutes = (CheckBoxPreference)findPreference("every_thirty_minutes");
-    everyHour = (CheckBoxPreference)findPreference("every_hour");
-    everyDay = (CheckBoxPreference)findPreference("every_day");
-    custom = (CheckBoxPreference)findPreference("custom");
-    customDescription = (PreferenceScreen)findPreference("custom_description");
-    duration = (PreferenceScreen)findPreference("duration");
-    time = (PreferenceScreen)findPreference("time");
-    label = (PreferenceScreen)findPreference("label");
+    none = findPreference("none");
+    defaultNotify = findPreference("default");
+    everyMinute = findPreference("every_minute");
+    everyFiveMinutes = findPreference("every_five_minutes");
+    everyFifteenMinutes = findPreference("every_fifteen_minutes");
+    everyThirtyMinutes = findPreference("every_thirty_minutes");
+    everyHour = findPreference("every_hour");
+    everyDay = findPreference("every_day");
+    custom = findPreference("custom");
+    customDescription = findPreference("custom_description");
+    duration = findPreference("duration");
+    time = findPreference("time");
+    label = findPreference("label");
 
     ((MyCheckBoxPreference)none).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     ((MyCheckBoxPreference)defaultNotify).setOnMyCheckBoxPreferenceCheckedChangeListener(this);

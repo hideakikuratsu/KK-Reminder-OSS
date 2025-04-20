@@ -27,7 +27,7 @@ public class DayRepeatCustomDaysOfMonthPickerPreference extends Preference
 
     super(context, attrs);
     setLayoutResource(R.layout.repeat_custom_days_of_month_picker);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+    activity = MainActivity.unwrap(context);
   }
 
   @Override

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:title="@string/manually_backup"
-        android:key="backup_and_restore">
+        android:key="backup_and_restore"
+        app:iconSpaceReserved="false">
 
         <PreferenceScreen
             android:title="@string/backup_to_google_drive"

@@ -1,7 +1,6 @@
 package com.hideaki.kk_reminder;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -28,7 +27,7 @@ public class DefaultControlTimeModelPreference extends Preference {
 
     super(context, attrs);
     setLayoutResource(R.layout.child_layout);
-    activity = (MainActivity)((ContextWrapper)context).getBaseContext();
+    activity = MainActivity.unwrap(context);
   }
 
   @Override

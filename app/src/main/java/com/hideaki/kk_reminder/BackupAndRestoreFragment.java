@@ -33,7 +33,6 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +51,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
 import bolts.Continuation;
 import bolts.TaskCompletionSource;
@@ -133,15 +133,15 @@ public class BackupAndRestoreFragment extends BasePreferenceFragmentCompat
   }
 
   @Override
-  public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+  public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
     addPreferencesFromResource(R.xml.backup_and_restore);
     setHasOptionsMenu(true);
 
-    preferenceCategory = (PreferenceCategory)findPreference("backup_and_restore");
-    PreferenceScreen backup = (PreferenceScreen)findPreference("backup");
-    PreferenceScreen restore = (PreferenceScreen)findPreference("restore");
-    logout = (PreferenceScreen)findPreference("logout");
+    preferenceCategory = findPreference("backup_and_restore");
+    PreferenceScreen backup = findPreference("backup");
+    PreferenceScreen restore = findPreference("restore");
+    logout = findPreference("logout");
 
     backup.setOnPreferenceClickListener(this);
     restore.setOnPreferenceClickListener(this);

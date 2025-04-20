@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import androidx.cardview.widget.CardView;
-import petrov.kristiyan.colorpicker.ColorPicker;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

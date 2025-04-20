@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:key="title"
-        android:title="@string/title">
+        android:title="@string/title"
+        app:iconSpaceReserved="false">
 
-        <com.hideaki.kk_reminder.MyEditTextPreference
-            android:key="detail"/>
+        <EditTextPreference
+            android:key="detail"
+            android:dialogLayout="@layout/preference_edittext_custom_dialog"/>
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:title="@string/schedule_task"
-        android:key="schedule">
+        android:key="schedule"
+        app:iconSpaceReserved="false">
 
         <PreferenceScreen
             android:key="date_picker"/>
@@ -23,7 +28,8 @@
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:key="color"
-        android:title="@string/pick_color">
+        android:title="@string/pick_color"
+        app:iconSpaceReserved="false">
 
         <PreferenceScreen
             android:key="primary_color"
@@ -37,7 +43,8 @@
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:key="tag_category"
-        android:title="@string/tag">
+        android:title="@string/tag"
+        app:iconSpaceReserved="false">
 
         <PreferenceScreen
             android:key="tag"/>
@@ -45,7 +52,8 @@
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:key="notification_category"
-        android:title="@string/notify_option">
+        android:title="@string/notify_option"
+        app:iconSpaceReserved="false">
         <PreferenceScreen
             android:key="interval"
             android:title="@string/interval" />
@@ -60,7 +68,8 @@
     </com.hideaki.kk_reminder.MyPreferenceCategory>
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
-        android:title="@string/repeat_option">
+        android:title="@string/repeat_option"
+        app:iconSpaceReserved="false">
         <PreferenceScreen
             android:key="repeat_day_unit"
             android:title="@string/repeat_day_unit" />
@@ -72,7 +81,8 @@
 
     <com.hideaki.kk_reminder.MyPreferenceCategory
         android:key="notes_category"
-        android:title="@string/notes">
+        android:title="@string/notes"
+        app:iconSpaceReserved="false">
         <com.hideaki.kk_reminder.NotesPreference
             android:key="notes"/>
     </com.hideaki.kk_reminder.MyPreferenceCategory>

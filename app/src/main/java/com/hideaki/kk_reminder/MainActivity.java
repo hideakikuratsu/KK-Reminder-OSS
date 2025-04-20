@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -310,6 +311,13 @@ public class MainActivity extends AppCompatActivity
     MONTH_MAP.put("Dec", 11);
   }
 
+  public static MainActivity unwrap(Context context) {
+    while (!(context instanceof MainActivity) && context instanceof ContextWrapper) {
+        context = ((ContextWrapper) context).getBaseContext();
+    }
+
+    return (MainActivity) context;
+ }
 
   @SuppressLint("UnspecifiedRegisterReceiverFlag")
   @Override
