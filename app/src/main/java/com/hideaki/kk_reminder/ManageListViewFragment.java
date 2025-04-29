@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class ManageListViewFragment extends Fragment {
@@ -72,6 +73,7 @@ public class ManageListViewFragment extends Fragment {
   ) {
 
     View view = inflater.inflate(R.layout.listview, container, false);
+    setViewPaddingBasedOnCutout(view);
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);
     }

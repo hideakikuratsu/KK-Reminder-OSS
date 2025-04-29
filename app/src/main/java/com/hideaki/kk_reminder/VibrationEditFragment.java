@@ -3,7 +3,6 @@ package com.hideaki.kk_reminder;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -31,6 +30,7 @@ import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 import static com.hideaki.kk_reminder.UtilClass.getRegularizedVibrationStr;
 import static com.hideaki.kk_reminder.UtilClass.getVibrationPattern;
 import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class VibrationEditFragment extends BasePreferenceFragmentCompat {
@@ -100,14 +100,9 @@ public class VibrationEditFragment extends BasePreferenceFragmentCompat {
           long[] vibrationPattern = getVibrationPattern(vibrationStr);
           Vibrator vibrator = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
           requireNonNull(vibrator);
-          if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            VibrationEffect effect =
-              VibrationEffect.createWaveform(vibrationPattern, -1);
-            vibrator.vibrate(effect);
-          }
-          else {
-            vibrator.vibrate(vibrationPattern, -1);
-          }
+          VibrationEffect effect =
+            VibrationEffect.createWaveform(vibrationPattern, -1);
+          vibrator.vibrate(effect);
 
           MainEditFragment.item.setVibrationPattern(vibrationStr);
         })
@@ -142,15 +137,18 @@ public class VibrationEditFragment extends BasePreferenceFragmentCompat {
     });
   }
 
+  @NonNull
   @Override
   public View onCreateView(
-    LayoutInflater inflater,
+    @NonNull LayoutInflater inflater,
     ViewGroup container,
     Bundle savedInstanceState
   ) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
     requireNonNull(view);
+
+    setViewPaddingBasedOnCutout(view);
 
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);

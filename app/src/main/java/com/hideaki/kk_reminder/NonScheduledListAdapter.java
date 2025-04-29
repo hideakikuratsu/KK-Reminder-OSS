@@ -9,11 +9,13 @@ class NonScheduledListAdapter implements Cloneable {
   NonScheduledListAdapter() {
 
     nonScheduledList = new NonScheduledList2();
+    nonScheduledList.setIsColorPrimary(false);
   }
 
   NonScheduledListAdapter(String title) {
 
     nonScheduledList = new NonScheduledList2(title);
+    nonScheduledList.setIsColorPrimary(false);
   }
 
   NonScheduledListAdapter(Object obj) {
@@ -49,6 +51,7 @@ class NonScheduledListAdapter implements Cloneable {
     else {
       throw new IllegalArgumentException("Arg nonScheduledList is not instance of NonScheduledList Class");
     }
+    nonScheduledList.setIsColorPrimary(false);
   }
 
   NonScheduledList2 getNonScheduledList() {
@@ -68,7 +71,8 @@ class NonScheduledListAdapter implements Cloneable {
 
   boolean isColorPrimary() {
 
-    return nonScheduledList.isColorPrimary();
+//    return nonScheduledList.isColorPrimary();
+    return false;
   }
 
   int getColor() {
@@ -128,7 +132,8 @@ class NonScheduledListAdapter implements Cloneable {
 
   void setIsColorPrimary(boolean isColorPrimary) {
 
-    nonScheduledList.setIsColorPrimary(isColorPrimary);
+//    nonScheduledList.setIsColorPrimary(isColorPrimary);
+    nonScheduledList.setIsColorPrimary(false);
   }
 
   void setColor(int color) {

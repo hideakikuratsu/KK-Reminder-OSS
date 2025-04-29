@@ -28,6 +28,7 @@ import androidx.transition.Transition;
 
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
 import static com.hideaki.kk_reminder.UtilClass.appendTimeLimitLabelOfDayRepeat;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
@@ -90,15 +91,18 @@ public class DayRepeatEditFragment extends BasePreferenceFragmentCompat
     ((MyCheckBoxPreference)timeLimit).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
   }
 
+  @NonNull
   @Override
   public View onCreateView(
-    LayoutInflater inflater,
+    @NonNull LayoutInflater inflater,
     @Nullable ViewGroup container,
     @Nullable Bundle savedInstanceState
   ) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
     requireNonNull(view);
+
+    setViewPaddingBasedOnCutout(view);
 
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);

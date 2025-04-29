@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="version_value">4.3.1.0</string>
+    <string name="version_value">4.3.1.1</string>
     <string name="app_id">******************</string>
     <string name="ad_unit_id">******************</string>
     <string name="app_name">KK Reminder</string>
@@ -347,8 +347,8 @@
     </plurals>
     <string name="detail">Detail</string>
     <string name="determine">OK</string>
-    <string name="pick_primary_color">Pick a primary color (base color)</string>
-    <string name="pick_secondary_color">Pick a secondary color (accent color)</string>
+    <string name="pick_primary_color">Pick a base color</string>
+    <string name="pick_secondary_color">Pick an accent color</string>
     <string name="pick_color">Pick color</string>
     <string name="pick_color_description">Pick color variations</string>
     <string name="action_send_booted_dialog_title">You will create a new task. Choose a list which you want to add the task to</string>

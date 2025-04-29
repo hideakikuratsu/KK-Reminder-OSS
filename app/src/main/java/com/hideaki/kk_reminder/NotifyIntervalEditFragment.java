@@ -21,6 +21,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
@@ -89,15 +90,18 @@ public class NotifyIntervalEditFragment extends BasePreferenceFragmentCompat
     time.setOnPreferenceClickListener(this);
   }
 
+  @NonNull
   @Override
   public View onCreateView(
-    LayoutInflater inflater,
+    @NonNull LayoutInflater inflater,
     @Nullable ViewGroup container,
     @Nullable Bundle savedInstanceState
   ) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
     requireNonNull(view);
+
+    setViewPaddingBasedOnCutout(view);
 
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);

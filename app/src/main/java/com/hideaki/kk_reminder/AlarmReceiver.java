@@ -208,29 +208,26 @@ public class AlarmReceiver extends BroadcastReceiver {
     if(channelId == null) {
       channelId = String.valueOf(item.getId()) + System.currentTimeMillis();
     }
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    AudioAttributes attributes = new AudioAttributes.Builder()
+      .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+      .build();
 
-      AudioAttributes attributes = new AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-        .build();
+    String channelName = LOCALE.equals(Locale.JAPAN) ? "タスク" : "Task";
+    channelName += ": " + item.getDetail();
+    NotificationChannel channel = new NotificationChannel(
+      channelId,
+      channelName,
+      NotificationManager.IMPORTANCE_HIGH
+    );
 
-      String channelName = LOCALE.equals(Locale.JAPAN) ? "タスク" : "Task";
-      channelName += ": " + item.getDetail();
-      NotificationChannel channel = new NotificationChannel(
-        channelId,
-        channelName,
-        NotificationManager.IMPORTANCE_HIGH
-      );
+    channel.setShowBadge(true);
+    channel.setSound(sound, attributes);
+    channel.setLightColor(Color.RED);
+    channel.setVibrationPattern(vibrationPattern);
+    channel.enableLights(true);
+    channel.enableVibration(true);
 
-      channel.setShowBadge(true);
-      channel.setSound(sound, attributes);
-      channel.setLightColor(Color.RED);
-      channel.setVibrationPattern(vibrationPattern);
-      channel.enableLights(true);
-      channel.enableVibration(true);
-
-      manager.createNotificationChannel(channel);
-    }
+    manager.createNotificationChannel(channel);
 
     NotificationCompat.Builder builder = new NotificationCompat
       .Builder(context, channelId)

@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -77,6 +78,7 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.annotation.NonNull;
@@ -89,7 +91,10 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -156,6 +161,7 @@ import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 import static com.hideaki.kk_reminder.UtilClass.readFileFromAssets;
 import static com.hideaki.kk_reminder.UtilClass.serialize;
 import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class MainActivity extends AppCompatActivity
@@ -322,6 +328,7 @@ public class MainActivity extends AppCompatActivity
   @SuppressLint("UnspecifiedRegisterReceiverFlag")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
 
     if(IS_FIRST_USE.isEmpty()) {
       IS_FIRST_USE = "IS_FIRST_USE_" + getString(R.string.version_value);
@@ -443,44 +450,39 @@ public class MainActivity extends AppCompatActivity
 
     // テーマの設定
     MyThemeAdapter theme = generalSettings.getTheme();
-    if(theme.getColor() != 0) {
-      Resources res = getResources();
-      TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.colorStylesArray);
+    int colorGroup = theme.getColorGroup() == -1 ? 1 : theme.getColorGroup();
+    Resources res = getResources();
+    TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.colorStylesArray);
 
-      int stylesArrayId = typedArraysOfArray.getResourceId(theme.getColorGroup(), -1);
-      checkArgument(stylesArrayId != -1);
-      TypedArray typedArray = res.obtainTypedArray(stylesArrayId);
+    int stylesArrayId = typedArraysOfArray.getResourceId(colorGroup, -1);
+    checkArgument(stylesArrayId != -1);
+    TypedArray typedArray = res.obtainTypedArray(stylesArrayId);
 
-      int styleId = typedArray.getResourceId(theme.getColorChild(), -1);
-      checkArgument(styleId != -1);
+    int styleId = typedArray.getResourceId(theme.getColorChild(), -1);
+    checkArgument(styleId != -1);
 
-      typedArray.recycle();
-      typedArraysOfArray.recycle();
+    typedArray.recycle();
+    typedArraysOfArray.recycle();
 
-      setTheme(styleId);
-    }
+    setTheme(styleId);
 
+    // ダイアログのスタイルを設定
     theme.setIsColorPrimary(false);
-    if(theme.getColor() != 0) {
-      Resources res = getResources();
-      TypedArray typedArraysOfArray = res.obtainTypedArray(R.array.colorDialogStylesArray);
+    res = getResources();
+    typedArraysOfArray = res.obtainTypedArray(R.array.colorDialogStylesArray);
 
-      int dialogStylesArrayId = typedArraysOfArray.getResourceId(
-        theme.getColorGroup(),
-        -1
-      );
-      checkArgument(dialogStylesArrayId != -1);
-      TypedArray typedArray = res.obtainTypedArray(dialogStylesArrayId);
+    int dialogStylesArrayId = typedArraysOfArray.getResourceId(
+      colorGroup,
+      -1
+    );
+    checkArgument(dialogStylesArrayId != -1);
+    typedArray = res.obtainTypedArray(dialogStylesArrayId);
 
-      dialogStyleId = typedArray.getResourceId(theme.getColorChild(), -1);
-      checkArgument(dialogStyleId != -1);
+    dialogStyleId = typedArray.getResourceId(theme.getColorChild(), -1);
+    checkArgument(dialogStyleId != -1);
 
-      typedArray.recycle();
-      typedArraysOfArray.recycle();
-    }
-    else {
-      dialogStyleId = R.style.BaseDialog_Base;
-    }
+    typedArray.recycle();
+    typedArraysOfArray.recycle();
     theme.setIsColorPrimary(true);
 
     setContentView(R.layout.activity_main);
@@ -504,10 +506,32 @@ public class MainActivity extends AppCompatActivity
     drawerToggle.setDrawerArrowDrawable(badgeDrawable);
     drawerLayout.addDrawerListener(drawerToggle);
 
+    // Edge-to-Edge対応用のマージンをレイアウト全体に適用
+    ViewCompat.setOnApplyWindowInsetsListener(drawerLayout, (v, windowInsets) -> {
+      Insets insets = windowInsets.getInsets(
+          WindowInsetsCompat.Type.systemBars()
+          | WindowInsetsCompat.Type.displayCutout()
+      );
+      // Apply the insets as a margin to the view. This solution sets only the
+      // bottom, left, and right dimensions, but you can apply whichever insets are
+      // appropriate to your layout. You can also update the view padding if that's
+      // more appropriate.
+      ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+      mlp.topMargin = insets.top;
+      mlp.bottomMargin = insets.bottom;
+      v.setLayoutParams(mlp);
+
+      // Return CONSUMED if you don't want the window insets to keep passing
+      // down to descendant views.
+      return windowInsets;
+    });
+
     navigationView = findViewById(R.id.nav_view);
     menu = navigationView.getMenu();
     navigationView.setItemIconTintList(null);
     navigationView.setNavigationItemSelectedListener(this);
+
+    setViewPaddingBasedOnCutout(navigationView);
 
     // 各NonScheduledListを読み込む
     for(NonScheduledListAdapter list : generalSettings.getNonScheduledLists()) {
@@ -2831,13 +2855,11 @@ public class MainActivity extends AppCompatActivity
     requireNonNull(manager);
     manager.cancelAll();
 
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      List<NotificationChannel> channelList = manager.getNotificationChannels();
-      if(channelList != null) {
-        int size = channelList.size();
-        for(int i = 0; i < size; i++) {
-          manager.deleteNotificationChannel(channelList.get(i).getId());
-        }
+    List<NotificationChannel> channelList = manager.getNotificationChannels();
+    if(channelList != null) {
+      int size = channelList.size();
+      for(int i = 0; i < size; i++) {
+        manager.deleteNotificationChannel(channelList.get(i).getId());
       }
     }
   }
@@ -2852,9 +2874,9 @@ public class MainActivity extends AppCompatActivity
         setDefaultColor();
       }
       else {
-        menuItemColor = list.getTextColor();
-        menuBackgroundColor = list.getColor();
-        statusBarColor = list.getDarkColor();
+        menuItemColor = Color.BLACK;
+        menuBackgroundColor = Color.WHITE;
+        statusBarColor = Color.WHITE;
         list.setIsColorPrimary(false);
         if(list.getColor() == 0) {
           accentColor = ContextCompat.getColor(this, R.color.colorAccent);
@@ -2873,9 +2895,9 @@ public class MainActivity extends AppCompatActivity
 
     if(isDarkMode) {
       primaryMaterialDarkColor =
-        ContextCompat.getColor(this, R.color.primaryMaterialDark);
+        ContextCompat.getColor(this, R.color.backgroundMaterialDark);
       primaryDarkMaterialDarkColor =
-        ContextCompat.getColor(this, R.color.primaryDarkMaterialDark);
+        ContextCompat.getColor(this, R.color.backgroundMaterialDark);
       backgroundMaterialDarkColor =
         ContextCompat.getColor(this, R.color.backgroundMaterialDark);
       backgroundFloatingMaterialDarkColor =
@@ -2901,25 +2923,14 @@ public class MainActivity extends AppCompatActivity
     // ツールバーとステータスバーの色を指定
     toolbar.setTitleTextColor(menuItemColor);
     toolbar.setBackgroundColor(menuBackgroundColor);
-    Window window = getWindow();
-    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-    window.setStatusBarColor(statusBarColor);
   }
 
   private void setDefaultColor() {
 
     MyThemeAdapter theme = generalSettings.getTheme();
-    if(theme.getColor() == 0) {
-      menuItemColor = Color.WHITE;
-      menuBackgroundColor = ContextCompat.getColor(this, R.color.colorPrimary);
-      statusBarColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
-    }
-    else {
-      menuItemColor = theme.getTextColor();
-      menuBackgroundColor = theme.getColor();
-      statusBarColor = theme.getDarkColor();
-    }
+    menuItemColor = Color.BLACK;
+    menuBackgroundColor = Color.WHITE;
+    statusBarColor = Color.WHITE;
     theme.setIsColorPrimary(false);
     if(theme.getColor() == 0) {
       accentColor = ContextCompat.getColor(this, R.color.colorAccent);

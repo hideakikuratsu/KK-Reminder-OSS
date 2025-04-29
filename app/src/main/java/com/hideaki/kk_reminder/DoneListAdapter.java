@@ -194,12 +194,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
 
       actionMode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
 
-      // ActionMode時のみツールバーとステータスバーの色を設定
-      Window window = activity.getWindow();
-      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-      window.setStatusBarColor(ContextCompat.getColor(activity, R.color.darkerGrey));
-
       return true;
     }
 
@@ -392,11 +386,6 @@ public class DoneListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
-
-      Window window = activity.getWindow();
-      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-      window.setStatusBarColor(activity.statusBarColor);
 
       DoneListAdapter.this.actionMode = null;
       for(ItemAdapter item : itemList) {

@@ -47,6 +47,7 @@ import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
 import static com.hideaki.kk_reminder.UtilClass.getRegularizedVibrationStr;
 import static com.hideaki.kk_reminder.UtilClass.getVibrationPattern;
 import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class SetAllFragment
@@ -205,14 +206,9 @@ public class SetAllFragment
           long[] vibrationPattern = getVibrationPattern(vibrationStr);
           Vibrator vibrator = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
           requireNonNull(vibrator);
-          if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            VibrationEffect effect =
-              VibrationEffect.createWaveform(vibrationPattern, -1);
-            vibrator.vibrate(effect);
-          }
-          else {
-            vibrator.vibrate(vibrationPattern, -1);
-          }
+          VibrationEffect effect =
+            VibrationEffect.createWaveform(vibrationPattern, -1);
+          vibrator.vibrate(effect);
 
           SetAllProgressBarDialogFragment setAllProgressBarDialogFragment =
             new SetAllProgressBarDialogFragment(false);
@@ -252,15 +248,18 @@ public class SetAllFragment
   }
 
   @SuppressLint("UseRequireInsteadOfGet")
+  @NonNull
   @Override
   public View onCreateView(
-    LayoutInflater inflater,
+    @NonNull LayoutInflater inflater,
     @Nullable ViewGroup container,
     @Nullable Bundle savedInstanceState
   ) {
 
     view = super.onCreateView(inflater, container, savedInstanceState);
     requireNonNull(view);
+
+    setViewPaddingBasedOnCutout(view);
 
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);

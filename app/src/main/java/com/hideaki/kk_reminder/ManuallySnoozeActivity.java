@@ -10,8 +10,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,10 +20,14 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import static com.hideaki.kk_reminder.StartupReceiver.getDynamicContext;
 import static com.hideaki.kk_reminder.StartupReceiver.getIsDirectBootContext;
@@ -77,6 +80,7 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
 
     super.onCreate(savedInstanceState);
 
@@ -169,6 +173,27 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
 
     setContentView(R.layout.manually_snooze_layout);
 
+    View layout = findViewById(R.id.constraintLayout);
+    // Edge-to-Edge対応用のマージンをレイアウト全体に適用
+    ViewCompat.setOnApplyWindowInsetsListener(layout, (v, windowInsets) -> {
+      Insets insets = windowInsets.getInsets(
+          WindowInsetsCompat.Type.systemBars()
+         | WindowInsetsCompat.Type.displayCutout()
+      );
+      // Apply the insets as a margin to the view. This solution sets only the
+      // bottom, left, and right dimensions, but you can apply whichever insets are
+      // appropriate to your layout. You can also update the view padding if that's
+      // more appropriate.
+      ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+      mlp.topMargin = insets.top;
+      mlp.bottomMargin = insets.bottom;
+      v.setLayoutParams(mlp);
+
+      // Return CONSUMED if you don't want the window insets to keep passing
+      // down to descendant views.
+      return WindowInsetsCompat.CONSUMED;
+    });
+
     // ListViewの設定
     ManuallySnoozeListAdapter manuallySnoozeListAdapter
       = new ManuallySnoozeListAdapter(this);
@@ -198,11 +223,6 @@ public class ManuallySnoozeActivity extends AppCompatActivity implements View.On
       backArrow.setColorFilter(secondaryTextMaterialDarkColor);
       launchActivity.setColorFilter(secondaryTextMaterialDarkColor);
       done.setColorFilter(secondaryTextMaterialDarkColor);
-      // ステータスバーの色
-      Window window = getWindow();
-      window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-      window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-      window.setStatusBarColor(primaryDarkMaterialDarkColor);
     }
 
     // タイトルの設定

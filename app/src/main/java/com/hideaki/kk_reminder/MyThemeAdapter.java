@@ -7,6 +7,7 @@ class MyThemeAdapter {
   MyThemeAdapter() {
 
     theme = new MyTheme2();
+    theme.setIsColorPrimary(false);
   }
 
   MyThemeAdapter(Object obj) {
@@ -37,6 +38,7 @@ class MyThemeAdapter {
     else {
       throw new IllegalArgumentException("Arg theme is not instance of MyTheme Class");
     }
+    theme.setIsColorPrimary(false);
   }
 
   MyTheme2 getTheme() {
@@ -47,7 +49,8 @@ class MyThemeAdapter {
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   boolean isColorPrimary() {
 
-    return theme.isColorPrimary();
+//    return theme.isColorPrimary();
+    return false;
   }
 
   int getColor() {
@@ -82,7 +85,8 @@ class MyThemeAdapter {
 
   void setIsColorPrimary(boolean isColorPrimary) {
 
-    theme.setIsColorPrimary(isColorPrimary);
+//    theme.setIsColorPrimary(isColorPrimary);
+    theme.setIsColorPrimary(false);
   }
 
   void setColor(int color) {

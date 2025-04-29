@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class DefaultControlTimeEditFragment extends BasePreferenceFragmentCompat {
@@ -39,15 +40,18 @@ public class DefaultControlTimeEditFragment extends BasePreferenceFragmentCompat
     setHasOptionsMenu(true);
   }
 
+  @NonNull
   @Override
   public View onCreateView(
-    LayoutInflater inflater,
+    @NonNull LayoutInflater inflater,
     ViewGroup container,
     Bundle savedInstanceState
   ) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
     requireNonNull(view);
+
+    setViewPaddingBasedOnCutout(view);
 
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);

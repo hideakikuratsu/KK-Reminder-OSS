@@ -31,6 +31,7 @@ import androidx.transition.Transition;
 import static com.hideaki.kk_reminder.UtilClass.IS_DARK_MODE;
 import static com.hideaki.kk_reminder.UtilClass.IS_DARK_THEME_FOLLOW_SYSTEM;
 import static com.hideaki.kk_reminder.UtilClass.PLAY_SLIDE_ANIMATION;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class GeneralSettingsFragment extends BasePreferenceFragmentCompat
@@ -79,7 +80,7 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat
     animation = findPreference("animation");
     PreferenceCategory adsCategory = findPreference("ads_category");
     PreferenceScreen disableAds = findPreference("disable_ads");
-    PreferenceScreen primaryColor = findPreference("primary_color");
+//    PreferenceScreen primaryColor = findPreference("primary_color");
     PreferenceScreen secondaryColor = findPreference("secondary_color");
     darkTheme = findPreference("dark_theme");
     darkThemeFollowSystem = findPreference("dark_theme_follow_system");
@@ -93,7 +94,7 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat
     manuallySnooze.setOnPreferenceClickListener(this);
     ((MyCheckBoxPreference)animation).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     disableAds.setOnPreferenceClickListener(this);
-    primaryColor.setOnPreferenceClickListener(this);
+//    primaryColor.setOnPreferenceClickListener(this);
     secondaryColor.setOnPreferenceClickListener(this);
     ((MyCheckBoxPreference)darkTheme).setOnMyCheckBoxPreferenceCheckedChangeListener(this);
     ((MyCheckBoxPreference)darkThemeFollowSystem)
@@ -116,15 +117,18 @@ public class GeneralSettingsFragment extends BasePreferenceFragmentCompat
     setDividerHeight(0);
   }
 
+  @NonNull
   @Override
   public View onCreateView(
-    LayoutInflater inflater,
+    @NonNull LayoutInflater inflater,
     @Nullable ViewGroup container,
     @Nullable Bundle savedInstanceState
   ) {
 
     View view = super.onCreateView(inflater, container, savedInstanceState);
     requireNonNull(view);
+
+    setViewPaddingBasedOnCutout(view);
 
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);

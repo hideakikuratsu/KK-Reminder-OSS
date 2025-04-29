@@ -31,9 +31,9 @@
         android:title="@string/pick_color"
         app:iconSpaceReserved="false">
 
-        <PreferenceScreen
-            android:key="primary_color"
-            android:title="@string/pick_primary_color"/>
+<!--        <PreferenceScreen-->
+<!--            android:key="primary_color"-->
+<!--            android:title="@string/pick_primary_color"/>-->
 
         <PreferenceScreen
             android:key="secondary_color"

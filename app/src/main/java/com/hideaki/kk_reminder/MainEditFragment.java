@@ -60,6 +60,7 @@ import static com.hideaki.kk_reminder.UtilClass.MENU_POSITION;
 import static com.hideaki.kk_reminder.UtilClass.REQUEST_CODE_RINGTONE_PICKER;
 import static com.hideaki.kk_reminder.UtilClass.generateUniqueId;
 import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class MainEditFragment extends BasePreferenceFragmentCompat
@@ -376,8 +377,8 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
 
       // colorセクション
       PreferenceCategory colorCategory = findPreference("color");
-      PreferenceScreen primaryColor = findPreference("primary_color");
-      primaryColor.setOnPreferenceClickListener(this);
+//      PreferenceScreen primaryColor = findPreference("primary_color");
+//      primaryColor.setOnPreferenceClickListener(this);
       PreferenceScreen secondaryColor = findPreference("secondary_color");
       secondaryColor.setOnPreferenceClickListener(this);
 
@@ -448,9 +449,10 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
   }
 
   @SuppressLint("UseRequireInsteadOfGet")
+  @NonNull
   @Override
   public View onCreateView(
-    LayoutInflater inflater,
+    @NonNull LayoutInflater inflater,
     @Nullable ViewGroup container,
     @Nullable Bundle savedInstanceState
   ) {
@@ -462,6 +464,8 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
       }
       view = super.onCreateView(inflater, container, savedInstanceState);
       requireNonNull(view);
+
+      setViewPaddingBasedOnCutout(view);
 
       if(activity.isDarkMode) {
         view.setBackgroundColor(activity.backgroundMaterialDarkColor);

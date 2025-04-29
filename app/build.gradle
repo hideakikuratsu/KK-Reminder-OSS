@@ -8,8 +8,8 @@ android {
         minSdk 28
         compileSdk 35
         targetSdkVersion 35
-        versionCode 40301000
-        versionName "4.3.1.0"
+        versionCode 40301001
+        versionName "4.3.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -50,6 +50,7 @@ dependencies {
     implementation 'com.android.billingclient:billing:7.1.1'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.preference:preference:1.2.1"
+    implementation 'androidx.activity:activity:1.10.1'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
     implementation 'com.google.android.gms:play-services-auth:21.3.0'
     implementation 'com.google.http-client:google-http-client-gson:1.26.0'

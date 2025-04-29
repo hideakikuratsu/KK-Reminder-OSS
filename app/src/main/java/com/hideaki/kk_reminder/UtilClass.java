@@ -14,6 +14,7 @@ import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -38,6 +39,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -536,5 +540,17 @@ class UtilClass {
     int adWidth = (int)(widthPixels / density);
 
     return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, adWidth);
+  }
+
+  static void setViewPaddingBasedOnCutout(View view) {
+
+    // view表示時、カットアウト領域が含まれている場合はパディングを追加
+    ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+      Insets bars = insets.getInsets(
+          WindowInsetsCompat.Type.displayCutout()
+      );
+      v.setPadding(bars.left, 0, bars.right, 0);
+      return WindowInsetsCompat.CONSUMED;
+    });
   }
 }

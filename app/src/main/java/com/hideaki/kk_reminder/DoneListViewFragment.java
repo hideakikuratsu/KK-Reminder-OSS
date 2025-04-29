@@ -30,6 +30,7 @@ import androidx.work.WorkRequest;
 
 import static com.hideaki.kk_reminder.UtilClass.ITEM_IDS;
 import static com.hideaki.kk_reminder.UtilClass.getPxFromDp;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class DoneListViewFragment extends Fragment {
@@ -109,6 +110,9 @@ public class DoneListViewFragment extends Fragment {
     }
 
     View view = inflater.inflate(R.layout.listview, container, false);
+
+    setViewPaddingBasedOnCutout(view);
+
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);
     }

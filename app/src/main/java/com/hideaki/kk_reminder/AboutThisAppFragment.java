@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import static com.hideaki.kk_reminder.UtilClass.LOCALE;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class AboutThisAppFragment extends Fragment {
@@ -54,6 +55,9 @@ public class AboutThisAppFragment extends Fragment {
   ) {
 
     View view = inflater.inflate(R.layout.about_this_app_layout, container, false);
+
+    setViewPaddingBasedOnCutout(view);
+
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);
     }

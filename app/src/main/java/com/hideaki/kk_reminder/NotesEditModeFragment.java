@@ -33,6 +33,7 @@ import androidx.fragment.app.FragmentManager;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
 import static com.hideaki.kk_reminder.UtilClass.LINE_SEPARATOR;
 import static com.hideaki.kk_reminder.UtilClass.setCursorDrawableColor;
+import static com.hideaki.kk_reminder.UtilClass.setViewPaddingBasedOnCutout;
 import static java.util.Objects.requireNonNull;
 
 public class NotesEditModeFragment extends Fragment {
@@ -90,6 +91,7 @@ public class NotesEditModeFragment extends Fragment {
     }
 
     View view = inflater.inflate(R.layout.notes_edit_layout, container, false);
+    setViewPaddingBasedOnCutout(view);
     if(activity.isDarkMode) {
       view.setBackgroundColor(activity.backgroundMaterialDarkColor);
     }
