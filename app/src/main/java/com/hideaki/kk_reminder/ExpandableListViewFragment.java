@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -128,14 +128,18 @@ public class ExpandableListViewFragment extends Fragment
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener((v, keyCode, event) -> {
+    // 戻るボタン押下時の処理
+    activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+      @Override
+      public void handleOnBackPressed() {
 
-      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
         if(activity.expandableListAdapter.actionMode != null) {
           activity.expandableListAdapter.actionMode.finish();
         }
+
+        setEnabled(false);
+        activity.getOnBackPressedDispatcher().onBackPressed();
       }
-      return false;
     });
 
     MyExpandableListAdapter.hasPanel = 0;

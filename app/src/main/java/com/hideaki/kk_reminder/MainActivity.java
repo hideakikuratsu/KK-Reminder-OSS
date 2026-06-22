@@ -79,6 +79,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.annotation.NonNull;
@@ -505,6 +506,24 @@ public class MainActivity extends AppCompatActivity
     drawerToggle.setDrawerIndicatorEnabled(true);
     drawerToggle.setDrawerArrowDrawable(badgeDrawable);
     drawerLayout.addDrawerListener(drawerToggle);
+
+    // 戻るボタン押下時ドロワーが開いていたらドロワーを閉じる
+    this.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+      @Override
+      public void handleOnBackPressed() {
+
+        if(drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+          drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else {
+          // 元々のsuper.onBackPressed()相当の処理をディスパッチャーに委譲する
+          // (バックスタックのポップ、無ければアプリ終了)
+          setEnabled(false);
+          getOnBackPressedDispatcher().onBackPressed();
+          setEnabled(true);
+        }
+      }
+    });
 
     // Edge-to-Edge対応用のマージンをレイアウト全体に適用
     ViewCompat.setOnApplyWindowInsetsListener(drawerLayout, (v, windowInsets) -> {
@@ -1314,7 +1333,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  protected void onNewIntent(Intent intent) {
+  protected void onNewIntent(@NonNull Intent intent) {
 
     super.onNewIntent(intent);
 
@@ -1681,17 +1700,6 @@ public class MainActivity extends AppCompatActivity
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
     return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-  }
-
-  @Override
-  public void onBackPressed() {
-
-    if(drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
-      drawerLayout.closeDrawer(GravityCompat.START);
-    }
-    else {
-      super.onBackPressed();
-    }
   }
 
   @Override

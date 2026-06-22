@@ -6,7 +6,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +21,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -100,9 +100,10 @@ public class NotesEditModeFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener((v, keyCode, event) -> {
-
-      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+    // 戻るボタン押下時の処理
+    activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+      @Override
+      public void handleOnBackPressed() {
 
         if(isEditing) {
           new AlertDialog.Builder(activity)
@@ -110,13 +111,14 @@ public class NotesEditModeFragment extends Fragment {
             .setMessage(R.string.is_editing_message)
             .show();
 
-          return true;
+          return;
         }
 
         MainEditFragment.isNotesPopping = true;
-      }
 
-      return false;
+        setEnabled(false);
+        activity.getOnBackPressedDispatcher().onBackPressed();
+      }
     });
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);

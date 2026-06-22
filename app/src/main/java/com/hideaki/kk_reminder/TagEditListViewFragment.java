@@ -5,7 +5,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +19,7 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -99,9 +99,11 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener((v, keyCode, event) -> {
+    // 戻るボタン押下時の処理
+    activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+      @Override
+      public void handleOnBackPressed() {
 
-      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
         ColorPickerListAdapter.isFromListTagEdit = false;
         if(TagEditListAdapter.isEditing) {
           new AlertDialog.Builder(activity)
@@ -109,7 +111,7 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
             .setMessage(R.string.is_editing_message)
             .show();
 
-          return true;
+          return;
         }
         else if(TagEditListAdapter.isSorting) {
           new AlertDialog.Builder(activity)
@@ -117,11 +119,12 @@ public class TagEditListViewFragment extends Fragment implements View.OnClickLis
             .setMessage(R.string.is_sorting_message)
             .show();
 
-          return true;
+          return;
         }
-      }
 
-      return false;
+        setEnabled(false);
+        activity.getOnBackPressedDispatcher().onBackPressed();
+      }
     });
 
     TagEditListAdapter.isFirst = true;

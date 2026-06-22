@@ -1,15 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="version_value">4.3.1.1</string>
+    <string name="version_value">4.4.0.0</string>
     <string name="app_id">******************</string>
     <string name="ad_unit_id">******************</string>
     <string name="app_name">KK Reminder</string>
-    <string name="app_promotion">KK Reminder  -  notify persistently</string>
+    <string name="app_promotion">KK Reminder  -  never miss a task with persistent notifications</string>
     <string name="app_url">https://play.google.com/store/apps/details?id=com.hideaki.kk_reminder</string>
     <string name="backup_progress_bar_title">Backup Data</string>
     <string name="restore_progress_bar_title">Restore Data</string>
-    <string name="set_all_notify_sound_progress_bar_title">Set notification sound to all tasks</string>
-    <string name="set_all_vibration_progress_bar_title">Set vibration to all tasks</string>
+    <string name="set_all_notify_sound_progress_bar_title">Set notification sound for all tasks</string>
+    <string name="set_all_vibration_progress_bar_title">Set vibration for all tasks</string>
     <string name="copy_from_old_version_progress_bar_title">Database Update</string>
     <string name="update_info">Update Info</string>
     <string name="align_top">Go to top of the list</string>
@@ -39,7 +39,7 @@
     <string name="below_picker4">Calendar</string>
     <string name="title">Title</string>
     <string name="default_detail">New task</string>
-    <string name="detail_hint">Put a title</string>
+    <string name="detail_hint">Enter a title</string>
     <string name="schedule_task">Task period</string>
     <string name="due_date">Due date</string>
     <string name="tag">Tag</string>
@@ -73,12 +73,12 @@
     <string name="repeat_minute_interval">Repeat Interval</string>
     <string name="repeat_minute_count">Repeat count</string>
     <plurals name="repeat_minute_count_format">
-        <item quantity="one">Repeat every %1$sx 1 time since you finish this task</item>
-        <item quantity="other">Repeat every %1$sx %2$d times since you finish this task</item>
+        <item quantity="one">Repeat every %1$sx 1 time after you finish this task</item>
+        <item quantity="other">Repeat every %1$sx %2$d times after you finish this task</item>
     </plurals>
     <string name="repeat_minute_duration">Repeat duration</string>
-    <string name="repeat_minute_duration_format">Repeat every %1$sfor %2$ssince you finish this task</string>
-    <string name="repeat_minute_illegal_dialog">Repeat interval exceeds the repeat duration.\nSet shorter interval than the duration again</string>
+    <string name="repeat_minute_duration_format">Repeat every %1$sfor %2$safter you finish this task</string>
+    <string name="repeat_minute_illegal_dialog">The repeat interval exceeds the repeat duration.\nPlease set an interval shorter than the duration.</string>
     <string name="alarm_option">Alarm options</string>
     <string name="pick_alarm">Pick an alarm</string>
     <string name="permission_external_alarm_rationale_title">External Storage Access Permission</string>
@@ -86,23 +86,23 @@
     <string name="permission_external_alarm_denied">External Storage Access Permission was denied. Setting default alarm sound</string>
     <string name="permission_exact_alarm_rationale_title">Exact Alarm Permission</string>
     <string name="permission_exact_alarm_rationale_message">After update to Android 12, you have to accept a special permission in order to set an exact time alarm. This app currently doesn\'t have the permission, so you have to give the permission to it if you want to use it normally.</string>
-    <string name="permission_exact_alarm_denied">Exact Alarm Permission was denied. No notification will be gone off</string>
+    <string name="permission_exact_alarm_denied">Exact Alarm Permission was denied. All task notifications will be stopped</string>
     <string name="permission_post_notification_rationale_title">Notification Permission</string>
     <string name="permission_post_notification_rationale_message">After update to Android 13, you have to accept notification permission in order to receive notification from app. This app currently doesn\'t have the permission, so you have to give the permission to it if you want to use it normally.</string>
-    <string name="permission_post_notification_denied">Post Notification Permission was denied. No notification will be gone off</string>
+    <string name="permission_post_notification_denied">Post Notification Permission was denied. All task notifications will be stopped</string>
     <string name="permit">Permit</string>
     <string name="deny">Deny</string>
     <string name="default_snooze">Default</string>
     <string name="snooze">snooze</string>
     <string name="snooze_time">Snooze Time</string>
     <string name="more_advanced_snooze">More...</string>
-    <string name="manually_snooze_description">If you set both hour and minute to 0, System regards it as 24 hours</string>
+    <string name="manually_snooze_description">If you set both the hour and minute to 0, it will be treated as 24 hours</string>
 
     <string name="fifteen_minutes">15 minutes</string>
     <string name="thirty_minutes">30 minutes</string>
     <string name="one_hour">1 hour</string>
-    <string name="three_hours">3 hour</string>
-    <string name="ten_hours">10 hour</string>
+    <string name="three_hours">3 hours</string>
+    <string name="ten_hours">10 hours</string>
     <string name="one_day">1 day</string>
 
     <string-array name="snooze_list">
@@ -118,39 +118,39 @@
     <string name="sort_notes">Sort notes</string>
     <string name="edit_mode">Edit notes</string>
     <string name="checklist_mode">Checklist mode</string>
-    <string name="notes_hint">Put notes</string>
+    <string name="notes_hint">Enter notes</string>
     <string name="done_edit">Done editing</string>
     <string name="delete_checked_items">Delete checked items</string>
-    <string name="unselect_all_items">Uncheck checked items</string>
+    <string name="unselect_all_items">Uncheck all items</string>
     <string name="clear_notes">Clear notes</string>
     <string name="clear_notes_message">Do you really want to clear notes? If you clear them, you cannot restore them</string>
     <string name="delete_checked_items_message">Do you really want to delete checked items? If you delete them, you cannot restore them</string>
     <string name="settings">Settings</string>
     <string name="default_settings">Default settings</string>
-    <string name="default_detail_text_size">Text size of card</string>
-    <string name="default_text_size_summary">This size will be applied to details section of card</string>
+    <string name="default_detail_text_size">Card text size</string>
+    <string name="default_text_size_summary">This size will be applied to the detail section of the card</string>
     <string name="small">Small</string>
     <string name="medium">Medium</string>
     <string name="large">Large</string>
     <string name="default_text_size_model_summary">Display example</string>
     <string name="default_new_task">New task</string>
-    <string name="default_new_task_summary">You can set default settings of new task previously</string>
+    <string name="default_new_task_summary">You can configure the default settings for new tasks in advance</string>
     <string name="set_all">Set to all tasks</string>
-    <string name="set_all_summary">Set a vibration or a notification sound to all tasks</string>
+    <string name="set_all_summary">Set the vibration or notification sound for all tasks at once</string>
     <string name="default_manually_snooze">Manual snooze time</string>
     <string name="default_control_time">Time step</string>
-    <string name="default_control_time_summary">This step will be applied to time control section in control panel of card</string>
+    <string name="default_control_time_summary">This step will be applied to the time control section in the card\'s control panel</string>
     <string name="default_control_time_model_summary">Display example</string>
-    <string name="default_control_time_description">If you set both hour and minute to 0, System regards it as 24 hours</string>
+    <string name="default_control_time_description">If you set both the hour and minute to 0, it will be treated as 24 hours</string>
     <string name="play_slide_animation">Slide animation of cards</string>
-    <string name="play_slide_animation_summary">Whether playing sliding animation of cards when scrolling</string>
+    <string name="play_slide_animation_summary">Whether to play the sliding animation of cards when scrolling</string>
     <string name="default_vibration">Vibration pattern</string>
-    <string name="default_vibration_summary" tools:ignore="TypographyEllipsis">example: 0, 250, 500, 200\nSet vibration off/on interval in turn by the millisecond (1/1000 second) such as\n\'NON VIBE TIME\', \'VIBE TIME\', \'NON VIBE TIME\', ...\nIf pattern is not set correctly, or nothing is set, default pattern will be applied</string>
+    <string name="default_vibration_summary" tools:ignore="TypographyEllipsis">Example: 0, 250, 500, 200\nSpecify the vibration off/on durations alternately in milliseconds (1/1000 second), such as\n\'NO VIBRATION\', \'VIBRATION\', \'NO VIBRATION\', ...\nIf the pattern is not set correctly, or nothing is set, the default pattern will be applied</string>
     <string name="vibration_hint">0, 250, 500, 200</string>
     <string name="default_vibration_hint">Default vibration pattern</string>
     <string name="custom_vibration_hint">Custom vibration pattern</string>
     <string name="theme">Theme</string>
-    <string name="after_theme_set_message">After you set theme, this app reboots automatically</string>
+    <string name="after_theme_set_message">After you set the theme, the app restarts automatically</string>
     <string name="dark_theme">Dark Theme</string>
     <string name="dark_theme_follow_system">Follow system settings (Dark Theme)</string>
     <string name="backup">Backup</string>
@@ -159,21 +159,21 @@
     <string name="backup_to_google_drive">Backup to Google Drive</string>
     <string name="restore_from_google_drive">Restore from Google Drive</string>
     <string name="logout">Logout</string>
-    <string name="backup_not_exists">No backup exists. Backup first, and then restore them</string>
+    <string name="backup_not_exists">No backup exists. Please back up first, and then restore</string>
     <string name="fail_to_query">Failed to send query</string>
-    <string name="success_to_restore">Succeeded to restore backups</string>
+    <string name="success_to_restore">Successfully restored backups</string>
     <string name="fail_to_restore">Failed to restore backups</string>
     <string name="create_new_backup">Created a new backup</string>
     <string name="fail_to_create_new_backup">Failed to create a new backup</string>
     <string name="choose_backup_data_message">Which backup data do you want to restore from?</string>
     <string name="canceled">Canceled</string>
     <string name="fail_to_make_backup_folder">Failed to make a backup folder</string>
-    <string name="logout_done">Logouted from backup account</string>
-    <string name="fail_to_logout">Failed to logout</string>
-    <string name="error">Unexpected error occurred</string>
+    <string name="logout_done">Logged out from the backup account</string>
+    <string name="fail_to_logout">Failed to log out</string>
+    <string name="error">An unexpected error occurred</string>
     <string name="backup_functions_denial_title">You cannot use Backup/Restore functions</string>
-    <string name="backup_functions_denial_message">This OS version is not compatible to backup and restore functions. Please use OS version >= 7.0 (Nougat/API24).</string>
-    <string name="backup_and_restore_note">If the latest backup data doesn\'t sync properly, try to logout, and then restore some times.\nIf you want to restore data on a new device from old one, you have to reset notification sounds on\n[Settings] > [Set to all tasks] > [Pick an alarm]\n[Settings] > [New task] > [Pick an alarm]\nbecause the new device cannot recognize those notification sounds from old one.</string>
+    <string name="backup_functions_denial_message">This OS version is not compatible with the backup and restore functions. Please use OS version 7.0 (Nougat/API24) or higher.</string>
+    <string name="backup_and_restore_note">If the latest backup data doesn\'t sync properly, try logging out and then restoring a few times.\nIf you want to restore data from an old device onto a new one, you have to reset the notification sounds on\n[Settings] > [Set to all tasks] > [Pick an alarm]\n[Settings] > [New task] > [Pick an alarm]\nbecause the new device cannot recognize the notification sounds from the old one.</string>
     <string name="about">About</string>
     <string name="version">Version</string>
     <string name="about_this_app">About this app</string>
@@ -183,7 +183,7 @@
         <item quantity="other">%1$d times</item>
     </plurals>
     <string name="none">None</string>
-    <string name="home">Home</string>
+    <string name="home">Chores</string>
     <string name="work">Work</string>
     <string name="shopping">Shopping</string>
     <string name="todo_menu">TODO</string>
@@ -193,22 +193,22 @@
     <string name="delete_dialog_message">If you delete them, they will not be saved to DONE list, so you cannot restore them</string>
     <string name="delete">Delete</string>
     <string name="list_delete_dialog_title">Do you really want to delete the list?</string>
-    <string name="list_delete_dialog_message">If you delete it, all tasks in it will be also deleted</string>
+    <string name="list_delete_dialog_message">If you delete it, all tasks in it will also be deleted</string>
     <string name="search_hint">Search...</string>
     <string name="search_task">Search task</string>
     <string name="tag_label">Tag:</string>
     <string name="non_tag">No tag</string>
     <string name="tag_search">Search by tag</string>
     <string name="add_tag">Add a new tag</string>
-    <string name="tag_hint">Put a tag name</string>
+    <string name="tag_hint">Enter a tag name</string>
     <string name="name_tag">Tag name settings</string>
     <string name="default_tag">New tag</string>
     <string name="delete_tag_title">Delete tag</string>
     <string name="delete_tag_message">Do you really want to delete the tag? If you delete it, you cannot restore it</string>
     <string name="is_editing_title">You have to finish editing</string>
-    <string name="is_editing_message">Push EDIT BUTTON again, and then back to the previous page</string>
+    <string name="is_editing_message">Press the EDIT button again to finish editing, then go back to the previous page</string>
     <string name="is_sorting_title">You have to finish sorting</string>
-    <string name="is_sorting_message">Push SORT BUTTON again, and then back to the previous page</string>
+    <string name="is_sorting_message">Press the SORT button again to finish sorting, then go back to the previous page</string>
     <string name="non_notify">No notification repeat</string>
     <string name="notify_default">Default</string>
     <string name="notify_every_minute">Every minute</string>
@@ -254,10 +254,10 @@
         <item quantity="one">x 1 time</item>
         <item quantity="other">x %1$d times</item>
     </plurals>
-    <string name="infinite_times_notify">infinite_times_notify</string>
-    <string name="num_of_notification">How many times</string>
+    <string name="infinite_times_notify">Notify continuously</string>
+    <string name="num_of_notification">Number of notifications</string>
     <string name="notification_interval">Notification Interval</string>
-    <string name="description_for_notify_custom">If you set -1 time, System notifies forever, or if you set 0 time, System notifies only one time. If you set both hour and minute to 0, System regards it as 24 hours</string>
+    <string name="description_for_notify_custom">If you set the count to -1, the system will notify you indefinitely; if you set it to 0, it will notify you only once. If you set both the hour and minute to 0, it will be treated as 24 hours</string>
     <string name="everyday">Every day</string>
     <string name="every_weekday">Every weekday (Mon - Fri)</string>
     <string name="every_week">Every week</string>
@@ -289,9 +289,9 @@
     <string name="november">Nov.</string>
     <string name="december">Dec.</string>
     <string name="memo">Notes</string>
-    <string name="complete">Finished task</string>
+    <string name="complete">Task completed</string>
     <string name="undo">Undo</string>
-    <string name="repeat_conflict_dialog_message">Scheduled date was changed with Repeat Function set.\nIs this change temporary one?</string>
+    <string name="repeat_conflict_dialog_message">The scheduled date was changed while the Repeat function was set.\nIs this a temporary change?</string>
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -302,7 +302,7 @@
     <string name="add_list">Add a new list</string>
     <string name="add">Add</string>
     <string name="default_list">New list</string>
-    <string name="list_hint">Put a list name</string>
+    <string name="list_hint">Enter a list name</string>
     <string name="add_task">Add a new task</string>
     <string name="nav_other">Other</string>
     <string name="manage_lists">Manage lists</string>
@@ -312,12 +312,12 @@
     <string name="help">Help</string>
     <string name="contact">Contact</string>
     <string name="feedback">Feedback</string>
-    <string name="review">Review this app in Google Play</string>
+    <string name="review">Review this app on Google Play</string>
     <string name="request">Requests</string>
     <string name="share_this_app">Share this app</string>
     <string name="notice">Notice</string>
     <string name="notice_title">About a bug after version 4.2.0.0</string>
-    <string name="notice_message">After version 4.2.0.0, we confirmed a bug on Android 12 that reminder of tasks do not end after completing them on app main screen. If you encounter a similar bug, you can solve this issue by disabling and then enabling setting on alarm notification setting page (If you touch \'OK\' button, you will jump to the page on Android 12 device. Other devices do not have this setting page) because all alarm scheduling will be reset, or you can also solve this by backing up on\n[Settings] > [Backup and Restore]\npage, then reinstalling this app, and restoring data.</string>
+    <string name="notice_message">After version 4.2.0.0, we confirmed a bug on Android 12 where task reminders do not stop even after the tasks are completed on the app\'s main screen. If you encounter a similar bug, you can solve this issue by disabling and then re-enabling the setting on the alarm notification settings page (if you tap the \'OK\' button, you will jump to that page on an Android 12 device; other devices do not have this settings page), because doing so resets all scheduled alarms. Alternatively, you can solve this by backing up your data from\n[Settings] > [Backup and Restore]\nthen reinstalling this app and restoring your data.</string>
     <string name="notification_channel_name">KK Reminder Notification Channel</string>
     <plurals name="cab_selected_task_num">
         <item quantity="one">1 task selected</item>
@@ -328,7 +328,7 @@
         <item quantity="one">1 task will be deleted.\nOK?</item>
         <item quantity="other">%1$d tasks will be deleted.\nOK?</item>
     </plurals>
-    <string name="cab_move_task">Move tasks to other lists</string>
+    <string name="cab_move_task">Move tasks to another list</string>
     <string name="cab_move_task_message">\nWhich list do you want to move to?</string>
     <string name="cab_recycle_task_title">Recycle task</string>
     <plurals name="cab_recycle_task_message">
@@ -349,25 +349,25 @@
     <string name="determine">OK</string>
     <string name="pick_primary_color">Pick a base color</string>
     <string name="pick_secondary_color">Pick an accent color</string>
-    <string name="pick_color">Pick color</string>
-    <string name="pick_color_description">Pick color variations</string>
-    <string name="action_send_booted_dialog_title">You will create a new task. Choose a list which you want to add the task to</string>
+    <string name="pick_color">Pick a color</string>
+    <string name="pick_color_description">Pick a color variation</string>
+    <string name="action_send_booted_dialog_title">You are about to create a new task. Choose the list you want to add it to.</string>
     <string name="date_and_time_detected_title">Time and Date detected</string>
-    <string name="date_and_time_detected_message">Time and date detected from shared strings. Do you want to set it to schedule of the task?</string>
+    <string name="date_and_time_detected_message">Time and date were detected from the shared text. Do you want to set them as the task\'s schedule?</string>
     <string name="sort">Sort task</string>
-    <string name="done_task_click_title">Which processing do you want to do to this task?</string>
+    <string name="done_task_click_title">What do you want to do with this task?</string>
     <string name="recycle_task">Recycle task</string>
     <string name="recycle_and_edit_task">Recycle and Edit this task</string>
     <string name="delete_task">Delete task</string>
-    <string name="task_not_pushed_yet">No task exists</string>
-    <string name="list_not_pushed_yet">No list exists</string>
-    <string name="notes_not_pushed_yet">No notes exist</string>
+    <string name="task_not_pushed_yet">No tasks</string>
+    <string name="list_not_pushed_yet">No lists</string>
+    <string name="notes_not_pushed_yet">No notes</string>
     <string name="ads">Ads</string>
     <string name="disable_ads">Disable Ads</string>
-    <string name="disable_ads_promotion">You need to upgrade to Premium Account to disable Ads.\nDo you want to disable Ads?</string>
-    <string name="fail_to_setup_billing">Failed to setup billing services</string>
-    <string name="succeed_to_upgrade">Succeeded to upgrade to Premium Account</string>
-    <string name="cancel_to_buy">Canceled to buy</string>
+    <string name="disable_ads_promotion">You need to upgrade to a Premium Account to disable ads.\nDo you want to disable ads?</string>
+    <string name="fail_to_setup_billing">Failed to set up the billing service</string>
+    <string name="succeed_to_upgrade">Successfully upgraded to a Premium Account</string>
+    <string name="cancel_to_buy">Purchase canceled</string>
     <string name="error_occurred">Error Occurred</string>
 
     <string name="red">Red</string>
@@ -412,7 +412,7 @@
         <item>@string/blue_grey</item>
     </string-array>
 
-    <string name="colorpicker_dialog_title">Choose the color</string>
+    <string name="colorpicker_dialog_title">Choose a color</string>
     <string name="colorpicker_dialog_cancel">CANCEL</string>
     <string name="colorpicker_dialog_ok">OK</string>
 </resources>

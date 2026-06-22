@@ -5,18 +5,18 @@ android {
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
         applicationId "com.hideaki.kk_reminder"
-        minSdk 28
-        compileSdk 35
-        targetSdkVersion 35
-        versionCode 40301001
-        versionName "4.3.1.1"
+        minSdk 29
+        compileSdk = 36
+        targetSdkVersion 36
+        versionCode 40400000
+        versionName "4.4.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             signingConfig signingConfigs.debug
@@ -33,26 +33,26 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test:runner:1.6.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    implementation 'com.google.android.material:material:1.12.0'
+    androidTestImplementation 'androidx.test:runner:1.7.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    api 'com.google.guava:guava:31.1-android'
+    api 'com.google.guava:guava:33.6.0-android'
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
-    implementation 'androidx.media:media:1.7.0'
+    implementation 'androidx.media:media:1.8.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.browser:browser:1.8.0'
+    implementation 'androidx.browser:browser:1.10.0'
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-ads:23.6.0'
     implementation 'com.android.billingclient:billing:7.1.1'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.preference:preference:1.2.1"
-    implementation 'androidx.activity:activity:1.10.1'
+    implementation 'androidx.activity:activity:1.13.0'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
-    implementation 'com.google.android.gms:play-services-auth:21.3.0'
+    implementation 'com.google.android.gms:play-services-auth:21.6.0'
     implementation 'com.google.http-client:google-http-client-gson:1.26.0'
     implementation('com.google.api-client:google-api-client-android:1.26.0') {
         exclude group: 'org.apache.httpcomponents'

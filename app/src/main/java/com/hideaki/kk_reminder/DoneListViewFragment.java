@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -121,16 +121,18 @@ public class DoneListViewFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener((v, keyCode, event) -> {
-
-      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+    // 戻るボタン押下時の処理
+    activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+      @Override
+      public void handleOnBackPressed() {
 
         if(activity.doneListAdapter.actionMode != null) {
           activity.doneListAdapter.actionMode.finish();
         }
-      }
 
-      return false;
+        setEnabled(false);
+        activity.getOnBackPressedDispatcher().onBackPressed();
+      }
     });
 
     List<ItemAdapter> itemList = activity.getDoneItem();

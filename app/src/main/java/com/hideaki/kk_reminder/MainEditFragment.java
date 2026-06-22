@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +30,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
@@ -475,9 +475,10 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
       }
       view.setFocusableInTouchMode(true);
       view.requestFocus();
-      view.setOnKeyListener((v, keyCode, event) -> {
-
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+      // 戻るボタン押下時の処理
+      activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
 
           isNextEditExists = false;
           if((isMovingTask || isCloningTask) && checkedItemNum > 0) {
@@ -491,8 +492,10 @@ public class MainEditFragment extends BasePreferenceFragmentCompat
           if(!isNextEditExists) {
             isMainPopping = true;
           }
+
+          setEnabled(false);
+          activity.getOnBackPressedDispatcher().onBackPressed();
         }
-        return false;
       });
 
       Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);

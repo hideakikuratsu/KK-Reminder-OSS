@@ -3,7 +3,6 @@ package com.hideaki.kk_reminder;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 import java.util.Calendar;
 import java.util.Locale;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -114,12 +114,16 @@ public class DayRepeatCustomPickerFragment extends BasePreferenceFragmentCompat
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener((v, keyCode, event) -> {
+    // 戻るボタン押下時の処理
+    activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+      @Override
+      public void handleOnBackPressed() {
 
-      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
         registerCustomRepeat();
+
+        setEnabled(false);
+        activity.getOnBackPressedDispatcher().onBackPressed();
       }
-      return false;
     });
 
     Toolbar toolbar = activity.findViewById(R.id.toolbar_layout);

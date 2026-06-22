@@ -3,7 +3,6 @@ package com.hideaki.kk_reminder;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,7 @@ import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -82,9 +82,10 @@ public class ManageListViewFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener((v, keyCode, event) -> {
-
-      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+    // 戻るボタン押下時の処理
+    activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+      @Override
+      public void handleOnBackPressed() {
 
         if(ManageListAdapter.isSorting) {
           new AlertDialog.Builder(activity)
@@ -92,11 +93,12 @@ public class ManageListViewFragment extends Fragment {
             .setMessage(R.string.is_sorting_message)
             .show();
 
-          return true;
+          return;
         }
-      }
 
-      return false;
+        setEnabled(false);
+        activity.getOnBackPressedDispatcher().onBackPressed();
+      }
     });
 
     activity.listView = view.findViewById(R.id.listView);

@@ -1,3 +1,7 @@
+(Update about ver. 4.4.0.0)
+・Support for Android 16
+・Terminated support under Android 9.0
+・Fixed some English wording
 (Update about ver. 4.3.1.1)
 ・Support for edge-to-edge display
 ・Slight adjustment of UI coloring
@@ -5,7 +9,3 @@
 (Update about ver. 4.3.1.0)
 ・Support for Android 15
 ・Terminated support under Android 8.1
-(Update about ver. 4.3.0.0)
-・Support for Android 14
-・Terminated support under Android 7
-・Small bug fixes

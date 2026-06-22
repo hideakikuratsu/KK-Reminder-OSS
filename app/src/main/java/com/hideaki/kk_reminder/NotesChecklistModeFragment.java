@@ -6,7 +6,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -107,9 +107,10 @@ public class NotesChecklistModeFragment extends Fragment {
     }
     view.setFocusableInTouchMode(true);
     view.requestFocus();
-    view.setOnKeyListener((v, keyCode, event) -> {
-
-      if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+    // 戻るボタン押下時の処理
+    activity.getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+      @Override
+      public void handleOnBackPressed() {
 
         if(NotesTodoListAdapter.isSorting) {
           new AlertDialog.Builder(activity)
@@ -117,13 +118,14 @@ public class NotesChecklistModeFragment extends Fragment {
             .setMessage(R.string.is_sorting_message)
             .show();
 
-          return true;
+          return;
         }
 
         MainEditFragment.isNotesPopping = true;
-      }
 
-      return false;
+        setEnabled(false);
+        activity.getOnBackPressedDispatcher().onBackPressed();
+      }
     });
 
     // NotesTodoListとNotesDoneListの保持するnotesListの初期化
