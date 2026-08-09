@@ -96,7 +96,6 @@ class UtilClass {
   static final String BOOLEAN_GENERAL_COPY = "BOOLEAN_GENERAL_COPY";
   static final String READ_NOTICE = "READ_NOTICE";
   static final String IS_COPIED_FROM_OLD_VERSION = "IS_COPIED_FROM_OLD_VERSION";
-  static final String IS_QUERIED_PURCHASE_HISTORY = "IS_QUERIED_PURCHASE_HISTORY";
   static final String IS_RECREATED = "IS_RECREATED";
   static final String IS_RECREATED_TWICE = "IS_RECREATED_TWICE";
   static final String IS_ID_TABLE_FLOOD = "IS_ID_TABLE_FLOOD";

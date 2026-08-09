@@ -46,17 +46,19 @@ import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClient.BillingResponseCode;
+import com.android.billingclient.api.BillingClient.OnPurchasesUpdatedSubResponseCode;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingFlowParams.ProductDetailsParams;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.QueryPurchaseHistoryParams;
+import com.android.billingclient.api.QueryProductDetailsResult;
 import com.android.billingclient.api.QueryPurchasesParams;
+import com.android.billingclient.api.UnfetchedProduct;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
@@ -138,7 +140,6 @@ import static com.hideaki.kk_reminder.UtilClass.IS_DARK_MODE;
 import static com.hideaki.kk_reminder.UtilClass.IS_DARK_THEME_FOLLOW_SYSTEM;
 import static com.hideaki.kk_reminder.UtilClass.IS_EXPANDABLE_TODO;
 import static com.hideaki.kk_reminder.UtilClass.IS_PREMIUM;
-import static com.hideaki.kk_reminder.UtilClass.IS_QUERIED_PURCHASE_HISTORY;
 import static com.hideaki.kk_reminder.UtilClass.IS_RECREATED;
 import static com.hideaki.kk_reminder.UtilClass.IS_RECREATED_TWICE;
 import static com.hideaki.kk_reminder.UtilClass.ITEM;
@@ -242,7 +243,6 @@ public class MainActivity extends AppCompatActivity
   boolean isDarkMode;
   boolean isDarkThemeFollowSystem;
   boolean isFirstUse;
-  boolean isQueriedPurchaseHistory;
   int primaryMaterialDarkColor;
   int primaryDarkMaterialDarkColor;
   int backgroundMaterialDarkColor;
@@ -381,8 +381,6 @@ public class MainActivity extends AppCompatActivity
     readNotice = booleanPreferences.getBoolean(READ_NOTICE, true);
     isCopiedFromOldVersion =
       booleanPreferences.getBoolean(IS_COPIED_FROM_OLD_VERSION, false);
-    isQueriedPurchaseHistory =
-      booleanPreferences.getBoolean(IS_QUERIED_PURCHASE_HISTORY, false);
     isRecreated = booleanPreferences.getBoolean(IS_RECREATED, false);
     isRecreatedTwice = booleanPreferences.getBoolean(IS_RECREATED_TWICE, false);
     isFirstUse = booleanPreferences.getBoolean(IS_FIRST_USE, true);
@@ -877,14 +875,22 @@ public class MainActivity extends AppCompatActivity
       billingClient = BillingClient
         .newBuilder(this)
         .setListener(this)
-        .enablePendingPurchases()
+        // 本アプリが販売するのは非消費型の一回限りの購入商品(プレミアムアカウント)のみ
+        .enablePendingPurchases(
+          PendingPurchasesParams.newBuilder()
+            .enableOneTimeProducts()
+            .build()
+        )
+        // 接続が切れた際のライブラリによる自動再接続を有効にする
+        .enableAutoServiceReconnection()
         .build();
 
       billingClient.startConnection(new BillingClientStateListener() {
         @Override
         public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
 
-          if(billingResult.getResponseCode() == BillingResponseCode.OK) {
+          int responseCode = billingResult.getResponseCode();
+          if(responseCode == BillingResponseCode.OK) {
             // プレミアムアカウントかどうかの確認
             checkIsPremium();
           }
@@ -894,7 +900,10 @@ public class MainActivity extends AppCompatActivity
               billingClient.startConnection(this);
             }
             else {
-              Log.e("MainActivity#onBillingSetupFinished", "Cannot start connection");
+              Log.e(
+                "MainActivity#onBillingSetupFinished",
+                "Cannot start connection: " + getResponseCodeString(responseCode)
+              );
             }
           }
         }
@@ -902,13 +911,8 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onBillingServiceDisconnected() {
 
-          tryCount++;
-          if(tryCount < 3) {
-            billingClient.startConnection(this);
-          }
-          else {
-            Log.e("MainActivity#onBillingSetupFinished", "Cannot start connection");
-          }
+          // enableAutoServiceReconnection()により再接続はライブラリが行う
+          Log.w("MainActivity#onBillingServiceDisconnected", "Service disconnected");
         }
       });
     }
@@ -922,7 +926,8 @@ public class MainActivity extends AppCompatActivity
     QueryPurchasesParams params = QueryPurchasesParams.newBuilder()
         .setProductType(BillingClient.ProductType.INAPP)
         .build();
-    // 購入履歴を問い合わせる(ローカルのキャッシュデータを参照)
+    // 有効な購入を問い合わせる。プレミアムアカウントは非消費型の商品なので、
+    // 一度購入されていればこの問い合わせで必ず返される
     billingClient.queryPurchasesAsync(
         params, (billingResult, purchaseList) -> {
 
@@ -930,9 +935,7 @@ public class MainActivity extends AppCompatActivity
       if(responseCode == BillingResponseCode.OK) {
         Log.i("MainActivity#checkIsPremium", getResponseCodeString(responseCode));
         if(purchaseList.isEmpty()) {
-          if(!isQueriedPurchaseHistory) {
-            queryPurchaseHistory();
-          }
+          Log.i("MainActivity#checkIsPremium", "No purchase found");
         }
         else {
           for(Purchase purchase : purchaseList) {
@@ -944,56 +947,6 @@ public class MainActivity extends AppCompatActivity
         Log.w("MainActivity#checkIsPremium", getResponseCodeString(responseCode));
       }
     });
-  }
-
-  // 購入履歴を問い合わせる(ネットワークアクセス処理)
-  private void queryPurchaseHistory() {
-
-    QueryPurchaseHistoryParams params = QueryPurchaseHistoryParams.newBuilder()
-        .setProductType(BillingClient.ProductType.INAPP)
-        .build();
-    billingClient.queryPurchaseHistoryAsync(
-      params,
-        (billingResult, purchasesList) -> {
-
-          int responseCode = billingResult.getResponseCode();
-          if(responseCode == BillingResponseCode.OK) {
-            Log.i("MainActivity#queryPurchaseHistory", getResponseCodeString(responseCode));
-            handler.post(() ->
-                setBooleanGeneralInSharedPreferences(IS_QUERIED_PURCHASE_HISTORY, true)
-            );
-            if(purchasesList == null || purchasesList.isEmpty()) {
-              Log.w("MainActivity#queryPurchaseHistory", "No History");
-            }
-            else {
-              for(PurchaseHistoryRecord purchase : purchasesList) {
-                if(purchase.getProducts().contains(PRODUCT_ID_PREMIUM)) {
-                  Log.i(
-                      "MainActivity#queryPurchaseHistory",
-                      purchase.getProducts().get(0) + ": Purchased"
-                  );
-                  handler.post(() -> {
-                    Toast
-                        .makeText(
-                            MainActivity.this,
-                            getString(R.string.succeed_to_upgrade),
-                            Toast.LENGTH_LONG
-                        )
-                        .show();
-                    setBooleanGeneralInSharedPreferences(IS_PREMIUM, true);
-                    if(expandableListViewFragment != null) {
-                      expandableListViewFragment.disableAdView();
-                    }
-                  });
-                }
-              }
-            }
-          }
-          else {
-            Log.w("MainActivity#queryPurchaseHistory", getResponseCodeString(responseCode));
-          }
-        }
-    );
   }
 
   @Override
@@ -1031,7 +984,11 @@ public class MainActivity extends AppCompatActivity
       );
     }
     else {
-      Log.e("MainActivity#onPurchasesUpdated", getResponseCodeString(responseCode));
+      Log.e(
+          "MainActivity#onPurchasesUpdated",
+          getResponseCodeString(responseCode)
+              + getSubResponseCodeString(billingResult.getOnPurchasesUpdatedSubResponseCode())
+      );
       handler.post(() ->
           Toast
               .makeText(
@@ -1249,11 +1206,22 @@ public class MainActivity extends AppCompatActivity
         .setProductList(productList)
         .build();
 
-    billingClient.queryProductDetailsAsync(params, (billingResult, productDetailsList) -> {
+    billingClient.queryProductDetailsAsync(params, (billingResult, queryProductDetailsResult) -> {
 
       int responseCode = billingResult.getResponseCode();
       if(responseCode == BillingResponseCode.OK) {
-        if(productDetailsList.isEmpty()) {
+        // 取得できなかった商品があればその理由を記録する
+        for(UnfetchedProduct unfetchedProduct : queryProductDetailsResult.getUnfetchedProductList()) {
+          Log.w(
+              "MainActivity#queryProductDetailsAsync",
+              "Unfetched product: " + unfetchedProduct.getProductId()
+                  + ", StatusCode: " + unfetchedProduct.getStatusCode()
+          );
+        }
+
+        List<ProductDetails> fetchedProductDetailsList =
+            queryProductDetailsResult.getProductDetailsList();
+        if(fetchedProductDetailsList.isEmpty()) {
           Log.e("MainActivity#queryProductDetailsAsync", "productDetailsList is null or empty");
           taskCompletionSource.setError(new IllegalStateException());
           handler.post(() ->
@@ -1268,11 +1236,11 @@ public class MainActivity extends AppCompatActivity
         }
         else {
           Log.i("MainActivity#queryProductDetailsAsync", getResponseCodeString(responseCode));
-          taskCompletionSource.setResult(productDetailsList);
+          taskCompletionSource.setResult(fetchedProductDetailsList);
         }
       }
       else if(responseCode == BillingResponseCode.USER_CANCELED) {
-        Log.w("MainActivity#querySkuDetailsList", getResponseCodeString(responseCode));
+        Log.w("MainActivity#queryProductDetailsAsync", getResponseCodeString(responseCode));
         taskCompletionSource.setCancelled();
         handler.post(() ->
             Toast
@@ -1285,7 +1253,7 @@ public class MainActivity extends AppCompatActivity
         );
       }
       else {
-        Log.e("MainActivity#querySkuDetailsList", getResponseCodeString(responseCode));
+        Log.e("MainActivity#queryProductDetailsAsync", getResponseCodeString(responseCode));
         taskCompletionSource.setError(new IllegalStateException());
         handler.post(() ->
             Toast
@@ -1325,10 +1293,31 @@ public class MainActivity extends AppCompatActivity
         return "ITEM_NOT_OWNED";
       case BillingResponseCode.SERVICE_DISCONNECTED:
         return "SERVICE_DISCONNECTED";
+      case BillingResponseCode.SERVICE_TIMEOUT:
+        return "SERVICE_TIMEOUT";
       case BillingResponseCode.FEATURE_NOT_SUPPORTED:
         return "FEATURE_NOT_SUPPORTED";
+      case BillingResponseCode.NETWORK_ERROR:
+        return "NETWORK_ERROR";
       default:
-        throw new IllegalArgumentException("Such a Response Code not exists!");
+        // ライブラリの更新により未知のレスポンスコードが返される可能性があるため、
+        // 例外を投げずにそのまま記録する
+        return "UNKNOWN_RESPONSE_CODE(" + responseCode + ")";
+    }
+  }
+
+  // PBL 9で追加された、launchBillingFlow()の失敗理由をより詳細に示すサブレスポンスコード
+  private String getSubResponseCodeString(int subResponseCode) {
+
+    switch(subResponseCode) {
+      case OnPurchasesUpdatedSubResponseCode.NO_APPLICABLE_SUB_RESPONSE_CODE:
+        return "";
+      case OnPurchasesUpdatedSubResponseCode.PAYMENT_DECLINED_DUE_TO_INSUFFICIENT_FUNDS:
+        return ", PAYMENT_DECLINED_DUE_TO_INSUFFICIENT_FUNDS";
+      case OnPurchasesUpdatedSubResponseCode.USER_INELIGIBLE:
+        return ", USER_INELIGIBLE";
+      default:
+        return ", UNKNOWN_SUB_RESPONSE_CODE(" + subResponseCode + ")";
     }
   }
 
@@ -2695,10 +2684,6 @@ public class MainActivity extends AppCompatActivity
       }
       case IS_COPIED_FROM_OLD_VERSION: {
         isCopiedFromOldVersion = value;
-        break;
-      }
-      case IS_QUERIED_PURCHASE_HISTORY: {
-        isQueriedPurchaseHistory = value;
         break;
       }
       case IS_RECREATED: {
